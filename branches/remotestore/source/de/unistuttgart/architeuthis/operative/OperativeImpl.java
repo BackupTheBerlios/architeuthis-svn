@@ -369,15 +369,18 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         // Den oder die ClassLoader löschen
         CacheFlushingRMIClSpi.flushClassLoaders();
 
-        // Den lokalen RemoteStore abmelden
-        unregisterRemoteStore();
-
         // Mehrmals versuchen, die Teillösung zu senden
         while ((versuche > 0) && (!transmitted)) {
-            Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: Versuche, Teilergebnis zurückzugeben");
+            Miscellaneous.printDebugMessage(debugMode,
+                                            "Debug: Versuche, RemoteStore"
+                                            + " abzumelden und Teilergebnis"
+                                            + " zurückzugeben");
             try {
+                unregisterRemoteStore();
+                Miscellaneous.printDebugMessage(
+                    debugMode,
+                    "Debug: RemoteStore abgemeldet");
+
                 computeManager.returnPartialSolution(parSol, this);
                 Miscellaneous.printDebugMessage(
                     debugMode,
