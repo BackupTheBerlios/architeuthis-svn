@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeComputing.java
  * created:     26.04.2004
- * last change: 15.03.2005 by Michael Wohlfart
+ * last change: 30.03.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -49,7 +49,7 @@ import de.unistuttgart.architeuthis.misc.Miscellaneous;
 /**
  * Implementierung den Thread zur Berechnung eines Teilproblems.
  *
- * @author Jürgen Heit, Ralf Kible, Dietmar Lippold
+ * @author Jürgen Heit, Ralf Kible, Dietmar Lippold, Michael Wohlfart
  */
 public class OperativeComputing extends Thread {
 
@@ -71,11 +71,11 @@ public class OperativeComputing extends Thread {
     private boolean debugMode = true;
 
     /**
-     * der verwendete RemoteStore, dies ist entweder ein zentraler RemoteStore
-     * oder ein dezentraler RemoteSTore oder null, falls kein RemoteStore
-     * verwendet wird
+     * Der verwendete RemoteStore. Das ist entweder ein zentraler RemoteStore
+     * oder ein dezentraler RemoteStore oder <CODE>null</CODE>, falls kein
+     * RemoteStoreverwendet wird
      */
-	private RemoteStore store;
+    private RemoteStore store;
 
     /**
      * Dieser Konstruktor sollte nicht benutzt werden, muss aber wegen
@@ -97,31 +97,32 @@ public class OperativeComputing extends Thread {
      * Wird vom <code>OperativeImpl</code> aufgerufen, um das übergebenen
      * Teilproblem berechnen zu lassen.
      *
-     * @param parProb  Neues Teilproblem für den Operative
+     * @param parProb  Neues Teilproblem für den Operative.
+     * @param store    Der RemoteStore für das Teilproblem.
      *
-     * @throws ProblemComputeException  wenn der Thread bereits ein Teilproblem
+     * @throws ProblemComputeException  Wenn der Thread bereits ein Teilproblem
      *                                  berechnet.
      */
     synchronized void fetchPartialProblem(PartialProblem parProb,
-    		                              RemoteStore store)
+                                          RemoteStore store)
         throws ProblemComputeException {
-    	// note: Um die hässlichen instanceof-Tests in der run() Methode loszuwerden 
-    	//       könnte man aus dieser Methode zwei Methoden machen, die jeweils
-    	//       für CommunicationPartialProblem und NonCommPartialProblem implementiert 
-    	//       werden.
-    	//       Allerdings würde das die instanceof Tests wohl nur in die OperativeImpl Klasse
-    	//       verschieben... (MW)   	
-    	
-        Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: OperativeComputing hat Aufgabe vom ComputeManager"
-                    + " empfangen.");
-        Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: der RemoteSTore ist " + store);
+        /*
+         * note: Um die hässlichen instanceof-Tests in der run() Methode
+         *       loszuwerden, könnte man aus dieser Methode zwei Methoden
+         *       machen, die jeweils für CommunicationPartialProblem und
+         *       für NonCommPartialProblem implementiert werden.
+         *       Allerdings würde das die instanceof Tests wohl nur in die
+         *       OperativeImpl Klasse verschieben... (MW)
+         */
+
+        Miscellaneous.printDebugMessage(debugMode,
+                                        "Debug: OperativeComputing hat Aufgabe"
+                                        + " vom ComputeManager empfangen.");
+        Miscellaneous.printDebugMessage(debugMode,
+                                        "Debug: der RemoteStore ist " + store);
         if (partialProblem == null) {
-            partialProblem = parProb;           
-            this.store = store;           
+            partialProblem = parProb;
+            this.store = store;
             notifyAll();
         } else {
             throw new ProblemComputeException("OperativeComputing bereits"
@@ -169,29 +170,32 @@ public class OperativeComputing extends Thread {
             try {
                 Miscellaneous.printDebugMessage(
                     debugMode,
-                    "Debug: Berechnung gestartet");
-                
+                    "Debug: Starte Berechnung");
+
                 if (partialProblem instanceof NonCommPartialProblem) {
-                    ps = ((NonCommPartialProblem)partialProblem).compute();                	
-                } else if (partialProblem instanceof CommunicationPartialProblem ) {
-                	ps = ((CommunicationPartialProblem)partialProblem).compute(store);
+                    ps = ((NonCommPartialProblem)partialProblem).compute();
+                } else if (partialProblem instanceof CommunicationPartialProblem) {
+                    ps = ((CommunicationPartialProblem)partialProblem).compute(store);
                 } else {
-                	// Fehler über den OperativeImpl an den Dispatcher weitergeben:
-                	System.err.println("Error: PartialProblem implementiert kein passendes Interface");
+                    // Fehler über den OperativeImpl an den Dispatcher weitergeben:
+                    System.err.println("Error: PartialProblem implementiert"
+                                       + " kein passendes Interface");
                     operativeImpl.reportException(
-                            ExceptionCodes.PARTIALPROBLEM_ERROR, "PartialProblem implementiert kein passendes Interface");
-                    // es macht keinen Sinn an diesem Teilproblem zu rechnen:
-                    //partialProblem = null;
-                    // es mach auch keinen Sinn eine Lösung zurückzugeben:
-                    //continue;
-                }               
-                
-                Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Berechnung beendet");
-                partialProblem = null;
-                // Lösung zurückgeben
-                operativeImpl.returnPartialSolution(ps);
+                        ExceptionCodes.PARTIALPROBLEM_ERROR,
+                        "PartialProblem implementiert kein passendes Interface");
+
+                    // Zum Teilproblem kann keine Teillösung berechnet werden
+                    partialProblem = null;
+                }
+
+                if (partialProblem != null) {
+                    Miscellaneous.printDebugMessage(
+                        debugMode,
+                        "Debug: Berechnung beendet");
+                    partialProblem = null;
+                    // Lösung zurückgeben
+                    operativeImpl.returnPartialSolution(ps);
+                }
             } catch (ProblemComputeException e) {
                 partialProblem = null;
                 Miscellaneous.printDebugMessage(
@@ -209,13 +213,6 @@ public class OperativeComputing extends Thread {
             } catch (ThreadDeath e) {
                 // Dieser Error darf nicht abgefangen werden.
                 throw e;
-            } catch (Error e) {
-                partialProblem = null;
-                Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Error ist aufgetreten : " + e);
-                operativeImpl.reportException(
-                    ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
             } catch (RemoteException e) {
                 partialProblem = null;
                 Miscellaneous.printDebugMessage(
@@ -223,7 +220,15 @@ public class OperativeComputing extends Thread {
                     "Debug: Error ist aufgetreten : " + e);
                 operativeImpl.reportException(
                     ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
-			}
+            } catch (Error e) {
+                partialProblem = null;
+                Miscellaneous.printDebugMessage(
+                    debugMode,
+                    "Debug: Error ist aufgetreten : " + e);
+                operativeImpl.reportException(
+                    ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
+            }
         }
     }
 }
+
