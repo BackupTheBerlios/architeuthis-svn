@@ -46,7 +46,7 @@ public interface RelayHashSet extends RemoteStore {
 
     /**
      * Speichert das übergebene Objekt und sendet es an alle anderen
-     * RemoteStroes außer an den, von dem der Aufruf kommt.
+     * RemoteStores außer an den, von dem der Aufruf kommt.
      *
      * @param origin  RemoteStore, von dem der Aufruf kommt.
      * @param object  Neues Objekt für den Speicher.
