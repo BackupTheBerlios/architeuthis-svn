@@ -1,14 +1,15 @@
 @echo off
 
-REM Startet den ClassFileServer, der dem Dispatcher und den Operatives die
-REM Klassen der Anwendung zur Verfügung stellt
+REM Startet die Statistik, um Informationen über einen Dispatcher darzustellen
 
-REM Benötigte Umgebungsvariablen (JAVA, INSTALLDIR, DISPATCHER_PORT)
-REM werden gesetzt
+
+REM Benötigte Umgebungsvariablen (CONFIG_DIR, JAVA, DEPLOY_DIR,
+REM DISPATCHER_HOST, DISPATCHER_PORT) werden gesetzt
 call setup.bat
 
 POLICY_CONF=statisticreader.pol
 
+REM die Parameter für die JVM
 set JVMPAR= 
 set JVMPAR=%JVMPAR% -Djava.security.policy=%CONFIG_DIR%/%POLICY_CONF%
 

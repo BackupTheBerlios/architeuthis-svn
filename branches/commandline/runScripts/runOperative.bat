@@ -3,8 +3,9 @@
 REM Startet den Operative von Architeuthis - das Programm, das die
 REM Berechnung übernimmt.
 
-REM Benötigte Umgebungsvariablen (JAVA, INSTALLDIR, DISPATCHER_PORT)
-REM werden gesetzt
+
+REM Benötigte Umgebungsvariablen (CONFIG_DIR, JAVA, DEPLOY_DIR,
+REM DISPATCHER_HOST, DISPATCHER_PORT) werden gesetzt
 call setup.bat
 
 
@@ -22,4 +23,5 @@ set JVMPAR=%JVMPAR% -Djava.util.logging.config.file=%CONFIG_DIR%/%LOGGING_CONF%
 REM die Main-Klasse ist
 REM   de.unistuttgart.architeuthis.operative.OperativeImpl
 REM und wird als Main-Class Attribut im jar-Manifest definiert
+
 %JAVA% %JVMPAR% -jar %DEPLOY_DIR%\Operative.jar %DISPATCHER_HOST%:%DISPATCHER_PORT% -d

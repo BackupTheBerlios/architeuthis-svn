@@ -1,14 +1,15 @@
 @echo off
 
-REM Startet den Problem-Transmitter und 
-REM übermittelt dem Dispatcher ein fehlerhaftes Problem
+REM Startet den Problem-Transmitter und übermittelt dem Dispatcher ein
+REM fehlerhaftes Problem
 
-REM Benötigte Umgebungsvariablen (JAVA, INSTALLDIR, DISPATCHER_PORT)
-REM werden gesetzt
+
+REM Benötigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
+REM DISPATCHER_PORT, SOLUTIONFILE, JAVA, DEPLOY_DIR) werden gesetzt
 call setup.bat
 
 
-REM die Parameter fuer die JVM
+REM die Parameter für die JVM
 set JVMPAR=
 set JVMPAR=%JVMPAR% -Djava.security.policy=%CONFIG_DIR%/transmitter.pol
 

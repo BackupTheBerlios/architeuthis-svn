@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# Startet den Problem-Transmitter und 
-# ’bermittelt dem Dispatcher das Monta-Carlo-Problem
+# Startet den Problem-Transmitter und übermittelt dem Dispatcher das
+# Monte-Carlo-Problem
 
-# Benötigte Umgebungsvariablen (JAVA, INSTALLDIR, DISPATCHER_HOST, DISPATCHER_PORT, CLASSURL, SOLUTIONFILE)
-# werden gesetzt
+
+# Benötigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
+# DISPATCHER_PORT, SOLUTIONFILE, JAVA, DEPLOY_DIR) werden gesetzt
 . ./setup.sh
-
 
 # die Parameter für die JVM
 JVMPAR=" "
@@ -24,3 +24,4 @@ ARGS="$ARGS -f $SOLUTIONFILE"
 MAIN="de.unistuttgart.architeuthis.user.ProblemTransmitterApp"
 
 exec $JAVA -cp $DEPLOY_DIR/User.jar $JVMPAR $MAIN $ARGS
+

@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# Startet den Problem-Transmitter und 
-# ’bermittelt dem Dispatcher ein zuf„llige Zeit wartendes Problem
+# Startet den Problem-Transmitter und übermittelt dem Dispatcher ein eine
+# zufällige Zeit wartendes Problem
 
-# Benötigte Umgebungsvariablen (JAVA, INSTALLDIR, DISPATCHER_HOST, DISPATCHER_PORT, CLASSURL, SOLUTIONFILE)
-# werden gesetzt
+
+# Benötigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
+# DISPATCHER_PORT, SOLUTIONFILE, JAVA, DEPLOY_DIR) werden gesetzt
 . ./setup.sh
-
 
 # die Parameter für die JVM
 JVMPAR=" "
@@ -19,8 +19,8 @@ ARGS="$ARGS -r $DISPATCHER_HOST:$DISPATCHER_PORT"
 ARGS="$ARGS -c de.unistuttgart.architeuthis.testenvironment.random.RandomProblemImpl"
 ARGS="$ARGS -f $SOLUTIONFILE"
 
-
 # die Main-Klasse
 MAIN=de.unistuttgart.architeuthis.user.ProblemTransmitterApp
 
 exec $JAVA -cp $DEPLOY_DIR/User.jar $JVMPAR $MAIN $ARGS
+

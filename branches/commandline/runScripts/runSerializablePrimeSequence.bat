@@ -1,11 +1,11 @@
 @echo off
 
-REM Startet den Problem-Transmitter und 
-REM übermittelt dem Dispatcher das Primzahlbereich-Problem
+REM Startet den Problem-Transmitter und übermittelt dem Dispatcher das
+REM serialisierte Primzahlfolge-Problem
 
 
 REM Benötigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
-REM DISPATCHER_PORT, SOLUTIONFILE, JAVA) werden gesetzt
+REM DISPATCHER_PORT, SOLUTIONFILE, JAVA, DEPLOY_DIR) werden gesetzt
 call setup.bat
 
 

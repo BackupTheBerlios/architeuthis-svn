@@ -1,6 +1,7 @@
 # Diese Datei dient zum Setzen der Umgebungsvariablen von Architeuthis
 # in den anderen Scripten
 
+
 # Der Pfad zum JDK. Wird standardmäßig als äußere Umgebungsvariable gesetzt.
 # Kann hier aber auch explizit gesetzt werden.
 # JAVA_HOME=/usr/java

@@ -1,10 +1,11 @@
 @echo off
 
-REM Startet die graphische Statistik um Informationen über einen 
-REM Dispatcher darzustellen
+REM Startet die graphische Statistik um Informationen über einen Dispatcher
+REM darzustellen
 
-REM Benötigte Umgebungsvariablen (JAVA, INSTALLDIR, DISPATCHER_PORT)
-REM werden gesetzt
+
+REM Benötigte Umgebungsvariablen (CONFIG_DIR, DISPATCHER_HOST,
+REM DISPATCHER_PORT, JAVA, DEPLOY_DIR) werden gesetzt
 call setup.bat
 
 

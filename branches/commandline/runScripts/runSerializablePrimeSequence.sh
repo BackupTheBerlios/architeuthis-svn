@@ -1,10 +1,11 @@
 #!/bin/sh
 
-# Startet den Problem-Transmitter und
-# übermittelt dem Dispatcher das Primzahlbereich-Problem
+# Startet den Problem-Transmitter und übermittelt dem Dispatcher das
+# serialisierte Primzahlfolge-Problem
+
 
 # Benötigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
-# DISPATCHER_PORT, SOLUTIONFILE, JAVA) werden gesetzt
+# DISPATCHER_PORT, SOLUTIONFILE, JAVA, DEPLOY_DIR) werden gesetzt
 . ./setup.sh
 
 # die Parameter für die JVM

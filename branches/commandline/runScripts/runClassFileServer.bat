@@ -3,8 +3,9 @@
 REM Startet den ClassFileServer, der dem Dispatcher und den Operatives die
 REM Klassen der Anwendung zur Verfügung stellt
 
-REM Benötigte Umgebungsvariablen (JAVA, INSTALLDIR, DISPATCHER_PORT)
-REM werden gesetzt
+
+REM Benötigte Umgebungsvariablen (JAVA, DEPLOY_DIR, CLASS_SERVER_PORT,
+REM CLASS_FILE_PATH) werden gesetzt
 call setup.bat
 
 REM die Main-Klasse

@@ -3,8 +3,9 @@
 # Startet den ClassFileServer, der dem Dispatcher und den Operatives die
 # Klassen der Anwendung zur Verfügung stellt
 
-# Benötigte Umgebungsvariablen (JAVA, INSTALLDIR, CLASS_SERVER_PORT, CLASS_FILE_PATH)
-# werden gesetzt
+
+# Benötigte Umgebungsvariablen (JAVA, DEPLOY_DIR, CLASS_SERVER_PORT,
+# CLASS_FILE_PATH) werden gesetzt
 . ./setup.sh
 
 # die Main-Klasse
