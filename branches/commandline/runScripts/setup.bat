@@ -3,6 +3,7 @@
 REM Diese Datei dient zum Setzen der Umgebungsvariablen von Architeuthis
 REM in den anderen Scripten
 
+
 REM Der Pfad zum JDK. Wird standardm‰ﬂig als ‰uﬂere Umgebungsvariable gesetzt.
 REM Kann hier aber auch explizit gesetzt werden.
 REM JAVA_HOME=/usr/java
