@@ -1,7 +1,7 @@
 /*
  * file:        CommunicationPartialProblem.java
  * created:     08.02.2005
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 29.03.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -26,23 +26,28 @@
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+
 package de.unistuttgart.architeuthis.userinterfaces.develop;
 
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 
-
 /**
- * @author Michael Wohlfart
+ * Interface muß von einem Teilproblem implementiert werden, das mit anderen
+ * Teilproblemen keine Daten austauschen will.
  *
+ * @author Michael Wohlfart
  */
 public interface NonCommPartialProblem extends PartialProblem {
+
     /**
      * Startet die Berechnung des Teilproblems.
      *
-     * @return  berechnete Teillösung
+     * @return  Die berechnete Teillösung.
      *
-     * @throws ProblemComputeException  bei beliebigen Berechnungsproblemen
+     * @throws ProblemComputeException  Bei beliebigen Fehlern bei der
+     *                                  Berechnung.
      */
     public PartialSolution compute() throws ProblemComputeException;
-
 }
+

@@ -1,7 +1,7 @@
 /*
  * file:        AbstractRemoteStore.java
  * created:     08.02.2005
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 29.03.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -26,113 +26,106 @@
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+
 package de.unistuttgart.architeuthis.remotestore;
-
-import java.util.logging.Level;
-
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMapImpl;
 
 /**
- * Diese Klasse implementiert die Register- und
- * Unregister-Funktionalität für einen RemoteStore.
+ * Diese Klasse implementiert die Register- und Unregister-Funktionalität
+ * für einen RemoteStore.<P>
  *
- * Beide Methoden werden in der Operative Komponente verwendet um
- * dezentrale Speicher am zentralen Speicher an- bzw. abzumelden.
- *
- *
+ * Beide Methoden werden in einem Operative verwendet, um dezentrale Speicher
+ * am zentralen Speicher an- und abzumelden.
  *
  * @author Michael Wohlfart
- *
  */
 public abstract class AbstractRemoteStore extends UnicastRemoteObject
                                           implements RemoteStore {
     /**
-     * Konstruktor
+     * Konstruktor.
      *
-     * @throws RemoteException RMI-Probleme
+     * @throws RemoteException  Bei einem RMI-Problem.
      */
     protected AbstractRemoteStore() throws RemoteException {
         super();
     }
 
     /**
-     * Standard Logger Pattern
+     * Standard Logger Pattern.
      */
-    private static final Logger LOGGER = Logger
-            .getLogger(RemoteHashMapImpl.class.getName());
-
+    private static final Logger LOGGER = Logger.getLogger(RemoteHashMapImpl.class.getName());
 
     /**
-     * Alle registrieren RemoteStores werden in einem HashSet
+     * Alle registrieren RemoteStores werden in einem <CODE>HashSet</CODE>
      * gespeichert. Konkrete Implementierungen können über
-     * getRemoteStoreIterator einen Iterator erhalten und auf
-     * die einzelnen Elemente diesen HashSet zugreifen.
+     * <CODE>getRemoteStoreIterator</CODE> einen <CODE>Iterator</CODE> erhalten
+     * und auf die einzelnen Elemente diesen <CODE>HashSet</CODE> zugreifen.
      */
     private HashSet registeredStores = new HashSet();
 
-
     /**
-     * Anmeldung eines RemoteStores
+     * Anmeldung eines RemoteStores.
      *
-     * @param remoteStore neuer RemoteStore
+     * @param remoteStore  Ein neuer RemoteStore.
      *
-     * @throws RemoteException Probleme mit RMI Zugriff
+     * @throws RemoteException  Bei einem Probleme mit einem RMI Zugriff.
      */
     public synchronized void registerRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("registering RemoteStore: "
-                    + remoteStore
-                    + " in "
-                    + this);
+                        + remoteStore
+                        + " in "
+                        + this);
         }
 
         registeredStores.add(remoteStore);
     }
 
-
     /**
-     * Abmeldung eines RemoteStores
+     * Abmeldung eines RemoteStores.
      *
-     * @param remoteStore RemoteStore der abgemeldet werden soll
+     * @param remoteStore  Ein RemoteStore, der abgemeldet werden soll.
      *
-     * @throws RemoteException Zugriff ’ber RMI
+     * @throws RemoteException  Bei einem Probleme mit einem RMI Zugriff.
      */
     public synchronized void unregisterRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("unregistering RemoteStore: "
-                    + remoteStore
-                    + " in "
-                    + this);
+                        + remoteStore
+                        + " in "
+                        + this);
         }
 
         registeredStores.remove(remoteStore);
     }
 
-
     /**
-     * Liefert eine Iteration über alle Remote Stores,
-     * die aktuell registriert sind.
+     * Liefert einen Iterator über alle Remote Stores, die aktuell
+     * registriert sind. Die Methode darf nur in einer abgeleiteten Klasse
+     * aufgerufen werden und die aufrufende Methode muß auf <CODE>this</CODE>
+     * synchronisiert sein.
      *
-     * @return Iterator der alle registieren RemoteStores enthält.
+     * @return  Ein Iterator über alle registieren RemoteStores.
      */
     protected Iterator getRemoteStoreIterator() {
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.finest("getRemoteStoreIterator size: "
-                    + registeredStores.size());
+                          + registeredStores.size());
         }
         return registeredStores.iterator();
     }
-
-
 }
+

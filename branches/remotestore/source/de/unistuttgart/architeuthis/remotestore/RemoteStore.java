@@ -1,7 +1,7 @@
 /*
  * file:        RemoteStore.java
  * created:     08.02.2005
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 29.03.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -26,6 +26,8 @@
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+
 package de.unistuttgart.architeuthis.remotestore;
 
 import java.io.Serializable;
@@ -33,36 +35,32 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
- *
- * Interface für ein RemoteStore Objekt, das den verteilten Speicher
- * für Architeurthis implementiert.<BR>
- * Neben den hier vorgegebenen Methoden für die Synchronisation der
- * einzelnen Speicherobjekte untereinander, müssen in einer konkreten
- * Implementierung noch weitere Methoden für den Zugriff
- * auf den Speicher implementiert werden.
- *
+ * Interface für ein Speicherobjekt, das den verteilten Speicher für
+ * Architeurthis implementiert. Neben den hier vorgegebenen Methoden für die
+ * Synchronisation der einzelnen Speicherobjekte untereinander müssen in
+ * einer konkreten Implementierung noch weitere Methoden für den Zugriff auf
+ * den Speicher implementiert werden.
  *
  * @author Michael Wohlfart
- *
  */
 public interface RemoteStore extends Remote, Serializable  {
 
     /**
-     * Anmelden eines Speicherobjekts
+     * Anmelden eines Speicherobjekts.
      *
-     * @param remoteStore peer store object
+     * @param remoteStore  Das anzumendende Speicherobjekt.
      *
-     * @throws RemoteException RMI Probleme
+     * @throws RemoteException  RMI Problem.
      */
     void registerRemoteStore(RemoteStore remoteStore) throws RemoteException;
 
     /**
-     * Abmelden eines Speciehrobjekts
+     * Abmelden eines Speicherobjekts.
      *
-     * @param remoteStore peer store object
+     * @param remoteStore   Das abzumendende Speicherobjekt.
      *
-     * @throws RemoteException RMI Probleme
+     * @throws RemoteException  RMI Problem.
      */
     void unregisterRemoteStore(RemoteStore remoteStore) throws RemoteException;
-
 }
+

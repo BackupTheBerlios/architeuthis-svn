@@ -1,7 +1,7 @@
 /*
  * file:        RemoteStoreGenerator.java
  * created:     08.02.2005
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 29.03.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -27,35 +27,33 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
 package de.unistuttgart.architeuthis.remotestore;
 
 import java.io.Serializable;
 
 /**
- * Die Aufgabe eines RemoteStoreGenerators ist es zentrale und/oder
- * verteilte Speicher zu erzeugen. Dies Speicher implementieren
- * üblicherweise Collection ähnliche Interfaces, so dass sich darin
- * Objekte ablegen lassen.
+ * Die Aufgabe eines RemoteStoreGenerators ist es, zentrale und/oder
+ * verteilte Speicher zu erzeugen. Diese Speicher implementieren
+ * üblicherweise Collection-ähnliche Interfaces, so dass sich darin Objekte
+ * ablegen lassen.<P>
  *
- * Ein RemoteStoreGenerator muss Serializable sein,
- * da er an den Dispatcher und an die Operatives übermittelt wird.
+ * Ein RemoteStoreGenerator muss Serializable sein, da er an den Dispatcher
+ * und an die Operatives übermittelt wird.<P>
  *
- * Die Methode generateCentralRemoteStore wird vom Dispatcher
- * verwendet.
- * Die Methode generateDistRemoteStore wird vom Operative
- * verwendet.
- *
+ * Ein Speicherobjekt kann entweder im Dispatcher oder in einem Operative
+ + erzeugt und verwaltet werden.
  *
  * @author Michael Wohlfart
- *
  */
 public interface RemoteStoreGenerator extends Serializable {
 
     /**
-     * Die Implementierung dieser Methode wird vom Dispatcher
-     * verwendet um ein zentrales Speicherobjekt zu erhalten.
+     * Die Implementierung dieser Methode wird vom Dispatcher verwendet, um
+     * ein zentrales Speicherobjekt zu erhalten.
      *
-     * @return RemoteStore in der JVM des Dispatcher verankert
+     * @return RemoteStore  Ein Speicherobjekt, das in der JVM des Dispatcher
+     *                      verankert wird.
      */
     RemoteStore generateCentralRemoteStore();
 
@@ -64,8 +62,9 @@ public interface RemoteStoreGenerator extends Serializable {
      * den Operatives verwendet, um ein dezentrales Speicherobjekt
      * zu erhalten
      *
-     * @return RemoteStore in der JVM eines Operatives vernakert
+     * @return RemoteStore  Ein Speicherobjekt, das in der JVM eines
+     *                      Operatives verankert wird.
      */
     RemoteStore generateDistRemoteStore();
-
 }
+
