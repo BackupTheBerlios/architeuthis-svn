@@ -39,8 +39,9 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.misc.Numerator;
-import de.unistuttgart.architeuthis.dispatcher.statistic.ProblemStatisticsCollector;
+import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
+import de.unistuttgart.architeuthis.dispatcher.statistic.ProblemStatisticsCollector;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
@@ -93,6 +94,145 @@ public class ProblemComputation {
     }
 
     /**
+     * Meldet, wenn sowohl ein zentraler wie ein dezentraler RemoteStore
+     * vorhanden ist, zuerst den dezentralen beim zentralen und dann den
+     * zentralen beim dezentralen ab.
+     *
+     * @param centralRemoteStore  Der zentrale RemoteStore oder
+     *                            <CODE>null</CODE>, wenn keiner existiert.
+     * @param distRemoteStore     Der dezentrale RemoteStore oder
+     *                            <CODE>null</CODE>, wenn keiner existiert.
+     */
+    private void unregisterRemoteStore(RemoteStore centralRemoteStore,
+                                       RemoteStore distRemoteStore) {
+        try {
+            if ((centralRemoteStore != null) && (distRemoteStore != null)) {
+                centralRemoteStore.unregisterRemoteStore(distRemoteStore);
+                distRemoteStore.unregisterRemoteStore(centralRemoteStore);
+                centralRemoteStore = null;
+                distRemoteStore = null;
+            }
+        } catch (RemoteException e) {
+            // Exception kann nicht auftreten, da auf die RemoteStores nicht
+            // über RMI zugegriffen wird.
+            System.err.println("Unmöglicher Fehler aufgetreten in Methode"
+                               + " unregisterRemoteStore");
+        }
+    }
+
+    /**
+     * Berechnet ein <code>Problem</code> lokal. Der Methode
+     * <code>getPartialProblem</code> der konkreten Instanz des Problems wird
+     * dabei der angegebene Wert übergeben. Die erzeugten Teilprobleme werden
+     * jedoch rein sequentiell verarbeitet, wobei zu jedem Zeitpunkt maximal
+     * ein Teilproblem erzeugt und noch nicht bearbeitet ist (sondern gerade
+     * bearbeitet wird). Nach der Erzeugung einer Gesamtlösung ist daher die
+     * Anzahl der bearbeiteten Teilprobleme immer genau so groß wie die Anzahl
+     * der erzeugten und der angeforderten Teilprobleme.
+     *
+     * @param problem                Zu berechnendes Problem.
+     * @param numberPartialProblems  Die vorgeschlagene Anzahl von
+     *                               Teilproblemen, die vom konkreten Problem
+     *                               erzeugt werden soll.
+     * @param generator              RemoteStoreGenerator zur Erzeugung des
+     *                               zentralen und der verteilten Speicher.
+     *
+     * @return  Lösung des Problems.
+     *
+     * @throws ProblemComputeException  Das Problem liefert keine Teilprobleme
+     *                                  mehr aber auch keine Gesamtlösung oder
+     *                                  das Problem implementiert kein
+     *                                  passendes Interface.
+     */
+    public Serializable computeProblem(SerializableProblem problem,
+                                       long numberPartialProblems,
+                                       RemoteStoreGenerator generator)
+        throws ProblemComputeException {
+
+        ProblemStatisticsCollector probStatCollector;
+        CommunicationPartialProblem commParProb;
+        NonCommPartialProblem nonCommParProb;
+        RemoteStore centralRemoteStore = null;
+        RemoteStore distRemoteStore = null;
+        PartialProblem partialProblem = null;
+        PartialSolution partialSolution = null;
+        Serializable solution = null;
+        long problemId;
+
+        problemId = localProblemNumerator.nextNumber();
+        probStatCollector = new ProblemStatisticsCollector(null);
+
+        // Erzeugung und gegenseitige Anmeldung der RemoteStores.
+        if (generator != null) {
+            centralRemoteStore = generator.generateCentralRemoteStore();
+            distRemoteStore = generator.generateDistRemoteStore();
+            if ((distRemoteStore != null) && (centralRemoteStore != null)) {
+                try {
+                    distRemoteStore.registerRemoteStore(centralRemoteStore);
+                    centralRemoteStore.registerRemoteStore(distRemoteStore);
+                } catch (RemoteException e) {
+                    // Exception kann nicht auftreten, da auf die RemoteStores
+                    // nicht über RMI zugegriffen wird.
+                    System.err.println("Unmöglicher Fehler aufgetreten in"
+                                       + " Methode computeProblem");
+                }
+            } else if (distRemoteStore == null) {
+                distRemoteStore = centralRemoteStore;
+            }
+        }
+
+        do {
+            probStatCollector.notifyRequestedPartialProblem();
+            partialProblem = problem.getPartialProblem(numberPartialProblems);
+
+            if (partialProblem != null) {
+                probStatCollector.notifyCreatedPartialProblem();
+
+                // Teillösung berechnen
+                probStatCollector.startTimeMeasurement(null);
+                if (partialProblem instanceof NonCommPartialProblem) {
+                    nonCommParProb = (NonCommPartialProblem) partialProblem;
+                    partialSolution = nonCommParProb.compute();
+                } else if (partialProblem instanceof CommunicationPartialProblem) {
+                    commParProb = (CommunicationPartialProblem) partialProblem;
+                    try {
+                        partialSolution = commParProb.compute(distRemoteStore);
+                    } catch (RemoteException e) {
+                        // Exception kann nicht auftreten, da auf die
+                        // RemoteStores nicht über RMI zugegriffen wird.
+                        System.err.println("Unmöglicher Fehler aufgetreten in"
+                                           + " Methode computeProblem");
+                    }
+                } else {
+                    // Zuerst gegenseitige Abmeldung der RemoteStores.
+                    unregisterRemoteStore(centralRemoteStore, distRemoteStore);
+                    throw new ProblemComputeException("PartialProblem implementiert"
+                                                      + " kein passendes Interface");
+                }
+                probStatCollector.stopTimeMeasurement(null);
+
+                // Teillösung dem Problem zurückgeben, damit es die
+                // Gesamtlösung zusammensetzen kann.
+                problem.collectResult(partialSolution, partialProblem);
+                probStatCollector.notifyProcessedPartialProblem();
+
+                // Nach der Gesamtlösung fragen
+                solution = problem.getSolution();
+            }
+        } while ((partialProblem != null) && (solution == null));
+        finalProbStat = probStatCollector.getSnapshot();
+
+        // Gegenseitige Abmeldung der RemoteStores.
+        unregisterRemoteStore(centralRemoteStore, distRemoteStore);
+
+        if (solution == null) {
+            throw new ProblemComputeException("Problem liefert keine"
+                                              + " Teilprobleme und keine Lösung");
+        }
+        return solution;
+    }
+
+    /**
      * Berechnet ein <code>Problem</code> lokal. Der Methode
      * <code>getPartialProblem</code> der konkreten Instanz des Problems wird
      * dabei der angegebene Wert übergeben. Die erzeugten Teilprobleme werden
@@ -118,49 +258,7 @@ public class ProblemComputation {
                                        long numberPartialProblems)
         throws ProblemComputeException {
 
-        ProblemStatisticsCollector probStatCollector;
-        PartialProblem partialProblem = null;
-        PartialSolution partialSolution = null;
-        Serializable solution = null;
-        long problemId;
-
-        problemId = localProblemNumerator.nextNumber();
-        probStatCollector = new ProblemStatisticsCollector(null);
-        do {
-            probStatCollector.notifyRequestedPartialProblem();
-            partialProblem = problem.getPartialProblem(numberPartialProblems);
-
-            if (partialProblem != null) {
-                probStatCollector.notifyCreatedPartialProblem();
-
-                // Teillösung berechnen
-                probStatCollector.startTimeMeasurement(null);
-                if (partialProblem instanceof NonCommPartialProblem) {
-                    partialSolution = ((NonCommPartialProblem)partialProblem).compute();
-                } else if (partialProblem instanceof CommunicationPartialProblem) {
-                    partialSolution = ((CommunicationPartialProblem)partialProblem).compute(null);
-                } else {
-                    throw new ProblemComputeException("PartialProblem implementiert"
-                                                      + " kein passendes Interface");
-                }
-                probStatCollector.stopTimeMeasurement(null);
-
-                // Teillösung dem Problem zurückgeben, damit es die
-                // Gesamtlösung zusammensetzen kann.
-                problem.collectResult(partialSolution, partialProblem);
-                probStatCollector.notifyProcessedPartialProblem();
-
-                // Nach der Gesamtlösung fragen
-                solution = problem.getSolution();
-            }
-        } while ((partialProblem != null) && (solution == null));
-        finalProbStat = probStatCollector.getSnapshot();
-
-        if (solution == null) {
-            throw new ProblemComputeException("Problem liefert keine"
-                                              + " Teilprobleme und keine Lösung");
-        }
-        return solution;
+        return computeProblem(problem, numberPartialProblems, null);
     }
 
     /**
