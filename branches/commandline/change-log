@@ -1,4 +1,4 @@
-                        Change Log für Architeuthis
+                       Change Log für Architeuthis
 
 
 Achtung
@@ -13,8 +13,8 @@ Operative gelegentlich ein Fehler in der JVM auf, der zu deren Absturz
 führte.
 
 
-Stand 20.02.2005
-----------------
+Release 1.4
+-----------
 
  * Angabe vom Package in der Klasse
    de.unistuttgart.architeuthis.user.RuntimeComparison korrigiert.
@@ -29,12 +29,17 @@ Stand 20.02.2005
 
  * Datei build.xml überarbeitet, um die veränderte Verzeichnisstruktur zu
    berücksichtigen. Außerdem wird jetzt von den Distributionsdateien
-   userenvironment und von testenvironment jeweils eine Version für
-   Unix/Linux (mit den sh-Scripten) und eine Version für Windows (mit den
-   bat-Scripten) erzeugt.
+   userenvironment und testenvironment jeweils eine Version für Unix/Linux
+   (mit sh-Scripten) und eine Version für Windows (mit bat-Scripten)
+   erzeugt.
+
+ * In der build.xml bei der Erzeugung der jar-Dateien einen workaround
+   aufgenommen und die Abschnitte zur Erzeugung der class-Dateien ergänzt,
+   so daß alle Änderungen von java-Dateien jetzt zur Erzeugung neuer jar-
+   bzw. class-Dateien führen.
 
  * Synchronisationsproblem in der Klasse ProblemManagerImpl beseitigt.
-   Die hatte dazu geführt, daß der Server beim Abbruch eines Prblems
+   Dies hatte dazu geführt, daß der Server beim Abbruch eines Prblems
    hängen bleiben konnte (ein deadlock entstehen konnte).
 
 
