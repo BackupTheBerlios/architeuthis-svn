@@ -1,5 +1,6 @@
 # Diese Datei dient zum Setzen der Umgebungsvariablen von Architeuthis
-# in den anderen Scripten
+# in den anderen Scripten. Alle relativen Pfade beziehen sich auf das
+# Verzeichnis runScripts.
 
 
 # Der Pfad zum JDK. Wird standardmäßig als äußere Umgebungsvariable gesetzt.
@@ -18,7 +19,7 @@ DEPLOY_DIR="../deploy"
 # Der Pfad, unter dem die Anwendungs-Klassen bzw. deren äußerstes
 # Package liegen. Wird für den Classfileserver verwendet und normalerweise
 # als äußere Umgebungsvariable gesetzt.
-if [ ! -n "CLASS_FILE_PATH" ]; then
+if [ ! -n "$CLASS_FILE_PATH" ]; then
   CLASS_FILE_PATH="../classes"
 fi
 
@@ -37,7 +38,8 @@ CLASS_SERVER_PORT="1855"
 
 # URL, unter dem die Problemklassen abrufbar sind
 #CLASSURL=http://meinrechner:1855/
-#CLASSURL=http://www.iis.uni-stuttgart.de/forschung/RMI-Test/
+#CLASSURL=http://meinrechner:1855/projekt.jar
+#CLASSURL=http://www.meine-domain.de/java/projekt/
 CLASSURL="http://${CLASS_SERVER_HOST}:${CLASS_SERVER_PORT}/"
 
 # Die Ausgabedatei der Lösung
