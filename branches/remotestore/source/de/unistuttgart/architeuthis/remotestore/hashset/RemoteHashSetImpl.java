@@ -38,7 +38,6 @@ import java.util.Iterator;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.AbstractRemoteStore;
 
 /**
  * Diese Klasse implementiert das RemoteStore Interface als HashSet. Derzeit
