@@ -19,7 +19,8 @@ ARGS="$ARGS $CLASSURL"
 ARGS="$ARGS $DISPATCHER_HOST:$DISPATCHER_PORT"
 
 
-REM die Main-Klasse
+# die Main-Klasse
 MAIN="de.unistuttgart.architeuthis.testenvironment.hashstore.HashStoreMain"
 
 exec $JAVA  -cp ../build $JVMPAR $MAIN $ARGS
+
