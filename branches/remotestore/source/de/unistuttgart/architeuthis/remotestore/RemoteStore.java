@@ -1,7 +1,7 @@
 /*
  * file:        RemoteStore.java
  * created:     08.02.2005
- * last change: 29.03.2005 by Dietmar Lippold
+ * last change: 01.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -50,17 +50,17 @@ public interface RemoteStore extends Remote, Serializable  {
      *
      * @param remoteStore  Das anzumendende Speicherobjekt.
      *
-     * @throws RemoteException  RMI Problem.
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    void registerRemoteStore(RemoteStore remoteStore) throws RemoteException;
+    public void registerRemoteStore(RemoteStore remoteStore) throws RemoteException;
 
     /**
      * Abmelden eines Speicherobjekts.
      *
-     * @param remoteStore   Das abzumendende Speicherobjekt.
+     * @param remoteStore  Das abzumendende Speicherobjekt.
      *
-     * @throws RemoteException  RMI Problem.
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    void unregisterRemoteStore(RemoteStore remoteStore) throws RemoteException;
+    public void unregisterRemoteStore(RemoteStore remoteStore) throws RemoteException;
 }
 
