@@ -1,5 +1,5 @@
 /*
- * file:        AllTests.java
+ * file:        ParameterParserException.java
  * created:     21.10.2004
  * last change: 07.12.2004 by Michael Wohlfart
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de

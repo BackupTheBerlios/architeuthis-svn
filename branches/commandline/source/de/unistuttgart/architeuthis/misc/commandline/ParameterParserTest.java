@@ -1,5 +1,5 @@
 /*
- * file:        AllTests.java
+ * file:        ParameterParserTest.java
  * created:     21.10.2004
  * last change: 07.12.2004 by Michael Wohlfart
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
@@ -65,14 +65,14 @@ public class ParameterParserTest extends TestCase {
 
 
         Option option1 = parser.createOptionForKey("b")
-        .setOptional(false);
+            .setOptional(false);
 
         Option option2 = parser.createOptionForKey("debug")
-        .setOptional(false);
+            .setOptional(false);
 
         Option option3 = parser.createOptionForKey("help")
-        .setOptional(false)
-        .setPrefix("--");
+            .setOptional(false)
+                .setPrefix("--");
 
         try {
             //System.out.println("parser: " + parser);

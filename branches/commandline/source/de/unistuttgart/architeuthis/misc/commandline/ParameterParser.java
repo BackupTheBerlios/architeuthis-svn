@@ -1,5 +1,5 @@
 /*
- * file:        AllTests.java
+ * file:        ParameterParser.java
  * created:     21.10.2004
  * last change: 07.12.2004 by Michael Wohlfart
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
@@ -38,14 +38,10 @@
  */
 package de.unistuttgart.architeuthis.misc.commandline;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Properties;
 
 /**
  * This class implements a simple command line parser.
@@ -179,7 +175,7 @@ public class ParameterParser {
      * @return the parsed option
      */
     public synchronized Option parseOption(Option option)
-    throws ParameterParserException {
+        throws ParameterParserException {
         assert (argv != null);
         // find the index for the matching string in the commandline
         int i = 0;
@@ -238,7 +234,7 @@ public class ParameterParser {
      * the parameters
      */
     public synchronized void parseAll(String[] argv)
-    throws ParameterParserException {
+        throws ParameterParserException {
         setComandline(argv);
         parseAll();
     }
@@ -251,7 +247,7 @@ public class ParameterParser {
      * I/O Problems
      */
     public synchronized void parseProperties(HashMap in)
-    throws ParameterParserException {
+        throws ParameterParserException {
 
 
         Iterator input = in.keySet().iterator();
@@ -479,7 +475,7 @@ public class ParameterParser {
     /**
      * set the name for the free parameters
      *
-     * @param parameterPosition START or END
+     * @param parameterName the name
      */
     public void setFreeParameterName(String parameterName) {
         this.parameterName = parameterName;
@@ -532,7 +528,7 @@ public class ParameterParser {
      *  be added as free parameter
      */
     /* package-private */ void addParameter(String parameter)
-    throws ParameterParserException {
+        throws ParameterParserException {
         // check if we can take a parameter
         if (!canTakeFreeParameter()) {
             throw new ParameterParserException("can't take free parameter: "
