@@ -1,7 +1,7 @@
 /*
  * file:        AbstractRemoteStore.java
  * created:     08.02.2005
- * last change: 29.03.2005 by Dietmar Lippold
+ * last change: 31.03.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -62,7 +62,7 @@ public abstract class AbstractRemoteStore extends UnicastRemoteObject
     /**
      * Standard Logger Pattern.
      */
-    private static final Logger LOGGER = Logger.getLogger(RemoteHashMapImpl.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractRemoteStore.class.getName());
 
     /**
      * Alle registrieren RemoteStores werden in einem <CODE>HashSet</CODE>
