@@ -1,7 +1,7 @@
 /*
  * file:        AbstractRemoteStore.java
  * created:     08.02.2005
- * last change: 31.03.2005 by Dietmar Lippold
+ * last change: 05.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -36,8 +36,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Logger;
 import java.util.logging.Level;
-
-import de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMapImpl;
 
 /**
  * Diese Klasse implementiert die Register- und Unregister-Funktionalität
