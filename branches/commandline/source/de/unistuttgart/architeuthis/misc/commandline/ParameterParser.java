@@ -176,7 +176,24 @@ public class ParameterParser {
      */
     public synchronized Option parseOption(Option option)
         throws ParameterParserException {
-        assert (argv != null);
+
+        // are there any arguments
+        if (argv == null) {
+            throw new ParameterParserException(
+                    "no commandline paramters, "
+                    + "use the setComandline(String[] argv) Method "
+                    + "before calling parseOption(Option option)");
+        }
+
+        // is the requested option in our list
+        if (!optionSet.contains(option)) {
+            throw new ParameterParserException(
+                    "the option " + option
+                    + "isn't in the list of option,"
+                    + "use addOption(Option option) to add the option to the list");
+        }
+
+
         // find the index for the matching string in the commandline
         int i = 0;
         while ((i < argv.length) && (!option.isMatch(argv[i]))) {
@@ -184,7 +201,7 @@ public class ParameterParser {
         }
 
         if (i >= argv.length) {
-            assert (false);
+            option.setEnabled(false);
         } else {
             option.setEnabled(true);
             // move to the next string (should be the first parameter)

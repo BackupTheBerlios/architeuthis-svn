@@ -376,8 +376,29 @@ public class ParameterParserTest extends TestCase {
             fail();
         }
 
-        //parser.parseAll();
-        //assertTrue(FOUR.equals(params2.get(1)));
+           Option option3 = new Option();
+        // test exception for unknown option
+        try {
+            option3.setKey("d");
+            option3.setOptional(false);
+            option3.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+
+            // shouldn't return:
+            ArrayList params3 = parser.parseOption(option3).getParameterList();
+            fail();
+        } catch (ParameterParserException ex) {
+        }
+
+        // add the option as optional and check again
+        option3.setOptional(true);
+        parser.addOption(option3);
+
+        try {
+            assertFalse(parser.parseOption(option3).isEnabled());
+        } catch (ParameterParserException ex) {
+            fail();
+        }
+
     }
 
     /**
