@@ -571,6 +571,16 @@ public class ParameterParser {
     }
 
     /**
+     * returns the first parameter of an option as long primitive
+     *
+     * @param option option to query for parameters
+     * @return the first parameter as int
+     */
+    public long getParameterAsLong(Option option) {
+        return Long.parseLong(option.getParameter());
+    }
+
+    /**
      * accessor to the free parameter list
      *
      * @return vector of free parameters

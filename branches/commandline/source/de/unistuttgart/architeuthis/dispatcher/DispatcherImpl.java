@@ -34,23 +34,18 @@
 
 package de.unistuttgart.architeuthis.dispatcher;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.UnknownHostException;
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.Properties;
 
-import de
-    .unistuttgart
-    .architeuthis
-    .dispatcher
-    .computemanaging
-    .ComputeManagerImpl;
+import de.unistuttgart.architeuthis.dispatcher.computemanaging.ComputeManagerImpl;
 import de.unistuttgart.architeuthis.systeminterfaces.ComputeManager;
-import de.unistuttgart.architeuthis.misc.CommandLineParser;
+import de.unistuttgart.architeuthis.misc.commandline.Option;
+import de.unistuttgart.architeuthis.misc.commandline.ParameterParser;
+import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
 
 /**
  * Der Dispatcher startet den ComputeMananger und ProblemManager.
@@ -68,12 +63,12 @@ public final class DispatcherImpl {
      * Minimale Zeitspanne zwischen zwei Operative-Erreichbarkeits
      * Überprüfungen
      */
-    private static final String DEFAULT_INTERVAL_OPERATIVEMONITORING = "10000";
+    private static final long DEFAULT_INTERVAL_OPERATIVEMONITORING = 10000;
 
     /**
      * Maximale Anzahl der Kommunikationsversuche für einen Operative.
      */
-    private static final String REMOTE_OPERATIVE_MAXTRY = "3";
+    private static final int REMOTE_OPERATIVE_MAXTRY = 3;
 
     /**
      * Übernimmt die Initialisierung des {@link ComputeManager}. Beim Starten
@@ -86,64 +81,89 @@ public final class DispatcherImpl {
      * @param args  Array der Kommandozeilen-Parameter-Strings
      */
     public static void main(String[] args) {
-        CommandLineParser cmdln = new CommandLineParser(args);
-        String configname;
+        //CommandLineParser cmdln = new CommandLineParser(args);
+        String configname = DEFAULT_CONFIGNAME;
         boolean additionalThreads = false;
 
-        try {
-            configname = cmdln.getParameter("-c");
-        } catch (IOException e1) {
-            configname = DEFAULT_CONFIGNAME;
+        ParameterParser parser = new ParameterParser();
+
+        Option configOption = new Option("c");
+        parser.addOption(configOption);
+
+        Option threadSwitch = new Option("t");
+        parser.addOption(threadSwitch);
+
+        Option portOption = new Option("port");
+        portOption.setName("port");
+        parser.addOption(portOption);
+
+        Option deadtriesOption = new Option("deadtries");
+        deadtriesOption.setName("deadtries");
+        parser.addOption(deadtriesOption);
+
+        Option deadtimeOption = new Option("deadtime");
+        deadtimeOption.setName("deadtime");
+        parser.addOption(deadtimeOption);
+
+        parser.setComandline(args);
+
+        // verwenden wir ein properties file ?
+        if (parser.isEnabled(configOption)) {
+            configname = parser.getParameter(configOption);
         }
 
         try {
-            additionalThreads = cmdln.getSwitch("-t");
-        } catch (IOException e1) {
-            System.out.println("Fehler bei: " + e1.getMessage());
+            // properties laden
+            Properties props = new Properties();
+            HashMap in = new HashMap(props);
+            parser.parseProperties(in);
+
+            parser.parseAll(args);
+
+            additionalThreads = parser.isEnabled(threadSwitch);
+
+            int port = Integer.parseInt(ComputeManager.PORT_NO);
+            if (parser.isEnabled(portOption)) {
+                port = parser.getParameterAsInt(portOption);
+            }
+
+            long millisOperativeMonitoringInterval = DEFAULT_INTERVAL_OPERATIVEMONITORING;
+            if (parser.isEnabled(deadtimeOption)) {
+                millisOperativeMonitoringInterval
+                    = parser.getParameterAsLong(deadtimeOption);
+            }
+
+            long remoteOperativeMaxtries = REMOTE_OPERATIVE_MAXTRY;
+            if (parser.isEnabled(deadtriesOption)) {
+                millisOperativeMonitoringInterval
+                    = parser.getParameterAsLong(deadtriesOption);
+            }
+
+
+            try {
+                new ComputeManagerImpl(
+                        port,
+                        millisOperativeMonitoringInterval,
+                        remoteOperativeMaxtries,
+                        additionalThreads);
+            } catch (UnknownHostException e) {
+                System.err.println("IP-Adresse vom localhost konnte nicht"
+                        + "ermittelt werden");
+            } catch (MalformedURLException e) {
+                System.err.println("Ungültige URL für RMI-Registry : "
+                        + e.toString());
+            } catch (AlreadyBoundException e) {
+                System.err.println("Port " + port + " wird schon benutzt.");
+            } catch (RemoteException e) {
+                System.err.println(
+                        "Fehler beim Starten des Dispatchers!\n"
+                        + "Stellen Sie sicher, dass Port "
+                        + String.valueOf(port)
+                        + " nicht benutzt wird.");
+            }
+        } catch (ParameterParserException e1) {
+            e1.printStackTrace();
         }
 
-        Properties props = new Properties();
-        try {
-            props.load(new FileInputStream(configname));
-        } catch (FileNotFoundException e2) {
-            // keine Fehlerbehandlung -> Defaultwerte verwenden
-        } catch (IOException e2) {
-            // keine Fehlerbehandlung -> Defaultwerte verwenden
-        }
-
-        props = cmdln.properties(props);
-        int port =
-            Integer.parseInt(
-                props.getProperty("port", ComputeManager.PORT_NO));
-        long millisOperativeMonitoringInterval =
-            Long.parseLong(
-                props.getProperty(
-                    "deadtime",
-                    DEFAULT_INTERVAL_OPERATIVEMONITORING));
-
-        long remoteOperativeMaxtries =
-            Long.parseLong(
-                props.getProperty("deadtries", REMOTE_OPERATIVE_MAXTRY));
-        try {
-            new ComputeManagerImpl(
-                port,
-                millisOperativeMonitoringInterval,
-                remoteOperativeMaxtries,
-                additionalThreads);
-        } catch (UnknownHostException e) {
-            System.err.println("IP-Adresse vom localhost konnte nicht"
-                               + "ermittelt werden");
-        } catch (MalformedURLException e) {
-            System.err.println("Ungültige URL für RMI-Registry : "
-                               + e.toString());
-        } catch (AlreadyBoundException e) {
-            System.err.println("Port " + port + " wird schon benutzt.");
-        } catch (RemoteException e) {
-            System.err.println(
-                "Fehler beim Starten des Dispatchers!\n"
-                    + "Stellen Sie sicher, dass Port "
-                    + String.valueOf(port)
-                    + " nicht benutzt wird.");
-        }
     }
 }
