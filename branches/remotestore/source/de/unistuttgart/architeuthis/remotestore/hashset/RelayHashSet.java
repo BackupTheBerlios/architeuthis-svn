@@ -30,8 +30,8 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
-import java.rmi.RemoteException;
 import java.util.HashSet;
+import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 
@@ -54,7 +54,7 @@ public interface RelayHashSet extends RemoteStore {
     public void add(Object object) throws RemoteException;
 
     /**
-     * Liefert eine Kopie des gspeicherten <CODE>HashSet</CODE>.
+     * Liefert eine Kopie des gespeicherten <CODE>HashSet</CODE>.
      *
      * @return  Den Speicherinhalt.
      *

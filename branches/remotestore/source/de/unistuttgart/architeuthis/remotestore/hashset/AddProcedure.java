@@ -45,12 +45,13 @@ public class AddProcedure implements TransmitProcedure {
 
     /**
      * Übertragt das an den <CODE>Transmitter</CODE> übergebene Objekt zum
-     * angegebenen zentralen <CODE>RelayStore</CODE>, indem es dort die
+     * angegebenen zentralen <CODE>RelayHashSet</CODE>, indem es dort die
      * Methode <CODE>add</CODE> aufruft.
      *
      * @param object      Das zu übertragende Objekt.
      * @param relayStore  Der RelayStore, zu dem das Objekt übertragen werden
-     *                    soll.
+     *                    soll. Dabei handelt es sich um ein
+     *                    <CODE>RelayHashSet</CODE>.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */

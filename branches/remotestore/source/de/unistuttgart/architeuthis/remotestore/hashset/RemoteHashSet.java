@@ -46,7 +46,8 @@ public interface RemoteHashSet extends RemoteStore {
 
     /**
      * Nimmt ein Objekt in den lokalen Speicher auf und gibt dieses an andere
-     + RemoteStores weiter, wenn welche vorhanden sind.
+     + RemoteStores weiter, wenn ein <CODE>RelayHashSet</CODE> angemeldet
+     * wurde.
      *
      * @param object  Das aufzunehmende Objekt.
      *

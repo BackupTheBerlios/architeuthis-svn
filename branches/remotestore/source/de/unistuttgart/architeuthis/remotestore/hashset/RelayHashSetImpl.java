@@ -73,17 +73,17 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
     }
 
     /**
-     * Anmeldung eines RemoteStores. Dabei wird dem anzumeldenden RemoteStore
-     * der aktuelle Inhalt dieses Objekts hinzugefügt.
+     * Anmeldung eines <CODE>RemoteHashSet</CODE>. Dabei wird diesem der
+     * aktuelle Inhalt dieses Objekts hinzugefügt.
      *
-     * @param remoteStore  Ein neuer RemoteStore.
+     * @param remoteStore  Ein neues <CODE>RemoteHashSet</CODE>
      *
      * @throws RemoteException  Bei einem Probleme mit einem RMI Zugriff.
      */
     public synchronized void registerRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
-        RemoteHashSetImpl remoteHashSet = (RemoteHashSetImpl)remoteStore;
+        RemoteHashSetImpl remoteHashSet = (RemoteHashSetImpl) remoteStore;
 
         // Die aktuellen Elemente dem zu registrierenden RemoteStore
         // hinzufügen.
@@ -108,7 +108,7 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
     public synchronized void add(Object object) throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.info("called addRemote for : " + object);
+            LOGGER.fine("called addRemote for : " + object);
         }
 
         // Erstmal den Delegatee updaten.

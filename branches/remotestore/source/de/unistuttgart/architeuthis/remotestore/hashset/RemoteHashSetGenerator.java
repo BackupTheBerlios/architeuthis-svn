@@ -30,6 +30,8 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
@@ -43,6 +45,11 @@ import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
  * @author Michael Wohlfart, Dietmar Lippold
  */
 public class RemoteHashSetGenerator implements RemoteStoreGenerator {
+
+    /**
+     * Standard Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(RemoteHashSetGenerator.class.getName());
 
     /**
      * Generierte <code>serialVersionUID</code>.
@@ -61,8 +68,8 @@ public class RemoteHashSetGenerator implements RemoteStoreGenerator {
     }
 
     /**
-     * Konstruktor, bei dem angegeben werden kann, ob ein verteilter
-     * Speicher verwendet werden soll.
+     * Konstruktor, bei dem anzugeben ist, ob ein verteilter Speicher
+     * verwendet werden soll.
      *
      * @param isCentralOnly  <CODE>true</CODE>, wenn nur ein zentraler Speicher
      *                       verwendet werden soll, anderenfalls, wenn
@@ -79,6 +86,10 @@ public class RemoteHashSetGenerator implements RemoteStoreGenerator {
      * @return  Den zentralen RemoteStore.
      */
     public RemoteStore generateCentralRemoteStore() {
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info("Erzeuge zentralen RemoteStore.");
+        }
+
         try {
             if (isCentralOnly) {
                 return new RemoteHashSetImpl();
@@ -99,9 +110,15 @@ public class RemoteHashSetGenerator implements RemoteStoreGenerator {
      */
     public RemoteStore generateDistRemoteStore() {
         if (isCentralOnly) {
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.info("Dezentraler RemoteStore wird nicht verwendet.");
+            }
             return null;
         } else {
             try {
+                if (LOGGER.isLoggable(Level.INFO)) {
+                    LOGGER.info("Erzeuge dezentralen RemoteStore.");
+                }
                 return new RemoteHashSetImpl();
             } catch (RemoteException ex) {
                 ex.printStackTrace();

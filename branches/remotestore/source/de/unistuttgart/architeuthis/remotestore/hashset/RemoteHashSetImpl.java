@@ -70,7 +70,7 @@ public class RemoteHashSetImpl implements RemoteHashSet {
      * Das <CODE>RelayHashSet</CODE>, an das Veränderungen an diesem Objekt
      * weitergeleitet werden.
      */
-    private RelayHashSet relayHasSet = null;
+    private RelayHashSet relayHashSet = null;
 
     /**
      * Der <CODE>Transmitter</CODE>, an den die Objekte der Methode
@@ -94,10 +94,12 @@ public class RemoteHashSetImpl implements RemoteHashSet {
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void registerRemoteStore(RemoteStore remoteStore) throws RemoteException {
+    public synchronized void registerRemoteStore(RemoteStore remoteStore)
+        throws RemoteException {
+
         if (remoteStore != null) {
-            relayHasSet = (RelayHashSet) remoteStore;
-            addTransmitter = new Transmitter(relayHasSet, new AddProcedure());
+            relayHashSet = (RelayHashSet) remoteStore;
+            addTransmitter = new Transmitter(relayHashSet, new AddProcedure());
         }
     }
 
@@ -108,8 +110,10 @@ public class RemoteHashSetImpl implements RemoteHashSet {
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void unregisterRemoteStore(RemoteStore remoteStore) throws RemoteException {
-        relayHasSet = null;
+    public synchronized void unregisterRemoteStore(RemoteStore remoteStore)
+        throws RemoteException {
+
+        relayHashSet = null;
         addTransmitter.terminate();
         addTransmitter = null;
     }
@@ -125,8 +129,7 @@ public class RemoteHashSetImpl implements RemoteHashSet {
     synchronized void addLocal(Object object) throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.info("called add for "
-                        + object);
+            LOGGER.fine("called add for " + object);
         }
 
         // Den Delegatee updaten.
@@ -135,11 +138,11 @@ public class RemoteHashSetImpl implements RemoteHashSet {
 
     /**
      * Speichert ein Objekt im lokalen HashSet und sendet es an andere
-     * RemoteHashSets weiter. Diese Methode wird vom Teilproblem aufgerufen.
-     * Für den Anwendungsentwickler ist es transparent, ob hier ein lokales
-     * Objekt (distStore) angesprochen wird oder dies ein RMI-Aufruf ist
-     * und das angesprochene Storage-Objekt (centralStore) auf den Dispatcher
-     * liegt.
+     * RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE> angemeldet
+     * wurde. Diese Methode wird vom Teilproblem aufgerufen. Für den
+     * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
+     * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
+     * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
      *
      * @param object  Das zu speichernde Objekt.
      *
@@ -180,7 +183,7 @@ public class RemoteHashSetImpl implements RemoteHashSet {
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public int size() throws RemoteException {
+    public synchronized int size() throws RemoteException {
         return hashSet.size();
     }
 }
