@@ -35,6 +35,7 @@ package de.unistuttgart.architeuthis.testenvironment.prime.example;
 
 import de.unistuttgart.architeuthis.testenvironment.PrimeNumbers;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
@@ -45,7 +46,7 @@ import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
  *
  * @author Achim Linke
  */
-public class OrderedPrimeParProb implements PartialProblem {
+public class OrderedPrimeParProb implements NonCommPartialProblem {
 
     /**
      * Zahl, ab der nach PrimeNumbers gesucht wird.

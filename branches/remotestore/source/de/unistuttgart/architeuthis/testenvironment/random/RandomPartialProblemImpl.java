@@ -33,6 +33,7 @@
 package de.unistuttgart.architeuthis.testenvironment.random;
 
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 
@@ -40,7 +41,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
  * Teilproblem, das eine zufällige Zeit wartet. Nur zu Testzwecken.
  * @author Ralf Kible
  */
-public class RandomPartialProblemImpl implements PartialProblem {
+public class RandomPartialProblemImpl implements NonCommPartialProblem {
 
     /**
      * Die Nummer des <code>PartialProblem</code> Objekts, die zur internen

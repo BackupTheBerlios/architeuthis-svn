@@ -35,6 +35,7 @@ package de.unistuttgart.architeuthis.testenvironment.myprime;
 
 import de.unistuttgart.architeuthis.testenvironment.MyPrimeNumbers;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 
@@ -44,7 +45,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
  *
  * @author Ralf Kible, Achim Linke
  */
-public class PrimePartialProblemImpl implements PartialProblem {
+public class PrimePartialProblemImpl implements NonCommPartialProblem {
 
     /**
      * Untere Grenze, ab der PrimeNumbers gesucht werden
