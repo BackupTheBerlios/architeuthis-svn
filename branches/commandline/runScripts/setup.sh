@@ -17,9 +17,10 @@ DEPLOY_DIR="../deploy"
 
 # Der Pfad, unter dem die Anwendungs-Klassen bzw. deren ‰uﬂerstes
 # Package liegen. Wird f¸r den Classfileserver verwendet und normalerweise
-# als ‰uﬂere Umgebungsvariable gesetzt. Man kann sie nachfolgend aber auch
-# hier setzen.
-# CLASS_FILE_PATH="../classes"
+# als ‰uﬂere Umgebungsvariable gesetzt.
+if [ ! -n "CLASS_FILE_PATH" ]; then
+  CLASS_FILE_PATH="../classes"
+fi
 
 # Der Rechner, auf dem der Dispatcher von Architeuthis l‰uft
 #DISPATCHER_HOST=isny.informatik.uni-stuttgart.de
