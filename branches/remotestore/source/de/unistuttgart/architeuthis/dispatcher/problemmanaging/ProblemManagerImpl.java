@@ -367,15 +367,13 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
                              String message) {
 
         try {
-            log.info(
-                    "Sende Nachricht \""
-                    + String.valueOf(message)
-                    + "\" an Problem-Übermittler");
+            log.info("Sende Nachricht \""
+                     + String.valueOf(message)
+                     + "\" an Problem-Übermittler");
             transmitter.fetchMessage(messageID, message);
         } catch (RemoteException e) {
-            log.severe(
-                    "<E> Nachricht konnte nicht an den Problem-Uebermittler "
-                    + "geschickt werden");
+            log.severe("<E> Nachricht konnte nicht an den Problem-Uebermittler"
+                       + " geschickt werden");
         }
     }
 
@@ -720,26 +718,26 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
      * Wurden alle PartialProbleme berechnet, gibt <code>newProblem</code> die
      * Gesamtlösung an den Problem-Übermittler zurück.
      *
-     * @param transmitter  Problem-Übermittler, der das Problem sendet und die
-     *                     Lösung empfangen soll
-     * @param url          Pfad zu den Quelldateien auf einem HTTP-Server
-     * @param className    {@link Problem}-spezifischer Name, das die Berechnung
-     *                     startet
+     * @param transmitter        Problem-Übermittler, der das Problem sendet
+     *                           und die Lösung empfangen soll.
+     * @param url                Pfad zu den Quelldateien auf einem
+     *                           HTTP-Server.
+     * @param className          {@link Problem}-spezifischer Name, das die
+     *                           Berechnung startet.
      * @param problemParameters  Die formalen Parameter des vom Problem zu
      *                           startenden Konstruktors.
-     * @param generator der remoteStore Generator
-     * @throws RemoteException  RMI RemoteException wird bei Netzproblemen
-     *                          geworfen.
+     * @param generator          Der RemoteStore-Generator.
+     *
+     * @throws RemoteException          Falls ein Netzproblemen aufgetreten ist
+     *                                  oder der Dispatcher gerade beendet wird.
+     * @throws ClassNotFoundException   Tritt auf, wenn der Zugriff auf die
+     *                                  Problemklasse nicht funktioniert,
+     *                                  möglicherweise wegen einer falschen URL.
+     * @throws ProblemComputeException  Wenn nicht genung Compute-System-Resourcen
+     *                                  vorhanden sind.
      *
      * @see  Problem
      * @see  PartialProblem
-     * @throws RemoteException          Falls ein Netzproblemen aufgetreten ist
-     *                                  oder der Dispatcher gerade beendet wird
-     * @throws ClassNotFoundException   Tritt auf, wenn der Zugriff auf die
-     *                                  Problemklasse nicht funktioniert,
-     *                                  Möglicherweise wegen einer falschen URL.
-     * @throws ProblemComputeException  Wenn nicht genung Compute-System-Resourcen
-     *                                  vorhanden sind.
      */
     public synchronized void loadProblem(ProblemTransmitter transmitter,
                                          URL url,
@@ -820,12 +818,13 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
      * an Operatives verteilt und nach erfolgreicher Berechnung deren
      * Lösung dem Problem zum Zusammenfügen übergeben.<br>
      *
-     * @param transmitter  Problem-übermittler, der das Problem sendet und die
+     * @param transmitter  Problem-Übermittler, der das Problem sendet und die
      *                     Lösung empfangen soll
-     * @param problem      serialisierbares Problem, das verteilt berechnet
+     * @param problem      Serialisierbares Problem, das verteilt berechnet
      *                     werden soll.
-     * @param generator    Der verwendete RemoteStoreGenerator oder null, falls
-     *                     kein RemoteStoreGenerator verwendet wird.
+     * @param generator    Der verwendete RemoteStoreGenerator oder
+     *                     <CODE>null</CODE>, falls kein RemoteStoreGenerator
+     *                     verwendet wird.
      *
      * @throws RemoteException  bei RMI-Verbindungsproblemen.
      * @throws ProblemComputeException  bei Berechnungsfehler.
