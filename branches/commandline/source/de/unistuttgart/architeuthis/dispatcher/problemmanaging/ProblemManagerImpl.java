@@ -722,15 +722,13 @@ public class ProblemManagerImpl
         if (transmitter == null) {
             return;
         } else {
-            synchronized (probWrapTransmitter) {
-                ProblemWrapper probWrap = problemWrapper(transmitter);
-                if (probWrap != null) {
-                    reportException(
-                        probWrap,
-                        null,
-                        ExceptionCodes.USER_ABORT_PROBLEM,
-                        "Abbruch durch Benutzer");
-                }
+            ProblemWrapper probWrap = problemWrapper(transmitter);
+            if (probWrap != null) {
+                reportException(
+                    probWrap,
+                    null,
+                    ExceptionCodes.USER_ABORT_PROBLEM,
+                    "Abbruch durch Benutzer");
             }
         }
     }
