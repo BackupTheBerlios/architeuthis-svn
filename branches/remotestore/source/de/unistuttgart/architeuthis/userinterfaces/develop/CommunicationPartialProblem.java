@@ -1,7 +1,7 @@
 /*
  * file:        CommunicationPartialProblem.java
  * created:     08.02.2005
- * last change: 29.03.2005 by Dietmar Lippold
+ * last change: 01.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -44,11 +44,22 @@ import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 public interface CommunicationPartialProblem extends PartialProblem {
 
     /**
-     * Startet die Berechnung des Teilproblems.
+     * Startet die Berechnung des Teilproblems.<P>
+     *
+     * Wenn ein <CODE>RemoteStoreGenerator</CODE> mit dem Problem zusammen
+     * übergeben wurde, wird dessen Methode <CODE>generateDistRemoteStore</CODE>
+     * vom Operative aufgerufen. Wenn diese ein Objekt liefert, wird dieses
+     * als Parameter <CODE>store</CODE> beim Aufruf dieser Methode übergeben.
+     * Wenn <CODE>generateDistRemoteStore</CODE> den Wert <CODE>null</CODE>
+     * geliefert hat, wird der Wert der Methode <CODE>generateCentralRemoteStore</CODE>
+     * die auf dem Dispatcher aufgerufen wurde, übergeben. Es wird der Wert
+     * <CODE>null</CODE> übergeben, wenn beide Methoden den Wert <CODE>null</CODE>
+     * geliefert haben oder wenn kein <CODE>RemoteStoreGenerator</CODE> mit
+     * dem Problem zusammen übergeben wurde.
      *
      * @param store  Der Verteilte Speicher (RemoteStore).
      *
-     * @return  Berechnete Teillösung
+     * @return  Die berechnete Teillösung.
      *
      * @throws ProblemComputeException  Bei beliebigen Fehlern bei der
      *                                  Berechnung.
