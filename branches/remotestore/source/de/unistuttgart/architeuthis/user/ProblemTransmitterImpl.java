@@ -1,7 +1,7 @@
 /*
  * file:        ProblemTransmitterImpl.java
  * created:     08.07.2003
- * last change: 15.02.2005 by Michael Wohlfart
+ * last change: 06.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -68,7 +68,7 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
     implements ProblemTransmitter, UserProblemTransmitter {
 
     /**
-     * generierte <code>serialVersionUID</code>
+     * Generierte <code>serialVersionUID</code>.
      */
     private static final long serialVersionUID = 4121128130447750709L;
 
@@ -224,10 +224,9 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
      * @throws ProblemComputeException  Ein Fehler bei der Berechnung auf dem
      *                                  Compute-System ist aufgetreten.
      */
-    public synchronized Serializable transmitProblem(
-            URL packageUrl,
-            String classname,
-            Object[] problemParameters)
+    public synchronized Serializable transmitProblem(URL packageUrl,
+                                                     String classname,
+                                                     Object[] problemParameters)
         throws
             ClassNotFoundException,
             RemoteException,
@@ -294,39 +293,16 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
     }
 
     /**
-     * Übermittelt ein serialisierbares Problem an ein ProblemManager.
-     *
-     * Die Fehlerbehandlung muss vom aufrufenden Programm übernommen werden.
-     *
-     * @param problem  Zentrale Problemklasse, die übertragen wird.
-     *
-     * @return  Die Lösung für das übergebene Problem.
-     *
-     * @throws RemoteException          Kommunikationsproblem über RMI.
-     * @throws ProblemComputeException  Ein Fehler bei der Berechnung auf dem
-     *                                  Compute-System ist aufgetreten.
-     */
-    public synchronized Serializable transmitProblem(
-            SerializableProblem problem)
-        throws
-            RemoteException,
-            ProblemComputeException {
-        return transmitProblem(problem, null);
-    }
-
-
-    /**
      * Übermittelt ein serialisierbares Problem und einen RemoteStoreGenerator
-     * an ein ProblemManager.
-     * Ist bereits ein Problem dieses Objekts in Berechnung, wartet der Aufruf,
-     * bis das Problem fertig berechnet ist.<p>
+     * an ein ProblemManager. Ist bereits ein Problem dieses Objekts in
+     * Berechnung, wartet der Aufruf, bis das Problem fertig berechnet ist.<p>
      *
      * Die Fehlerbehandlung muss vom aufrufenden Programm übernommen werden.
      *
-     * @param problem  Zentrale Problemklasse, die übertragen wird.
-     *
-     * @param generator RemoteStoreGenerator der verwendet werden soll 
-     *                  oder null falls kein RemoteStoreGenerator benötigt wird
+     * @param problem    Zentrale Problemklasse, die übertragen wird.
+     * @param generator  RemoteStoreGenerator der verwendet werden soll oder
+     *                   <CODE>null</CODE>, falls kein RemoteStoreGenerator
+     *                   bereitgestellt wird.
      *
      * @return  Die Lösung für das übergebene Problem.
      *
@@ -334,9 +310,8 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
      * @throws ProblemComputeException  Ein Fehler bei der Berechnung auf dem
      *                                  Compute-System ist aufgetreten.
      */
-    public synchronized Serializable transmitProblem(
-            SerializableProblem problem,
-            RemoteStoreGenerator generator)
+    public synchronized Serializable transmitProblem(SerializableProblem problem,
+                                                     RemoteStoreGenerator generator)
         throws
             RemoteException,
             ProblemComputeException {
@@ -393,6 +368,29 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
         }
 
         return solution;
+    }
+
+    /**
+     * Übermittelt ein serialisierbares Problem an ein ProblemManager. Ist
+     * bereits ein Problem dieses Objekts in Berechnung, wartet der Aufruf,
+     * bis das Problem fertig berechnet ist.<p>
+     *
+     * Die Fehlerbehandlung muss vom aufrufenden Programm übernommen werden.
+     *
+     * @param problem  Zentrale Problemklasse, die übertragen wird.
+     *
+     * @return  Die Lösung für das übergebene Problem.
+     *
+     * @throws RemoteException          Kommunikationsproblem über RMI.
+     * @throws ProblemComputeException  Ein Fehler bei der Berechnung ist
+     *                                  aufgetreten.
+     */
+    public synchronized Serializable transmitProblem(SerializableProblem problem)
+        throws
+            RemoteException,
+            ProblemComputeException {
+
+        return transmitProblem(problem, null);
     }
 
     /**
