@@ -30,7 +30,7 @@
 <!--- * clean         : Loescht alle von ant erzeugten Dateien        -->
 <!--- * help          : Gibt eine Meldung zur Benutzung aus           -->
 
-<project default="help">
+<project name="Architeuthis" default="help">
 
   <!-- Festlegung der allgemeinen Verzeichnisse                       -->
   <property name="source" location="."/>

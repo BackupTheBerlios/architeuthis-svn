@@ -227,22 +227,30 @@ public class ProblemTransmitterApp {
 
         // parameters
         Option urlOption = new Option("u");
+        urlOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+        urlOption.setOptional(false);
         urlOption.setName("packageURL");
         parser.addOption(urlOption);
 
         Option classnameOption = new Option("c");
+        classnameOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+        classnameOption.setOptional(false);
         classnameOption.setName("classname");
         parser.addOption(classnameOption);
 
         Option filenameOption = new Option("f");
+        filenameOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+        filenameOption.setOptional(false);
         filenameOption.setName("filename");
         parser.addOption(filenameOption);
 
         Option problemManagerOption = new Option("r");
+        problemManagerOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+        problemManagerOption.setOptional(false);
         problemManagerOption.setName("problemManager");
         parser.addOption(problemManagerOption);
 
-
+        
         try {
             parser.parseAll(args);
 
