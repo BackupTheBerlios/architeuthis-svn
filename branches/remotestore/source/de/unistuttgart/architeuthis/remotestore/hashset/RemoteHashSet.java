@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSet.java
  * created:     08.02.2005
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 01.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -26,55 +26,50 @@
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
+import java.util.Collection;
 import java.rmi.RemoteException;
-import java.util.HashSet;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 
-
 /**
- * Dieses Interface gibt die Methoden vor, die für einen RemoteStore
- * mit HashSet-Funktionalität implementiert werden.
+ * Dieses Interface gibt die Methoden vor, die für einen RemoteStore zu
+ * implementieren sind, der von einem Teilproblem verwendet wird.
  *
- * FIXME: beim Anmelden eines neuen RemoteStire müssen die im zentralen RemoteStore
- * vorhandenen Daten zunächst eingetragen werden.
- *
- * @author Michael Wohlfart
+ * @author Michael Wohlfart, Dietmar Lippold
  */
 public interface RemoteHashSet extends RemoteStore {
 
     /**
-     * Schnittstelle für den Anwendungsprogrammierer, um Objekte im
-     * Speicher abzulegen.
+     * Nimmt ein Objekt in den lokalen Speicher auf und gibt dieses an andere
+     + RemoteStores weiter, wenn welche vorhanden sind.
      *
-     * @param object hashobject to store
+     * @param object  Das aufzunehmende Objekt.
      *
-     * @throws RemoteException RMI Probleme
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    void add(Object object) throws RemoteException;
-
+    public void add(Object object) throws RemoteException;
 
     /**
-     * Schnittstelle für die Plattform um die Speicher zu synchronisieren
+     * Nimmt die Objekte in den lokalen Speicher auf und gibt sie an andere
+     + RemoteStores weiter, wenn welche vorhanden sind.
      *
-     * @param origin RemoteStore von dem die Änderung kommt
-     * @param object neues Objekt für den Speicher
+     * @param objects  Die aufzunehmenden Objekte.
      *
-     * @throws RemoteException RMI Probleme
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    void addRemote(Object origin, Object object) throws RemoteException;
-
-
+    public void addAll(Collection objects) throws RemoteException;
 
     /**
-     * liefert eine Kopie des Inhalts des Speichers zurück
+     * Liefert die Anzahl der in dieser Menge enthaltenen Objekte.
      *
-     * @return Speicherinhalt
+     * @return  Die Anzahl der enthaltenen Objekte.
      *
-     * @throws RemoteException RMI Probleme
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    HashSet getHashSet() throws RemoteException;
-
+    public int size() throws RemoteException;
 }
+

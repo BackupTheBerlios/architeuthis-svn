@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 01.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -26,122 +26,150 @@
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import java.rmi.RemoteException;
 import java.util.HashSet;
+import java.util.Collection;
 import java.util.Iterator;
+import java.rmi.RemoteException;
 
+import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.AbstractRemoteStore;
 
 /**
- * Diese Klasse implementiert das RemoteStore Interface als HashSet
+ * Diese Klasse implementiert das RemoteStore Interface als HashSet. Derzeit
+ * sind nur wenige Methode von <CODE>HashSet</CODE> implementiert.
  *
- * @author Michael Wohlfart
- *
- * FIXME: diese Implementierung ist noch nicht vollständig!
+ * @author Michael Wohlfart, Dietmar Lippold
  */
-public class RemoteHashSetImpl extends AbstractRemoteStore implements RemoteHashSet {
+public class RemoteHashSetImpl implements RemoteHashSet {
 
     /**
-     * generierte <code>serialVersionUID</code>
+     * Generierte <code>serialVersionUID</code>.
      */
-    private static final long serialVersionUID = 3257847679689505078L;
+//    private static final long serialVersionUID = 3257847679689505078L;
 
     /**
-     * Standard Logger Pattern
+     * Standard Logger Pattern.
      */
-    private static final Logger LOGGER = Logger
-        .getLogger(RemoteHashSetImpl.class.getName());
-
+    private static final Logger LOGGER = Logger.getLogger(RemoteHashSetImpl.class.getName());
 
     /**
-     * Delegatee, das Objekt, das die eigentliche Arbeit macht
-     * (an das alle get()/put()-Aufrufe weitergeleitet werden)
+     * Delegatee, also das Objekt, das die lokale Arbeit macht (an das alle
+     * Aufrufe weitergeleitet werden).
      */
     private HashSet hashSet = new HashSet();
 
-
+    /**
+     * Das <CODE>RelayHashSet</CODE>, an das Veränderungen an diesem Objekt
+     * weitergeleitet werden.
+     */
+    private RelayHashSet relayHasSet = null;
 
     /**
-     * @throws RemoteException RMI-Probleme
+     * Konstruktor ohne spezielle Wirkung.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
      */
     protected RemoteHashSetImpl() throws RemoteException {
         super();
     }
 
     /**
-     * Diese Methode wird vom Anwendungsentwickler verwendet, um Objekte
-     * zu einem Hash-Key abzulegen.
-     * Für den Anwendungsentwickler ist transparent, ob hier ein lokales
-     * Objekt (distStore) angesprochen wird, oder dies ein RMI-Aufruf ist
+     * Anmelden eines <CODE>RelayHashSet</CODE>.
+     *
+     * @param remoteStore  Das anzumendende Speicherobjekt.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void registerRemoteStore(RemoteStore remoteStore) throws RemoteException {
+        if (relayHasSet != null) {
+            relayHasSet = (RelayHashSet) remoteStore;
+        }
+    }
+
+    /**
+     * Abmelden eines <CODE>RelayHashSet</CODE>.
+     *
+     * @param remoteStore  Das abzumendende Speicherobjekt.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void unregisterRemoteStore(RemoteStore remoteStore) throws RemoteException {
+        relayHasSet = null;
+    }
+
+    /**
+     * Speichert ein Objekt nur im lokalen HashSet, ohne es an das
+     * RelayHashSet weiterzugeben.
+     *
+     * @param object  Das zu speichernde Objekt.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    synchronized void addLocal(Object object) throws RemoteException {
+
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.info("called add for "
+                        + object);
+        }
+
+        // Den Delegatee updaten.
+        hashSet.add(object);
+    }
+
+    /**
+     * Speichert ein Objekt im lokalen HashSet und sendet es an andere
+     * RemoteHashSets weiter. Diese Methode wird vom Teilproblem aufgerufen.
+     * Für den Anwendungsentwickler ist es transparent, ob hier ein lokales
+     * Objekt (distStore) angesprochen wird oder dies ein RMI-Aufruf ist
      * und das angesprochene Storage-Objekt (centralStore) auf den Dispatcher
      * liegt.
      *
-     * @param object das zu speichernde Objekt
+     * @param object  Das zu speichernde Objekt.
      *
-     * @throws RemoteException RMI-Probleme
+     * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public synchronized void add(Object object)
-        throws RemoteException {
-        if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("called put,  for "
-                    + object);
+    public synchronized void add(Object object) throws RemoteException {
+
+        // Erstmal lokal updaten.
+        addLocal(object);
+
+        // Dann das Objekt an die anderen RemoteHashSets weiterleiten.
+        if (relayHasSet != null) {
+            relayHasSet.addRemote(this, object);
         }
-        addRemote(this, object);
     }
 
     /**
-     * Diese Methode wird von der Plattform zur synchronisation der einzelnen
-     * Storage Objekte untereinander verwendet.
+     * Speichert Objekte im lokalen HashSet und sendet sie an andere
+     * RemoteHashSets weiter. Diese Methode wird vom Teilproblem aufgerufen.
      *
-     * @param origin the origin of a change to the data
+     * @param objects  Die aufzunehmenden Objekte.
      *
-     * @param object hashmap data object
-     *
-     * @throws RemoteException RMI-Probleme
-     *
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    public synchronized void addRemote(Object origin, Object object)
-        throws RemoteException {
-        if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("called put, origin:"
-                    + origin
-                    + " for "
-                    + object);
-        }
-        // erstmal den Delegatee updaten:
-        hashSet.add(object);
+    public synchronized void addAll(Collection objects) throws RemoteException {
 
-        // alle anderen Speicher benachrichtigen, wobei der Speicher
-        // ausgelassen wird, von welchen der Update kommt
-        Iterator iterator = getRemoteStoreIterator();
-        while (iterator.hasNext()) {
-            Object peer = iterator.next();
-            // nur updaten wenn das nicht der Ursprung ist
-            if (!peer.equals(origin)) {
-                ((RemoteHashSet) peer) .addRemote(origin, object);
-            }
+        Iterator iter = objects.iterator();
+        while (iter.hasNext()) {
+            add(iter.next());
         }
-
     }
-
 
     /**
-     * Liefert clone des verwendeten HashSet
+     * Liefert die Anzahl der in dieser Menge enthaltenen Objekte.
      *
-     * @return Clone des HashSet
+     * @return  Die Anzahl der enthaltenen Objekte.
      *
-     * @throws RemoteException wenn bei der RMI Kommunikation ein
-     * Fehler auftritt
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    public synchronized HashSet getHashSet() throws RemoteException {
-        return ((HashSet) hashSet.clone());
+    public int size() throws RemoteException {
+        return hashSet.size();
     }
-
-
-
 }
+
