@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSet.java
  * created:     08.02.2005
- * last change: 01.04.2005 by Dietmar Lippold
+ * last change: 05.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -45,15 +45,13 @@ import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 public interface RelayHashSet extends RemoteStore {
 
     /**
-     * Speichert das übergebene Objekt und sendet es an alle anderen
-     * RemoteStores außer an den, von dem der Aufruf kommt.
+     * Speichert das übergebene Objekt und sendet es an alle RemoteStores.
      *
-     * @param origin  RemoteStore, von dem der Aufruf kommt.
      * @param object  Neues Objekt für den Speicher.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void addRemote(RemoteStore origin, Object object) throws RemoteException;
+    public void add(Object object) throws RemoteException;
 
     /**
      * Liefert eine Kopie des gspeicherten <CODE>HashSet</CODE>.

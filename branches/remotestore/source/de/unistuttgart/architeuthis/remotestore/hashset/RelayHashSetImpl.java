@@ -98,17 +98,14 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
 
     /**
      * Diese Methode wird von RemoteHashSets aufgerufen, denen ein neuen
-     * Objekt zur Speicherung übergeben wurde. Dieses Objekt wird an die
-     * anderen RemoteHashSets weitergegeben.
+     * Objekt zur Speicherung übergeben wurde. Dieses Objekt wird an alle
+     * RemoteHashSets weitergegeben.
      *
-     * @param origin  Der RemoteStore, zu dem ein neues Objekt hinzugefügt
-     *                wurde.
      * @param object  Das neue Objekt.
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public synchronized void addRemote(RemoteStore origin, Object object)
-        throws RemoteException {
+    public synchronized void addRemote(Object object) throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.info("called addRemote, origin:"
@@ -120,16 +117,11 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
         // Erstmal den Delegatee updaten.
         hashSet.add(object);
 
-        // Alle anderen RemoteHashSets benachrichtigen, wobei das RemoteHashSet
-        // ausgelassen wird, von dem der Aufruf kommt.
+        // Das Objekt an alle RemoteHashSets übertragen.
         Iterator iterator = getRemoteStoreIterator();
         while (iterator.hasNext()) {
             RemoteHashSetImpl peer = (RemoteHashSetImpl) iterator.next();
-
-            // Nur updaten, wenn das nicht der Aufrufer ist.
-            if (!peer.equals(origin)) {
-                peer.addLocal(object);
-            }
+            peer.addLocal(object);
         }
     }
 
