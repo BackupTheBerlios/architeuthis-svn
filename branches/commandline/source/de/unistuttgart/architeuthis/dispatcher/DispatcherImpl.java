@@ -1,7 +1,7 @@
 /*
  * file:        DispatcherImpl.java
  * created:     18.12.20003
- * last change: 07.02.2005 by Michael Wohlfart
+ * last change: 09.02.2005 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -60,9 +60,9 @@ import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
 public final class DispatcherImpl {
 
     /**
-     * privater Konstruktor, wird nicht verwendet
-     * von checkstyle empfohlen um die (versehentliche) Verwendung eines
-     * default Konstruktors zu verhindern
+     * Privater Konstruktor, wird nicht verwendet. Dieser wird von checkstyle
+     * empfohlen um die (versehentliche) Verwendung eines default Konstruktors
+     * zu verhindern.
      */
     private DispatcherImpl() {
         // wird nie verwendet
@@ -75,7 +75,7 @@ public final class DispatcherImpl {
 
     /**
      * Minimale Zeitspanne zwischen zwei Operative-Erreichbarkeits
-     * Überprüfungen (in ms)
+     * Überprüfungen (in ms).
      */
     private static final long DEFAULT_INTERVAL_OPERATIVEMONITORING = 10000;
 
@@ -108,8 +108,6 @@ public final class DispatcherImpl {
         long millisOperativeMonitoringInterval = DEFAULT_INTERVAL_OPERATIVEMONITORING;
         // default port
         int port = Integer.parseInt(ComputeManager.PORT_NO);
-
-
 
         ParameterParser parser = new ParameterParser();
 
@@ -159,11 +157,12 @@ public final class DispatcherImpl {
                 parser.parseProperties(in);
             }
 
-
             // properties mit den Kommandozeilenparametern überschreiben
             parser.parseAll(args);
 
-            additionalThreads = parser.isEnabled(threadSwitch);
+            if (parser.isEnabled(threadSwitch)) {
+                additionalThreads = true;
+            }
 
             if (parser.isEnabled(portOption)) {
                 port = parser.getParameterAsInt(portOption);
@@ -178,7 +177,6 @@ public final class DispatcherImpl {
                 remoteOperativeMaxtries
                     = parser.getParameterAsLong(deadtriesOption);
             }
-
 
             new ComputeManagerImpl(
                     port,
@@ -218,3 +216,4 @@ public final class DispatcherImpl {
 
     }
 }
+
