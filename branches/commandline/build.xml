@@ -59,6 +59,8 @@
                  includes="de/unistuttgart/architeuthis/operative/*"/>
     <rootfileset dir="${build}"
                  includes="de/unistuttgart/architeuthis/abstractproblems/ContainerPartialSolution.class"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl_Stub.class"/>
   </classfileset>
 
   <classfileset id="userClasses" dir="${build}">
@@ -128,20 +130,22 @@
   <target name="compile">
     <mkdir dir="${build}"/>
 
+  	<!-- durch debug="true" wird bei Exceptions die Zeile im Source mit ausgegeben -->
     <javac source="1.4"
            srcdir="${source}"
            destdir="${build}"
-    	   includes="**/*.java"
-    	>
+           debug="true"   
+           includes="**/*.java"
+        >
       <classpath>
-      	<pathelement path="${junitJar}"/>
+        <pathelement path="${junitJar}"/>
       </classpath>
     </javac>
   </target>
 
   <!-- Erzeugung der jar-Dateien                                      -->
 
-  <target name="dispatcherJar" depends="compileDis"
+  <target name="dispatcherJar" depends="compile"
     description="Erstellt die jar-Datei der User-Klassen">
 
     <rmic base="${build}"
@@ -163,7 +167,7 @@
          encoding="ISO-8859-1">
       <manifest>
         <attribute name="Main-Class"
-        	 	   value="de.unistuttgart.architeuthis.dispatcher.DispatcherImpl"/>
+                   value="de.unistuttgart.architeuthis.dispatcher.DispatcherImpl"/>
       </manifest>
       <fileset refid="dispatcherClasses"/>
       <fileset dir="${build}"
@@ -188,16 +192,14 @@
     <jar destfile="${deploy}/Operative.jar"
          encoding="ISO-8859-1">
       <manifest>
-      	<attribute name="Main-Class"
-      	 	       value="de.unistuttgart.architeuthis.operative.OperativeImpl"/>
+        <attribute name="Main-Class"
+                   value="de.unistuttgart.architeuthis.operative.OperativeImpl"/>
       </manifest>
       <fileset refid="operativeClasses"/>
-      <fileset dir="${build}"
-               includes="de.unistuttgart.architeuthis.dispatcher.computemanaging.ComputeManagerImpl_Stub.class"/>
     </jar>
   </target>
 
-  <target name="userJar" depends="compileUser"
+  <target name="userJar" depends="compile"
     description="Erstellt die jar-Datei der User-Klassen">
 
     <rmic base="${build}"
@@ -217,7 +219,7 @@
     </jar>
   </target>
 
-  <target name="problemsJar" depends="compileProbs"
+  <target name="problemsJar" depends="compile"
     description="Erstellt die jar-Datei der Testproblem-Klassen">
 
     <mkdir dir="${deploy}"/>

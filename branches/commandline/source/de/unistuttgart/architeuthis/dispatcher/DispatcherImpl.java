@@ -87,21 +87,26 @@ public final class DispatcherImpl {
 
         ParameterParser parser = new ParameterParser();
 
-        Option configOption = new Option("c");
-        parser.addOption(configOption);
 
         Option threadSwitch = new Option("t");
         parser.addOption(threadSwitch);
 
+        Option configOption = new Option("c");
+        configOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+        parser.addOption(configOption);
+
         Option portOption = new Option("port");
+        portOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
         portOption.setName("port");
         parser.addOption(portOption);
 
         Option deadtriesOption = new Option("deadtries");
+        deadtriesOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
         deadtriesOption.setName("deadtries");
         parser.addOption(deadtriesOption);
 
         Option deadtimeOption = new Option("deadtime");
+        deadtimeOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
         deadtimeOption.setName("deadtime");
         parser.addOption(deadtimeOption);
 
@@ -162,6 +167,7 @@ public final class DispatcherImpl {
                         + " nicht benutzt wird.");
             }
         } catch (ParameterParserException e1) {
+            System.err.println(parser);
             e1.printStackTrace();
         }
 

@@ -13,6 +13,9 @@ set JAVA=java
 REM Das Verzeichnis, in das Architeuthis installiert wurde
 set INSTALLDIR=.
 
+REM Das Verzeichnis mit den policy Dateien
+set POLICYDIR=../policy
+
 REM Der Rechner, auf dem der Dispatcher von Architeuthis läuft
 set DISPATCHER_HOST=127.0.0.1
 
