@@ -1,13 +1,14 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 18.01.2005 by Michael Wohlfart
+ * last change: 10.02.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
  *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
+ *
  *
  * This file is part of Architeuthis.
  *
@@ -65,8 +66,8 @@ import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
 public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
     /**
-     * generierte SerialVersionUID, muss geändert werden, sobald
-     * strukurelle Änderungen an dieser KLasse durchgeführt worden sind
+     * Generierte SerialVersionUID. Diese muss geändert werden, sobald
+     * strukurelle Änderungen an dieser KLasse durchgeführt worden sind.
      */
     private static final long serialVersionUID = 3257569516132447543L;
 
@@ -77,10 +78,10 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
     private static final long CONNECT_RETRIES = 3;
 
     /**
-    * Gibt die Anzahl der Millisekunden an, die gewartet wird, falls aufgrund
-    * einer {@link RemoteException} nochmals versucht werden muss eine
-    * Teillösung zu übermitteln.
-    */
+     * Gibt die Anzahl der Millisekunden an, die gewartet wird, falls aufgrund
+     * einer {@link RemoteException} nochmals versucht werden muss eine
+     * Teillösung zu übermitteln.
+     */
     private static final long SEND_TIMEOUT = 3000; // Millisekunden;
 
     /**
@@ -119,10 +120,10 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * dieser Konstruktor ist private, da er nicht aus anderen Klassen heraus
      * aufgerufen werden muss.
      *
-     * @param computeManager      Der ComputeManagers in der
-     *                            RMI-Registry.
-     * @param debug               Schaltet zusätzliche debug-Meldungen ein,
-     *                            falls <code>true</code>
+     * @param computeManager  Der ComputeManagers in der RMI-Registry.
+     * @param debug           Schaltet zusätzliche debug-Meldungen ein, falls
+     *                        <code>true</code>.
+     *
      * @throws MalformedURLException  Die Angabe vom <code>compManager</code>
      *                                war kein zulässiger Name.
      * @throws RemoteException        Kommunikationsproblem über RMI.
@@ -136,7 +137,6 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
         this.computeManager = computeManager;
 
-
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new RMISecurityManager());
         }
@@ -144,14 +144,12 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         debugMode = debug;
     }
 
-
     /**
      * Startet den Berechnungs-Thread, der im Hintergrund läuft. Zur
      * Berechnung eines tatsächlichen PartialProblmes muss noch die
-     * fetchPartialProblemMethode aufgerufen werden.<BR>
-     * <BR>
-     * Diese Methode ist protected für den Zugriff durch JUnit-Tests
+     * fetchPartialProblemMethode aufgerufen werden.<P>
      *
+     * Diese Methode ist protected für den Zugriff durch JUnit-Tests.
      */
     protected synchronized void startComputation() {
 
@@ -164,9 +162,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             }
         });
 
-
         backgroundComputation = new OperativeComputing(this, this.debugMode);
-
     }
 
     /**
@@ -358,8 +354,6 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * @param args  Die obligatorischen Kommandozeilenargumente
      */
     public static void main(String[] args) {
-
-
         ParameterParser parser = new ParameterParser();
 
         // debug option
@@ -381,11 +375,10 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         parser.addOption(debug2);
 
         StringBuffer binding = new StringBuffer();
-        boolean debug = false;
+        boolean debug;
 
         try {
             parser.parseAll(args);
-
 
             // ist debuging aktiviert?
             debug = (parser.isEnabled(debug1) || parser.isEnabled(debug2));
@@ -394,21 +387,20 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
             // ist ein Port angegeben ?
             if (binding.indexOf(":") == -1) {
-                // falls nicht: default Port verwenden:
+                // Es wurde kein Port angegeben: default Port verwenden.
                 binding.append(":");
                 binding.append(ComputeManager.PORT_NO);
             }
 
-            // noch id String anhängen und Slashes dazubasteln:
+            // noch id String anhängen und Slashes dazubasteln.
             binding.insert(0, "//");
             binding.append("/");
             binding.append(ComputeManager.COMPUTEMANAGER_ID_STRING);
 
-
             ComputeManager computeManager =
                 (ComputeManager) java.rmi.Naming.lookup(binding.toString());
 
-            // Aufruf des privaten Konstruktors mit ComputeManager:
+            // Aufruf des privaten Konstruktors mit ComputeManager.
             OperativeImpl operative = new OperativeImpl(computeManager, debug);
 
             // erst wenn das funktioniert hat, computing starten
@@ -423,17 +415,15 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
             Miscellaneous.printDebugMessage(debug, "Debug: Gestartet!");
 
-
         } catch (ParameterParserException ex) {
             // usage ausgeben:
             System.err.println(parser);
             // Stacktrace (nicht unbedingt notwendig)
             ex.printStackTrace();
-
         } catch (java.rmi.StubNotFoundException e) {
             System.out.println(
                 "\n\n Fehler! Die Stubs wurden vermutlich "
-                    + "nicht generiert!\n");
+                + "nicht generiert!\n");
             System.exit(1);
         } catch (Exception e) {
             System.out.println(
@@ -450,3 +440,4 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         }
     }
 }
+
