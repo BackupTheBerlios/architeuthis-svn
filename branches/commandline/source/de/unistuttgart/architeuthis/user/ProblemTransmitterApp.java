@@ -204,11 +204,9 @@ public class ProblemTransmitterApp {
         boolean graphicalMode = true;
         boolean onlyProblemGraphical = false;
 
-
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new RMISecurityManager());
         }
-
 
         ParameterParser parser = new ParameterParser();
 
@@ -249,7 +247,6 @@ public class ProblemTransmitterApp {
         problemManagerOption.setOptional(false);
         problemManagerOption.setName("problemManager");
         parser.addOption(problemManagerOption);
-
         
         try {
             parser.parseAll(args);
@@ -264,24 +261,22 @@ public class ProblemTransmitterApp {
             filename = parser.getParameter(filenameOption);
             problemManagerHost = parser.getParameter(problemManagerOption);
 
-
             // Status ausgeben
-            Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "\n\nStelle nun Verbindung her:\n"
-                    + "URL: "
-                    + packageURL
-                    + "\n"
-                    + "Klassenname: "
-                    + classname
-                    + "\n"
-                    + "Computesystem: "
-                    + problemManagerHost
-                    + "\n"
-                    + "Loesung: "
-                    + filename
-                    + "\n\n"
-                    + "Debug-Modus ist AN\n\n");
+            Miscellaneous.printDebugMessage(debugMode,
+                                            "\n\nStelle nun Verbindung her:\n"
+                                            + "URL: "
+                                            + packageURL
+                                            + "\n"
+                                            + "Klassenname: "
+                                            + classname
+                                            + "\n"
+                                            + "Computesystem: "
+                                            + problemManagerHost
+                                            + "\n"
+                                            + "Loesung: "
+                                            + filename
+                                            + "\n\n"
+                                            + "Debug-Modus ist AN\n\n");
 
             if (serializable) {
                 // Die folgende Zeile muß gleich am Anfang stehen
@@ -291,13 +286,13 @@ public class ProblemTransmitterApp {
             try {
                 // Erzeugung des Problem-Transmitters
                 transmitter = new ProblemTransmitterImpl(problemManagerHost,
-                        debugMode);
+                                                         debugMode);
 
                 // Die graphischen Statistik-Ausgaben starten
                 if (graphicalMode) {
                     problemStatisticsReader =
                         new ProblemGUIStatisticsReader(transmitter, problemManagerHost,
-                                classname);
+                                                       classname);
                     if (!onlyProblemGraphical) {
                         systemStatisticReader =
                             new SystemGUIStatisticsReader(problemManagerHost);
@@ -338,14 +333,12 @@ public class ProblemTransmitterApp {
             }
             solution = computedSolution(serializable);
             if (solution == null) {
-                System.err.println(
-                "Fehler! Die zurückgegebene Lösung ist null");
+                System.err.println("Fehler! Die zurückgegebene Lösung ist null");
                 System.exit(1);
             }
 
-            Miscellaneous.printDebugMessage(
-                    debugMode,
-            "Schreibe Lösung in Datei");
+            Miscellaneous.printDebugMessage(debugMode,
+                                            "Schreibe Lösung in Datei");
             Miscellaneous.writeSerializableToFile(solution, filename);
             System.out.println("\nLösung erhalten und geschrieben!");
             System.out.println("Berechnung beeendet!\n");
@@ -362,7 +355,6 @@ public class ProblemTransmitterApp {
                 }
             }
 
-
         } catch (MalformedURLException ex) {
             System.out.println("Fehler bei: -u");
             usage(1);
@@ -373,6 +365,6 @@ public class ProblemTransmitterApp {
             System.out.println("Fehler in der Kommandozeile: " + ex.getMessage());
             usage(1);
         }
-
     }
 }
+
