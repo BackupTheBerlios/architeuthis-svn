@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html><head></head>
+
+<body bgcolor="white">
+<p>
+This package implements a simple API for parsing command line arguments.
+<p/>
+<h2>Package Specification and Example Code</h2>
+
+<b>Definitions:</b><br/>
+<dt>Option:</dt>
+<dd>An option is a string which consist of a prefix and a key,
+    e.g. for the option "-b" the key is "b" and the prefix is "-".
+    An option may be followed by zero or more parameters.</dd>
+    
+<dt>Parameter:<dt> 
+<dd>A parameter is a string with or without a preceded
+    option, e.g. for the string "-b test", "-b" is an option and "test"
+    is the parameter. There can be zero or more parameters for any
+    option. A parameter without an option is called a "free parameter".
+    Free parameters are only allowed at the end or at the beginning
+    of a parameterlist.</dd>
+
+<dt>Parameterlist:</dt> 
+<dd>An array of strings which consists of options and parameters.</dd>
+<br/><br/>
+
+
+<b>Code Example 1:</b><br/>
+The following code can be used to parse a command line with the syntax
+<code>"&lt;parameter&gt; [--debug] [-d]"</code>
+<pre>
+ParameterParser parser = new ParameterParser();
+
+Option debug1 = new Option();
+debug1.setKey("d");
+parser.addOption(debug1);
+
+Option debug2 = new Option();
+debug2.setKey("debug");
+debug2.setPrefix("--");
+parser.addOption(debug2);
+   
+parser.setFreeParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+
+parser.parseAll(argv);
+</pre>
+
+The method call <code>parser.isEnabled(debug2)</code> returns <code>true</code> 
+if there was an option "--debug" in the command line.
+<br/>
+The method call <code>parser.isEnabled(debug1)</code> returns <code>true</code> 
+if there was an option "-d" in the command line.
+<br/>
+The method call <code>parser.getParameter()</code> returns the parameter of the
+command line.
+<br/>The method call <code>parser.gtoString()</code> returns the syntax of the
+command line which is <code>"&lt;parameter&gt; [--debug] [-d]"</code> for this 
+example.<br/>
+<br/>
+
+<b>Code Example 2:</b><br/>
+The following code shows a simplified version of the previous example.
+<pre>
+ParameterParser parser = new ParameterParser();
+parser.setFreeParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+        
+Option option1 = parser.createOptionForKey("d");
+        
+Option option2 = parser.createOptionForKey("debug").setPrefix("--");
+        
+parser.parseAll(argv);
+</pre>
+<br/>
+
+<b>Code Example 3:</b><br/>
+The syntax for
+<code>
+ [-deadtries <Anzahl>] [-deadtime &lt;Zeit&gt;] 
+ -c &lt;config-Datei&gt; [-t] [-port &lt;Port-Nummer&gt;] 
+</code>
+can be parsed with the following code:
+<pre>
+ParameterParser parser = new ParameterParser();
+
+Option configFile = parser.createOptionForKey("c")
+        .setName("config-Datei")
+        .setOptional(false)
+        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+
+Option port = parser.createOptionForKey("port")
+        .setName("Port-Nummer")
+        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+
+Option deadtime = parser.createOptionForKey("deadtime")
+        .setName("Zeit")
+        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+
+Option deadtries = parser.createOptionForName("Anzahl")
+        .setKey("deadtries")
+        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+        
+Option additionalThreads = parser.createOptionForKey("t");
+
+		parser.parseAll(argv);
+</pre>        
+<ul>
+<li>The method call <code>parser.getParameter(configFile)</code> returns
+the string after "-c" as string.</li>
+<li>The method call <code>parser.getParameterAsInt(deadtries)</code> returns
+the the string after "-deadtries" as int</li>
+<li>The method call <code>parser.getParameterAsInt(deadtime)</code> returns
+the the string after "-deadtime" as int</li>
+<li>The method call <code>parser.getParameterAsInt(port)</code> returns
+the the string after "-port" as int</li>
+<li>The method call <code>parser.isEnabled(additionalThreads)</code> return
+true if an option "-t" is present in the string array argv</li>
+</ul></br>
+
+
+<b>Code Example 4:</b><br/>
+A properties file with default values for the command line can be used
+by calling the <code>parser.parseProperties(inputStream)</code> method
+of the <code>ParameterParser</code> object. Note that the key-value pairs
+in the properties file must use the names of the options as keys.
+<br/>
+
+
+
+<h2>Related Documentation</h2>
+Similar Packages and further readings about commandline parsing in java can be 
+found at:
+<ul>
+<li>jakarta CLI:<a href="http://jakarta.apache.org/commons/cli/">
+    http://jakarta.apache.org/commons/cli/</a></li>
+<li>argparser:<a href="http://www.cs.ubc.ca/spider/lloyd/java/argparser.html">
+    http://www.cs.ubc.ca/spider/lloyd/java/argparser.html</a></li>
+<li>JArgs:<a href="http://jargs.sourceforge.net/">
+    http://jargs.sourceforge.net/</a></li>
+<li><a href="http://www.javaworld.com/javaworld/jw-08-2004/jw-0816-command.html">
+    http://www.javaworld.com/javaworld/jw-08-2004/jw-0816-command.html</a></li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,110 @@
+Datei          : Readme
+Letzte Änderung: 15.02.2005 durch Dietmar Lippold
+
+
+This file is part of Architeuthis.
+
+Architeuthis is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+Architeuthis is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Architeuthis; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+Funktion von Architeuthis
+-------------------------
+
+Architeuthis ist ein System zur Unterstützung und Ausführung verteilter
+und paralleler Anwendungen in Java. Das primär Ziel besteht darin, deren
+Entwicklung und Ausführung so einfach wie möglich zu machen.
+
+Das Grundprinzip der Verarbeitung besteht darin, daß eine Methode eines
+Benutzers dem System ein "Problem" übergibt, das sich in "Teilprobleme"
+aufteilen läßt. Diese Teilprobleme werden getrennt berechnung und deren
+"Teillösungen" zu einer "Gesamtlösung" zusammengesetzt.
+
+Für die verteilte Ausführung sind folgende Komponenten erforderlich:
+
+ * Genau ein laufender Dispatcher. Dieser nimmt Probleme einer oder
+   mehrerer Benutzer-Anwendungen entgegen, übergibt sie zur Berechnung
+   an die angemeldeten Operatives, nimmt die Teillösungen entgegen und
+   setzt diese zu einer Gesamtlösung zusammen.
+
+ * Mindestens ein, sinnvoller Weise mehrere laufende Operatives. Diese
+   berechnen die einzelnen Teilprobleme.
+
+ * Ein Transmitter für jedes Problem, das zum Dispatcher übertragen wird.
+
+Da ein laufendes System von mehreren Benutzer-Anwendungen gleichzeitig
+verwendet werden kann, werden die drei genannten Komponenten oftmals von
+unterschiedlichen Personen betreut. Der Benutzer braucht dann nur die
+Methoden einer einzigen Klasse aufrufen.
+
+Zum Test und für die lokal parallele Ausführung (die derzeit noch in
+Entwicklung ist) ist nur der Transmitter erforderlich.
+
+
+Benutzung von Architeuthis
+--------------------------
+
+Es sind folgende Distributionspakete verfügbar:
+
+ * dispatcher.tar.gz            : Enthält die Dateien mit dem Dispatcher.
+ * operative.tar.gz             : Enthält die Dateien mit dem Operative.
+ * userenvironment-unix.tar.gz  : Enthält die Dateien für den Benutzer unter
+                                  Linux/Unix, inlusive dem Transmitter.
+ * userenvironment-win.tar.gz   : Enthält die Dateien für den Benutzer unter
+                                  Windows, inlusive dem Transmitter.
+ * testenvironment-unix.tar.gz  : Enthält zusätzlich Dateien unter Linux/Unix
+                                  mit Testproblemen.
+ * testenvironment-win.tar.gz   : Enthält zusätzlich Dateien unter Windows
+                                  mit Testproblemen.
+ * architeuthis_src.tar.gz      : Enthält alle Quelldateien vom System.
+
+Nachdem man sich die gewünschten Distributionspakete runtergeladen hat,
+packt man diese jeweils mit folgendem Befehl unter Linux/Unix aus ("paket"
+steht für den Namen des jeweiligen Distributionspakets):
+
+  tar -zxvf paket.tar.gz
+
+Dabei wird ein Unterverzeichnis im aktuellen Verzeichnis erzeugt. Darin
+liegt ein Readme zu der entsprechenden Komponente, in der sich weitere
+Hinweise finden.
+
+Für die Erzeugung der Distributionspakete aus den Quelldateien mit der
+vorhandenen Datei build.xml muß ant (http://ant.apache.org/) installiert
+sein. Hinweise zur Erzeugung erhält man durch Eingabe von "ant" im
+Verzechnis mit der Datei build.xml. Falls ant gcj benutzt und es dabei
+Probleme gibt, sollte man das JDK von Sun oder IBM installieren und die
+environment-Variable JAVA_HOME auf dieses JDK setzen.
+
+Allgemein wird für Architeuthis als JDK das J2SE Version 1.4.2_07 oder
+die Version von IBM ab 1.4.1 empfohlen.
+
+
+Entwickler von Architeuthis
+---------------------------
+
+Architeuthis wurde am Institut für Intelligente Systeme der Universität
+Stuttgart (http://www.iis.uni-stuttgart.de/) entwickelt und ist seit
+Version 1.0 bei berlios (http://www.berlios.de/) gehostet. An der
+Entwicklung waren bzw. sind folgende Personen beteiligt:
+
+ * Jürgen Heit, juergen.heit@gmx.de (bis Version 1.0)
+ * Andreas Heydlauff, AndiHeydlauff@gmx.de (bis Version 1.0)
+ * Achim Linke, achim81@gmx.de (bis Prototyp)
+ * Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
+ * Ralf Kible, ralf_kible@gmx.de (bis Prototyp)
+ * Michael Wohlfart, michael.wohlfart@zsw-bw.de (ab Version 1.3.2)
+
+Die Homepage von Architeuthis ist
+http://developer.berlios.de/projects/architeuthis/
+

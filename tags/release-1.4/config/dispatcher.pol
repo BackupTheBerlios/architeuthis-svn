@@ -1,0 +1,29 @@
+// Policy fuer den Dispatcher
+
+grant {
+  // Erlaubt, den Config-File zu lesen
+  permission java.io.FilePermission "cmpserv.conf", "read";
+  
+  // Netzwerkverbindungen zu allen herstellen 
+  permission java.net.SocketPermission "*", "accept, connect, listen, resolve";
+
+  //Beispiele zu Netzwerkverbindungen:
+  // Verbindungen nur zu Rechnern einer Domaene aufbauen
+  // permission java.net.SocketPermission "*.meinedomaene.de", "accept, connect, listen, resolve";
+  // Verbindungen nur zu bestimmten IP-Adressen aufbauen
+  // permission java.net.SocketPermission "192.168.0.*", "accept, connect, listen, resolve";
+  
+  // ShutdownHooks ermoeglichen das kontrollierte Beenden des Dispatchers
+  permission java.lang.RuntimePermission "shutdownHooks";
+  
+  // Ab hier alles fuer den RMIClassLoaderSpi
+
+  // Erlaubt, den richtigen Socket fuer den RMIClassLoaderSpi zu setzen
+  permission java.lang.RuntimePermission "setFactory";
+
+  // Erlaubt, die verwendete java.rmi.codebase auszulesen
+  permission java.util.PropertyPermission "java.rmi.codebase", "read";
+
+  // Erlaubt, eigene ClassLoader zu erstellen, wichtig fuer RMIClassLoaderSpi
+  permission java.lang.RuntimePermission "createClassLoader";
+};
