@@ -1,5 +1,5 @@
 /*
- * file:        RemoteHashMap.java
+ * file:        RelayHashMap.java
  * created:     08.02.2005
  * last change: 05.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
@@ -30,51 +30,39 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashmap;
 
+import java.util.HashMap;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 
 /**
- * Dieses Interface gibt die Methoden vor, die für einen RemoteStore zu
- * implementieren sind, der die Funktionalität einer <CODE>HashMap</CODE> hat.
- * Er wird von einem Teilproblem verwendet.
+ * Dieses Interface gibt die Methoden vor, die für einen RemoteStore mit
+ * Relay-Funktion bei Verwaltung einer <CODE>HashMap</CODE> zu implementieren
+ * sind.
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
-public interface RemoteHashMap extends RemoteStore {
+public interface RelayHashMap extends RemoteStore {
 
     /**
      * Speichert zu einen key-Objekt ein value-Objekt. Das Objekt-Paar wird
-     * zur Speicherung an andere RemoteStores weitergegeben, wenn eine
-     * <CODE>RelayMap</CODE> angemeldet wurde.
+     * zur Speicherung an alle RemoteStores weitergegeben.
      *
-     * @param key    Das key-Objekt, unter dem das value-Objekt gespeichert
-     *               wird.
-     * @param value  Das value-Objekt, das zum key-Objekt gespeichert wird.
+     * @param key     Das key-Objekt, unter dem das value-Objekt gespeichert
+     *                wird.
+     * @param object  Das value-Objekt, das zum key-Objekt gespeichert wird.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public void put(Object key, Object value) throws RemoteException;
 
     /**
-     * Liefert zu einem key-Objekt das lokal gespeicherte value-Objekt.
+     * Liefert eine Kopie des gespeicherten <CODE>HashMap</CODE>.
      *
-     * @param key  Das Key-Objekt, zu dem das zugehörige value-Objekt
-     *             geliefert wird.
-     *
-     * @throws RemoteException  Bei einm RMI Problem.
-     *
-     * @return  Das zugehörige Objekt.
-     */
-    public Object get(Object key) throws RemoteException;
-
-    /**
-     * Liefert die Anzahl der in dieser loaklen Map enthaltenen Objekt-Paare.
-     *
-     * @return  Die Anzahl der enthaltenen Objekt-Paare.
+     * @return  Den Speicherinhalt.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public int size() throws RemoteException;
+    public HashMap getHashMap() throws RemoteException;
 }
 

@@ -26,11 +26,13 @@
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+
 package de.unistuttgart.architeuthis.remotestore.hashmap;
 
-import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
@@ -46,50 +48,55 @@ import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 public class RemoteHashMapGenerator implements RemoteStoreGenerator {
 
     /**
-     * Standard Logger
+     * Generierte <code>serialVersionUID</code>.
      */
-    private static final Logger LOGGER = Logger
-            .getLogger(RemoteHashMapGenerator.class.getName());
+//    private static final long serialVersionUID = 3545517322140727097L;
 
     /**
-     * generierte <code>serialVersionUID</code>
+     * Standard Logger.
      */
-    private static final long serialVersionUID = 3545517322140727097L;
+    private static final Logger LOGGER = Logger.getLogger(RemoteHashMapGenerator.class.getName());
 
     /**
-     * Defaulmässig wird lediglich zentraler Speicher verwendet
+     * Defaulmässig wird lediglich zentraler Speicher verwendet.
      */
     private boolean isCentralOnly = true;
 
-
     /**
-     * einfacher Konstruktor für die Defaulteinstellungen
+     * Einfacher Konstruktor für die Defaulteinstellungen.
      */
     public RemoteHashMapGenerator() {
     }
 
     /**
-     * Konstruktor
+     * Konstruktor, bei dem anzugeben ist, ob ein verteilter Speicher
+     * verwendet werden soll.
      *
-     * @param isCentralOnly flase, wenn dezentraler Speicher verwendet
-     * werden soll
+     * @param isCentralOnly  <CODE>true</CODE>, wenn nur ein zentraler Speicher
+     *                       verwendet werden soll, anderenfalls, wenn
+     *                       dezentrale Speicher verwendet werden sollen,
+     *                       <CODE>false</CODE>.
      */
     public RemoteHashMapGenerator(boolean isCentralOnly) {
         this.isCentralOnly = isCentralOnly;
     }
 
     /**
-     * liefert den zentralen RemoteStore
+     * Liefert den zentralen RemoteStore.
      *
-     * @return a remoteStore obejct
+     * @return  Den zentralen RemoteStore.
      */
     public RemoteStore generateCentralRemoteStore() {
         if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("erzeuge zentralen RemoteStore");
+            LOGGER.info("Erzeuge zentralen RemoteStore.");
         }
 
         try {
-            return new RemoteHashMapImpl();
+            if (isCentralOnly) {
+                return new RemoteHashMapImpl();
+            } else {
+                return new RelayHashMapImpl();
+            }
         } catch (RemoteException ex) {
             ex.printStackTrace();
             return null;
@@ -97,21 +104,21 @@ public class RemoteHashMapGenerator implements RemoteStoreGenerator {
     }
 
     /**
-     * Liefert den dezentralen RemoteStore oder null, falls
+     * Liefert den dezentralen RemoteStore oder <CODE>null</CODE>, falls
      * nur ein zentraler Speicher verwendet werden soll.
      *
-     * @return a remoteStore obejct
+     * @return  Den dezentralen RemoteStore oder <CODE>null</CODE>.
      */
     public RemoteStore generateDistRemoteStore() {
         if (isCentralOnly) {
             if (LOGGER.isLoggable(Level.INFO)) {
-                LOGGER.info("dezentraler RemoteStore wird nicht verwendet");
+                LOGGER.info("Dezentraler RemoteStore wird nicht verwendet.");
             }
             return null;
         } else {
             try {
                 if (LOGGER.isLoggable(Level.INFO)) {
-                    LOGGER.info("erzeuge dezentralen RemoteStore");
+                    LOGGER.info("Erzeuge dezentralen RemoteStore.");
                 }
                 return new RemoteHashMapImpl();
             } catch (RemoteException ex) {
@@ -120,5 +127,5 @@ public class RemoteHashMapGenerator implements RemoteStoreGenerator {
             }
         }
     }
-
 }
+

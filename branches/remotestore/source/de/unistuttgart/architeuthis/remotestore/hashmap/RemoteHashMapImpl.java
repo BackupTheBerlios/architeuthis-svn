@@ -26,173 +26,169 @@
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+
 package de.unistuttgart.architeuthis.remotestore.hashmap;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import de.unistuttgart.architeuthis.remotestore.AbstractRelayStore;
-
 /**
- * Diese Klasse implementiert das RemoteStore Interface als HashMap
+ * Diese Klasse implementiert das RemoteStore Interface als HashMap. Derzeit
+ * sind nur wenige Methode von <CODE>HashMap</CODE> implementiert.<P>
  *
- * Für die Synchronisierung der RemoteStores sind 2 Ansätze denkbar:
+ * ToDo: Für putAll kann ein eigener Transmitter vorgesehen werden.
  *
- * <UL>
- * <LI>"Push Ansatz": Die Daten werden beim Abspeichern an alle anderen
- *   RemoteStores weitergegeben.</LI>
- * <LI>"Get Ansatz": Die Daten werden bei der Anfrage durch den Anwender
- *   auf allen anderen RemoteStores gesucht.</LI>
- * </UL>
- *
- * Welcher Ansatz besser ist hängt von der Anwendung ab d.h. wie häufig
- * und in welcher Form (lesen/schreiben) auf die Daten im RemoteStore
- * zugegriffen wird.
- * In dieser Implementierung wird der "Push Ansatz" verwendet.<BR>
- * <BR>
- * FIXME:<BR>
- * Bei der Neuanmeldung eines RemoteStores müssen zunächst alle
- * Daten aus dem zentralen RemoteStore übernommen werden.
- *
- * 
- * @author Michael Wohlfart
- *
+ * @author Michael Wohlfart, Dietmar Lippold
  */
-public class RemoteHashMapImpl extends AbstractRelayStore implements RemoteHashMap {
+public class RemoteHashMapImpl implements RemoteHashMap {
 
     /**
-     * generierte <code>serialVersionUID</code>
+     * Generierte <code>serialVersionUID</code>.
      */
-    private static final long serialVersionUID = 3905239013777553205L;
+//    private static final long serialVersionUID = 3905239013777553205L;
 
     /**
-     * Standard Logger
+     * Standard Logger.
      */
-    private static final Logger LOGGER = Logger
-            .getLogger(RemoteHashMapImpl.class.getName());
-
+    private static final Logger LOGGER = Logger.getLogger(RemoteHashMapImpl.class.getName());
 
     /**
-     * Der Delegatee ist das Objekt, das die eigentliche Arbeit macht
-     * (an das alle get()/put()-Aufrufe weitergeleitet werden)
+     * Delegatee, also das Objekt, das die lokale Arbeit macht (an das alle
+     * Aufrufe weitergeleitet werden).
      */
     private HashMap hashMap = new HashMap();
 
-
+    /**
+     * Das <CODE>RelayHashMap</CODE>, an das Veränderungen an diesem Objekt
+     * weitergeleitet werden.
+     */
+    private RelayHashMap relayHashMap = null;
 
     /**
-     * @throws RemoteException RMI-Probleme
+     * Der <CODE>Transmitter</CODE>, an den die Objekte der Methode
+     * <CODE>put</CODE> übergeben werden.
+     */
+    private Transmitter putTransmitter = null;
+
+    /**
+     * Konstruktor ohne spezielle Wirkung.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
      */
     protected RemoteHashMapImpl() throws RemoteException {
         super();
     }
 
     /**
-     * Diese Methode wird vom Anwendungsentwickler verwendet, um Objekte
-     * zu einem Hash-Key abzulegen.
-     * Für den Anwendungsentwickler ist transparent, ob hier ein lokales
-     * Objekt (distStore) angesprochen wird, oder dies ein RMI-Aufruf ist
-     * und das angesprochene Storage-Objekt (centralStore) auf den Dispatcher
-     * liegt.
+     * Anmelden eines <CODE>RelayHashMap</CODE>.
      *
-     * @param key Hash-Key
+     * @param remoteStore  Das anzumendende Speicherobjekt.
      *
-     * @param object das zu speichernde Objekt
-     *
-     * @throws RemoteException RMI-Probleme
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    public synchronized void put(Object key, Object object)
+    public synchronized void registerRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
-        if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("called put, key: "
-                + key
-                + " for "
-                + object);
+
+        if (remoteStore != null) {
+            relayHashMap = (RelayHashMap) remoteStore;
+            putTransmitter = new Transmitter(relayHasMap, new PutProcedure());
         }
-        putRemote(this, key, object);
     }
 
     /**
-     * Diese Methode wird vom Anwendungsentwickler verwendet, f’r den
-     * Anwendungsentwickler ist transparent, ob hier ein lokales Objekt
-     * angesprochen wird, oder dies ein RMI-Aufruf ist und das angesprochene
-     * Storage-Objekt auf den Dispatcher liegt
+     * Abmelden eines <CODE>RelayHashMap</CODE>.
      *
-     * @param key hashkey
+     * @param remoteStore  Das abzumendende Speicherobjekt.
      *
-     * @return das gesuchte Objekt
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public synchronized void unregisterRemoteStore(RemoteStore remoteStore)
+        throws RemoteException {
+
+        relayHashMap = null;
+        putTransmitter.terminate();
+        addTransmitter = null;
+    }
+
+    /**
+     * Speichert zu einen key-Objekt ein value-Objekt nur lokal, ohne das
+     * Objekt-Paar an die RelayMap weiterzugeben.
+     *
+     * @param key    Das key-Objekt, unter dem das value-Objekt gespeichert
+     *               wird.
+     * @param value  Das value-Objekt, das zum key-Objekt gespeichert wird.
      *
      * @throws RemoteException RMI-Probleme
+     */
+    synchronized void putLocal(Object key, Object value)
+        throws RemoteException {
+
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("called put, key: " + key + " for " + value);
+        }
+
+        // Den Delegatee updaten.
+        hashMap.put(key, value);
+     }
+
+    /**
+     * Speichert zu einen key-Objekt ein value-Objekt. Das Objekt-Paar wird
+     * zur Speicherung an andere RemoteStores weitergegeben, wenn eine
+     * <CODE>RelayMap</CODE> angemeldet wurde. Für den Anwendungsentwickler
+     *  ist transparent, ob hier ein lokales Objekt distStore) angesprochen
+     * wird oder dies ein RMI-Aufruf ist und das angesprochene Storage-Objekt
+     * (centralStore) auf den Dispatcher liegt.
+     *
+     * @param key    Das key-Objekt, unter dem das value-Objekt gespeichert
+     *               wird.
+     * @param value  Das value-Objekt, das zum key-Objekt gespeichert wird.
+     *
+     * @throws RemoteException RMI-Probleme
+     */
+    public synchronized void put(Object key, Object value)
+        throws RemoteException {
+
+        // Erstmal lokal updaten.
+        putLocal(key, value);
+
+        // Dann das Objekt-Paar an den Transmitter zur Weiterleitung an den
+        // RelayStore und damit an die anderen RemoteHashMaps übergeben.
+        if (putTransmitter != null) {
+            putTransmitter.enqueue(new MapEntry(key, value));
+        }
+    }
+
+    /**
+     * Liefert zu einem key-Objekt das lokal gespeicherte value-Objekt.
+     *
+     * @param key  Ein key-Objekt.
+     *
+     * @return  Das zugehörige value-Objekt oder <CODE>null</CODE>, wenn das
+     *          key-Objekt nicht enthalten ist.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
      */
     public synchronized Object get(Object key) throws RemoteException {
-        if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("called get, key: "
-                        + key);
-        }
-        // In der aktuellen Implementierung werden die Daten beim Abspeichern
-        // an alle anderen RemoteStores propagiert, so dass die Daten
-        // (mehr oder weniger) aktuell sein müssten.
-        // In einer alternativen Implementierung könnte hier eine Anfrage
-        // an den zentralen RemoteStore verwendet werden
-        return getLocal(key);
-    }
-
-    /**
-     * Diese Methode wird von der Plattform zur synchronisation der einzelnen
-     * Storage Objekte untereinander verwendet.
-     *
-     * @param origin the origin of a change to the data
-     *
-     * @param key hashmap key
-     *
-     * @param object hashmap data object
-     *
-     * @throws RemoteException RMI-Probleme
-     *
-     */
-    public synchronized void putRemote(Object origin, Object key, Object object)
-        throws RemoteException {
 
         if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("called put, origin:"
-                      + origin
-                      + " key: "
-                      + key
-                      + " for "
-                      + object);
-        }
-        // erstmal den Delegatee updaten:
-        hashMap.put(key, object);
-
-        // alle anderen Speicher benachrichtigen, wobei der Speicher
-        // ausgelassen wird, von welchen der Update kommt
-        Iterator iterator = getRemoteStoreIterator();
-        while (iterator.hasNext()) {
-            Object peer = iterator.next();
-            // nur updaten wenn das nicht der Ursprung ist
-            if (!peer.equals(origin)) {
-                ((RemoteHashMap) peer) .putRemote(origin, key, object);
-            }
+            LOGGER.info("called get, key: " + key);
         }
 
-    }
-
-    /**
-     * Abfrage an den lokalen RemoteStore.
-     *
-     * @param key Hash-Key
-     *
-     * @throws RemoteException RMI Probleme
-     *
-     * @return das gewünschte Objekt
-     */
-    public synchronized Object getLocal(Object key)
-        throws RemoteException  {
-        // an den Delegatee weitergeben
         return hashMap.get(key);
     }
 
+    /**
+     * Liefert die Anzahl der in der lokalen Map enthaltenen Objekt-Paare.
+     *
+     * @return  Die Anzahl der enthaltenen Objekt-Paare.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public synchronized int size() throws RemoteException {
+        return hashMap.size();
+    }
 }
+
