@@ -24,7 +24,6 @@ REM als ‰uﬂere Umgebungsvariable gesetzt.
 if "%CLASS_FILE_PATH%"=="" set CLASS_FILE_PATH=..\classes
 
 
-
 REM Der Rechner, auf dem der Dispatcher von Architeuthis l‰uft.
 set DISPATCHER_HOST=127.0.0.1
 
@@ -33,7 +32,7 @@ set DISPATCHER_PORT=1854
 
 REM Der Rechner, auf dem der Fileserver l‰uft. Es muﬂ ein Name angegeben
 REM werden, unter dem der Rechner von allen Operatives erreichbar ist.
-REM CLASS_SERVER_HOST="rechner.meine-domain.de"
+REM CLASS_SERVER_HOST=rechner.meine-domain.de
 set CLASS_SERVER_HOST=hostname
 
 REM Der Port, unter dem der ClassFileServer l‰uft.
