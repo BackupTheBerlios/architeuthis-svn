@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!-- build-file fuer Ant zum Projekt Architeuthis                     -->
-<!-- Letzte Aenderung: 12.02.2005 durch Dietmar Lippold               -->
+<!-- Letzte Aenderung: 14.02.2005 durch Dietmar Lippold               -->
 
 <!-- Hinweise zur Benutzung werden nach Aufruf von "ant" ohne weitere -->
 <!-- Parameter ausgegeben.                                            -->
@@ -176,6 +176,12 @@
 
     <mkdir dir="${deploy}"/>
 
+    <!-- Workaround: Da ant Version 1.6.2 die jar-Datei nicht ersetzt,    -->
+    <!--             wenn sich eine der enthaltenen Dateien geändert hat, -->
+    <!--             wird die jar-Datei vorweg gelöscht.                  -->
+    <delete file="${deploy}/Dispatcher.jar"
+            quiet="true"/>
+
     <jar destfile="${deploy}/Dispatcher.jar"
          encoding="ISO-8859-1">
       <manifest>
@@ -201,7 +207,13 @@
           classname="de.unistuttgart.architeuthis.operative.OperativeImpl"/>
 
     <mkdir dir="${deploy}"/>
-                                                                                
+
+    <!-- Workaround: Da ant Version 1.6.2 die jar-Datei nicht ersetzt,    -->
+    <!--             wenn sich eine der enthaltenen Dateien geändert hat, -->
+    <!--             wird die jar-Datei vorweg gelöscht.                  -->
+    <delete file="${deploy}/Operative.jar"
+            quiet="true"/>
+
     <jar destfile="${deploy}/Operative.jar"
          encoding="ISO-8859-1">
       <manifest>
@@ -224,6 +236,12 @@
 
     <mkdir dir="${deploy}"/>
 
+    <!-- Workaround: Da ant Version 1.6.2 die jar-Datei nicht ersetzt,    -->
+    <!--             wenn sich eine der enthaltenen Dateien geändert hat, -->
+    <!--             wird die jar-Datei vorweg gelöscht.                  -->
+    <delete file="${deploy}/User.jar"
+            quiet="true"/>
+
     <jar destfile="${deploy}/User.jar"
          encoding="ISO-8859-1">
       <fileset refid="userClasses"/>
@@ -237,6 +255,12 @@
 
     <mkdir dir="${deploy}"/>
 
+    <!-- Workaround: Da ant Version 1.6.2 die jar-Datei nicht ersetzt,    -->
+    <!--             wenn sich eine der enthaltenen Dateien geändert hat, -->
+    <!--             wird die jar-Datei vorweg gelöscht.                  -->
+    <delete file="${deploy}/Problems.jar"
+            quiet="true"/>
+
     <jar destfile="${deploy}/Problems.jar"
          encoding="ISO-8859-1">
       <fileset refid="problemClasses"/>
@@ -247,6 +271,12 @@
     description="Erstellt die jar-Datei der java-Source-Dateien">
 
     <mkdir dir="${deploy}"/>
+
+    <!-- Workaround: Da ant Version 1.6.2 die jar-Datei nicht ersetzt,    -->
+    <!--             wenn sich eine der enthaltenen Dateien geändert hat, -->
+    <!--             wird die jar-Datei vorweg gelöscht.                  -->
+    <delete file="${deploy}/Source.jar"
+            quiet="true"/>
 
     <jar destfile="${deploy}/Source.jar"
          encoding="ISO-8859-1"
