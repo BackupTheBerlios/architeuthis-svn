@@ -1,7 +1,7 @@
 /*
  * file:        DispatcherImpl.java
  * created:     18.12.20003
- * last change: 12.02.2005 by Dietmar Lippold
+ * last change: 16.02.2005 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -95,7 +95,7 @@ public final class DispatcherImpl {
      * @param args  Array der Kommandozeilen-Parameter-Strings
      */
     public static void main(String[] args) {
-        // Defaultwerte setzen:
+        // Defaultwerte setzen
 
         // default config filename
         String configname = DEFAULT_CONFIGNAME;
@@ -111,6 +111,9 @@ public final class DispatcherImpl {
         boolean additionalThreads;
 
         ParameterParser parser = new ParameterParser();
+
+        Option helpSwitch = new Option("help");
+        parser.addOption(helpSwitch);
 
         Option threadSwitch = new Option("t");
         parser.addOption(threadSwitch);
@@ -136,53 +139,55 @@ public final class DispatcherImpl {
         parser.addOption(deadtimeOption);
 
         parser.setComandline(args);
-        System.out.println(parser);
 
         try {
-            if (parser.isEnabled(configOption)) {
-                // Es wird ein vorgegebenes properties file verwendet
-                configname = parser.getParameter(configOption);
-            } else if (!(new File(configname)).canRead()) {
-                // Es wurde kein properties file vorgegeben und ein default
-                // properties file ist nicht vorhanden.
-                configname = "";
+            if (parser.isEnabled(helpSwitch)) {
+                System.out.println(parser.toString());
+            } else {
+                if (parser.isEnabled(configOption)) {
+                    // Es wird ein vorgegebenes properties file verwendet
+                    configname = parser.getParameter(configOption);
+                } else if (!(new File(configname)).canRead()) {
+                    // Es wurde kein properties file vorgegeben und ein default
+                    // properties file ist nicht vorhanden.
+                    configname = "";
+                }
+
+                // Daten vom properties file laden wenn vorhanden.
+                if (configname != "") {
+                    // properties laden ...
+                    Properties props = new Properties();
+                    props.load(new FileInputStream(configname));
+                    // ... und im Kommandozeilenparser setzen.
+                    HashMap propsHashMap = new HashMap(props);
+                    parser.parseProperties(propsHashMap);
+                }
+
+                // properties mit den Kommandozeilenparametern überschreiben
+                parser.parseAll(args);
+
+                additionalThreads = parser.isEnabled(threadSwitch);
+
+                if (parser.isEnabled(portOption)) {
+                    port = parser.getParameterAsInt(portOption);
+                }
+
+                if (parser.isEnabled(deadtimeOption)) {
+                    millisOperativeMonitoringInterval
+                        = parser.getParameterAsLong(deadtimeOption);
+                }
+
+                if (parser.isEnabled(deadtriesOption)) {
+                    remoteOperativeMaxtries
+                        = parser.getParameterAsLong(deadtriesOption);
+                }
+
+                new ComputeManagerImpl(
+                        port,
+                        millisOperativeMonitoringInterval,
+                        remoteOperativeMaxtries,
+                        additionalThreads);
             }
-
-            // Daten vom properties file laden wenn vorhanden.
-            if (configname != "") {
-                // properties laden ...
-                Properties props = new Properties();
-                props.load(new FileInputStream(configname));
-                // ... und im Kommandozeilenparser setzen.
-                HashMap propsHashMap = new HashMap(props);
-                parser.parseProperties(propsHashMap);
-            }
-
-            // properties mit den Kommandozeilenparametern überschreiben
-            parser.parseAll(args);
-
-            additionalThreads = parser.isEnabled(threadSwitch);
-
-            if (parser.isEnabled(portOption)) {
-                port = parser.getParameterAsInt(portOption);
-            }
-
-            if (parser.isEnabled(deadtimeOption)) {
-                millisOperativeMonitoringInterval
-                    = parser.getParameterAsLong(deadtimeOption);
-            }
-
-            if (parser.isEnabled(deadtriesOption)) {
-                remoteOperativeMaxtries
-                    = parser.getParameterAsLong(deadtriesOption);
-            }
-
-            new ComputeManagerImpl(
-                    port,
-                    millisOperativeMonitoringInterval,
-                    remoteOperativeMaxtries,
-                    additionalThreads);
-
         // Exceptions vom ComputeManagerImpl Konstruktor:
         } catch (UnknownHostException e) {
             System.err.println("IP-Adresse vom localhost konnte nicht"
