@@ -83,10 +83,16 @@ public class RelayHashSetImpl extends AbstractRemoteStore implements RelayHashSe
     public synchronized void registerRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
-        RemoteHashSet remoteHashSet = (RemoteHashSet)remoteStore;
-        if (!remoteHashSet.isEmpty()) {
-            remoteHashSet.addAll(hashSet);
+        RemoteHashSetImpl remoteHashSet = (RemoteHashSetImpl)remoteStore;
+
+        // Die aktuellen Elemente dem zu registrierenden RemoteStore
+        // hinzufügen.
+        Iterator iter = hashSet.iterator();
+        while (iter.hasNext()) {
+            remoteHashSet.addLocal(iter.next());
         }
+
+        // Den zu registrierenden RemoteStore speichern.
         super.registerRemoteStore(remoteStore);
     }
 
@@ -101,7 +107,7 @@ public class RelayHashSetImpl extends AbstractRemoteStore implements RelayHashSe
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public synchronized void addRemote(Object origin, Object object)
+    public synchronized void addRemote(RemoteStore origin, Object object)
         throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINE)) {
@@ -115,14 +121,14 @@ public class RelayHashSetImpl extends AbstractRemoteStore implements RelayHashSe
         hashSet.add(object);
 
         // Alle anderen RemoteHashSets benachrichtigen, wobei das RemoteHashSet
-        // ausgelassen wird, von der der Update kommt.
+        // ausgelassen wird, von dem der Aufruf kommt.
         Iterator iterator = getRemoteStoreIterator();
         while (iterator.hasNext()) {
-            RemoteHashSet peer = (RemoteHashSet) iterator.next();
+            RemoteHashSetImpl peer = (RemoteHashSetImpl) iterator.next();
 
             // Nur updaten, wenn das nicht der Aufrufer ist.
             if (!peer.equals(origin)) {
-                peer.add(object);
+                peer.addLocal(object);
             }
         }
     }
