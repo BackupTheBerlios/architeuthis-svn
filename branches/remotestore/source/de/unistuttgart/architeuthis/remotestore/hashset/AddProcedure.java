@@ -36,7 +36,7 @@ package de.unistuttgart.architeuthis.remotestore;
  *
  * @author Dietmar Lippold
  */
-public class AddProcedure {
+public class AddProcedure implements TransmitProcedure {
 
     /**
      * Übertragt das an den <CODE>Transmitter</CODE> übergebene Objekt zum
