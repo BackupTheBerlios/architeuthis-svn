@@ -89,7 +89,7 @@
            srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
-    	   debug="true"
+           debug="true"
            includes="de/unistuttgart/architeuthis/dispatcher/**/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/*.java,
                      de/unistuttgart/architeuthis/operative/OperativeImpl.java,
@@ -97,6 +97,7 @@
                      de/unistuttgart/architeuthis/misc/**/*.java,
                      de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
                      de/unistuttgart/architeuthis/userinterfaces/**/*.java"
+           excludes="**/*Test.java, **/*Tests.java"
     />
   </target>
 
@@ -107,13 +108,14 @@
            srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
-    	   debug="true"
+           debug="true"
            includes="de/unistuttgart/architeuthis/operative/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/ContainerPartialSolution.java,
                      de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl.java,
                      de/unistuttgart/architeuthis/misc/**/*.java,
                      de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
                      de/unistuttgart/architeuthis/userinterfaces/**/*.java"
+           excludes="**/*Test.java, **/*Tests.java"
     />
   </target>
 
@@ -131,6 +133,7 @@
                      de/unistuttgart/architeuthis/misc/**/*.java,
                      de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
                      de/unistuttgart/architeuthis/userinterfaces/**/*.java"
+           excludes="**/*Test.java, **/*Tests.java"
     />
   </target>
 
@@ -148,6 +151,7 @@
                      de/unistuttgart/architeuthis/misc/Miscellaneous.java,
                      de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
                      de/unistuttgart/architeuthis/userinterfaces/**/*.java"
+           excludes="**/*Test.java, **/*Tests.java"
     />
   </target>
 
@@ -166,6 +170,17 @@
         <pathelement path="${junitJar}"/>
       </classpath>
     </javac>
+
+    <!-- zwei Implementierungen des RemoteStore -->
+    <rmic base="${build}"
+        stubversion="1.2"    	
+      	debug="true"
+        classname="de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMapImpl"/>
+    <rmic base="${build}"
+        stubversion="1.2"
+      	debug="true"
+        classname="de.unistuttgart.architeuthis.remotestore.hashset.RemoteHashSetImpl"/>
+
   </target>
 
   <!-- Erzeugung der jar-Dateien                                      -->
