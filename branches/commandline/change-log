@@ -5,7 +5,7 @@ Achtung
 -------
 
 Es wird empfohlen, für Architeuthis als JDK Version 1.4.2_07 vom J2SE von
-Sun oder das JDK von IBM ab Version 1.4.1 zu benutzen. Bis J2SE 1.4.2_07
+Sun oder das JDK von IBM ab Version 1.4.1 zu benutzen. Bis J2SE 1.4.2_06
 von Sun trat bei der Mehrfachverteilung von Teilproblemen (wenn mehr
 Operatives als Teilprobleme vorhanden sind) insbesondere bei kurzen
 Bearbeitungszeiten von Teilproblemen (deutlich unter einer Sekunde) beim
@@ -13,17 +13,7 @@ Operative gelegentlich ein Fehler in der JVM auf, der zu deren Absturz
 führte.
 
 
-Bekannte Probleme
------------------
-
- * Wenn der Dispatcher die Klasse java.rmi.server.RMIClassLoaderSpi benutzt,
-   um das Caching von Problem- und Teilproblemklassen abzuschalten, tritt
-   gelegentlich eine ClassCastException auf, wenn sich mehr als ein Problem
-   in Berechnung befindet. Daher ist die Verwendung der genannten Klasse in
-   runDispatcher.sh und runDispatcher.bat standardmäßig auskommentiert.
-
-
-Stand 12.02.2005
+Stand 20.02.2005
 ----------------
 
  * Angabe vom Package in der Klasse
@@ -42,6 +32,10 @@ Stand 12.02.2005
    userenvironment und von testenvironment jeweils eine Version für
    Unix/Linux (mit den sh-Scripten) und eine Version für Windows (mit den
    bat-Scripten) erzeugt.
+
+ * Synchronisationsproblem in der Klasse ProblemManagerImpl beseitigt.
+   Die hatte dazu geführt, daß der Server beim Abbruch eines Prblems
+   hängen bleiben konnte (ein deadlock entstehen konnte).
 
 
 Release 1.3.2
