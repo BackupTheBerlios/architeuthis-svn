@@ -411,8 +411,6 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             // Aufruf des privaten Konstruktors mit ComputeManager:
             OperativeImpl operative = new OperativeImpl(computeManager, debug);
 
-
-
             // erst wenn das funktioniert hat, computing starten
             operative.startComputation();
 

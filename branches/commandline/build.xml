@@ -86,6 +86,7 @@
            srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
+    	   debug="true"
            includes="de/unistuttgart/architeuthis/dispatcher/**/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/*.java,
                      de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl.java,
@@ -102,6 +103,7 @@
            srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
+    	   debug="true"
            includes="de/unistuttgart/architeuthis/operative/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/ContainerPartialSolution.java,
                      de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl.java"
@@ -115,6 +117,7 @@
            srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
+           debug="true"   
            includes="de/unistuttgart/architeuthis/user/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/*.java,
                      de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl.java"
@@ -128,6 +131,7 @@
            srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
+           debug="true"   
            includes="de/unistuttgart/architeuthis/testenvironment/**/*.java"
     />
   </target>

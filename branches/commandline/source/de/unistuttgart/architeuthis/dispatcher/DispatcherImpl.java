@@ -1,12 +1,13 @@
 /*
  * file:        DispatcherImpl.java
  * created:     18.12.20003
- * last change: 26.09.2004 by Dietmar Lippold
+ * last change: 07.02.2005 by Michael Wohlfart
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -34,6 +35,10 @@
 
 package de.unistuttgart.architeuthis.dispatcher;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
@@ -55,20 +60,29 @@ import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
 public final class DispatcherImpl {
 
     /**
+     * privater Konstruktor, wird nicht verwendet
+     * von checkstyle empfohlen um die (versehentliche) Verwendung eines
+     * default Konstruktors zu verhindern
+     */
+    private DispatcherImpl() {
+        // wird nie verwendet
+    }
+
+    /**
      * Standardname der Konfigurationsdatei.
      */
-    private static final String DEFAULT_CONFIGNAME = "cmpserv.conf";
+    private static final String DEFAULT_CONFIGNAME = "compserv.conf";
 
     /**
      * Minimale Zeitspanne zwischen zwei Operative-Erreichbarkeits
-     * Überprüfungen
+     * Überprüfungen (in ms)
      */
     private static final long DEFAULT_INTERVAL_OPERATIVEMONITORING = 10000;
 
     /**
      * Maximale Anzahl der Kommunikationsversuche für einen Operative.
      */
-    private static final int REMOTE_OPERATIVE_MAXTRY = 3;
+    private static final int DEFAULT_REMOTE_OPERATIVE_MAXTRY = 3;
 
     /**
      * Übernimmt die Initialisierung des {@link ComputeManager}. Beim Starten
@@ -81,12 +95,23 @@ public final class DispatcherImpl {
      * @param args  Array der Kommandozeilen-Parameter-Strings
      */
     public static void main(String[] args) {
-        //CommandLineParser cmdln = new CommandLineParser(args);
+        // Defaultwerte setzen:
+
+        // default config filename
         String configname = DEFAULT_CONFIGNAME;
+        // parameter für ComputeManagerImpl Konstruktor
         boolean additionalThreads = false;
+        // max. Kommunikationsversuche (für ComputeManagerImpl Konstruktor)
+        long remoteOperativeMaxtries = DEFAULT_REMOTE_OPERATIVE_MAXTRY;
+        // Timout Zeitspanne für Kommunikation mit Operative
+        // (für ComputeManagerImpl Konstruktor)
+        long millisOperativeMonitoringInterval = DEFAULT_INTERVAL_OPERATIVEMONITORING;
+        // default port
+        int port = Integer.parseInt(ComputeManager.PORT_NO);
+
+
 
         ParameterParser parser = new ParameterParser();
-
 
         Option threadSwitch = new Option("t");
         parser.addOption(threadSwitch);
@@ -111,64 +136,84 @@ public final class DispatcherImpl {
         parser.addOption(deadtimeOption);
 
         parser.setComandline(args);
-
-        // verwenden wir ein properties file ?
-        if (parser.isEnabled(configOption)) {
-            configname = parser.getParameter(configOption);
-        }
+        System.out.println(parser);
 
         try {
-            // properties laden
-            Properties props = new Properties();
-            HashMap in = new HashMap(props);
-            parser.parseProperties(in);
+            // verwenden wir ein eigenes properties file ?
+            if (parser.isEnabled(configOption)) {
+                configname = parser.getParameter(configOption);
+                // properties laden...
+                Properties props = new Properties();
+                props.load(new FileInputStream(configname));
+                // ...und im Kommandozeilenparser setzen:
+                HashMap in = new HashMap(props);
+                parser.parseProperties(in);
 
+            // kein eigens Propertiesfile, existiert das default properties file ?
+            } else if (new File(configname) .canRead()) {
+                // properties laden...
+                Properties props = new Properties();
+                props.load(new FileInputStream(configname));
+                // ...und im Kommandozeilenparser setzen:
+                HashMap in = new HashMap(props);
+                parser.parseProperties(in);
+            }
+
+
+            // properties mit den Kommandozeilenparametern überschreiben
             parser.parseAll(args);
 
             additionalThreads = parser.isEnabled(threadSwitch);
 
-            int port = Integer.parseInt(ComputeManager.PORT_NO);
             if (parser.isEnabled(portOption)) {
                 port = parser.getParameterAsInt(portOption);
             }
 
-            long millisOperativeMonitoringInterval = DEFAULT_INTERVAL_OPERATIVEMONITORING;
             if (parser.isEnabled(deadtimeOption)) {
                 millisOperativeMonitoringInterval
                     = parser.getParameterAsLong(deadtimeOption);
             }
 
-            long remoteOperativeMaxtries = REMOTE_OPERATIVE_MAXTRY;
             if (parser.isEnabled(deadtriesOption)) {
-                millisOperativeMonitoringInterval
+                remoteOperativeMaxtries
                     = parser.getParameterAsLong(deadtriesOption);
             }
 
 
-            try {
-                new ComputeManagerImpl(
-                        port,
-                        millisOperativeMonitoringInterval,
-                        remoteOperativeMaxtries,
-                        additionalThreads);
-            } catch (UnknownHostException e) {
-                System.err.println("IP-Adresse vom localhost konnte nicht"
-                        + "ermittelt werden");
-            } catch (MalformedURLException e) {
-                System.err.println("Ungültige URL für RMI-Registry : "
-                        + e.toString());
-            } catch (AlreadyBoundException e) {
-                System.err.println("Port " + port + " wird schon benutzt.");
-            } catch (RemoteException e) {
-                System.err.println(
-                        "Fehler beim Starten des Dispatchers!\n"
-                        + "Stellen Sie sicher, dass Port "
-                        + String.valueOf(port)
-                        + " nicht benutzt wird.");
-            }
-        } catch (ParameterParserException e1) {
+            new ComputeManagerImpl(
+                    port,
+                    millisOperativeMonitoringInterval,
+                    remoteOperativeMaxtries,
+                    additionalThreads);
+
+        // Exceptions vom ComputeManagerImpl Konstruktor:
+        } catch (UnknownHostException e) {
+            System.err.println("IP-Adresse vom localhost konnte nicht"
+                    + "ermittelt werden");
+        } catch (MalformedURLException e) {
+            System.err.println("Ungültige URL für RMI-Registry : "
+                    + e.toString());
+        } catch (AlreadyBoundException e) {
+            System.err.println("Port " + port + " wird schon benutzt.");
+        } catch (RemoteException e) {
+            System.err.println(
+                    "Fehler beim Starten des Dispatchers!\n"
+                    + "Stellen Sie sicher, dass Port "
+                    + String.valueOf(port)
+                    + " nicht benutzt wird.");
+
+        // Kommandozeilen Expections:
+        } catch (ParameterParserException e) {
             System.err.println(parser);
-            e1.printStackTrace();
+            e.printStackTrace();
+
+        // sonstige Probleme:
+        } catch (FileNotFoundException e) {
+            System.err.println("Konfigurationsfile konnte nicht gefunden werden: " + configname);
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("IO Exception");
+            e.printStackTrace();
         }
 
     }

@@ -71,6 +71,7 @@ public class ClassFileServer extends ClassServer {
     {
     super(ss);
     this.docroot = docroot;
+    System.out.println("serving from directory: " + docroot);
     }
 
     /**
