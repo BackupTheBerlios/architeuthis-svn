@@ -15,9 +15,7 @@ LOGGING_CONF="logging.properties"
 # die Parameter für die JVM
 JVMPAR=" "
 JVMPAR="$JVMPAR -Djava.security.policy=$CONFIG_DIR/$POLICY_CONF"
-# die Verwendung des folgenden Parameters führt bei gleichzeitig
-# mehreren Problemen auf den Dispatcher gelegentlich zu einer Exception
-#JVMPAR="$JVMPAR -Djava.rmi.server.RMIClassLoaderSpi=$CLASSLOADER_SPI"
+JVMPAR="$JVMPAR -Djava.rmi.server.RMIClassLoaderSpi=$CLASSLOADER_SPI"
 JVMPAR="$JVMPAR -Djava.util.logging.config.file=$CONFIG_DIR/$LOGGING_CONF"
 
 # die Parameter für die Anwendung

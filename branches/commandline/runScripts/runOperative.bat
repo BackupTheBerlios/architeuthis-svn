@@ -16,9 +16,7 @@ set LOGGING_CONF=operativeLogging.properties
 REM die Parameter für die JVM
 set JVMPAR= 
 set JVMPAR=%JVMPAR% -Djava.security.policy=%CONFIG_DIR%/%POLICY_CONF%
-REM die Verwendung des folgenden Parameters führt bei gleichzeitig
-REM mehreren Problemen auf den Dispatcher gelegentlich zu einer Exception
-REM set JVMPAR=%JVMPAR% -Djava.rmi.server.RMIClassLoaderSpi=%CLASSLOADER_SPI%
+set JVMPAR=%JVMPAR% -Djava.rmi.server.RMIClassLoaderSpi=%CLASSLOADER_SPI%
 set JVMPAR=%JVMPAR% -Djava.util.logging.config.file=%CONFIG_DIR%/%LOGGING_CONF%
 
 REM die Parameter für die Anwendung
