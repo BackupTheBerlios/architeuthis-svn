@@ -37,11 +37,15 @@ package de.unistuttgart.architeuthis.operative;
 
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
-import java.rmi.AccessException;
-import java.rmi.RemoteException;
 import java.rmi.RMISecurityManager;
+import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi;
+import de.unistuttgart.architeuthis.misc.Miscellaneous;
+import de.unistuttgart.architeuthis.misc.commandline.Option;
+import de.unistuttgart.architeuthis.misc.commandline.ParameterParser;
+import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.systeminterfaces.ComputeManager;
@@ -50,11 +54,6 @@ import de.unistuttgart.architeuthis.systeminterfaces.Operative;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
-import de.unistuttgart.architeuthis.misc.Miscellaneous;
-import de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi;
-import de.unistuttgart.architeuthis.misc.commandline.Option;
-import de.unistuttgart.architeuthis.misc.commandline.ParameterParser;
-import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
 
 /**
  * Implementierung die Operative Remote-Anwendung und nimmt die Kommunikation
@@ -69,7 +68,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
     /**
      * Generierte SerialVersionUID. Diese muss geändert werden, sobald
-     * strukurelle Änderungen an dieser KLasse durchgeführt worden sind.
+     * strukurelle Änderungen an dieser Klasse durchgeführt worden sind.
      */
     private static final long serialVersionUID = 3257569516132447543L;
 
@@ -103,7 +102,15 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      */
     private boolean debugMode = true;
 
-	private RemoteStore store;
+    /**
+     * der dezentralen Speichers oder null, falls keiner verwendet wird
+     */
+	private RemoteStore distRemoteStore;
+	
+	/**
+	 * der zentrale Speicher oder null, falls keiner verwendet wird
+	 */
+	private RemoteStore centralRemoteStore;
 
     /**
      * Dieser Konstruktor sollte nicht benutzt werden, muss aber wegen
@@ -190,6 +197,9 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             backgroundComputation.stop();
             backgroundComputation = null;
 
+            // RemoteStore abmelden
+            unregisterRemoteStore();
+
             // Vom RMI-Server abmelden
             unexportObject(this, true);
         }
@@ -256,19 +266,23 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
     		                        RemoteStoreGenerator generator)
         throws RemoteException, ProblemComputeException {
     	
+    	// muss gemerkt werden, da wir später den distRemoteStore abmelden müssen
+    	centralRemoteStore = centralStore;
+    	
     	
     	if (generator != null) {
     		// falls generator vorhanden, einen dezentralen RemoteStore erzeugen
-    		store = generator.generateDistRemoteStore();  		
+    		distRemoteStore = generator.generateDistRemoteStore();  		
     		// falls der generator kein dezentralen RemoteStore liefert,
     		// wird der zentrale RemoteStore verwendet
-    		if ( store == null ) {
-    			this.store = centralStore;
+    		if ( distRemoteStore != null ) {
+    			centralRemoteStore.registerRemoteStore(distRemoteStore);
+    			distRemoteStore.registerRemoteStore(centralRemoteStore);			
+    		} else {
+    			distRemoteStore = centralRemoteStore;
     		}
-    		// FIXME: RemoteStores hier anmelden 
-    		// TODO: RemoteStores wieder abmelden
     	} else {
-    		store = centralStore; 
+    		distRemoteStore = centralRemoteStore; 
     	}
 
         Miscellaneous.printDebugMessage(
@@ -278,12 +292,12 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                 debugMode,
                 "\nDebug: centralStore: " + centralStore 
                 + "generator: " + generator );    
-        backgroundComputation.fetchPartialProblem(parProb, store);
+        backgroundComputation.fetchPartialProblem(parProb, distRemoteStore);
     }
 
     /**
-     * Übrmittelt dem Dispatcher eine Fehlermeldung. Wenn dies nicht möglich
-     * ist, wird der Operative beendet.
+     * Übrmittelt dem Dispatcher eine Fehlermeldung und meldet den distRemoteStore ab.
+     * Wenn dies nicht möglich ist, wird der Operative beendet.
      *
      * @param exceptionCode     Integerwert, der die Ausnahme charakterisisert.
      * @param exceptionMessage  Fehlermeldung, die die Ausnahme näher beschreibt.
@@ -295,11 +309,29 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                 this,
                 exceptionCode,
                 exceptionMessage);
-        } catch (RemoteException e) {
+            unregisterRemoteStore();
+         } catch (RemoteException e) {
             // Dispatcher ist nicht erreichbar, Operative beenden
             shutdown();
         }
     }
+    
+    
+    /**
+     * prüft ob und welche RemoteStores verwendet wurden und
+     * meldet den RemoteStore ab
+     * 
+     * @throws RemoteException RMI Probleme
+     */
+    private void unregisterRemoteStore() throws RemoteException {
+    	if (centralRemoteStore != null) {
+    		if (distRemoteStore != null) {
+    			centralRemoteStore.unregisterRemoteStore(distRemoteStore);
+    			centralRemoteStore = null;
+    		}
+    	}
+    }
+    
 
     /**
      * Gibt eine berechnete Teillösung dem ComputeManager zurück. Damit wird
@@ -341,6 +373,9 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             }
             versuche--;
         }
+        
+        
+        
         if (!transmitted) {
             reportException(ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION,
                             exceptionMessage);

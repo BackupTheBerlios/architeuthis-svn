@@ -1,7 +1,7 @@
 @echo off
 
-REM Startet den Problem-Transmitter und �bermittelt dem Dispatcher das
-REM Primzahlbereich-Problem
+REM Startet den Problem-Transmitter und �bermittelt dem Dispatcher
+REM ein Problem zum Testen des RemoteStores
 
 
 REM Ben�tigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,

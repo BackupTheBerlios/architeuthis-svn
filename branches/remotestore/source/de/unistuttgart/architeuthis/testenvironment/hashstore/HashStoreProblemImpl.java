@@ -29,6 +29,9 @@
 
 package de.unistuttgart.architeuthis.testenvironment.hashstore;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import java.io.Serializable;
 
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
@@ -44,22 +47,34 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
  *
  */
 public class HashStoreProblemImpl implements SerializableProblem {
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = Logger
+			.getLogger(HashStoreProblemImpl.class.getName());
+	
+    /**
+     * Generierte SerialVersionUID. Diese muss geändert werden, sobald
+     * strukurelle Änderungen an dieser Klasse durchgeführt worden sind.
+     */
+	private static final long serialVersionUID = 3258135769033094193L;
+	
+	
 	
 	/**
 	 * key für den RemoteStore
 	 */
 	private static final String KEY = "key";
+	
 	/**
 	 * Lösung, die in den RemoteStore gelegt wird
 	 */
 	private static final  String LOESUNG = "loesung";
 	
-	
 	/**
 	 * die berechnetet Lösung
 	 */
 	private PartialSolution solution = null;
-	
 	
 	/**
 	 * PartialProblem, das die Lösung in den RemoteStore legt
@@ -86,7 +101,6 @@ public class HashStoreProblemImpl implements SerializableProblem {
 	 */
 	private  boolean putReturned = false;
 	
-	
 	/**
 	 * Erzeugt die Teilprobleme
 	 *
@@ -97,12 +111,16 @@ public class HashStoreProblemImpl implements SerializableProblem {
 	public PartialProblem getPartialProblem(long number) {
 		if (!putActive) {
 			putActive = true;
-			System.out.println("### sent put");
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine("sent put");
+			}
 			return put;
 		}
 		if (putReturned && (!getActive)) {
 			getActive = true;
-			System.out.println("### sent get");
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine("sent get");
+			}
 			return get;
 		}
 		return null;
@@ -116,11 +134,15 @@ public class HashStoreProblemImpl implements SerializableProblem {
 	 */
 	public void collectResult(PartialSolution parSol, PartialProblem parProb) {
 		if (parProb == put) {
-			System.out.println("### put returned");
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine("put returned");
+			}
 			putReturned = true;
 		}
 		if (parProb == get) {
-			System.out.println("### get returned");
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine("get returned");
+			}
 			solution = parSol;
 		}
 	}
@@ -131,7 +153,9 @@ public class HashStoreProblemImpl implements SerializableProblem {
 	 * @return die Lösung
 	 */
 	public Serializable getSolution() {
-		System.out.println("### loesung bisher: " + solution);
+		if (logger.isLoggable(Level.FINE)) {
+			logger.fine("loesung bisher: " + solution);
+		}
 		return solution;
 	}
 	
