@@ -33,7 +33,7 @@
 <project name="Architeuthis" default="help">
 
   <!-- Festlegung der allgemeinen Verzeichnisse                       -->
-  <property name="source" location="."/>
+  <property name="source" location="source"/>
   <property name="policy" location="policy"/>
   <property name="runScripts" location="runScripts"/>
   <property name="readme" location="readme"/>
@@ -82,7 +82,8 @@
   <target name="compileDis">
     <mkdir dir="${build}"/>
 
-    <javac srcdir="${source}"
+    <javac source="1.4"
+           srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
            includes="de/unistuttgart/architeuthis/dispatcher/**/*.java,
@@ -97,17 +98,21 @@
   <target name="compileOp">
     <mkdir dir="${build}"/>
 
-    <javac srcdir="${source}"
+    <javac source="1.4"
+           srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
-           includes="de/unistuttgart/architeuthis/operative/*.java"
+           includes="de/unistuttgart/architeuthis/operative/*.java,
+                     de/unistuttgart/architeuthis/abstractproblems/ContainerPartialSolution.java,
+                     de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl.java"
     />
   </target>
 
   <target name="compileUser">
     <mkdir dir="${build}"/>
 
-    <javac srcdir="${source}"
+    <javac source="1.4"
+           srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
            includes="de/unistuttgart/architeuthis/user/*.java,
@@ -119,7 +124,8 @@
   <target name="compileProbs">
     <mkdir dir="${build}"/>
 
-    <javac srcdir="${source}"
+    <javac source="1.4"
+           srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
            includes="de/unistuttgart/architeuthis/testenvironment/**/*.java"
@@ -145,7 +151,7 @@
 
   <!-- Erzeugung der jar-Dateien                                      -->
 
-  <target name="dispatcherJar" depends="compile"
+  <target name="dispatcherJar" depends="compileDis"
     description="Erstellt die jar-Datei der User-Klassen">
 
     <rmic base="${build}"
@@ -177,7 +183,7 @@
     </jar>
   </target>
 
-  <target name="operativeJar" depends="compile"
+  <target name="operativeJar" depends="compileOp"
     description="Erstellt die jar-Datei der Operative-Klassen">
 
     <rmic base="${build}"
@@ -199,7 +205,7 @@
     </jar>
   </target>
 
-  <target name="userJar" depends="compile"
+  <target name="userJar" depends="compileUser"
     description="Erstellt die jar-Datei der User-Klassen">
 
     <rmic base="${build}"
@@ -219,7 +225,7 @@
     </jar>
   </target>
 
-  <target name="problemsJar" depends="compile"
+  <target name="problemsJar" depends="compileProbs"
     description="Erstellt die jar-Datei der Testproblem-Klassen">
 
     <mkdir dir="${deploy}"/>
