@@ -28,7 +28,12 @@
  */
 
 
-package de.unistuttgart.architeuthis.remotestore;
+package de.unistuttgart.architeuthis.remotestore.hashset;
+
+import java.rmi.RemoteException;
+
+import de.unistuttgart.architeuthis.remotestore.RemoteStore;
+import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
 
 /**
  * Implementiert eine Methode, die beim RelayStore für ein Objekt die Methode
@@ -46,8 +51,12 @@ public class AddProcedure implements TransmitProcedure {
      * @param object      Das zu übertragende Objekt.
      * @param relayStore  Der RelayStore, zu dem das Objekt übertragen werden
      *                    soll.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void transmit(Object object, RemoteStore relayStore) {
+    public void transmit(Object object, RemoteStore relayStore)
+        throws RemoteException {
+
         ((RelayHashSet) relayStore).add(object);
     }
 }

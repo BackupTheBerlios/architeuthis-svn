@@ -30,6 +30,8 @@
 
 package de.unistuttgart.architeuthis.remotestore;
 
+import java.rmi.RemoteException;
+
 /**
  * Definiert eine Methode zur Übertragung eines Objekt zu einem zentralen
  * RelayStore.
@@ -45,7 +47,9 @@ public interface TransmitProcedure {
      * @param object      Das zu übertragende Objekt.
      * @param relayStore  Der RelayStore, zu dem das Objekt übertragen werden
      *                    soll.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void transmit(Object object, RemoteStore relayStore);
+    public void transmit(Object object, RemoteStore relayStore) throws RemoteException;
 }
 

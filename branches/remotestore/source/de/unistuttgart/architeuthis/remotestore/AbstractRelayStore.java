@@ -55,14 +55,14 @@ public abstract class AbstractRelayStore extends UnicastRemoteObject
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    protected AbstractRemoteStore() throws RemoteException {
+    protected AbstractRelayStore() throws RemoteException {
         super();
     }
 
     /**
      * Standard Logger Pattern.
      */
-    private static final Logger LOGGER = Logger.getLogger(AbstractRemoteStore.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractRelayStore.class.getName());
 
     /**
      * Alle registrieren RemoteStores werden in einem <CODE>HashSet</CODE>

@@ -105,13 +105,10 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public synchronized void addRemote(Object object) throws RemoteException {
+    public synchronized void add(Object object) throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.info("called addRemote, origin:"
-                        + origin
-                        + " for "
-                        + object);
+            LOGGER.info("called addRemote for : " + object);
         }
 
         // Erstmal den Delegatee updaten.

@@ -30,6 +30,10 @@
 
 package de.unistuttgart.architeuthis.remotestore;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+import java.rmi.RemoteException;
+
 import de.unistuttgart.architeuthis.dispatcher.problemmanaging.BlockingBuffer;
 
 /**
@@ -39,6 +43,11 @@ import de.unistuttgart.architeuthis.dispatcher.problemmanaging.BlockingBuffer;
  * @author Dietmar Lippold
  */
 public class Transmitter extends Thread {
+
+    /**
+     * Standard Logger Pattern.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Transmitter.class.getName());
 
     /**
      * Flag um diesen Thread zu beenden.
@@ -102,8 +111,16 @@ public class Transmitter extends Thread {
      * welche verfügbar sind.
      */
     public void run() {
-        while (!terminated) {
-            transmitProc.transmit(objectBuffer.dequeue(), relayStore);
+        try {
+            while (!terminated) {
+                transmitProc.transmit(objectBuffer.dequeue(), relayStore);
+            }
+        } catch (RemoteException e) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("Übertragung von Objekt zum RelayStore"
+                            + " fehlgeschalgen : \n"
+                            + e.getMessage());
+            }
         }
     }
 }
