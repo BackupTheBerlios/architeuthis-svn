@@ -141,9 +141,14 @@ public final class DispatcherImpl {
         parser.setComandline(args);
 
         try {
+        	// einzelne Option suchen
+        	parser.parseOption(helpSwitch);
+        	
             if (parser.isEnabled(helpSwitch)) {
                 System.out.println(parser.toString());
             } else {
+            	// einzelne Option suchen
+            	parser.parseOption(configOption);
                 if (parser.isEnabled(configOption)) {
                     // Es wird ein vorgegebenes properties file verwendet
                     configname = parser.getParameter(configOption);
