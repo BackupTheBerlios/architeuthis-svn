@@ -259,17 +259,25 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
     	
     	if (generator != null) {
     		// falls generator vorhanden, einen dezentralen RemoteStore erzeugen
-    		this.store = generator.generateDistRemoteStore();
+    		store = generator.generateDistRemoteStore();  		
+    		// falls der generator kein dezentralen RemoteStore liefert,
+    		// wird der zentrale RemoteStore verwendet
+    		if ( store == null ) {
+    			this.store = centralStore;
+    		}
     		// FIXME: RemoteStores hier anmelden 
     		// TODO: RemoteStores wieder abmelden
     	} else {
-    		this.store = centralStore; 
+    		store = centralStore; 
     	}
 
         Miscellaneous.printDebugMessage(
             debugMode,
             "\nDebug: OperativeImpl hat Aufgabe vom ComputeManager empfangen.");
-        
+        Miscellaneous.printDebugMessage(
+                debugMode,
+                "\nDebug: centralStore: " + centralStore 
+                + "generator: " + generator );    
         backgroundComputation.fetchPartialProblem(parProb, store);
     }
 

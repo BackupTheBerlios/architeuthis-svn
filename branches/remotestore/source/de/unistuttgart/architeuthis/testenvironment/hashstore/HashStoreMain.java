@@ -76,9 +76,9 @@ public class HashStoreMain {
             Serializable solution =
                 computation.transmitProblem(problem, generator, dispatcher, codebase);
 
-
+            System.out.println(solution);
             // Lösung noch auspacken:
-            Serializable sol = ((ContainerPartialSolution) solution).getPartialSolution();
+            Object sol = ((HashStorePartialSolution) solution).getSolution();
 
             // Lösung ausgeben:
             System.out.println("gefundenen Lösung: " + sol);

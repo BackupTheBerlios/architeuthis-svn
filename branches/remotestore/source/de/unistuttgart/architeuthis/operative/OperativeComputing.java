@@ -108,9 +108,12 @@ public class OperativeComputing extends Thread {
         throws ProblemComputeException {
 
         Miscellaneous.printDebugMessage(
-            debugMode,
-            "Debug: OperativeComputing hat Aufgabe vom ComputeManager"
-                + " empfangen.");
+                debugMode,
+                "Debug: OperativeComputing hat Aufgabe vom ComputeManager"
+                    + " empfangen.");
+        Miscellaneous.printDebugMessage(
+                debugMode,
+                "Debug: der RemoteSTore ist " + store);
         if (partialProblem == null) {
             partialProblem = parProb;           
             this.store = store;           

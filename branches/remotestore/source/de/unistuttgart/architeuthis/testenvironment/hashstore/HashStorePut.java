@@ -77,8 +77,12 @@ public class HashStorePut implements
      */
     public PartialSolution compute(RemoteStore store) throws ProblemComputeException, RemoteException {
 
+    	System.err.println("### compute called in " + this);
+    	
         if (store instanceof RemoteHashMap) {
             ((RemoteHashMap)store).put(key, object);
+        } else {
+        	System.err.println("wrong remotestore parameter: " + store);
         }
 
         return null;

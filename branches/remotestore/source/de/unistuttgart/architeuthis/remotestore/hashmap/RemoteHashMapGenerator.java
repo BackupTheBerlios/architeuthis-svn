@@ -29,6 +29,8 @@
 package de.unistuttgart.architeuthis.remotestore.hashmap;
 
 import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
@@ -42,6 +44,12 @@ import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
  *
  */
 public class RemoteHashMapGenerator implements RemoteStoreGenerator {
+
+    /**
+     * Standard Logger
+     */
+    private static final Logger LOGGER = Logger
+            .getLogger(RemoteHashMapGenerator.class.getName());
 
     /**
      * generierte <code>serialVersionUID</code>
@@ -76,6 +84,10 @@ public class RemoteHashMapGenerator implements RemoteStoreGenerator {
      * @return a remoteStore obejct
      */
     public RemoteStore generateCentralRemoteStore() {
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info("erzeuge zentralen RemoteStore");
+        }
+
         try {
             return new RemoteHashMapImpl();
         } catch (RemoteException ex) {
@@ -92,9 +104,15 @@ public class RemoteHashMapGenerator implements RemoteStoreGenerator {
      */
     public RemoteStore generateDistRemoteStore() {
         if (isCentralOnly) {
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.info("dezentraler RemoteStore wird nicht verwendet");
+            }
             return null;
         } else {
             try {
+                if (LOGGER.isLoggable(Level.INFO)) {
+                    LOGGER.info("erzeuge dezentralen RemoteStore");
+                }
                 return new RemoteHashMapImpl();
             } catch (RemoteException ex) {
                 ex.printStackTrace();

@@ -44,87 +44,95 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
  *
  */
 public class HashStoreProblemImpl implements SerializableProblem {
-
-    /**
-     * key für den RemoteStore
-     */
-    private static final String KEY = "key";
-    /**
-     * Lösung, die in den RemoteStore gelegt wird
-     */
-    private static final  String LOESUNG = "gefunden!!";
-
-
-    /**
-     * die berechnetet Lösung
-     */
-    private PartialSolution solution = null;
-
-
-    /**
-     * PartialProblem, das die Lösung in den RemoteStore legt
-     */
-    private HashStorePut put = new HashStorePut(KEY, LOESUNG);
-
-    /**
-     * PartialProblem, das die Lösung aus dem RemoteStore holt
-     */
-    private HashStoreGet get = new HashStoreGet(KEY);
-
-    /**
-     * Flag, das anzeigt, ob HashStorePut bereits bearbeitet wird
-     */
-    private  boolean putActive = false;
-
-    /**
-     * Flag, das anzeigt, ob HashStorePut bereits bearbeitet wurde
-     */
-    private  boolean putReturned = false;
-
-
-    /**
-     * Erzeugt die Teilprobleme
-     *
-     * @param number  Anzahl zu generierender Teilprobleme, wird nicht
-     *                verwendet.
-     * @return das Teilproblem
-     */
-    public PartialProblem getPartialProblem(long number) {
-        synchronized (this) {
-            if (!putActive) {
-                putActive = true;
-                return put;
-            }
-            if (putReturned) {
-                return get;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Erzeugt die gesamtlösung aus den Teillösungen
-     *
-     * @param parProb Teilproblem
-     * @param parSol Teillösung
-     */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb) {
-        if (parProb == put) {
-            putReturned = true;
-        }
-        if (parProb == get) {
-            solution = parSol;
-        }
-    }
-
-    /**
-     * liefert die Lösung an die Anwendung zurück
-     *
-     * @return die Lösung
-     */
-    public Serializable getSolution() {
-    	System.out.println(solution);
-        return solution;
-    }
-
+	
+	/**
+	 * key für den RemoteStore
+	 */
+	private static final String KEY = "key";
+	/**
+	 * Lösung, die in den RemoteStore gelegt wird
+	 */
+	private static final  String LOESUNG = "loesung";
+	
+	
+	/**
+	 * die berechnetet Lösung
+	 */
+	private PartialSolution solution = null;
+	
+	
+	/**
+	 * PartialProblem, das die Lösung in den RemoteStore legt
+	 */
+	private HashStorePut put = new HashStorePut(KEY, LOESUNG);
+	
+	/**
+	 * PartialProblem, das die Lösung aus dem RemoteStore holt
+	 */
+	private HashStoreGet get = new HashStoreGet(KEY);
+	
+	/**
+	 * Flag, das anzeigt, ob HashStorePut bereits vergeben wurde
+	 */
+	private  boolean putActive = false;
+	
+	/**
+	 * Flag, das anzeigt, ob HashStoreGet bereits vergeben wurde
+	 */
+	private  boolean getActive = false;
+	
+	/**
+	 * Flag, das anzeigt, ob HashStorePut bereits bearbeitet wurde
+	 */
+	private  boolean putReturned = false;
+	
+	
+	/**
+	 * Erzeugt die Teilprobleme
+	 *
+	 * @param number  Anzahl zu generierender Teilprobleme, wird nicht
+	 *                verwendet.
+	 * @return das Teilproblem
+	 */
+	public PartialProblem getPartialProblem(long number) {
+		if (!putActive) {
+			putActive = true;
+			System.out.println("### sent put");
+			return put;
+		}
+		if (putReturned && (!getActive)) {
+			getActive = true;
+			System.out.println("### sent get");
+			return get;
+		}
+		return null;
+	}
+	
+	/**
+	 * Erzeugt die gesamtlösung aus den Teillösungen
+	 *
+	 * @param parProb Teilproblem
+	 * @param parSol Teillösung
+	 */
+	public void collectResult(PartialSolution parSol, PartialProblem parProb) {
+		if (parProb == put) {
+			System.out.println("### put returned");
+			putReturned = true;
+		}
+		if (parProb == get) {
+			System.out.println("### get returned");
+			solution = parSol;
+		}
+	}
+	
+	/**
+	 * liefert die Lösung an die Anwendung zurück
+	 *
+	 * @return die Lösung
+	 */
+	public Serializable getSolution() {
+		System.out.println("### loesung bisher: " + solution);
+		return solution;
+	}
+	
 }

@@ -72,6 +72,8 @@ public class HashStoreGet implements
 
         if (store instanceof RemoteHashMap) {
             solution = ((RemoteHashMap)store).get(key);
+        } else {
+        	System.err.println("wrong remotestore parameter: " + store);
         }
         return new HashStorePartialSolution(solution);
     }

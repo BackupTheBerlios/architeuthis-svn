@@ -56,4 +56,10 @@ public class HashStorePartialSolution implements PartialSolution {
     public Object getSolution() {
         return this.solution;
     }
+    
+    
+    public String toString() {
+    	return PartialSolution.class.toString() 
+    	+ "mit Loesung: " + solution;
+    }
 }
