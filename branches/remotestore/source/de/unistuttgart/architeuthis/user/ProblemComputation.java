@@ -43,6 +43,7 @@ import de.unistuttgart.architeuthis.misc.Numerator;
 import de.unistuttgart.architeuthis.dispatcher.statistic.ProblemStatisticsCollector;
 import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
@@ -137,9 +138,13 @@ public class ProblemComputation {
                 // Implementierung des RemoteStores für lokale Berechnung ???
                 if (partialProblem instanceof NonCommPartialProblem) {
                     partialSolution = ((NonCommPartialProblem)partialProblem).compute();
-                } else {
+                } else if (partialProblem instanceof CommunicationPartialProblem ) {
                     System.err.println(
                         "Verwendung von RemoteStores für die lokale Berechnung ist noch nicht Implementiert");
+                } else {
+                	// FIXME: bessere Fehlerbehandlung 
+                	System.err.println("PartialProblem implementiert kein passendes Interface");
+                	System.exit(1);             	
                 }
                 probStatCollector.stopTimeMeasurement(null);
 

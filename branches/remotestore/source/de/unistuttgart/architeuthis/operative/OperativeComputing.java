@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeComputing.java
  * created:     26.04.2004
- * last change: 13.02.2005 by Dietmar Lippold
+ * last change: 15.03.2005 by Michael Wohlfart
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -38,7 +38,6 @@ package de.unistuttgart.architeuthis.operative;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
@@ -106,7 +105,13 @@ public class OperativeComputing extends Thread {
     synchronized void fetchPartialProblem(PartialProblem parProb,
     		                              RemoteStore store)
         throws ProblemComputeException {
-
+    	// note: Um die hässlichen instanceof-Tests in der run() Methode loszuwerden 
+    	//       könnte man aus dieser Methode zwei Methoden machen, die jeweils
+    	//       für CommunicationPartialProblem und NonCommPartialProblem implementiert 
+    	//       werden.
+    	//       Allerdings würde das die instanceof Tests wohl nur in die OperativeImpl Klasse
+    	//       verschieben... (MW)   	
+    	
         Miscellaneous.printDebugMessage(
                 debugMode,
                 "Debug: OperativeComputing hat Aufgabe vom ComputeManager"
@@ -170,13 +175,22 @@ public class OperativeComputing extends Thread {
                     ps = ((NonCommPartialProblem)partialProblem).compute();                	
                 } else if (partialProblem instanceof CommunicationPartialProblem ) {
                 	ps = ((CommunicationPartialProblem)partialProblem).compute(store);
-                }
-                
+                } else {
+                	// Fehler über den OperativeImpl an den Dispatcher weitergeben:
+                	System.err.println("Error: PartialProblem implementiert kein passendes Interface");
+                    operativeImpl.reportException(
+                            ExceptionCodes.PARTIALPROBLEM_ERROR, "PartialProblem implementiert kein passendes Interface");
+                    // es macht keinen Sinn an diesem Teilproblem zu rechnen:
+                    //partialProblem = null;
+                    // es mach auch keinen Sinn eine Lösung zurückzugeben:
+                    //continue;
+                }               
                 
                 Miscellaneous.printDebugMessage(
                     debugMode,
                     "Debug: Berechnung beendet");
                 partialProblem = null;
+                // Lösung zurückgeben
                 operativeImpl.returnPartialSolution(ps);
             } catch (ProblemComputeException e) {
                 partialProblem = null;

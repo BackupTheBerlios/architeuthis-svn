@@ -34,7 +34,6 @@
 
 package de.unistuttgart.architeuthis.dispatcher.computemanaging;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -153,7 +152,7 @@ class InfoParProbWrapperQueue {
      * Sucht das <code>InfoParProbWrapper</code> zu einem Teilproblem in
      * Berechnung.
      *
-     * @param partProb  Teilproblem der gesuchten <code>InfoParProbWrapper</code>.
+     * @param partProbWrap  Teilproblem der gesuchten <code>InfoParProbWrapper</code>.
      * @return   dem Teilproblem zugeordnete <code>InfoParProbWrapper</code>,
      *           oder <code>null</code>, wenn das Teilproblem nicht in
      *           Berechnung ist.
@@ -175,7 +174,7 @@ class InfoParProbWrapperQueue {
      * Sucht das <code>InfoParProbWrapper</code> zu einem abgebrochenen
      * Teilproblem.
      *
-     * @param partProb  Teilproblem der gesuchten <code>InfoParProbWrapper</code>.
+     * @param partProbWrap  Teilproblem der gesuchten <code>InfoParProbWrapper</code>.
      * @return   dem Teilproblem zugeordnete <code>InfoParProbWrapper</code>,
      *           oder <code>null</code>, wenn das Teilproblem nicht abgebrochen
      *           wurde.

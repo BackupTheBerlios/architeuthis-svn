@@ -99,8 +99,8 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
     }
 
     /**
-     * Nimmt eine Teillösung entgegen, sammelt diese und ruft bei der letzten 
-     * Teillösung <code>createSolution</code> auf, um die Gesamtlösung 
+     * Nimmt eine Teillösung entgegen, sammelt diese und ruft bei der letzten
+     * Teillösung <code>createSolution</code> auf, um die Gesamtlösung
      * zurückzuliefern.
      *
      * @param parSol  Die nächste fertige Teillösung für das Problem.
@@ -122,7 +122,7 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
      * Stellt ein Array von Teilproblemen zur Verwaltung bereit.<p>
      * Diese Methode muss von einer konkreten Unterklasse implementiert werden.
      *
-     * @param porblemsExpected  gewünschte Anzahl von Teilproblemen.
+     * @param problemsExpected  gewünschte Anzahl von Teilproblemen.
      *
      * @return  Array von Teilproblemen.
      */

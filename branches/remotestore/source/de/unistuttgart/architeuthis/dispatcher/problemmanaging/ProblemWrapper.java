@@ -1,7 +1,7 @@
 /*
  * file:        ProblemWrapper.java
  * created:     29.06.2003
- * last change: 15.02.2005 by Michael Wohlfart
+ * last change: 15.03.2005 by Michael Wohlfart
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -23,7 +23,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * 
+ *
  * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
  * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
  * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
@@ -35,7 +35,6 @@ package de.unistuttgart.architeuthis.dispatcher.problemmanaging;
 
 import java.io.Serializable;
 import java.net.URLClassLoader;
-import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -109,14 +108,14 @@ public class ProblemWrapper extends Thread {
      * Referenz auf das zugeordnete Problem.
      */
     private Problem problem;
-    
+
     /**
      * zentrales Speicherobjekt für dieses Problem
      */
     private RemoteStore centralRemoteStore = null;
 
     /**
-     * RemoteStoreGenerator für dieses Problem, mit dem 
+     * RemoteStoreGenerator für dieses Problem, mit dem
      * der centralRemoteStore erzeugt wurde
      *
      */
@@ -163,6 +162,7 @@ public class ProblemWrapper extends Thread {
      * @param probMan       zentraler Problem-Manager
      * @param prob          zu verwaltendes Problem
      * @param sysStatistic  Statistik des ComputeSystems
+     * @param generator     RemoteStore Generator
      */
     ProblemWrapper(
         ProblemManagerImpl probMan,
@@ -176,7 +176,7 @@ public class ProblemWrapper extends Thread {
         systemStatistic = sysStatistic;
         problemStatistic = new ProblemStatisticsCollector(sysStatistic);
         problemId = problemIdNumerator.nextNumber();
-        
+
         // hier wird der zentrale RemoteStore erzeugt
         remoteStoreGenerator = generator;
         if (generator != null) {
@@ -210,12 +210,12 @@ public class ProblemWrapper extends Thread {
     /**
      * Gibt an, ob von diesem Problem derzeit Teilproblem-Wrapper geliefert
      * werden können.
-     * 
+     *
      * @return  <code>true</code>, falls Teilproblem-Wrapper verfügbar,
      *          <code>false</code sonst.
      */
-    boolean newParProbWrapperAvailable(){
-        return ((! parProbWrapBuffer.isEmpty()) && (! terminated));
+    boolean newParProbWrapperAvailable() {
+        return ((!parProbWrapBuffer.isEmpty()) && (!terminated));
     }
 
     /**
@@ -223,16 +223,16 @@ public class ProblemWrapper extends Thread {
      * den Wert <code>null</code>, wenn derzeit kein neuer Wrapper eines
      * Teilproblems verfügbar ist. Eine Instanz von ParProbWrapper enthält als
      * erzeugendes Objekt dieses Objekt.
-     * 
+     *
      * @return  Wrapper eines Teilproblems {@link ParProbWrapper} oder
      *          <code>null</code>
      */
     ParProbWrapper getNewParProbWrapper() {
         ParProbWrapper parProbWrap = null;
 
-        if (! terminated) {
+        if (!terminated) {
             synchronized (parProbWrapBuffer) {
-                if (! parProbWrapBuffer.isEmpty()) {
+                if (!parProbWrapBuffer.isEmpty()) {
                     parProbWrap = (ParProbWrapper) parProbWrapBuffer.dequeue();
                     deliveredParProbWrapper.add(parProbWrap);
                 }
@@ -245,8 +245,8 @@ public class ProblemWrapper extends Thread {
      * Übergibt eine berechnete Teillösung und den Wrapper des zugehörigen
      * Teilproblems.
      *
-     * @param parProb  der Wrappes dss zur Teillösung gehörenden brechneten
-     *                 Teilproblem
+     * @param parProbWrap  der Wrappes dss zur Teillösung gehörenden brechneten
+     *                     Teilproblem
      * @param parSol   die berechnete Teillösung
      */
     void collectPartialSolution(
@@ -277,9 +277,11 @@ public class ProblemWrapper extends Thread {
     }
 
     /**
-     * Liefert die voraussichtliche Zeit bis alle Teilprobleme, die derzeit 
+     * Liefert die voraussichtliche Zeit bis alle Teilprobleme, die derzeit
      * noch in Berechnung sind, berechnet worden sind. Wenn sich kein
      * Teilproblem in Berechnung befindet, wird der Wert Null geliefert.
+     * 
+     * @return geschätzte Zeit
      */
     long estimatedComputationTime() {
         return problemStatistic.estimatedComputationTime(parProbWrapBuffer.size());
@@ -558,19 +560,19 @@ public class ProblemWrapper extends Thread {
         return "Problem " + problemId;
     }
 
-	/**
-	 * @return liefert den im Konstruktor erzeugten centralRemoteStore
-	 *         zurück.
-	 */
-	public RemoteStore getCentralRemoteStore() {
-	    return centralRemoteStore;
-	}
+    /**
+     * @return liefert den im Konstruktor erzeugten centralRemoteStore
+     *         zurück.
+     */
+    public RemoteStore getCentralRemoteStore() {
+        return centralRemoteStore;
+    }
 
-	/**
-	 * @return liefert den für diese Problem verwendeten RemoteStoreGenerator
-	 *         zurück.
-	 */
-	public RemoteStoreGenerator getRemoteStoreGenerator() {
-	    return remoteStoreGenerator;
-	}
+    /**
+     * @return liefert den für diese Problem verwendeten RemoteStoreGenerator
+     *         zurück.
+     */
+    public RemoteStoreGenerator getRemoteStoreGenerator() {
+        return remoteStoreGenerator;
+    }
 }

@@ -184,6 +184,14 @@ public final class ComputeManagerImpl
      * gestartet, der die Verfügbarkeit von angemeldeten Operative überwacht.
      *
      * @param port  Portnummer der zu startenden RMI-Registry
+     * @param additionalThreads gibt an, ob neue Threads für den
+     *                          Aufruf des Operative verwendet werden sollen
+     * @param operativeMaxTries maximale Anzahl der Versuche mit dem Operative
+     *                          zu kommunizieren
+     * @param operativeMonitoringInterval Zeitinterval in ms in dem der Operative
+     *                                    überwacht wird
+     *
+     *
      * @throws UnknownHostException  Falls die IP-Adresse von localhost nicht
      *                               ermittelt werden konnte.
      * @throws MalformedURLException Falls der URL für die Anmeldung bei der
@@ -376,7 +384,7 @@ public final class ComputeManagerImpl
                 try {
 // Für GC-Fehler auf Operative nachfolgende Zeile auskommentieren
                     log.fine("Versuche Berechnung auf "
-                             + operativeInfo + " abzubrechen"); 
+                             + operativeInfo + " abzubrechen");
                     operativeInfo.getOperative().stopComputation();
                     log.fine("Berechnung auf " + operativeInfo
                              + " erfolgreich abgebrochen");
@@ -425,24 +433,24 @@ public final class ComputeManagerImpl
                     try {
                         log.fine("Versuche Teilproblem an "
                                  + operativeInfoObj + " zu senden");
-                        
-                       // der zentrale remoteStore und remoteStoreGenerator
-                       // sitzt im ProblemWrapper:                        
-                       ProblemWrapper probWrap = parProbWrap.getCreatingWrapper();
-                       
-                       log.fine("Problem Wrapper erhalten!");
-                       
-                       // hier muss vermutlich ein RMI-lookup her !!!
-                       RemoteStore centralRemoteStore = probWrap.getCentralRemoteStore();
-                       
-                       log.fine("RemoteStore erhalten!");
-                       
-                       RemoteStoreGenerator generator = probWrap.getRemoteStoreGenerator();
-                       
-                       log.fine("RemoteStoreGenerator erhalten!");
-                        
+
+                        // der zentrale remoteStore und remoteStoreGenerator
+                        // sitzt im ProblemWrapper:
+                        ProblemWrapper probWrap = parProbWrap.getCreatingWrapper();
+
+                        log.fine("Problem Wrapper erhalten!");
+
+                        // hier muss vermutlich ein RMI-lookup her !!!
+                        RemoteStore centralRemoteStore = probWrap.getCentralRemoteStore();
+
+                        log.fine("RemoteStore erhalten!");
+
+                        RemoteStoreGenerator generator = probWrap.getRemoteStoreGenerator();
+
+                        log.fine("RemoteStoreGenerator erhalten!");
+
                         operative.fetchPartialProblem(parProbWrap.getPartialProblem(),
-                        		centralRemoteStore, generator);
+                                centralRemoteStore, generator);
                         log.fine("Teilproblem erfolgreich an "
                                  + operativeInfoObj + " gesendet");
                         transmitted = true;
@@ -688,7 +696,7 @@ public final class ComputeManagerImpl
      * ({@link ParProbWrapper}) zuzuweisen. Operatives, bei denen das nicht
      * möglich war, werden passiv gesetzt.
      *
-     * @param operative  Collection unbeschäftigter aber aktiver Operatives
+     * @param operatives  Collection unbeschäftigter aber aktiver Operatives
      * @see  #distributePartialProblem(InfoOperative)
      */
     private void distributePartialProblem(Collection operatives) {
@@ -703,7 +711,7 @@ public final class ComputeManagerImpl
             if (createNewThreads) {
                 final InfoOperative opInfo = operativeInfoObj;
                 new Thread() {
-                    InfoOperative infoOperative;
+                    private InfoOperative infoOperative;
                     public void run() {
                         distributePartialProblem(opInfo);
                     }
@@ -753,7 +761,7 @@ public final class ComputeManagerImpl
         distributePartialProblem(passiveOperatives);
         passiveOperatives.clear();
 
-        // überprüfe welche Operatives in der Zwischenzeit inaktiv 
+        // überprüfe welche Operatives in der Zwischenzeit inaktiv
         // geworden sind.
         Iterator activeOpIter = activeOperatives.iterator();
         while (activeOpIter.hasNext()) {
@@ -1182,7 +1190,7 @@ public final class ComputeManagerImpl
     /**
      * Ausnahmen bei der Arbeit von Operatives werden über diese Methode an
      * den Compute-Manager gemeldet.
-     * 
+     *
      * @param operative         Referenz auf den Operative, auf dem der Fehler
      *                          auftrat.
      * @param exceptionCode     Integerwert, der die Ausnahme charakterisisert.

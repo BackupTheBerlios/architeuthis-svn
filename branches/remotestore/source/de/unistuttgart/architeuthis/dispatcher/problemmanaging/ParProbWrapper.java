@@ -29,7 +29,6 @@
 
 package de.unistuttgart.architeuthis.dispatcher.problemmanaging;
 
-import java.io.Serializable;
 
 import de
     .unistuttgart
@@ -81,7 +80,7 @@ public class ParProbWrapper {
      * @param partialProblem    Das konkrete Teilproblem.
      * @param creatingWrapper   Der <CODE>ProblemWrapper</CODE>, der dieses
      *                          Objekt erzeugt hat.
-     * @param parProbStatistic  Die zum Problem vom <CODE>partialProblem</CODE>
+     * @param problemStatisticCollector  Die zum Problem vom <CODE>partialProblem</CODE>
      *                          gehörende Statistik.
      */
     ParProbWrapper(PartialProblem partialProblem,

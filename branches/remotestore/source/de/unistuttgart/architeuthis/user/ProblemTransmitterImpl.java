@@ -316,7 +316,7 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
 
 
     /**
-     * Übermittelt ein serialisierbares Problem und einen RemoteSToreGenerator
+     * Übermittelt ein serialisierbares Problem und einen RemoteStoreGenerator
      * an ein ProblemManager.
      * Ist bereits ein Problem dieses Objekts in Berechnung, wartet der Aufruf,
      * bis das Problem fertig berechnet ist.<p>

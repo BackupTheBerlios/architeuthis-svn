@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * 
+ *
  * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
  * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
  * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
@@ -50,7 +50,7 @@ public abstract class AbstractFixedSizePriorityPartialProblem
      * Priorität des Teilproblems
      */
     private int prio = 0;
-    
+
     /**
      * Einzig erlaubter Konstruktor, der die Priorität eines Teilproblems
      * festlegt.
@@ -67,7 +67,7 @@ public abstract class AbstractFixedSizePriorityPartialProblem
      *
      * @param o  Erbe des <code>AbstractFixedSizePriorityPartialProlem</code>,
      *           mit dem verglichen wird
-     * @return  positiver Integer-Wert, falls die eigene Priorität kleiner, 
+     * @return  positiver Integer-Wert, falls die eigene Priorität kleiner,
      *          0 falls gleich, negativ falls größer ist
      *
      * @see java.lang.Comparable#compareTo(java.lang.Object)

@@ -105,12 +105,12 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
     /**
      * der dezentralen Speichers oder null, falls keiner verwendet wird
      */
-	private RemoteStore distRemoteStore;
-	
-	/**
-	 * der zentrale Speicher oder null, falls keiner verwendet wird
-	 */
-	private RemoteStore centralRemoteStore;
+    private RemoteStore distRemoteStore;
+
+    /**
+     * der zentrale Speicher oder null, falls keiner verwendet wird
+     */
+    private RemoteStore centralRemoteStore;
 
     /**
      * Dieser Konstruktor sollte nicht benutzt werden, muss aber wegen
@@ -262,36 +262,37 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      *                                  wird
      */
     public void fetchPartialProblem(PartialProblem parProb,
-    		                        RemoteStore centralStore,
-    		                        RemoteStoreGenerator generator)
+                                    RemoteStore centralStore,
+                                    RemoteStoreGenerator generator)
         throws RemoteException, ProblemComputeException {
-    	
-    	// muss gemerkt werden, da wir später den distRemoteStore abmelden müssen
-    	centralRemoteStore = centralStore;
-    	
-    	
-    	if (generator != null) {
-    		// falls generator vorhanden, einen dezentralen RemoteStore erzeugen
-    		distRemoteStore = generator.generateDistRemoteStore();  		
-    		// falls der generator kein dezentralen RemoteStore liefert,
-    		// wird der zentrale RemoteStore verwendet
-    		if ( distRemoteStore != null ) {
-    			centralRemoteStore.registerRemoteStore(distRemoteStore);
-    			distRemoteStore.registerRemoteStore(centralRemoteStore);			
-    		} else {
-    			distRemoteStore = centralRemoteStore;
-    		}
-    	} else {
-    		distRemoteStore = centralRemoteStore; 
-    	}
+
+        // muss gemerkt werden, da wir später den distRemoteStore abmelden müssen
+        centralRemoteStore = centralStore;
+
+
+        if (generator != null) {
+            // falls generator vorhanden, einen dezentralen RemoteStore erzeugen
+            distRemoteStore = generator.generateDistRemoteStore();
+            // falls der generator kein dezentralen RemoteStore liefert,
+            // wird der zentrale RemoteStore verwendet
+            if ( distRemoteStore != null ) {
+                centralRemoteStore.registerRemoteStore(distRemoteStore);
+                distRemoteStore.registerRemoteStore(centralRemoteStore);
+            } else {
+                distRemoteStore = centralRemoteStore;
+            }
+        } else {
+            distRemoteStore = centralRemoteStore;
+        }
 
         Miscellaneous.printDebugMessage(
             debugMode,
             "\nDebug: OperativeImpl hat Aufgabe vom ComputeManager empfangen.");
         Miscellaneous.printDebugMessage(
                 debugMode,
-                "\nDebug: centralStore: " + centralStore 
-                + "generator: " + generator );    
+                "\nDebug: centralStore: " + centralStore
+                + "generator: " + generator );
+
         backgroundComputation.fetchPartialProblem(parProb, distRemoteStore);
     }
 
@@ -315,23 +316,23 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             shutdown();
         }
     }
-    
-    
+
+
     /**
      * prüft ob und welche RemoteStores verwendet wurden und
      * meldet den RemoteStore ab
-     * 
+     *
      * @throws RemoteException RMI Probleme
      */
     private void unregisterRemoteStore() throws RemoteException {
-    	if (centralRemoteStore != null) {
-    		if (distRemoteStore != null) {
-    			centralRemoteStore.unregisterRemoteStore(distRemoteStore);
-    			centralRemoteStore = null;
-    		}
-    	}
+        if (centralRemoteStore != null) {
+            if (distRemoteStore != null) {
+                centralRemoteStore.unregisterRemoteStore(distRemoteStore);
+                centralRemoteStore = null;
+            }
+        }
     }
-    
+
 
     /**
      * Gibt eine berechnete Teillösung dem ComputeManager zurück. Damit wird
@@ -373,9 +374,9 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             }
             versuche--;
         }
-        
-        
-        
+
+
+
         if (!transmitted) {
             reportException(ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION,
                             exceptionMessage);

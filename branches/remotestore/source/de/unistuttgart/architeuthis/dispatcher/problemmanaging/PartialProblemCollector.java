@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * 
+ *
  * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
  * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
  * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
@@ -32,7 +32,7 @@
 package de.unistuttgart.architeuthis.dispatcher.problemmanaging;
 
 /**
- * Ruft vom 
+ * Ruft vom
  * {@link de.unistuttgart.architeuthis.interfaces.ProblemManager} die jeweils
  * nächsten Teilproblem-Wrapper ab und speichert diese in einer Schlange.
  *
@@ -46,7 +46,7 @@ class PartialProblemCollector extends Thread {
     private volatile boolean terminated = false;
 
     /**
-     * Referenz auf den 
+     * Referenz auf den
      * {@link de.unistuttgart.architeuthis.systeminterfaces.ProblemManager}
      */
     private ProblemManagerImpl problemManager;
@@ -59,9 +59,9 @@ class PartialProblemCollector extends Thread {
     /**
      * Erzeugt eine neue Instanz.
      *
-     * @param probMan       Der ProblemManager, von dem die Teilprobleme geholt
+     * @param problemManager       Der ProblemManager, von dem die Teilprobleme geholt
      *                      werden.
-     * @param parProbQueue  Die Queue, in die die geholten Teilprobleme
+     * @param parProbWrapperBuffer  Ein Buffer, in die die geholten Teilprobleme
      *                      eingestellt werden.
      * {@link de.unistuttgart.architeuthis.systeminterfaces.ProblemManager}
      */
@@ -102,11 +102,11 @@ class PartialProblemCollector extends Thread {
 
     /**
      * Signalisiert dem Thread, der den Teilproblem-Puffer auffüllt, sich zu
-     * beenden. Diese Methode wird bei der Beendigung des ComputeManagers 
+     * beenden. Diese Methode wird bei der Beendigung des ComputeManagers
      * aufgerufen.
      */
     public void terminate() {
-        terminated = true;            
+        terminated = true;
     }
 
     /**

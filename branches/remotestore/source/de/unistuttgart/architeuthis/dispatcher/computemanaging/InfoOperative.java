@@ -75,8 +75,7 @@ class InfoOperative {
      * Informationen beziehen.
      *
      * @param operative       Referenz auf den Operative
-     * @param computeManager  Referenz auf den Compute-Manager
-     * @param opid            Einzigartige ID
+     *
      */
     InfoOperative(Operative operative) {
         this.operative = operative;
@@ -109,7 +108,7 @@ class InfoOperative {
      * Setzt die Referenz auf das Objekt, dass Informationen über das vom
      * Operative zu verwaltende Teilproblem enthält.
      *
-     * @param  infoParProb Referenz auf die zugehörige Teilproblem-Information
+     * @param  infoParProbWrap Referenz auf die zugehörige Teilproblem-Information
      */
     void setInfoParProbWrapper(InfoParProbWrapper infoParProbWrap) {
         infoParProbWrapper = infoParProbWrap;
@@ -117,7 +116,7 @@ class InfoOperative {
 
     /**
      * Liefert zurück, ob der Operative aktiv oder inaktiv ist.
-     * 
+     *
      * @return  <code>true</code> falls aktiv
      *          <code>false</code> falls nicht aktiv
      */
@@ -128,7 +127,7 @@ class InfoOperative {
     /**
      * Setzt den Zustand des Operatives. Aktiv bedeutet, dass der Operative ein
      * Teilproblem berechnet.
-     * 
+     *
      * @param newStatus  Folgezustand des Operatives.
      */
     void setActive(boolean newStatus) {

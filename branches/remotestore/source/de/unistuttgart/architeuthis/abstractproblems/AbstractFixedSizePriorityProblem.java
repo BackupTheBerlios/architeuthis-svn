@@ -129,7 +129,7 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
     public Serializable getSolution() {
         if (partialSolutions.size() >= givenPartialProblems.length) {
 
-            PartialSolution sortedSolutions[] =
+            PartialSolution[] sortedSolutions =
                 new PartialSolution[givenPartialProblems.length];
             for (int i = 0; i < givenPartialProblems.length; i++) {
                 sortedSolutions[i] =
@@ -147,12 +147,12 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      * Stellt ein Array von Teilproblemen zur Verwaltung bereit.<p>
      * Diese Methode muss von einer konkreten Unterklasse implementiert werden.
      *
-     * @param porblemsExpected  gewünschte Anzahl von Teilproblemen.
+     * @param problemsExpected  gewünschte Anzahl von Teilproblemen.
      *
      * @return  Array von Teilproblemen.
      */
     protected abstract AbstractFixedSizePriorityPartialProblem[]
-        createPartialProblems(long problemsExpected);
+    createPartialProblems(long problemsExpected);
 
     /**
      * Erstellt eine Gesamtlösung aus allen Teillösungen.<p>
