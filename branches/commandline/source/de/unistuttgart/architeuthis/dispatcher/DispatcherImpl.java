@@ -1,7 +1,7 @@
 /*
  * file:        DispatcherImpl.java
  * created:     18.12.20003
- * last change: 09.02.2005 by Dietmar Lippold
+ * last change: 10.02.2005 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -99,8 +99,6 @@ public final class DispatcherImpl {
 
         // default config filename
         String configname = DEFAULT_CONFIGNAME;
-        // parameter für ComputeManagerImpl Konstruktor
-        boolean additionalThreads = false;
         // max. Kommunikationsversuche (für ComputeManagerImpl Konstruktor)
         long remoteOperativeMaxtries = DEFAULT_REMOTE_OPERATIVE_MAXTRY;
         // Timout Zeitspanne für Kommunikation mit Operative
@@ -108,6 +106,9 @@ public final class DispatcherImpl {
         long millisOperativeMonitoringInterval = DEFAULT_INTERVAL_OPERATIVEMONITORING;
         // default port
         int port = Integer.parseInt(ComputeManager.PORT_NO);
+        // parameter für ComputeManagerImpl Konstruktor. Beitzt keinen
+        // default-Wert.
+        boolean additionalThreads;
 
         ParameterParser parser = new ParameterParser();
 
@@ -137,32 +138,29 @@ public final class DispatcherImpl {
         System.out.println(parser);
 
         try {
-            // verwenden wir ein eigenes properties file ?
             if (parser.isEnabled(configOption)) {
+                // Es wird ein vorgegebenes properties file verwendet
                 configname = parser.getParameter(configOption);
-                // properties laden...
-                Properties props = new Properties();
-                props.load(new FileInputStream(configname));
-                // ...und im Kommandozeilenparser setzen:
-                HashMap in = new HashMap(props);
-                parser.parseProperties(in);
+            } else if (!(new File(configname)).canRead()) {
+                // Es wurde kein properties file vorgegeben und ein default
+                // properties file ist nicht vorhanden.
+                configname = "";
+            }
 
-            // kein eigens Propertiesfile, existiert das default properties file ?
-            } else if (new File(configname) .canRead()) {
-                // properties laden...
+            // Daten vom properties file laden wenn vorhanden.
+            if (configname != "") {
+                // properties laden ...
                 Properties props = new Properties();
                 props.load(new FileInputStream(configname));
-                // ...und im Kommandozeilenparser setzen:
-                HashMap in = new HashMap(props);
-                parser.parseProperties(in);
+                // ... und im Kommandozeilenparser setzen.
+                HashMap propsHashMap = new HashMap(props);
+                parser.parseProperties(propsHashMap);
             }
 
             // properties mit den Kommandozeilenparametern überschreiben
             parser.parseAll(args);
 
-            if (parser.isEnabled(threadSwitch)) {
-                additionalThreads = true;
-            }
+            additionalThreads = parser.isEnabled(threadSwitch);
 
             if (parser.isEnabled(portOption)) {
                 port = parser.getParameterAsInt(portOption);
