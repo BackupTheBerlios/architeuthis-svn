@@ -24,5 +24,5 @@ ARGS="$ARGS -f $SOLUTIONFILE"
 # die Main-Klasse
 MAIN="de.unistuttgart.architeuthis.user.ProblemTransmitterApp"
 
-exec $JAVA -cp $DEPLOY_DIR/User.jar:$DEPLOY_DIR/Problems.jar $JVMPAR $MAIN $ARGS
+exec $JAVA -cp $DEPLOY_DIR/User.jar:$CLASS_FILE_PATH/Problems.jar $JVMPAR $MAIN $ARGS
 
