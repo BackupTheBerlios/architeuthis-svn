@@ -1,7 +1,7 @@
 /*
  * file:        PutProcedure.java
  * created:     05.04.2005
- * last change: 05.04.2005 by Dietmar Lippold
+ * last change: 06.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -28,8 +28,9 @@
  */
 
 
-package de.unistuttgart.architeuthis.remotestore.hashset;
+package de.unistuttgart.architeuthis.remotestore.hashmap;
 
+import java.util.Map.Entry;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
@@ -59,7 +60,7 @@ public class PutProcedure implements TransmitProcedure {
     public void transmit(Object objectpair, RemoteStore relayStore)
         throws RemoteException {
 
-        mapEntry = (MapEntry) objectpair;
+        MapEntry mapEntry = (MapEntry) objectpair;
         ((RelayHashMap) relayStore).put(mapEntry.getKey(), mapEntry.getValue());
     }
 }

@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapImpl.java
  * created:     08.02.2005
- * last change: 05.04.2005 by Michael Wohlfart
+ * last change: 06.04.2005 by Michael Wohlfart
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -34,6 +34,9 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import de.unistuttgart.architeuthis.remotestore.RemoteStore;
+import de.unistuttgart.architeuthis.remotestore.Transmitter;
 
 /**
  * Diese Klasse implementiert das RemoteStore Interface als HashMap. Derzeit
@@ -94,7 +97,7 @@ public class RemoteHashMapImpl implements RemoteHashMap {
 
         if (remoteStore != null) {
             relayHashMap = (RelayHashMap) remoteStore;
-            putTransmitter = new Transmitter(relayHasMap, new PutProcedure());
+            putTransmitter = new Transmitter(relayHashMap, new PutProcedure());
         }
     }
 
@@ -110,7 +113,7 @@ public class RemoteHashMapImpl implements RemoteHashMap {
 
         relayHashMap = null;
         putTransmitter.terminate();
-        addTransmitter = null;
+        putTransmitter = null;
     }
 
     /**

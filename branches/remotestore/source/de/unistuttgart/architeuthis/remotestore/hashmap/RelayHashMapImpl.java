@@ -32,10 +32,12 @@ package de.unistuttgart.architeuthis.remotestore.hashmap;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.rmi.RemoteException;
 
+import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.AbstractRelayStore;
 
 /**
@@ -86,9 +88,9 @@ public class RelayHashMapImpl extends AbstractRelayStore implements RelayHashMap
 
         // Die aktuellen Elemente dem zu registrierenden RemoteStore
         // hinzufügen.
-        Iterator iter = hashSet.iterator();
+        Iterator iter = hashMap.entrySet().iterator();
         while (iter.hasNext()) {
-            mapEntry = (Map.Entry) iter.next();
+            Entry mapEntry = (Entry) iter.next();
             remoteHashMap.putLocal(mapEntry.getKey(), mapEntry.getValue());
         }
 
@@ -106,7 +108,7 @@ public class RelayHashMapImpl extends AbstractRelayStore implements RelayHashMap
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public synchronized void putRemote(Object key, Object value)
+    public synchronized void put(Object key, Object value)
         throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINE)) {
@@ -119,7 +121,7 @@ public class RelayHashMapImpl extends AbstractRelayStore implements RelayHashMap
         // Das Objekt-Paar an alle RemoteHashMaps übertragen.
         Iterator iterator = getRemoteStoreIterator();
         while (iterator.hasNext()) {
-            RemoteHashMap peer = (RemoteHashMap) iterator.next();
+            RemoteHashMapImpl peer = (RemoteHashMapImpl) iterator.next();
             peer.putLocal(key, value);
         }
     }
