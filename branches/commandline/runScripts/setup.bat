@@ -1,7 +1,8 @@
 @echo off
 
 REM Diese Datei dient zum Setzen der Umgebungsvariablen von Architeuthis
-REM in den anderen Scripten
+REM in den anderen Scripten. Alle relativen Pfade beziehen sich auf das
+REM Verzeichnis runScripts.
 
 
 REM Der Pfad zum JDK. Wird standardmäßig als äußere Umgebungsvariable gesetzt.
@@ -38,6 +39,9 @@ REM Der Port, unter dem der ClassFileServer läuft
 set CLASS_SERVER_PORT=1855
 
 REM URL, unter dem die Problemklassen abrufbar sind
+REM set CLASSURL=http://meinrechner:1855/
+REM set CLASSURL=http://meinrechner:1855/projekt.jar
+REM set CLASSURL=http://www.meine-domain.de/java/projekt/
 set CLASSURL=http://%CLASS_SERVER_HOST%:%CLASS_SERVER_PORT%/
 
 REM Die Ausgabedatei der Lösung
