@@ -1,12 +1,13 @@
 /*
  * filename:    OperativeComputing.java
- * created:     26.04.2004
- * last change: 21.06.2004 by Dietmar Lippold
+ * created:     <???>
+ * last change: 18.01.2005 by Michael Wohlfart
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *				Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.

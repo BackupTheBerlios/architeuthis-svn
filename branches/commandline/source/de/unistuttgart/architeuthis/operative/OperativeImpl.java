@@ -1,13 +1,13 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 26.09.2004 by Dietmar Lippold
+ * last change: 18.01.2005 by Michael Wohlfart
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
- *
+ *				Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  * This file is part of Architeuthis.
  *
@@ -40,6 +40,8 @@ import java.rmi.AccessException;
 import java.rmi.RemoteException;
 import java.rmi.RMISecurityManager;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import de.unistuttgart.architeuthis.systeminterfaces.ComputeManager;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
@@ -49,6 +51,9 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.misc.Miscellaneous;
 import de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi;
+import de.unistuttgart.architeuthis.misc.commandline.Option;
+import de.unistuttgart.architeuthis.misc.commandline.ParameterParser;
+import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
 
 /**
  * Implementierung die Operative Remote-Anwendung und nimmt die Kommunikation
@@ -110,9 +115,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * dieser Konstruktor ist private, da er nicht aus anderen Klassen heraus
      * aufgerufen werden muss.
      *
-     * @param bindingCompManager  String, der die Adresse und das Verzeichnis
-     *                            des Eintrags des ComputeManagers in der
-     *                            RMI-Registry beinhaltet.
+     * @param computeManager      Der ComputeManagers in der
+     *                            RMI-Registry.
      * @param debug               Schaltet zusätzliche debug-Meldungen ein,
      *                            falls <code>true</code>
      * @throws MalformedURLException  Die Angabe vom <code>compManager</code>
@@ -124,20 +128,32 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * @throws NotBoundException      Der Dispatcher war auf der Registry nicht
      *                                eingetragen.
      */
-    private OperativeImpl(String bindingCompManager, boolean debug)
+    private OperativeImpl(ComputeManager computeManager, boolean debug)
         throws MalformedURLException,
                AccessException,
                RemoteException,
                NotBoundException {
+    	
+    	this.computeManager = computeManager;
+    
 
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new RMISecurityManager());
         }
 
         debugMode = debug;
-
-        // Den Thread zur Berechnung der Teilprobleme erzeugen
-        backgroundComputation = new OperativeComputing(this, debugMode);
+    }
+    
+    
+    /**
+     * Startet den Berechnungs-Thread, der im Hintergrund läuft. Zur
+     * Berechnung eines tatsächlichen PartialProblmes muss noch die
+     * fetchPartialProblemMethode aufgerufen werden.<BR>
+     * <BR>
+     * Diese Methode ist protected für den Zugriff durch JUnit-Tests
+     *
+     */
+    protected synchronized void startComputation() {
 
         // Hier wird ein shutdownHook gesetzt. Dieser wird aufgerufen, wenn vom
         // System ein term-Signal kommt (also beim Beenden oder bei Strg+c).
@@ -148,20 +164,9 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             }
         });
 
-        // Schlage den ComputeManager in der Registry nach
-        Miscellaneous.printDebugMessage(
-            debugMode,
-            "Debug: Versuche, Verbindung herzustellen");
-        computeManager =
-            (ComputeManager) java.rmi.Naming.lookup(bindingCompManager);
 
-        // Wenn das funktioniert hat, dann anmelden
-        Miscellaneous.printDebugMessage(
-            debugMode,
-            "Debug: Melde Operative an!");
-        computeManager.registerOperative(this);
-
-        Miscellaneous.printDebugMessage(debugMode, "Debug: Gestartet!");
+        backgroundComputation = new OperativeComputing(this, this.debugMode);
+        
     }
 
     /**
@@ -353,38 +358,80 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * @param args  Die obligatorischen Kommandozeilenargumente
      */
     public static void main(String[] args) {
+    	
+    	
+        ParameterParser parser = new ParameterParser();
+
+        // debug option
+        Option debug1 = new Option("d");
+        debug1.setPrefix("-");
+        debug1.setOptional(true);
+        debug1.setParameterNumberCheck(Option.ZERO_PARAMETERS_CHECK);
+
+        Option debug2 = new Option("debug");
+        debug2.setPrefix("--");
+        debug2.setOptional(true);
+        debug2.setParameterNumberCheck(Option.ZERO_PARAMETERS_CHECK);
+
+        parser.setFreeParameterPosition(ParameterParser.START);
+        parser.setFreeParameterName("registry:port");
+        parser.setFreeParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+
+        parser.addOption(debug1);
+        parser.addOption(debug2);
+
+        StringBuffer binding = new StringBuffer();
         boolean debug = false;
-        String compManager = null;
-
-        if ((args.length < 1) | (args.length > 2)) {
-            System.out.println(
-                "Fehler! Aufruf mit:\n\n "
-                    + "OperativeImpl"
-                    + " <registry>:<port> [-d / --debug]\n\n"
-                    + "wobei ersteres die Adresse der Registry ist, an der der"
-                    + "ComputeManager angemeldet ist, zweiteres ist optional"
-                    + "und schaltet die Debug-Meldungen an");
-            System.exit(1);
-        }
-        if (args.length == 2) {
-            if ((args[1].equalsIgnoreCase("--debug"))
-                || (args[1].equalsIgnoreCase("-d"))) {
-                debug = true;
-            }
-        }
-
-        compManager = args[0];
-        // Wenn beim ProblemManager kein Port angegeben ist, den Standard-Port
-        // verwenden
-        if (compManager.indexOf(":") == -1) {
-            compManager += ":" + ComputeManager.PORT_NO;
-        }
-
-        String binding = "//" + compManager + "/"
-                         + ComputeManager.COMPUTEMANAGER_ID_STRING;
-
+        
         try {
-            new OperativeImpl(binding, debug);
+            parser.parseAll(args);
+
+            
+            // ist debuging aktiviert?
+            debug = (parser.isEnabled(debug1) || parser.isEnabled(debug2));
+
+            binding.append(parser.getFreeParameter());
+
+            // ist ein Port angegeben ?
+            if (binding.indexOf(":") == -1) {
+                // falls nicht: default Port verwenden:
+                binding.append(":");
+                binding.append(ComputeManager.PORT_NO);
+            }
+
+            // noch id String anhängen und Slashes dazubasteln:
+            binding.insert(0, "//");
+            binding.append("/");
+            binding.append(ComputeManager.COMPUTEMANAGER_ID_STRING);
+
+
+            ComputeManager computeManager =
+                (ComputeManager) java.rmi.Naming.lookup(binding.toString());
+
+            // Aufruf des privaten Konstruktors mit ComputeManager:
+            OperativeImpl operative = new OperativeImpl(computeManager, debug);
+
+
+            
+            // erst wenn das funktioniert hat, computing starten
+            operative.startComputation();
+
+            // Wenn das funktioniert hat, dann anmelden
+            Miscellaneous.printDebugMessage(
+                debug,
+                "Debug: Melde Operative an!");
+            
+            computeManager.registerOperative(operative);
+
+            Miscellaneous.printDebugMessage(debug, "Debug: Gestartet!");
+            
+
+        } catch (ParameterParserException ex) {
+            // usage ausgeben:
+            System.err.println(parser);
+            // Stacktrace (nicht unbedingt notwendig)
+            ex.printStackTrace();
+
         } catch (java.rmi.StubNotFoundException e) {
             System.out.println(
                 "\n\n Fehler! Die Stubs wurden vermutlich "
