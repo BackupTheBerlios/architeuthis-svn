@@ -165,15 +165,14 @@
            srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
-           debug="true"   
-           includes="**/*.java"
-        >
+           debug="true"
+           includes="**/*.java">
       <classpath>
         <pathelement path="${junitJar}"/>
       </classpath>
     </javac>
 
-    <!-- Zwei Implementierungen des RemoteStore -->
+    <!-- Implementierungen von RemoteStore                            -->
     <rmic base="${build}"
         stubversion="1.2"    	
       	debug="true"
