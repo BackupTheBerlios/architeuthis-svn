@@ -1,0 +1,80 @@
+%% Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+%% Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+%% Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+%% entwickelt.
+
+\documentclass[a4,10pt]{report}
+\usepackage[german]{babel} % Einbindung des deutschen Sprachpaketes
+\usepackage[ansinew]{inputenc}
+\usepackage{verbatim}
+\usepackage[T1]{fontenc}
+\usepackage{palatino}
+\pagestyle{headings}
+\usepackage[pdftex=true
+,pdftitle={Glossar des Compute-Systems}
+,pdfauthor={Achim Linke, Ralf Kible}
+,pdfsubject={Hiermit sollen die Begriffe geklärt werden, die in den weiteren
+    Dokumenten benutzt werden}
+%,pdfkeywords={keyword 1, keyword 2, keyword 3, keyword 4}
+%,plainpages=false
+%,hypertexnames=false 
+,pdfpagelabels=true
+,pdfpagemode=UseOutlines
+,hyperindex=true
+,colorlinks=true]{hyperref} 
+% Hier wird die Farbe der Links ein- und ausgeschaltet.
+
+\usepackage{color}
+\definecolor{darkred}{rgb}{0.5,0,0}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+\definecolor{darkblue}{rgb}{0,0,0.8}
+\hypersetup{colorlinks
+,linkcolor=darkblue
+,filecolor=darkgreen
+,urlcolor=darkred
+,citecolor=darkblue}
+
+%% Mögliche Werte: 
+%% -1
+%% keine Überschrift wird numeriert 
+%% 0
+%% Kapitelüberschriften werden numeriert 
+%% 1
+%% Kapitel- und Abschnittsüberschriften werden numeriert 
+%% 2
+%% Kapitel- bis Unterabschnittsüberschriften werden numeriert 
+%% 3
+%% Kapitel- bis Unterunterabschnittsüberschriften werden numeriert 
+%% 4
+%% Kapitel- bis Paragraphsüberschriften werden numeriert 
+%% 5
+%% alle Überschriften werden numeriert 
+\setcounter{secnumdepth}{5}
+
+\setcounter{tocdepth}{2}
+
+\begin{document}
+\title{Architeuthis - Benutzerhandbuch}
+\author{Jürgen Heit, juergen.heit@gmx.de\\
+Andreas Heydlauff, andiheydlauff@gmx.de\\
+Ralf Kible, ralf\_kible@gmx.de\\
+Achim Linke, achim81@gmx.net}
+
+\date{Software Version: 0.9\\Stand: \today}
+\maketitle
+\tableofcontents
+%\listoffigures
+%\listoftables
+\chapter{Allgemeine Hinweise}
+Das Compue-System soll einem Benutzer die M"oglichkeit geben, ein von
+ihm in Java implementiertes Problem auf mehreren Rechnern verteilt berechnen
+zu lassen. Es besteht aus mehreren Komponenten, die hier erl"autert werden.
+
+
+    \include{beschreibung}
+    \include{glossar}
+    \include{benutzung}
+    \include{parallelisierungAbstrakt}
+    \include{parallelisierung}
+%  \printindex
+\end{document}

@@ -1,0 +1,79 @@
+Datei          : ReadmeStatistics
+Letzte Änderung: 13.09.2004 durch Dietmar Lippold
+
+
+This file is part of Architeuthis.
+
+Architeuthis is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+Architeuthis is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Architeuthis; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+Funktion der Statistik
+----------------------
+
+Bei Architeuthis git es zwei Arten von Statistiken:
+
+ * Die Problem-Statistik.
+ * Die System-Statistik.
+
+Die Problem-Statistik kann nur über den ProblemTransmitter abgerufen
+werden, über den das Problem zur Berechnung übergeben wurde. Dies kann
+durchaus auch noch während der Berechnung geschehen (dies geschieht auch in
+den Programmen zu den Testproblemen aus dem Distributionspaket
+testenvironment). In der Regel wird man diese Statistik aber erst nach
+Abschluß der Berechnung eines Problems abfragen (da die Anwendung eines
+Benutzers in der Regel nicht nebenläufig sein wird).
+
+Die System-Statistik kann unabhängig von einem Problem abgerufen werden,
+auch von einem Rechner, auf dem (noch) kein ProblemTransmitter läuft (z.B.
+um sich die Auslastung des Architeuthis-Systems anzuschauen).
+
+
+Benutzung der Statistik
+-----------------------
+
+Zur Ausgabe der System-Statistik gibt es zwei Scripte:
+
+ * runConsoleSysStat.sh : Gibt die Statistik als Text aus.
+ * runGuiSysStat.sh     : Erzeugt ein neues Fenster, in der der Statistik
+                          regelmäßig aktualisiert und angezeigt wird.
+
+Zur Abfrage der Statistik im eigenen Programm kann die Klasse
+de.unistuttgart.architeuthis.user.ProblemTransmitterImpl verwendet werden.
+
+Zum Starten der Scripts muß man die environment-Variable JAVA_HOME
+auf das Verzeichnis vom JRE oder JDK setzen. In der tcsh kann der Befehl
+z.B. folgendermaßen aussehen:
+
+  setenv JAVA_HOME /usr/java/jdk
+
+Alternativ kann man auch die Variable JAVA in der Datei setup.sh setzen. In
+dieser Datei kann bzw. muß man außerdem noch folgende Einträge ändern:
+
+ * DISPATCHER_HOST : Diesem Eintrag muß der Name oder die IP-Nummer des
+                     Rechners zugewiesen werden, auf dem der Dispatcher
+                     läuft.
+ * DISPATCHER_PORT : Der Port, unter dem der Dispatcher erreichbar ist.
+                     Dieser muß geändert werden, wenn er auch beim Start des
+                     Dispatchers geändert wurde. Dies kann man vom Betreuer
+                     des Dispatchers erfahren.
+ * INSTALLDIR      : Kann den Wert "." behalten, wenn das Script
+                     runDispatcher.sh aus dem Verzeichnis mit den anderen
+                     Dateien gestartet wird.
+
+In der Regel wird man nur den ersten Eintrag ändern.
+
+Zum Abrufen bzw. Starten der Statistik ruft man dann einfach das
+Start-Script auf: ./runConsoleSysStat.sh bzw. ./runGuiSysStat.sh
+

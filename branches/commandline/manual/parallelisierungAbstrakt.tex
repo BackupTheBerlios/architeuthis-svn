@@ -1,0 +1,85 @@
+%% Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+%% Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+%% Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+%% entwickelt.
+
+\chapter[Parallelisierung anhand eines Beispiels]{Der Weg zum parallelisierten Programm anhand eines Beispiels}
+
+\section{Ein einfaches Beispiel}
+Man betrachte zunächst die Methode {\tt primzahlTeilbereich} aus {\tt Primzahlen.java} :
+{\scriptsize \verbatiminput{PrimzahlTeilbereich.jav}}
+\par
+Gesucht werden also Primzahlen, die zwischen einem Intervall von zwei Zahlen existieren.
+{\tt Prim\-zahl\-Teil\-bereich} eignet sich sehr gut zum Verteilen, da hier jeder {\tt Operative} 
+für sich alleine rechnen kann, ohne weitere Informationen
+zu benötigen. Die Verwaltung wird von der abstrakten
+Klasse {\tt AbstractOrderedProblem.java} "ubernommen, bei der auf die Reihenfolge der zur"uckkommenden 
+{\tt Teill"osungen} geachtet wird. Siehe dazu auch Kapitel 9 - Abstrakte Hilfsklassen.
+
+\par
+Desweiteren muss das Interface {\tt PartialProblem} implementiert werden.
+
+\par
+Das Interface {\tt PartialSolution} ist durch die Verwendung der vorliegenden Klasse 
+{\tt ContainerPartialSolution.java} schon fertig, in der die Teill"osung einfach in
+ein {\tt Serializable-Objekt} gespeichert wird.
+
+
+\subsection{Implementierung von \texttt{AbstractOrderedProblem}}
+In der abstrakten Klasse, die das Interface {\tt Problem} implementiert, m"ussen die zwei Methoden 
+\begin{itemize}
+\item protected PartialProblem createPartialProblem(int problemsExpected)
+\item protected Serializable receivePartialSolution(PartialSolution parSol)
+\end{itemize}
+noch implementiert werden.
+\par
+Es wird eine untere und obere Grenze f"ur das zu durchsuchende Intervall ben"otigt, sowie
+eine Schrittweite f"ur die Teilprobleme. Desweiteren wird eine Liste f"ur die L"osung gebraucht und ein Z"ahler
+f"ur die noch zur"uckkommenenden Teill"osungen. Als Beispiel: \\
+Gesucht sind die Primzahlen zwischen 1 und 1000. Der erste {\tt Operative} berechnet die Primzahlen von 1-100, der
+zweite von 101-200 usw. D.h. die Schrittweite ist 100 und der Z"ahler f"ur die Teill"osungen wird auf 10 gesetzt.\\
+\par
+In der {\tt createPartialProblem} Methode wird ein neues {\tt Teilproblem} zur"uckgegeben. Hierzu werden einfach
+die Grenzen des Intervalls berechnet und die untere Grenze mit der Schrittweite nach oben gez"ahlt.
+\par
+In der {\tt receivePartialSolution} Methode wird die erhaltene Teill"osung zur Gesamtl"osung dazugef"ugt und
+"uberpr"uft, ob dies die letzte Teill"osung war. Ist dies der Fall wird die Gesamtl"osung zur"uckgegeben. Wenn
+dies nicht der Fall ist, muss {\tt null} zur"uckgegeben werden, da dies das Zeichen f"ur den {\tt Compute-Manager}
+ist, dass das Problem noch nicht fertig berechnet ist.
+
+{\scriptsize \verbatiminput{java/OrderedPrimeRangeProblem.java}}
+
+\subsection{Implementierung von \texttt{PartialProblem}}
+Klar ist, dass jedes Teilproblem den Bereich enthalten muss, in dem die Primzahlen bestimmt
+werden sollen. Also legt man dazu Attribute an. Dann modifiziere man den Konstruktor, so dass diese
+Grenzen des Bereichs festgelegt werden.
+\par
+Zu guter Letzt wird noch {\tt compute()} implementiert, indem man aus der Klasse
+{\tt Primzahlen} die vorher ausgewählte Methode \\{\tt primzahlTeilberech} aufruft. 
+
+{\scriptsize \verbatiminput{java/OrderedPrimeParProb.java}}
+
+
+\section{Weitere Beispiele}
+Weiter Beispiele kann man in dem Ordner {\tt de/unis/architeuthis/testumgebung} finden. Hier eine kurze Auflistung aller
+Probleme und eine kurze Beschreibung dazu:
+
+\begin{enumerate}
+\item de.unistuttgart.architeuthis.testenvironment.montecarlo.MonteCarloProblemImpl\\
+	Hier wird das MonteCarlo-Verfahren zur Bestimmung der Zahl Pi parallelisert. Man bekommt somit bei einer
+	festgelegten Rechenzeit eine bessere Genauigkeit f"ur Pi.
+\item de.unistuttgart.architeuthis.testenvironment.random.RandomProblemImpl\\
+	Hier wartet jedes Teilproblem einfach eine zuf"allige Anzahl von Sekunden. Dies ist f"ur Testzwecke recht
+	interessant gewesen.
+\item de.unistuttgart.architeuthis.testenvironment.caching.CachingTestProblem\\
+	Hier werden drei Dummy-Klassen in den Teilproblemen geladen. Mit diesem Problem wurde verglichen, inwiefern
+	sich das Laden von Klassen zeitlich bemerkbar macht. Siehe dazu auch im Kapitel Performance.
+\item de.unistuttgart.architeuthis.testenvironment.prim.example.OrderedPrimeRangeProblem\\
+	Dies ist das Einf"uhrungsbeispiel mittels der abstrakten Klasse {\tt Abstract\-Ordered\-Problem.java}.
+\item de.unistuttgart.architeuthis.testenvironment.prim.PrimRangeProblemImpl\\
+	Dieses Problem macht das gleiche wie {\tt OrderedPrimeRangeProblem}, nur dass es keine abstrakten 	Hilfsklassen benutzt.
+\item de.unistuttgart.architeuthis.testenvironment.prim.PrimSequenceProblemImpl\\
+	Dies ist das Beispiel f"ur Fortgeschrittene im n"achsten Kapitel.
+
+		
+\end{enumerate}
