@@ -1,5 +1,5 @@
 Datei          : ReadmeStatistics
-Letzte ƒnderung: 13.09.2004 durch Dietmar Lippold
+Letzte ƒnderung: 15.02.2005 durch Dietmar Lippold
 
 
 This file is part of Architeuthis.
@@ -43,6 +43,9 @@ um sich die Auslastung des Architeuthis-Systems anzuschauen).
 Benutzung der Statistik
 -----------------------
 
+Die Dateien zum Starten der System-Statistik liegen im Verzeichnis
+runScripts.
+
 Zur Ausgabe der System-Statistik gibt es zwei Scripte:
 
  * runConsoleSysStat.sh : Gibt die Statistik als Text aus.
@@ -52,28 +55,40 @@ Zur Ausgabe der System-Statistik gibt es zwei Scripte:
 Zur Abfrage der Statistik im eigenen Programm kann die Klasse
 de.unistuttgart.architeuthis.user.ProblemTransmitterImpl verwendet werden.
 
-Zum Starten der Scripts muﬂ man die environment-Variable JAVA_HOME
-auf das Verzeichnis vom JRE oder JDK setzen. In der tcsh kann der Befehl
-z.B. folgendermaﬂen aussehen:
+Zum Starten der Scripts muﬂ man die environment-Variable JAVA_HOME auf
+das Verzeichnis vom JRE oder JDK setzen. In der tcsh unter Linux/Unix kann
+der Befehl z.B. folgendermaﬂen aussehen:
 
   setenv JAVA_HOME /usr/java/jdk
 
-Alternativ kann man auch die Variable JAVA in der Datei setup.sh setzen. In
-dieser Datei kann bzw. muﬂ man auﬂerdem noch folgende Eintr‰ge ‰ndern:
+Alternativ kann man auch die Variable JAVA in der Datei setup.sh bzw. in
+setup.bat setzen. In dieser Datei kann bzw. muﬂ man auﬂerdem noch folgende
+Eintr‰ge ‰ndern:
 
  * DISPATCHER_HOST : Diesem Eintrag muﬂ der Name oder die IP-Nummer des
                      Rechners zugewiesen werden, auf dem der Dispatcher
                      l‰uft.
+
  * DISPATCHER_PORT : Der Port, unter dem der Dispatcher erreichbar ist.
                      Dieser muﬂ ge‰ndert werden, wenn er auch beim Start des
                      Dispatchers ge‰ndert wurde. Dies kann man vom Betreuer
-                     des Dispatchers erfahren.
- * INSTALLDIR      : Kann den Wert "." behalten, wenn das Script
-                     runDispatcher.sh aus dem Verzeichnis mit den anderen
-                     Dateien gestartet wird.
+                     des Dispatchers erfahren. Per default ist das der Port
+                     1854.
 
-In der Regel wird man nur den ersten Eintrag ‰ndern.
+ * DEPLOY_DIR      : Das Verzeichnis mit der jar-Datei der System-Statistik.
+                     Vorgegeben ist dieses relativ zum Verzeichnis
+                     runScripts. Man braucht diese Variable also nicht zu
+                     ‰ndern, wenn man die System-Statistik aus diesem
+                     Verzeichnis startet.
 
-Zum Abrufen bzw. Starten der Statistik ruft man dann einfach das
-Start-Script auf: ./runConsoleSysStat.sh bzw. ./runGuiSysStat.sh
+ * CONFIG_DIR      : Das Verzeichnis mit der Konfigurationsdatei
+                     statisticreader.pol. Vorgegeben ist dieses relativ zum
+                     Verzeichnis runScripts. Man braucht diese Variable
+                     also nicht zu ‰ndern, wenn man die System-Statistik aus
+                     diesem Verzeichnis startet.
+
+Zum Abrufen bzw. Starten der System-Statistik ruft man einfach das
+Start-Script auf.
+Unter Linux/Unix: ./runConsoleSysStat.sh bzw. ./runGuiSysStat.sh
+Unter Windows   : runConsoleSysStat.bat bzw. runGuiSysStat.bat
 

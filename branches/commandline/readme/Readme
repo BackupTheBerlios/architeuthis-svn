@@ -1,5 +1,5 @@
 Datei          : Readme
-Letzte Änderung: 22.09.2004 durch Dietmar Lippold
+Letzte Änderung: 15.02.2005 durch Dietmar Lippold
 
 
 This file is part of Architeuthis.
@@ -57,16 +57,21 @@ Benutzung von Architeuthis
 
 Es sind folgende Distributionspakete verfügbar:
 
- * dispatcher.tar.gz       : Enthält die Dateien mit dem Dispatcher.
- * operative.tar.gz        : Enthält die Dateien mit dem Operative.
- * userenvironment.tar.gz  : Enthält die Dateien für den Benutzer,
-                             inlusive dem Transmitter.
- * testenvironment.tar.gz  : Enthält zusätzlich Dateien mit Testproblemen.
- * architeuthis_src.tar.gz : Enthält alle Quelldateien vom System.
+ * dispatcher.tar.gz            : Enthält die Dateien mit dem Dispatcher.
+ * operative.tar.gz             : Enthält die Dateien mit dem Operative.
+ * userenvironment-unix.tar.gz  : Enthält die Dateien für den Benutzer unter
+                                  Linux/Unix, inlusive dem Transmitter.
+ * userenvironment-win.tar.gz   : Enthält die Dateien für den Benutzer unter
+                                  Windows, inlusive dem Transmitter.
+ * testenvironment-unix.tar.gz  : Enthält zusätzlich Dateien unter Linux/Unix
+                                  mit Testproblemen.
+ * testenvironment-win.tar.gz   : Enthält zusätzlich Dateien unter Windows
+                                  mit Testproblemen.
+ * architeuthis_src.tar.gz      : Enthält alle Quelldateien vom System.
 
 Nachdem man sich die gewünschten Distributionspakete runtergeladen hat,
-packt man diese jeweils mit folgendem Befehl aus ("paket" steht für den
-Namen des jeweiligen Distributionspakets):
+packt man diese jeweils mit folgendem Befehl unter Linux/Unix aus ("paket"
+steht für den Namen des jeweiligen Distributionspakets):
 
   tar -zxvf paket.tar.gz
 
@@ -76,9 +81,13 @@ Hinweise finden.
 
 Für die Erzeugung der Distributionspakete aus den Quelldateien mit der
 vorhandenen Datei build.xml muß ant (http://ant.apache.org/) installiert
-sein. Hinweise zur Erzeugung erhält man durch Eingabe von "ant" oder
-"classic-ant" im Verzechnis mit der Datei build.xml. Wenn ant gcj benutzt,
-muß man den Befehl classic-ant verwenden.
+sein. Hinweise zur Erzeugung erhält man durch Eingabe von "ant" im
+Verzechnis mit der Datei build.xml. Falls ant gcj benutzt und es dabei
+Probleme gibt, sollte man das JDK von Sun oder IBM installieren und die
+environment-Variable JAVA_HOME auf dieses JDK setzen.
+
+Allgemein wird für Architeuthis als JDK das J2SE Version 1.4.2_07 oder
+die Version von IBM ab 1.4.1 empfohlen.
 
 
 Entwickler von Architeuthis
@@ -94,6 +103,7 @@ Entwicklung waren bzw. sind folgende Personen beteiligt:
  * Achim Linke, achim81@gmx.de (bis Prototyp)
  * Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
  * Ralf Kible, ralf_kible@gmx.de (bis Prototyp)
+ * Michael Wohlfart, michael.wohlfart@zsw-bw.de (ab Version 1.3.2)
 
 Die Homepage von Architeuthis ist
 http://developer.berlios.de/projects/architeuthis/

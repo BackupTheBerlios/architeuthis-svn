@@ -1,5 +1,5 @@
 Datei          : ReadmeUserenvironment
-Letzte Änderung: 24.09.2004 durch Dietmar Lippold
+Letzte Änderung: 15.02.2005 durch Dietmar Lippold
 
 
 This file is part of Architeuthis.
@@ -46,15 +46,15 @@ Das Distributionspaket vom Userenvironment enthält folgende Dateien:
  * ReadmeStatistics      : Datei mit Hinweisen zur Statistik.
  * ReadmeClassFileServer : Datei mit Hinweisen zum ClassFileServer.
  * User.jar              : Die Klassen zur Benutzung von Architeuthis.
- * setup.sh              : Einstellungen zur Ausführung der Scripte zur
+ * setup.*               : Einstellungen zur Ausführung der Scripte zur
                            Statistik.
- * runConsoleSysStat.sh  : Script zur Ausgabe der Text-Statistik des
+ * runConsoleSysStat.*   : Script zur Ausgabe der Text-Statistik des
                            Systems. Weiter Informationen stehen in der
                            Datei ReadmeStatistics.
- * runGuiSysStat.sh      : Script zur Ausführung der graphischen Statistik
+ * runGuiSysStat.*       : Script zur Ausführung der graphischen Statistik
                            des Systems. Weiter Informationen stehen in der
                            Datei ReadmeStatistics.
- * runClassFileServer.sh : Script zum Starten des ClassFileServers. Weitere
+ * runClassFileServer.*  : Script zum Starten des ClassFileServers. Weitere
                            Informationen stehen in der Datei
                            ReadmeClassFileServer.
  * transmitter.pol       : Die Festlegung die Rechte, die der
@@ -63,6 +63,10 @@ Das Distributionspaket vom Userenvironment enthält folgende Dateien:
  * statisticreader.pol   : Die Festlegung die Rechte, die die
                            Statistik-Ausgabe auf dem Rechner hat, auf dem
                            sie läuft.
+
+Die Dateien, deren Name mit einem Stern endet, sind entweder für Linux/Unix
+mit der Endung "sh" oder für Windows mit der Endung "bat" vorhanden. Diese
+liegen im Verzeichnis runScripts.
 
 Die Benutzung von Architeuthis erfolgt (für serialisierbare Probleme)
 mittels der Klasse de.unistuttgart.architeuthis.user.ProblemComputation.
@@ -77,6 +81,5 @@ ohne daß sie auf vorhandene Daten zugreifen müssen, kann die ausführbare
 Klasse de.unistuttgart.architeuthis.user.ProblemTransmitterApp verwendet
 werden. Hinweise dazu stehen in ReadmeProblemTransmitterApp.
 
-Hinweise zur Ausgabe der System-Statistik stehen in der Datei
-ReadmeStatistics.
+Hinweise zur Statistik finden sich in der Datei ReadmeStatistics.
 
