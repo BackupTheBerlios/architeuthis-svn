@@ -309,8 +309,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         centralRemoteStore = centralStore;
 
         if (generator != null) {
-            // falls der Generator vorhanden ist, einen dezentralen RemoteStore
-            // erzeugen
+            // Falls der Generator vorhanden ist, einen dezentralen RemoteStore
+            // erzeugen.
             distRemoteStore = generator.generateDistRemoteStore();
             // Registriert die RemoteStores gegenseitig. Falls der Generator
             // keinen dezentralen RemoteStore geliefert hat, wird der zentrale
@@ -318,7 +318,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             if ((distRemoteStore != null) && (centralRemoteStore != null)) {
                 distRemoteStore.registerRemoteStore(centralRemoteStore);
                 centralRemoteStore.registerRemoteStore(distRemoteStore);
-            } else {
+            } else if (distRemoteStore == null) {
                 distRemoteStore = centralRemoteStore;
             }
         }
