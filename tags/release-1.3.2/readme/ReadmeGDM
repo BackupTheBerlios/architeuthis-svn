@@ -1,0 +1,10 @@
+Um den Architeuthis Operative als Background-Programm vom GDM zu starten, 
+muß ein Befehl in /etc/X11/gdm/gdm.conf eingetragen werden.
+
+BackgroundProgram=PATH-TO/background-prgs.sh
+
+In background-prgs.sh muss noch das korrekte Installationsverzeichnis des
+Architeuthis Operatives eingetragen werden und eventuell müssen weitere 
+Programme angegeben werden.
+
+Dann fehlt nur noch, dass background-prgs.sh ausführbar ist.
