@@ -11,7 +11,7 @@ call setup.bat
 
 set POLICY_CONF=operative.pol
 set CLASSLOADER_SPI=de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi
-set LOGGING_CONF=operativeLogging.properties
+set LOGGING_CONF=logging.properties
 
 REM die Parameter für die JVM
 set JVMPAR= 
