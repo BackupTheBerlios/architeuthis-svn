@@ -1,7 +1,7 @@
 /*
  * file:        RuntimeComparison.java
  * created:     <???>
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 10.02.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -119,7 +119,7 @@ public class RuntimeComparison {
      * Berechnet das Problem lokal. Dafür wird ein Teilproblem generiert und
      * dieses berechnet.
      *
-     * @return Serializable  die Lösung des Problems
+     * @return Serializable  Die Lösung des Problems.
      *
      * @throws ClassNotFoundException   Class-Datei konnte nicht vom Webserver
      *                                  geladen werden.
@@ -131,11 +131,10 @@ public class RuntimeComparison {
      *                                  aufgetreten.
      */
     private static Serializable computeLocal()
-        throws
-    ClassNotFoundException,
-    InstantiationException,
-    IllegalAccessException,
-    ProblemComputeException {
+        throws ClassNotFoundException,
+               InstantiationException,
+               IllegalAccessException,
+               ProblemComputeException {
 
         Class pc = null;
         ProblemComputation problemComputation;
@@ -156,7 +155,7 @@ public class RuntimeComparison {
     }
 
     /**
-     * übergibt dem
+     * Übergibt dem
      * {@link de.unistuttgart.architeuthis.systeminterfaces.ProblemTransmitter} das
      * <code>Problem</code> und berechnet es auf dem <code>ProblemManager</code>
      * parallel. Dabei wird dem
@@ -164,25 +163,26 @@ public class RuntimeComparison {
      * Adresse des Webservers auf dem das Problem liegt, der Name des Problems und
      * die Adresse des <code>ComputeSystems</code> übergeben.
      *
-     * @return Serializable die Lösung des Problems
-     * @throws MalformedURLException  URL der Registry oder des Webservers sind
-     *                                falsch.
-     * @throws RemoteException  Kommunikationsprobleme über RMI
-     * @throws NotBoundException  Verzeichnis wurde auf Registry nicht gefunden
-     * @throws ClassNotFoundException  Class-Datei konnte nicht vom Webserver
-     *                                 geladen werden.
+     * @return Serializable  Die Lösung des Problems.
+     *
+     * @throws MalformedURLException    URL der Registry oder des Webservers ist
+     *                                  falsch.
+     * @throws RemoteException          Kommunikationsprobleme über RMI.
+     * @throws NotBoundException        Verzeichnis wurde auf Registry nicht
+     *                                  gefunden.
+     * @throws ClassNotFoundException   Class-Datei konnte nicht vom Webserver
+     *                                  geladen werden.
      * @throws ProblemComputeException  Fehler bei der Berechnung auf dem
      *                                  Compute-System ist aufgetreten.
      */
     private static Serializable computeRemote()
-        throws
-    ClassNotFoundException,
-    InstantiationException,
-    IllegalAccessException,
-    MalformedURLException,
-    RemoteException,
-    NotBoundException,
-    ProblemComputeException {
+        throws ClassNotFoundException,
+               InstantiationException,
+               IllegalAccessException,
+               MalformedURLException,
+               RemoteException,
+               NotBoundException,
+               ProblemComputeException {
 
         URL[] urls = new URL[1];
         Class pc = null;
@@ -200,15 +200,15 @@ public class RuntimeComparison {
         problemComputation = new ProblemComputation(debugMode);
         urls[0] = url;
         solution =  problemComputation.transmitProblem(problem, adressCompSys,
-                urls);
+                                                       urls);
         finalProblemStat = problemComputation.getFinalProblemStat();
         return solution;
 
-//		ProblemTransmitterImpl transmit =
-//		new ProblemTransmitterImpl(adressCompSys, debugMode);
-//		solution = transmit.transmitProblem(url, problemName, null);
-//		finalProblemStat = transmit.getFinalProblemStat();
-//		return solution;
+//        ProblemTransmitterImpl transmit =
+//            new ProblemTransmitterImpl(adressCompSys, debugMode);
+//        solution = transmit.transmitProblem(url, problemName, null);
+//        finalProblemStat = transmit.getFinalProblemStat();
+//        return solution;
     }
 
     /**
@@ -246,28 +246,29 @@ public class RuntimeComparison {
      *              Klassennamen der Implementation des Interfaces
      *              <code>Problem</code>, sowie den Dateinamen für die Lösung
      *              enthalten
-     * @throws NotBoundException  Verzeichnis wurde auf Registry nicht gefunden.
-     * @throws IOException
-     * @throws RemoteException  Kommunikationsprobleme über RMI.
-     * @throws ClassNotFoundException  Class-Datei konnte nicht vom Webserver
-     *                                 geladen werden.
-     * @throws InstantiationException  Fehler beim casten von Klasse ins
-     *                                 Interface <code>Problem</code>.
-     * @throws IllegalAccessException  Fehler beim casten von Klasse ins
-     *                                 Interface <code>Problem</code>.
+     *
+     * @throws NotBoundException        Verzeichnis wurde auf Registry nicht
+     *                                  gefunden.
+     * @throws IOException              Fehler bei Ein- oder Ausgabe.
+     * @throws RemoteException          Kommunikationsprobleme über RMI.
+     * @throws ClassNotFoundException   Class-Datei konnte nicht vom Webserver
+     *                                  geladen werden.
+     * @throws InstantiationException   Fehler beim casten von Klasse ins
+     *                                  Interface <code>Problem</code>.
+     * @throws IllegalAccessException   Fehler beim casten von Klasse ins
+     *                                  Interface <code>Problem</code>.
      * @throws ProblemComputeException  Fehler bei der Berechnung auf dem
      *                                  Compute-System ist aufgetreten.
-     * @throws IOException  Lösung konnte nicht geschrieben werden.
+     * @throws IOException              Lösung konnte nicht geschrieben werden.
      */
     public static void main(String[] args)
-        throws
-    NotBoundException,
-    IOException,
-    RemoteException,
-    ClassNotFoundException,
-    InstantiationException,
-    IllegalAccessException,
-    ProblemComputeException {
+        throws NotBoundException,
+               IOException,
+               RemoteException,
+               ClassNotFoundException,
+               InstantiationException,
+               IllegalAccessException,
+               ProblemComputeException {
 
         ParameterParser parser = new ParameterParser();
 
@@ -294,7 +295,6 @@ public class RuntimeComparison {
         Option debugSwitch = new Option("d");
         parser.addOption(debugSwitch);
 
-
         Exception exception = null;
         Serializable solutionLocal = null;
         Serializable solutionRemote = null;
@@ -303,7 +303,6 @@ public class RuntimeComparison {
         String filenameRemote = null;
         double timeLocal;
         double timeRemote;
-
 
         try {
             parser.parseAll(args);
@@ -322,7 +321,6 @@ public class RuntimeComparison {
                 usage();
             }
 
-
             adressCompSys = parser.getParameter(remoteComputeOption);
 
             // Wenn beim ProblemManager kein Port angegeben ist, den
@@ -331,8 +329,8 @@ public class RuntimeComparison {
                 adressCompSys += ":" + ProblemManager.PORT_NO;
             }
 
-
             problemName = parser.getParameter(problemNameOption);
+
             // optionaler Parameter
             if (parser.isEnabled(fileNameOption)) {
                 filename = parser.getParameter(fileNameOption);
@@ -427,6 +425,6 @@ public class RuntimeComparison {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-
     }
 }
+
