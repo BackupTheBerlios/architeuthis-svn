@@ -32,7 +32,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment;
+package de.unistuttgart.architeuthis.user;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -43,10 +43,10 @@ import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.server.RMIClassLoader;
 
-import de.unistuttgart.architeuthis.misc.CommandLineParser;
 import de.unistuttgart.architeuthis.misc.Miscellaneous;
-import de.unistuttgart.architeuthis.user.ProblemComputation;
-import de.unistuttgart.architeuthis.user.ProblemTransmitterImpl;
+import de.unistuttgart.architeuthis.misc.commandline.Option;
+import de.unistuttgart.architeuthis.misc.commandline.ParameterParser;
+import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 import de.unistuttgart.architeuthis.userinterfaces.exec.ProblemStatistics;
@@ -81,7 +81,7 @@ public class RuntimeComparison {
      * <ul>
      * <li>Implementierung des Interfaces {@link Problem}</li>
      * <li>Implementierung des Interfaces {@link PartialProblem}</li>
-     * <li>Implementierung des Interfaces 
+     * <li>Implementierung des Interfaces
      * {@link de.unistuttgart.architeuthis.systeminterfaces.PartialSolution}</li>
      * </ul>
      * Zum Beispiel:
@@ -92,7 +92,7 @@ public class RuntimeComparison {
     /**
      * Der vollständige Name inklusive der packages der Java Datei, die das
      * Interface {@link Problem} implementiert.
-     * Zum Beispiel: 
+     * Zum Beispiel:
      * de.unistuttgart.architeuthis.testenvironment.problem.ProblemImpl
      */
     private static String problemName;
@@ -118,9 +118,6 @@ public class RuntimeComparison {
      * Berechnet das Problem lokal. Dafür wird ein Teilproblem generiert und
      * dieses berechnet.
      *
-     * @param numberParProblems  Integer für die gewünschte Anzahl von
-     *                           Teilproblemen
-     *
      * @return Serializable  die Lösung des Problems
      *
      * @throws ClassNotFoundException   Class-Datei konnte nicht vom Webserver
@@ -134,10 +131,10 @@ public class RuntimeComparison {
      */
     private static Serializable computeLocal()
         throws
-            ClassNotFoundException,
-            InstantiationException,
-            IllegalAccessException,
-            ProblemComputeException {
+    ClassNotFoundException,
+    InstantiationException,
+    IllegalAccessException,
+    ProblemComputeException {
 
         Class pc = null;
         ProblemComputation problemComputation;
@@ -178,13 +175,13 @@ public class RuntimeComparison {
      */
     private static Serializable computeRemote()
         throws
-            ClassNotFoundException,
-            InstantiationException,
-            IllegalAccessException,
-            MalformedURLException,
-            RemoteException,
-            NotBoundException,
-            ProblemComputeException {
+    ClassNotFoundException,
+    InstantiationException,
+    IllegalAccessException,
+    MalformedURLException,
+    RemoteException,
+    NotBoundException,
+    ProblemComputeException {
 
         URL[] urls = new URL[1];
         Class pc = null;
@@ -202,15 +199,15 @@ public class RuntimeComparison {
         problemComputation = new ProblemComputation(debugMode);
         urls[0] = url;
         solution =  problemComputation.transmitProblem(problem, adressCompSys,
-                                                       urls);
+                urls);
         finalProblemStat = problemComputation.getFinalProblemStat();
         return solution;
 
-//        ProblemTransmitterImpl transmit =
-//            new ProblemTransmitterImpl(adressCompSys, debugMode);
-//        solution = transmit.transmitProblem(url, problemName, null);
-//        finalProblemStat = transmit.getFinalProblemStat();
-//        return solution;
+//		ProblemTransmitterImpl transmit =
+//		new ProblemTransmitterImpl(adressCompSys, debugMode);
+//		solution = transmit.transmitProblem(url, problemName, null);
+//		finalProblemStat = transmit.getFinalProblemStat();
+//		return solution;
     }
 
     /**
@@ -218,7 +215,7 @@ public class RuntimeComparison {
      */
     private static void usage() {
         System.out.println(
-            "RuntimeComparison\n"
+                "RuntimeComparison\n"
                 + "Benutzung:\n"
                 + "RuntimeComparison -u <package url> -r <computesystem> "
                 + "-c <klassenname> -f <dateiname> [-d]\n"
@@ -240,6 +237,7 @@ public class RuntimeComparison {
     }
 
     /**
+     * @throws
      * Nachdem die Parameter vom Starten auf Korrektheit verglichen wurden, wird
      * das implementierte Problem lokal und parallel berechnet.
      *
@@ -262,15 +260,40 @@ public class RuntimeComparison {
      */
     public static void main(String[] args)
         throws
-            NotBoundException,
-            IOException,
-            RemoteException,
-            ClassNotFoundException,
-            InstantiationException,
-            IllegalAccessException,
-            ProblemComputeException {
+    NotBoundException,
+    IOException,
+    RemoteException,
+    ClassNotFoundException,
+    InstantiationException,
+    IllegalAccessException,
+    ProblemComputeException {
 
-        CommandLineParser cmdln = new CommandLineParser(args);
+        ParameterParser parser = new ParameterParser();
+
+        Option urlOption = new Option("u");
+        urlOption.setName("webserver");
+        urlOption.setOptional(false);
+        parser.addOption(urlOption);
+
+        Option remoteComputeOption = new Option("r");
+        remoteComputeOption.setName("adressCompSys");
+        remoteComputeOption.setOptional(false);
+        parser.addOption(remoteComputeOption);
+
+        Option problemNameOption = new Option("c");
+        problemNameOption.setName("problemName");
+        problemNameOption.setOptional(false);
+        parser.addOption(problemNameOption);
+
+        Option fileNameOption = new Option("f");
+        fileNameOption.setName("filename");
+        fileNameOption.setOptional(true);
+        parser.addOption(fileNameOption);
+
+        Option debugSwitch = new Option("d");
+        parser.addOption(debugSwitch);
+
+
         Exception exception = null;
         Serializable solutionLocal = null;
         Serializable solutionRemote = null;
@@ -280,112 +303,60 @@ public class RuntimeComparison {
         double timeLocal;
         double timeRemote;
 
-        // Falls der Benutzer keinen eigenen SecurityManager verwendet, muss
-        // einer gesetzt werden, da die zu übertragenden Objekte mittels eines
-        // RMIClassLoader geladen werden.
-        if (System.getSecurityManager() == null) {
-            System.setSecurityManager(new RMISecurityManager());
-        }
 
         try {
-            url = new URL(cmdln.getParameter("-u"));
-        } catch (MalformedURLException e) {
-            System.out.println("\n\nWebserver-Adresse fehlerhaft!\n\n");
-            usage();
-        } catch (IOException e) {
-            System.out.println("Parameter nicht vorhanden oder Wert hat null!");
-            usage();
-        }
+            parser.parseAll(args);
 
-        try {
-            adressCompSys = cmdln.getParameter("-r");
+            // Falls der Benutzer keinen eigenen SecurityManager verwendet, muss
+            // einer gesetzt werden, da die zu übertragenden Objekte mittels eines
+            // RMIClassLoader geladen werden.
+            if (System.getSecurityManager() == null) {
+                System.setSecurityManager(new RMISecurityManager());
+            }
+
+            try {
+                url = new URL(parser.getParameter(urlOption));
+            } catch (MalformedURLException e) {
+                System.out.println("\n\nWebserver-Adresse fehlerhaft!\n\n");
+                usage();
+            }
+
+
+            adressCompSys = parser.getParameter(remoteComputeOption);
 
             // Wenn beim ProblemManager kein Port angegeben ist, den
             // Standard-Port verwenden
             if (adressCompSys.indexOf(":") == -1) {
                 adressCompSys += ":" + ProblemManager.PORT_NO;
             }
-        } catch (IOException e) {
-            System.out.println("\n\nComputeSystem-Adresse fehlt!\n\n");
-            usage();
-        }
 
-        try {
-            problemName = cmdln.getParameter("-c");
-        } catch (IOException e) {
-            System.out.println("\n\nKlassenname fehlt!\n\n");
-            usage();
-        }
 
-        try {
-            filename = cmdln.getParameter("-f");
-            filenameLocal = filename + LOCAL_SUPPLEMENT;
-            filenameRemote = filename + REMOTE_SUPPLEMENT;
-        } catch (IOException e) {
-            // Dateiname ist optional
-        }
-
-        try {
-            debugMode = cmdln.getSwitch("-d");
-        } catch (IOException e) {
-            System.out.println("\n\nFehler bei Angabe des Debug-Modus!\n\n");
-            usage();
-        }
-
-        if (cmdln.hasUnusedParameters()) {
-            usage();
-        }
-
-        System.out.println("Berechnung lokal:");
-        timeLocal = System.currentTimeMillis();
-        try {
-            solutionLocal = computeLocal();
-            timeLocal = System.currentTimeMillis() - timeLocal;
-                System.out.println("\nErgebnis:");
-            if (filenameLocal == null) {
-                System.out.println(solutionLocal.toString());
-            } else {
-                Miscellaneous.writeSerializableToFile(solutionLocal,
-                                                      filenameLocal);
-                System.out.println("Geschrieben in Datei " + filenameLocal);
+            problemName = parser.getParameter(problemNameOption);
+            // optionaler Parameter
+            if (parser.isEnabled(fileNameOption)) {
+                filename = parser.getParameter(fileNameOption);
+                filenameLocal = filename + LOCAL_SUPPLEMENT;
+                filenameRemote = filename + REMOTE_SUPPLEMENT;
             }
-            System.out.println("Benötigte Zeit: "
-                               + (timeLocal / CHANGE_MILLISEC_TO_SEC)
-                               + " Sekunden");
-            System.out.println("\nStatistik:\n" + finalProblemStat);
-        } catch (ClassNotFoundException e) {
-            System.out.println("Klasse wurde nicht gefunden");
-            exception = e;
-        } catch (InstantiationException e) {
-            System.out.println("Objekt kann nicht instanziert werden");
-            exception = e;
-        } catch (IllegalAccessException e) {
-            System.out.println("Kein Zugriff auf computelocal erlaubt");
-            exception = e;
-        } catch (ProblemComputeException e) {
-            System.out.println(
-                "Fehler bei der Berechnung / unerlaubte Rechnung");
-            exception = e;
-        }
 
-        if (exception == null) {
-            System.out.println("\nBerechnung remote:");
-            timeRemote = System.currentTimeMillis();
+            debugMode = parser.isEnabled(debugSwitch);
+
+            System.out.println("Berechnung lokal:");
+            timeLocal = System.currentTimeMillis();
             try {
-                solutionRemote = computeRemote();
-                timeRemote = System.currentTimeMillis() - timeRemote;
+                solutionLocal = computeLocal();
+                timeLocal = System.currentTimeMillis() - timeLocal;
                 System.out.println("\nErgebnis:");
-                if (filenameRemote == null) {
-                    System.out.println(solutionRemote.toString());
+                if (filenameLocal == null) {
+                    System.out.println(solutionLocal.toString());
                 } else {
-                    Miscellaneous.writeSerializableToFile(solutionRemote,
-                                                          filenameRemote);
-                    System.out.println("Geschrieben in Datei "
-                                       + filenameRemote);
+                    Miscellaneous.writeSerializableToFile(solutionLocal,
+                            filenameLocal);
+                    System.out.println("Geschrieben in Datei " + filenameLocal);
                 }
                 System.out.println("Benötigte Zeit: "
-                                   + (timeRemote / CHANGE_MILLISEC_TO_SEC)
-                                   + " Sekunden");
+                        + (timeLocal / CHANGE_MILLISEC_TO_SEC)
+                        + " Sekunden");
                 System.out.println("\nStatistik:\n" + finalProblemStat);
             } catch (ClassNotFoundException e) {
                 System.out.println("Klasse wurde nicht gefunden");
@@ -396,26 +367,65 @@ public class RuntimeComparison {
             } catch (IllegalAccessException e) {
                 System.out.println("Kein Zugriff auf computelocal erlaubt");
                 exception = e;
-            } catch (MalformedURLException e) {
-                System.out.println("URL-Addresse fehlerhaft");
-                exception = e;
-            } catch (RemoteException e) {
-                System.out.println("Fehler beim Verbindungsaufbau mit RMI");
-                exception = e;
-            } catch (NotBoundException e) {
-                System.out.println("Fehler beim lookup in der Registry (RMI)");
-                exception = e;
             } catch (ProblemComputeException e) {
                 System.out.println(
                     "Fehler bei der Berechnung / unerlaubte Rechnung");
                 exception = e;
             }
+
+            if (exception == null) {
+                System.out.println("\nBerechnung remote:");
+                timeRemote = System.currentTimeMillis();
+                try {
+                    solutionRemote = computeRemote();
+                    timeRemote = System.currentTimeMillis() - timeRemote;
+                    System.out.println("\nErgebnis:");
+                    if (filenameRemote == null) {
+                        System.out.println(solutionRemote.toString());
+                    } else {
+                        Miscellaneous.writeSerializableToFile(solutionRemote,
+                                filenameRemote);
+                        System.out.println("Geschrieben in Datei "
+                                + filenameRemote);
+                    }
+                    System.out.println("Benötigte Zeit: "
+                            + (timeRemote / CHANGE_MILLISEC_TO_SEC)
+                            + " Sekunden");
+                    System.out.println("\nStatistik:\n" + finalProblemStat);
+                } catch (ClassNotFoundException e) {
+                    System.out.println("Klasse wurde nicht gefunden");
+                    exception = e;
+                } catch (InstantiationException e) {
+                    System.out.println("Objekt kann nicht instanziert werden");
+                    exception = e;
+                } catch (IllegalAccessException e) {
+                    System.out.println("Kein Zugriff auf computelocal erlaubt");
+                    exception = e;
+                } catch (MalformedURLException e) {
+                    System.out.println("URL-Addresse fehlerhaft");
+                    exception = e;
+                } catch (RemoteException e) {
+                    System.out.println("Fehler beim Verbindungsaufbau mit RMI");
+                    exception = e;
+                } catch (NotBoundException e) {
+                    System.out.println("Fehler beim lookup in der Registry (RMI)");
+                    exception = e;
+                } catch (ProblemComputeException e) {
+                    System.out.println(
+                        "Fehler bei der Berechnung / unerlaubte Rechnung");
+                    exception = e;
+                }
+            }
+
+            if (exception != null) {
+                if (debugMode) {
+                    exception.printStackTrace();
+                }
+            }
+        } catch (ParameterParserException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
         }
 
-        if (exception != null) {
-            if (debugMode) {
-                exception.printStackTrace();
-            }
-        }
     }
 }
