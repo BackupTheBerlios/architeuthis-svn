@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSetImpl.java
  * created:     08.02.2005
- * last change: 01.04.2005 by Dietmar Lippold
+ * last change: 05.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -37,7 +37,7 @@ import java.util.Iterator;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.AbstractRemoteStore;
+import de.unistuttgart.architeuthis.remotestore.AbstractRelayStore;
 
 /**
  * Diese Klasse vermittelt zwischen Instanzen von Klassen, die
@@ -45,7 +45,7 @@ import de.unistuttgart.architeuthis.remotestore.AbstractRemoteStore;
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
-public class RelayHashSetImpl extends AbstractRemoteStore implements RelayHashSet {
+public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet {
 
     /**
      * Generierte <code>serialVersionUID</code>.

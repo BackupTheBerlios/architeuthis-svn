@@ -38,16 +38,18 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 
 /**
- * Diese Klasse implementiert die Register- und Unregister-Funktionalität
- * für einen RemoteStore.<P>
+ * Diese Klasse implementiert die allgemeine Funktionalität eines RelayStore,
+ * d.h. die Methoden zur Register- und Unregister-Funktionalität und die
+ * Verwaltung der registrierten RemoteStores.<P>
  *
- * Beide Methoden werden in einem Operative verwendet, um dezentrale Speicher
- * am zentralen Speicher an- und abzumelden.
+ * Beide Register- und Unregister-Methoden werden in einem Operative
+ * verwendet, um dezentrale Speicher am zentralen Speicher an- und abzumelden.
  *
  * @author Michael Wohlfart
  */
-public abstract class AbstractRemoteStore extends UnicastRemoteObject
-                                          implements RemoteStore {
+public abstract class AbstractRelayStore extends UnicastRemoteObject
+                                         implements RemoteStore {
+
     /**
      * Konstruktor.
      *

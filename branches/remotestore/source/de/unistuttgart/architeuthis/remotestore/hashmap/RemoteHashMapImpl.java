@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapImpl.java
  * created:     08.02.2005
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 05.04.2005 by Michael Wohlfart
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -34,7 +34,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import de.unistuttgart.architeuthis.remotestore.AbstractRemoteStore;
+import de.unistuttgart.architeuthis.remotestore.AbstractRelayStore;
 
 /**
  * Diese Klasse implementiert das RemoteStore Interface als HashMap
@@ -61,7 +61,7 @@ import de.unistuttgart.architeuthis.remotestore.AbstractRemoteStore;
  * @author Michael Wohlfart
  *
  */
-public class RemoteHashMapImpl extends AbstractRemoteStore implements RemoteHashMap {
+public class RemoteHashMapImpl extends AbstractRelayStore implements RemoteHashMap {
 
     /**
      * generierte <code>serialVersionUID</code>
