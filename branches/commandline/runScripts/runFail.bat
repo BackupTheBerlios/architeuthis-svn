@@ -10,9 +10,9 @@ call setup.bat
 
 REM die Parameter fuer die JVM
 set JVMPAR=
-set JVMPAR=%JVMPAR% -Djava.security.policy=%POLICYDIR%/transmitter.pol
+set JVMPAR=%JVMPAR% -Djava.security.policy=%CONFIG_DIR%/transmitter.pol
 
-REM die Parameter fuer die Anwendung
+REM die Parameter für die Anwendung
 set ARGS=
 set ARGS=%ARGS% -u %CLASSURL%
 set ARGS=%ARGS% -r %DISPATCHER_HOST%:%DISPATCHER_PORT%
@@ -23,4 +23,4 @@ set ARGS=%ARGS% -f %SOLUTIONFILE%
 REM die Main-Klasse
 set MAIN=de.unistuttgart.architeuthis.user.ProblemTransmitterApp
 
-%JAVA% -cp ../deploy/User.jar %JVMPAR% %MAIN% %ARGS%
+%JAVA% -cp %DEPLOY_DIR%/User.jar %JVMPAR% %MAIN% %ARGS%

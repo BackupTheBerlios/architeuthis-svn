@@ -5,7 +5,10 @@
 
 # Benötigte Umgebungsvariablen (JAVA, INSTALLDIR, CLASS_SERVER_PORT, CLASS_FILE_PATH)
 # werden gesetzt
-source setup.sh
+. ./setup.sh
 
-exec $JAVA -cp $INSTALLDIR/User.jar de.unistuttgart.architeuthis.user.ClassFileServer $CLASS_SERVER_PORT $CLASS_FILE_PATH
+# die Main-Klasse
+MAIN="de.unistuttgart.architeuthis.user.ClassFileServer"
+
+exec $JAVA -cp $DEPLOY_DIR/User.jar $MAIN $CLASS_SERVER_PORT $CLASS_FILE_PATH
 

@@ -10,4 +10,4 @@ call setup.bat
 REM die Main-Klasse
 set MAIN=de.unistuttgart.architeuthis.user.ClassFileServer
 
-%JAVA% -cp ../deploy/User.jar %MAIN% %CLASS_SERVER_PORT% %CLASS_FILE_PATH%
+%JAVA% -cp %DEPLOY_DIR%/User.jar %MAIN% %CLASS_SERVER_PORT% %CLASS_FILE_PATH%

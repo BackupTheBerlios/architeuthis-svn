@@ -14,12 +14,12 @@ set LOGGING_CONF=operativeLogging.properties
 
 
 set JVMPAR= 
-set JVMPAR=%JVMPAR% -Djava.security.policy=%POLICYDIR%/%POLICY_CONF%
+set JVMPAR=%JVMPAR% -Djava.security.policy=%CONFIG_DIR%/%POLICY_CONF%
 REM set JVMPAR=%JVMPAR% -Djava.rmi.server.RMIClassLoaderSpi=%CLASSLOADER_SPI%
-set JVMPAR=%JVMPAR% -Djava.util.logging.config.file=%INSTALLDIR%/%LOGGING_CONF%
+set JVMPAR=%JVMPAR% -Djava.util.logging.config.file=%CONFIG_DIR%/%LOGGING_CONF%
 
 
 REM die Main-Klasse ist
 REM   de.unistuttgart.architeuthis.operative.OperativeImpl
 REM und wird als Main-Class Attribut im jar-Manifest definiert
-%JAVA% %JVMPAR% -jar ..\deploy\Operative.jar %DISPATCHER_HOST%:%DISPATCHER_PORT% -d
+%JAVA% %JVMPAR% -jar %DEPLOY_DIR%\Operative.jar %DISPATCHER_HOST%:%DISPATCHER_PORT% -d
