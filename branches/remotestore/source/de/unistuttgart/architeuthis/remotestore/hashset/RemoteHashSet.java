@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSet.java
  * created:     08.02.2005
- * last change: 01.04.2005 by Dietmar Lippold
+ * last change: 05.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -37,7 +37,8 @@ import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 
 /**
  * Dieses Interface gibt die Methoden vor, die für einen RemoteStore zu
- * implementieren sind, der von einem Teilproblem verwendet wird.
+ * implementieren sind, der die Funktionalität eines <CODE>HashSet</CODE> hat.
+ * Er wird von einem Teilproblem verwendet.
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
