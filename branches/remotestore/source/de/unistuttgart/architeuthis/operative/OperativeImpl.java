@@ -1,12 +1,13 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 26.09.2004 by Dietmar Lippold
+ * last change: 15.02.2005 by Michael Wohlfart
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -41,6 +42,8 @@ import java.rmi.RemoteException;
 import java.rmi.RMISecurityManager;
 import java.rmi.server.UnicastRemoteObject;
 
+import de.unistuttgart.architeuthis.remotestore.RemoteStore;
+import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.systeminterfaces.ComputeManager;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.systeminterfaces.Operative;
@@ -62,6 +65,11 @@ import de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi;
 public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
     /**
+	 * generierte <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 3258412850292011572L;
+
+	/**
      * Ist die Anzahl der Versuche, Verbindung mit dem ComputeManager
      * herzustellen, um eine Lösung zurückzugeben.
      */
@@ -90,6 +98,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * Dieses Flag schaltet zusätzliche Debug-Meldungen ein.
      */
     private boolean debugMode = true;
+
+	private RemoteStore store;
 
     /**
      * Dieser Konstruktor sollte nicht benutzt werden, muss aber wegen
@@ -246,13 +256,26 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * @throws ProblemComputeException  wenn bereits ein Teilproblem berechnet
      *                                  wird
      */
-    public void fetchPartialProblem(PartialProblem parProb)
+    public void fetchPartialProblem(PartialProblem parProb,
+    		                        RemoteStore centralStore,
+    		                        RemoteStoreGenerator generator)
         throws RemoteException, ProblemComputeException {
+    	
+    	
+    	if (generator != null) {
+    		// falls generator vorhanden, einen dezentralen RemoteStore erzeugen
+    		this.store = generator.generateDistRemoteStore();
+    		// FIXME: RemoteStores hier anmelden 
+    		// TODO: RemoteStores wieder abmelden
+    	} else {
+    		this.store = centralStore; 
+    	}
 
         Miscellaneous.printDebugMessage(
             debugMode,
             "\nDebug: OperativeImpl hat Aufgabe vom ComputeManager empfangen.");
-        backgroundComputation.fetchPartialProblem(parProb);
+        
+        backgroundComputation.fetchPartialProblem(parProb, store);
     }
 
     /**

@@ -57,6 +57,10 @@ import de.unistuttgart.architeuthis.remotestore.AbstractRemoteStore;
  * Bei der Neuanmeldung eines RemoteStores müssen zunächst alle
  * Daten aus dem zentralen RemoteStore übernommen werden.
  *
+ * FIXME:<BR>
+ * RMI-Stubs müssen im build.xml compiliert werden
+ * 
+ * 
  * @author Michael Wohlfart
  *
  */

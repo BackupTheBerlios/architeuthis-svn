@@ -42,6 +42,7 @@ import de.unistuttgart.architeuthis.remotestore.AbstractRemoteStore;
  *
  * @author Michael Wohlfart
  *
+ * FIXME: RMI-Stubs müssen im build.xml compiliert werden
  */
 public class RemoteHashSetImpl extends AbstractRemoteStore implements RemoteHashSet {
 

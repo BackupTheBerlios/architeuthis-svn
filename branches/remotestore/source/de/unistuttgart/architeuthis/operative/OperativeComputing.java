@@ -1,12 +1,13 @@
 /*
  * filename:    OperativeComputing.java
  * created:     26.04.2004
- * last change: 21.06.2004 by Dietmar Lippold
+ * last change: 08.02.2005 by Michael Wohlfart
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -34,8 +35,14 @@
 
 package de.unistuttgart.architeuthis.operative;
 
+import java.rmi.RemoteException;
+
+import de.unistuttgart.architeuthis.remotestore.RemoteStore;
+import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
+import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.misc.Miscellaneous;
@@ -65,6 +72,13 @@ public class OperativeComputing extends Thread {
     private boolean debugMode = true;
 
     /**
+     * der verwendete RemoteStore, dies ist entweder ein zentraler RemoteStore
+     * oder ein dezentraler RemoteSTore oder null, falls kein RemoteStore
+     * verwendet wird
+     */
+	private RemoteStore store;
+
+    /**
      * Dieser Konstruktor sollte nicht benutzt werden, muss aber wegen
      * der Ableitung von <code>UnicastRemoteObject</code> überschrieben
      * werden.
@@ -86,7 +100,8 @@ public class OperativeComputing extends Thread {
      * @throws ProblemComputeException  wenn der Thread bereits ein Teilproblem
      *                                  berechnet.
      */
-    synchronized void fetchPartialProblem(PartialProblem parProb)
+    synchronized void fetchPartialProblem(PartialProblem parProb,
+    		                              RemoteStore store)
         throws ProblemComputeException {
 
         Miscellaneous.printDebugMessage(
@@ -94,7 +109,8 @@ public class OperativeComputing extends Thread {
             "Debug: OperativeComputing hat Aufgabe vom ComputeManager"
                 + " empfangen.");
         if (partialProblem == null) {
-            partialProblem = parProb;
+            partialProblem = parProb;           
+            this.store = store;           
             notifyAll();
         } else {
             throw new ProblemComputeException("OperativeComputing bereits"
@@ -141,7 +157,14 @@ public class OperativeComputing extends Thread {
                 Miscellaneous.printDebugMessage(
                     debugMode,
                     "Debug: Berechnung gestartet");
-                ps = partialProblem.compute();
+                
+                if (partialProblem instanceof NonCommPartialProblem) {
+                    ps = ((NonCommPartialProblem)partialProblem).compute();                	
+                } else if (partialProblem instanceof CommunicationPartialProblem ) {
+                	ps = ((CommunicationPartialProblem)partialProblem).compute(store);
+                }
+                
+                
                 Miscellaneous.printDebugMessage(
                     debugMode,
                     "Debug: Berechnung beendet");
@@ -168,7 +191,14 @@ public class OperativeComputing extends Thread {
                     "Debug: Error ist aufgetreten : " + e);
                 operativeImpl.reportException(
                     ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
-            }
+            } catch (RemoteException e) {
+                partialProblem = null;
+                Miscellaneous.printDebugMessage(
+                    debugMode,
+                    "Debug: Error ist aufgetreten : " + e);
+                operativeImpl.reportException(
+                    ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
+			}
         }
     }
 }
