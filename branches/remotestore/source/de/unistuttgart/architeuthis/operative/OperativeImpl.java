@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 30.03.2005 by Dietmar Lippold
+ * last change: 01.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -106,13 +106,13 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * Der dezentrale Speichers oder <CODE>null</CODE>, falls keiner verwendet
      * wird.
      */
-    private RemoteStore distRemoteStore;
+    private RemoteStore distRemoteStore = null;
 
     /**
      * Der zentrale Speicher oder <CODE>null</CODE>, falls keiner verwendet
      * wird.
      */
-    private RemoteStore centralRemoteStore;
+    private RemoteStore centralRemoteStore = null;
 
     /**
      * Dieser Konstruktor sollte nicht benutzt werden, muss aber wegen
@@ -270,20 +270,36 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
     /**
      * Wird vom <code>ComputeManager</code> aufgerufen, um dem Operative ein
-     * neues Teilproblem zur Berechnung zuzuweisen.
+     * neues Teilproblem zur Berechnung zuzuweisen. Wenn <CODE>generator</CODE>
+     * nicht <CODE>null</CODE> ist, wird versucht, einen dezentralen
+     * RemoteStore zu erzeugen, um diesen dem Teilproblem zu übergeben. Wenn
+     * kein dezentraler RemoteStore erzeugt werden kann oder <CODE>generator</CODE>
+     * <CODE>null</CODE> ist, wird den Teilproblem der Wert <CODE>null</CODE>
+     * übergeben. Wenn sowohl ein zentraler wie ein dezentraler RemoteStore
+     * vorhanden ist, wird zuerst der zentrale beim dezentralen und dann der
+     * dezentrale beim zentralen registiert.
      *
      * @param parProb       Neues Teilproblem für den Operative.
      * @param centralStore  Der zentrale RemoteStore.
      * @param generator     Der Generator eines lokalen RemoteStore.
      *
-     * @throws RemoteException          Bei RMI-Verbindungsproblemen.
-     * @throws ProblemComputeException  Wenn bereits ein Teilproblem berechnet
-     *                                  wird.
+     * @throws RemoteException           Bei RMI-Verbindungsproblemen.
+     * @throws ProblemComputeException   Wenn bereits ein Teilproblem berechnet
+     *                                   wird.
+     * @throws IllegalArgumentException  Der Wert von <CODE>generator</CODE>
+     *                                   ist <CODE>null</CODE>, der Wert von
+     *                                   <CODE>centralStore</CODE> ist aber
+     *                                   ungleich <CODE>null</CODE>.
      */
     public void fetchPartialProblem(PartialProblem parProb,
                                     RemoteStore centralStore,
                                     RemoteStoreGenerator generator)
         throws RemoteException, ProblemComputeException {
+
+        if ((generator == null) && (centralStore != null)) {
+            throw new IllegalArgumentException("generator ist gleich null,"
+                                               + " centralStore aber ungleich null");
+        }
 
         // Zentralen RemoteStore merken, um den distRemoteStore dort später
         // abzumelden
@@ -293,16 +309,15 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             // falls der Generator vorhanden ist, einen dezentralen RemoteStore
             // erzeugen
             distRemoteStore = generator.generateDistRemoteStore();
-            // falls der Generator keinen dezentralen RemoteStore liefert,
-            // wird der zentrale RemoteStore verwendet
-            if (distRemoteStore != null) {
-                centralRemoteStore.registerRemoteStore(distRemoteStore);
+            // Registriert die RemoteStores gegenseitig. Falls der Generator
+            // keinen dezentralen RemoteStore geliefert hat, wird der zentrale
+            // RemoteStore verwendet.
+            if ((distRemoteStore != null) && (centralRemoteStore != null)) {
                 distRemoteStore.registerRemoteStore(centralRemoteStore);
+                centralRemoteStore.registerRemoteStore(distRemoteStore);
             } else {
                 distRemoteStore = centralRemoteStore;
             }
-        } else {
-            distRemoteStore = centralRemoteStore;
         }
 
         Miscellaneous.printDebugMessage(debugMode,
