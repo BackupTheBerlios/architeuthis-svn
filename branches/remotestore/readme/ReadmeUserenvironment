@@ -1,0 +1,82 @@
+Datei          : ReadmeUserenvironment
+Letzte Änderung: 24.09.2004 durch Dietmar Lippold
+
+
+This file is part of Architeuthis.
+
+Architeuthis is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+Architeuthis is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Architeuthis; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+Funktion vom Userenvironment
+----------------------------
+
+Das Userenvironment enthält die erforderlichen Dateien zur Benutzung von
+Architeuthis, d.h. die Klassen zur Berechnung eigener Probleme und Scripte
+zur Abfrage der System-Statistik.
+
+Eigene Probleme können mittels des ProblemTransmitter an den Dispatcher zur
+verteilten parallelen Verarbeitung übergeben werden. Alternativ können sie
+auch lokal auf dem eigenen Rechner berechnet werden (derzeit noch
+sequentiell, eine parallele Berechnung steht zur Implementierung an). Dies
+ist insbesondere für eine testweise Berechnung der Probleme sinnvoll.
+
+
+Benutzung vom Userenvironment
+-----------------------------
+
+Das Distributionspaket vom Userenvironment enthält folgende Dateien:
+
+ * Readme                : Datei mit allgemeinen Hinweisen zu Architeuthis.
+ * ReadmeUserenvironment : Diese Datei mit Hinweise zur Benutzung von
+                           Architeuthis.
+ * ReadmeProblemTransmitterApp : Datei mit Hinweisen zur ausführbaren
+                                 Klasse ProblemTransmitterApp.
+ * ReadmeStatistics      : Datei mit Hinweisen zur Statistik.
+ * ReadmeClassFileServer : Datei mit Hinweisen zum ClassFileServer.
+ * User.jar              : Die Klassen zur Benutzung von Architeuthis.
+ * setup.sh              : Einstellungen zur Ausführung der Scripte zur
+                           Statistik.
+ * runConsoleSysStat.sh  : Script zur Ausgabe der Text-Statistik des
+                           Systems. Weiter Informationen stehen in der
+                           Datei ReadmeStatistics.
+ * runGuiSysStat.sh      : Script zur Ausführung der graphischen Statistik
+                           des Systems. Weiter Informationen stehen in der
+                           Datei ReadmeStatistics.
+ * runClassFileServer.sh : Script zum Starten des ClassFileServers. Weitere
+                           Informationen stehen in der Datei
+                           ReadmeClassFileServer.
+ * transmitter.pol       : Die Festlegung die Rechte, die der
+                           ProblemTransmitter auf dem Rechner hat, auf dem
+                           er läuft.
+ * statisticreader.pol   : Die Festlegung die Rechte, die die
+                           Statistik-Ausgabe auf dem Rechner hat, auf dem
+                           sie läuft.
+
+Die Benutzung von Architeuthis erfolgt (für serialisierbare Probleme)
+mittels der Klasse de.unistuttgart.architeuthis.user.ProblemComputation.
+Falls ein Problem im Ausnahmefall nicht serialisierbar sein sollte, kann
+zur verteilten Berechnung die Klasse
+de.unistuttgart.architeuthis.user.ProblemTransmitterImpl auch direkt
+verwendet werden (was allerdings umständlicher ist).
+
+Zur Berechnung von Stand-Alone Problemen, d.h. von Problemen, die
+vollständig auf dem Dispatcher und den Operatives berechnet werden können,
+ohne daß sie auf vorhandene Daten zugreifen müssen, kann die ausführbare
+Klasse de.unistuttgart.architeuthis.user.ProblemTransmitterApp verwendet
+werden. Hinweise dazu stehen in ReadmeProblemTransmitterApp.
+
+Hinweise zur Ausgabe der System-Statistik stehen in der Datei
+ReadmeStatistics.
+
