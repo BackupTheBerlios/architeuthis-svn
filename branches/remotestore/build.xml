@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!-- build-file fuer Ant zum Projekt Architeuthis                     -->
-<!-- Letzte Aenderung: 16.02.2005 durch Dietmar Lippold               -->
+<!-- Letzte Aenderung: 01.04.2005 durch Dietmar Lippold               -->
 
 <!-- Hinweise zur Benutzung werden nach Aufruf von "ant" ohne weitere -->
 <!-- Parameter ausgegeben.                                            -->
@@ -159,10 +159,12 @@
   <target name="compile">
     <mkdir dir="${build}"/>
 
-  	<!-- durch debug="true" wird bei Exceptions die Zeile im Source mit ausgegeben -->
+    <!-- Durch debug="true" wird bei Exceptions die Zeile im Source   -->
+    <!-- mit ausgegeben                                               -->
     <javac source="1.4"
            srcdir="${source}"
            destdir="${build}"
+           encoding="ISO-8859-1"
            debug="true"   
            includes="**/*.java"
         >
@@ -171,7 +173,7 @@
       </classpath>
     </javac>
 
-    <!-- zwei Implementierungen des RemoteStore -->
+    <!-- Zwei Implementierungen des RemoteStore -->
     <rmic base="${build}"
         stubversion="1.2"    	
       	debug="true"
@@ -180,7 +182,10 @@
         stubversion="1.2"
       	debug="true"
         classname="de.unistuttgart.architeuthis.remotestore.hashset.RemoteHashSetImpl"/>
-
+    <rmic base="${build}"
+        stubversion="1.2"
+      	debug="true"
+        classname="de.unistuttgart.architeuthis.remotestore.hashset.RelayHashSetImpl"/>
   </target>
 
   <!-- Erzeugung der jar-Dateien                                      -->
