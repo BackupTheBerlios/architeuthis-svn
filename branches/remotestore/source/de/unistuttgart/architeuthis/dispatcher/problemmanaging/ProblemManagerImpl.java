@@ -1,7 +1,7 @@
 /*
  * file:        ProblemManagerImpl.java
  * created:     29.06.2003
- * last change: 15.02.2005 by Michael Wohlfart
+ * last change: 06.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@t-online.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -47,6 +47,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import de.unistuttgart.architeuthis.misc.util.BlockingBuffer;
 import de.unistuttgart.architeuthis.dispatcher.computemanaging.ComputeManagerImpl;
 import de.unistuttgart.architeuthis.dispatcher.statistic.SystemStatisticsCollector;
 import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
@@ -127,18 +128,18 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
     /**
      * Dieser Constructor wird vom {@link ComputeManagerImpl} aufgerufen.
      *
-     * @param computeManager  Referenz auf aufrufenden ComputeManager
-     * @param systemStatisticsCollector Statistik Collector
-     * @throws RemoteException  falls es zu Fehlern bei der RMI-Kommunikation
+     * @param computeManager    Referenz auf aufrufenden ComputeManager.
+     * @param sysStatCollector  Statistik Collector.
+     *
+     * @throws RemoteException  Falls es zu Fehlern bei der RMI-Kommunikation
      *                          kommt.
      */
-    public ProblemManagerImpl(
-            ComputeManagerImpl computeManager,
-            SystemStatisticsCollector systemStatisticsCollector)
+    public ProblemManagerImpl(ComputeManagerImpl computeManager,
+                              SystemStatisticsCollector sysStatCollector)
         throws RemoteException {
 
         cmpManager = computeManager;
-        systemStatistic = systemStatisticsCollector;
+        systemStatistic = sysStatCollector;
         parProbWrapperBuffer = new BlockingBuffer(BLOCKING_BUFFER_SIZE);
         partialProblemCollectorThread =
             new PartialProblemCollector(this, parProbWrapperBuffer);
@@ -263,6 +264,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
      * Gesamtlösung ermittelt wurde, aus der Verwaltung.
      *
      * @param probWrapper  ProblemWrapper vom zu entfernenden Problem.
+     *
      * @return  Den <code>ProblemTransmitter</code>, der das Problem, das
      *          entfernt wurde, übertragen hat.
      */
@@ -286,7 +288,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
 
         if (removedTransmitter != null) {
             log.info("Breche für " + probWrapper.toString()
-                    + " alle Teilprobleme ab");
+                     + " alle Teilprobleme ab");
 
             // Alle noch in Berechnung befindlichen Teilprobleme abbrechen.
             abortAllPartialProblems(parProbWrapper);
@@ -320,7 +322,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
      * Liefert den nächsten Teilproblem-Wrapper ({@link ParProbWrapper}) aus
      * dem Puffer der zur Berechnung stehenden Teilprobleme.
      *
-     * @return Wrapper für das Teilproblem
+     * @return  Wrapper für das Teilproblem.
      */
     public ParProbWrapper getParProbWrapper() {
         ParProbWrapper partProbWrap =
@@ -336,9 +338,8 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
      * @param partProbWrap  Wrapper des zur Teillösung gehörenden Teilproblems
      *                      ({@link ParProbWrapper})
      */
-    public void collectPartialSolution(
-            PartialSolution partSol,
-            ParProbWrapper partProbWrap) {
+    public void collectPartialSolution(PartialSolution partSol,
+                                       ParProbWrapper partProbWrap) {
 
         ProblemWrapper probWrap;
 
@@ -361,10 +362,9 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
      * @param messageID     Code der Nachricht.
      * @param message       Nachrichtentext.
      */
-    private void sendMessage(
-            ProblemTransmitter transmitter,
-            int messageID,
-            String message) {
+    private void sendMessage(ProblemTransmitter transmitter,
+                             int messageID,
+                             String message) {
 
         try {
             log.info(
@@ -412,9 +412,9 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
      *                          beschreiben.
      */
     public void reportException(ProblemWrapper problemWrapper,
-            ParProbWrapper parProbWrapper,
-            int exceptionCode,
-            String exceptionMessage) {
+                                ParProbWrapper parProbWrapper,
+                                int exceptionCode,
+                                String exceptionMessage) {
 
         ProblemWrapper probWrap = null;
         ProblemTransmitter transmitter = null;
@@ -653,6 +653,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
      *
      * @param transmitter  ProblemTransmitter, zu dem der ProblemWrapper
      *                     ermittelt werden soll.
+     *
      * @return  ProblemWrapper des Problem-Übermittlers, der das Teilproblem
      *          übermittelt hat, oder <code>null</code>, wenn dieser nicht
      *          gespeichert ist.
@@ -740,12 +741,11 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
      * @throws ProblemComputeException  Wenn nicht genung Compute-System-Resourcen
      *                                  vorhanden sind.
      */
-    public synchronized void loadProblem(
-            ProblemTransmitter transmitter,
-            URL url,
-            String className,
-            Object[] problemParameters,
-            RemoteStoreGenerator generator)
+    public synchronized void loadProblem(ProblemTransmitter transmitter,
+                                         URL url,
+                                         String className,
+                                         Object[] problemParameters,
+                                         RemoteStoreGenerator generator)
         throws RemoteException, ClassNotFoundException, ProblemComputeException {
 
         if (terminated) {
@@ -833,10 +833,9 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
      * @see  SerializableProblem
      * @see  PartialProblem
      */
-    public synchronized void receiveProblem(
-            ProblemTransmitter transmitter,
-            SerializableProblem problem,
-            RemoteStoreGenerator generator)
+    public synchronized void receiveProblem(ProblemTransmitter transmitter,
+                                            SerializableProblem problem,
+                                            RemoteStoreGenerator generator)
         throws RemoteException, ProblemComputeException {
 
         if (terminated) {
@@ -903,7 +902,8 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
     /**
      * Liefert einen Schnappschuß der allgemeinen Compute-System-Statistik.
      *
-     * @return allgemeine Statistik über den Zustand des Compute-Systems.
+     * @return  Allgemeine Statistik über den Zustand des Compute-Systems.
+     *
      * @throws RemoteException  RMI RemoteException wird bei Netzproblemen
      *                          geworfen.
      */
@@ -911,3 +911,4 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
         return systemStatistic.getSnapshot();
     }
 }
+

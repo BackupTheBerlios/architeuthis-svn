@@ -1,7 +1,7 @@
 /*
  * file:        Transmitter.java
  * created:     05.04.2005
- * last change: 05.04.2005 by Dietmar Lippold
+ * last change: 06.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.dispatcher.problemmanaging.BlockingBuffer;
+import de.unistuttgart.architeuthis.misc.util.BlockingBuffer;
 
 /**
  * Realisiert einen <CODE>Thread</CODE>, der für einen dezentralen RemoteStore

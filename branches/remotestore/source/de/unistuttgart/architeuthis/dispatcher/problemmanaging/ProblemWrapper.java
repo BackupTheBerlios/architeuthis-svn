@@ -1,7 +1,7 @@
 /*
  * file:        ProblemWrapper.java
  * created:     29.06.2003
- * last change: 15.03.2005 by Michael Wohlfart
+ * last change: 06.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -42,20 +42,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import de
-    .unistuttgart
-    .architeuthis
-    .dispatcher
-    .statistic
-    .SystemStatisticsCollector;
-import de
-    .unistuttgart
-    .architeuthis
-    .dispatcher
-    .statistic
-    .ProblemStatisticsCollector;
 import de.unistuttgart.architeuthis.misc.Numerator;
+import de.unistuttgart.architeuthis.misc.util.BlockingBuffer;
 import de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi;
+import de.unistuttgart.architeuthis.dispatcher.statistic.SystemStatisticsCollector;
+import de.unistuttgart.architeuthis.dispatcher.statistic.ProblemStatisticsCollector;
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
@@ -110,17 +101,15 @@ public class ProblemWrapper extends Thread {
     private Problem problem;
 
     /**
-     * zentrales Speicherobjekt für dieses Problem
+     * Zentrales Speicherobjekt für dieses Problem.
      */
     private RemoteStore centralRemoteStore = null;
 
     /**
-     * RemoteStoreGenerator für dieses Problem, mit dem
-     * der centralRemoteStore erzeugt wurde
-     *
+     * RemoteStoreGenerator für dieses Problem, mit dem der
+     * <CODE>centralRemoteStore</CODE> erzeugt wurde.
      */
     private RemoteStoreGenerator remoteStoreGenerator = null;
-
 
     /**
      * Signalisiert dem Thread, sich zu beenden.
@@ -159,16 +148,15 @@ public class ProblemWrapper extends Thread {
      * aufgerufen und setzt eine Referenz auf das zu verwaltende Problem sowie
      * die System-Statistik.
      *
-     * @param probMan       zentraler Problem-Manager
-     * @param prob          zu verwaltendes Problem
-     * @param sysStatistic  Statistik des ComputeSystems
-     * @param generator     RemoteStore Generator
+     * @param probMan       Zentraler Problem-Manager.
+     * @param prob          Zu verwaltendes Problem.
+     * @param sysStatistic  Statistik des ComputeSystems.
+     * @param generator     RemoteStore Generator.
      */
-    ProblemWrapper(
-        ProblemManagerImpl probMan,
-        Problem prob,
-        RemoteStoreGenerator generator,
-        SystemStatisticsCollector sysStatistic) {
+    ProblemWrapper(ProblemManagerImpl probMan,
+                   Problem prob,
+                   RemoteStoreGenerator generator,
+                   SystemStatisticsCollector sysStatistic) {
 
         super();
         problem = prob;
@@ -245,14 +233,12 @@ public class ProblemWrapper extends Thread {
      * Übergibt eine berechnete Teillösung und den Wrapper des zugehörigen
      * Teilproblems.
      *
-     * @param parProbWrap  der Wrappes dss zur Teillösung gehörenden brechneten
-     *                     Teilproblem
-     * @param parSol   die berechnete Teillösung
+     * @param parProbWrap  Der Wrapper des zur Teillösung gehörenden
+     *                     brechneten Teilproblem.
+     * @param parSol       Die berechnete Teillösung.
      */
-    void collectPartialSolution(
-        ParProbWrapper parProbWrap,
-        PartialSolution parSol) {
-
+    void collectPartialSolution(ParProbWrapper parProbWrap,
+                                PartialSolution parSol) {
         PartialSolutionParProbWrapper parProbWrapSolPair;
 
         synchronized (parProbSolBuffer) {
@@ -281,7 +267,8 @@ public class ProblemWrapper extends Thread {
      * noch in Berechnung sind, berechnet worden sind. Wenn sich kein
      * Teilproblem in Berechnung befindet, wird der Wert Null geliefert.
      * 
-     * @return geschätzte Zeit
+     * @return  Die geschätzte Zeit, bis alle in Berechnung befindlichen
+     *          Teilprobleme berechnet sind.
      */
     long estimatedComputationTime() {
         return problemStatistic.estimatedComputationTime(parProbWrapBuffer.size());
@@ -576,3 +563,4 @@ public class ProblemWrapper extends Thread {
         return remoteStoreGenerator;
     }
 }
+
