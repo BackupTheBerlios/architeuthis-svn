@@ -62,7 +62,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
  *
  * @author Jürgen Heit, Andreas Heydlauff, Dietmar Lippold
  */
-public class ProblemWrapper extends Thread {
+class ProblemWrapper extends Thread {
 
     /**
      * Ein Zähler für die Anzahl der erzeugten Instanzen diesert Klasse.
@@ -180,11 +180,29 @@ public class ProblemWrapper extends Thread {
     }
 
     /**
+     * Liefert den zentralen RemoteStore zum gespeicherten Problem.
+     *
+     * @return  Den im Konstruktor erzeugten zentralen RemoteStore.
+     */
+    RemoteStore getCentralRemoteStore() {
+        return centralRemoteStore;
+    }
+
+    /**
+     * Liefert den RemoteStoreGenerator zum gespeicherten Problem.
+     *
+     * @return  Den für diese Problem verwendeten RemoteStoreGenerator.
+     */
+    RemoteStoreGenerator getRemoteStoreGenerator() {
+        return remoteStoreGenerator;
+    }
+
+    /**
      * Liefert eine neue Liste mit den Wrappern aller in Bearbeitung
      * befindlichen und ausgelieferten Teilprobleme des Problems dieser
      * Instanz.
      *
-     * @return  alle ausgelieferten in Bearbeitung befindlichen Teilproblem.
+     * @return  Alle ausgelieferten in Bearbeitung befindlichen Teilproblem.
      */
     List getAllDeliveredParProbWrapper() {
         List parProbWrapper = new LinkedList();
@@ -266,7 +284,7 @@ public class ProblemWrapper extends Thread {
      * Liefert die voraussichtliche Zeit bis alle Teilprobleme, die derzeit
      * noch in Berechnung sind, berechnet worden sind. Wenn sich kein
      * Teilproblem in Berechnung befindet, wird der Wert Null geliefert.
-     * 
+     *
      * @return  Die geschätzte Zeit, bis alle in Berechnung befindlichen
      *          Teilprobleme berechnet sind.
      */
@@ -279,6 +297,10 @@ public class ProblemWrapper extends Thread {
      * berechneten Teilprobleme des Problems zur Dauer der Existenz des
      * Problems. Wenn das Probem erst 0 ms existiert, wird der Wert Null
      * geliefert.
+     *
+     * @return  Das Verhältnis der gesamten Berechnungszeit aller fertig
+     *          berechneten Teilprobleme des Problems zur Dauer der Existenz
+     *          des Problems.
      */
     float computationRatio() {
         ProblemStatistics snapshot = problemStatistic.getSnapshot();
@@ -347,6 +369,8 @@ public class ProblemWrapper extends Thread {
      * Liefert die maximale Anzahl von Teilproblemen, die ausgegeben werden
      * dürfen, von denen noch keine Teillösung geliefert wurde.
      *
+     * @param sysStat  Die Systemstatistik.
+     *
      * @return  die maximal zulässige Anzahl von ausstehenden Teilproblemen
      */
     private long parProbsOutLimit(SystemStatistics sysStat) {
@@ -360,6 +384,8 @@ public class ProblemWrapper extends Thread {
      * und der Anzahl der momentan zu bearbeitenden Probleme. Die Anzahl ist
      * größer oder gleich Eins und kleiner oder gleich der Anzahl momentan
      * angemeldeter Operatives.
+     *
+     * @param sysStat  Die Systemstatistik.
      *
      * @return  die vorgeschagene Anzahl von zu erzeugenden Teilproblemen
      */
@@ -523,7 +549,7 @@ public class ProblemWrapper extends Thread {
 
         // warten, bis der ClassLoader nicht mehr gebraucht wird
         synchronized (this) {
-            while (! classLoaderUnblocked) {
+            while (!classLoaderUnblocked) {
                 try {
                     this.wait();
                 } catch (InterruptedException e) {
@@ -545,22 +571,6 @@ public class ProblemWrapper extends Thread {
      */
     public String toString() {
         return "Problem " + problemId;
-    }
-
-    /**
-     * @return liefert den im Konstruktor erzeugten centralRemoteStore
-     *         zurück.
-     */
-    public RemoteStore getCentralRemoteStore() {
-        return centralRemoteStore;
-    }
-
-    /**
-     * @return liefert den für diese Problem verwendeten RemoteStoreGenerator
-     *         zurück.
-     */
-    public RemoteStoreGenerator getRemoteStoreGenerator() {
-        return remoteStoreGenerator;
     }
 }
 

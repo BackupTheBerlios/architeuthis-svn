@@ -57,7 +57,6 @@ import de
     .dispatcher
     .problemmanaging
     .ProblemManagerImpl;
-import de.unistuttgart.architeuthis.dispatcher.problemmanaging.ProblemWrapper;
 import de
     .unistuttgart
     .architeuthis
@@ -409,15 +408,16 @@ public final class ComputeManagerImpl
      * Teilproblem oder beim Operative lag und je nachdem wird entweder das
      * Teilproblem oder der Operative entfernt.
      *
-     * @param partProbInfoObj   InfoObjekt des Teilproblemes
-     * @param operativeInfoObj  InfoObjekt des Operatives
-     * @return  <code>true</code>, wenn das Teilproblem dem Operative übergeben
-     *          werden konnte, anderenfalls <code>false</code>.
+     * @param partProbInfoObj   InfoObjekt des Teilproblems.
+     * @param operativeInfoObj  InfoObjekt des Operatives.
+     *
+     * @return  <code>true</code>, wenn das Teilproblem dem Operative
+     *          übergeben werden konnte, anderenfalls <code>false</code>.
      */
-    private boolean sendPartialProblemToOperative(
-        InfoParProbWrapper partProbInfoObj,
-        InfoOperative operativeInfoObj) {
-
+    private boolean sendPartialProblemToOperative(InfoParProbWrapper partProbInfoObj,
+                                                  InfoOperative operativeInfoObj) {
+        RemoteStoreGenerator generator;
+        RemoteStore centralRemoteStore;
         String exceptionMessage = null;
         boolean transmitted = false;
 
@@ -434,19 +434,10 @@ public final class ComputeManagerImpl
                         log.fine("Versuche Teilproblem an "
                                  + operativeInfoObj + " zu senden");
 
-                        // der zentrale remoteStore und remoteStoreGenerator
-                        // sitzt im ProblemWrapper:
-                        ProblemWrapper probWrap = parProbWrap.getCreatingWrapper();
-
-                        log.fine("Problem Wrapper erhalten!");
-
-                        // hier muss vermutlich ein RMI-lookup her !!!
-                        RemoteStore centralRemoteStore = probWrap.getCentralRemoteStore();
-
+                        centralRemoteStore = parProbWrap.getCentralRemoteStore();
                         log.fine("RemoteStore erhalten!");
 
-                        RemoteStoreGenerator generator = probWrap.getRemoteStoreGenerator();
-
+                        generator = parProbWrap.getRemoteStoreGenerator();
                         log.fine("RemoteStoreGenerator erhalten!");
 
                         operative.fetchPartialProblem(parProbWrap.getPartialProblem(),
