@@ -144,7 +144,8 @@ public final class DispatcherImpl {
             // Option von help ermitteln
             parser.parseOption(helpSwitch);
             if (parser.isEnabled(helpSwitch)) {
-                System.out.println(parser.toString());
+                System.out.println("Benutzung:");
+                System.out.println("DispatcherImpl " + parser.toString());
             } else {
                 // Option von config-Datei ermitteln
                 parser.parseOption(configOption);
