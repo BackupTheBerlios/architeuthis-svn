@@ -1,7 +1,7 @@
 /*
  * file:        BlockingBuffer.java
  * created:     04.01.2004
- * last change: 25.05.2004 by Dietmar Lippold
+ * last change: 05.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@t-online.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -40,7 +40,7 @@ import de.unistuttgart.architeuthis.systeminterfaces.Queue;
  *
  * @author Andreas Heydlauff, Jürgen Heit, Dietmar Lippold
  */
-class BlockingBuffer implements Queue {
+public class BlockingBuffer implements Queue {
 
     /**
      * Die Schlange mit den Elementen des Puffers.
@@ -219,3 +219,4 @@ class BlockingBuffer implements Queue {
         queue.clear();
     }
 }
+
