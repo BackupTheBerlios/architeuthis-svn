@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetGenerator.java
  * created:     08.02.2005
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 01.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -26,6 +26,8 @@
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
 import java.rmi.RemoteException;
@@ -38,45 +40,51 @@ import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
  * Über ein Flag im Konstruktor kann gesteuert werden, ob ein
  * zentraler oder mehrere dezentrale Speicher verwendet werden.
  *
- * @author Michael Wohlfart
- *
+ * @author Michael Wohlfart, Dietmar Lippold
  */
 public class RemoteHashSetGenerator implements RemoteStoreGenerator {
 
     /**
-     * generierte <code>serialVersionUID</code>
+     * Generierte <code>serialVersionUID</code>.
      */
-    private static final long serialVersionUID = 3258688797494424632L;
+//    private static final long serialVersionUID = 3258688797494424632L;
 
     /**
-     * Defaulmässig wird lediglich zentraler Speicher verwendet
+     * Defaulmässig wird lediglich ein zentraler Speicher verwendet.
      */
     private boolean isCentralOnly = true;
 
     /**
-     * einfacher Konstruktor für die Defaulteinstellungen
+     * Einfacher Konstruktor für die Defaulteinstellungen.
      */
     public RemoteHashSetGenerator() {
     }
 
     /**
-     * Konstruktor
+     * Konstruktor, bei dem angegeben werden kann, ob ein verteilter
+     * Speicher verwendet werden soll.
      *
-     * @param isCentralOnly flase, wenn dezentraler Speicher verwendet
-     * werden soll
+     * @param isCentralOnly  <CODE>true</CODE>, wenn nur ein zentraler Speicher
+     *                       verwendet werden soll, anderenfalls, wenn
+     *                       dezentrale Speicher verwendet werden sollen,
+     *                       <CODE>false</CODE>.
      */
     public RemoteHashSetGenerator(boolean isCentralOnly) {
         this.isCentralOnly = isCentralOnly;
     }
 
     /**
-     * liefert den zentralen RemoteStore
+     * Liefert den zentralen RemoteStore.
      *
-     * @return a remoteStore obejct
+     * @return  Den zentralen RemoteStore.
      */
     public RemoteStore generateCentralRemoteStore() {
         try {
-            return new RemoteHashSetImpl();
+            if (isCentralOnly) {
+                return new RemoteHashSetImpl();
+            } else {
+                return new RelayHashSetImpl();
+            }
         } catch (RemoteException ex) {
             ex.printStackTrace();
             return null;
@@ -84,10 +92,10 @@ public class RemoteHashSetGenerator implements RemoteStoreGenerator {
     }
 
     /**
-     * Liefert den dezentralen RemoteStore oder null, falls
+     * Liefert den dezentralen RemoteStore oder <CODE>null</CODE>, falls
      * nur ein zentraler Speicher verwendet werden soll.
      *
-     * @return a remoteStore obejct
+     * @return  Den dezentralen RemoteStore oder <CODE>null</CODE>.
      */
     public RemoteStore generateDistRemoteStore() {
         if (isCentralOnly) {
@@ -101,5 +109,5 @@ public class RemoteHashSetGenerator implements RemoteStoreGenerator {
             }
         }
     }
-
 }
+
