@@ -1,19 +1,19 @@
 @echo off
 
-REM Startet den Problem-Transmitter und ï¿½bermittelt dem Dispatcher
-REM ein Problem zum Testen des RemoteStores
+REM Startet den Problem-Transmitter und übermittelt dem Dispatcher
+REM ein Problem zum Testen des RemoteStores.
 
 
-REM Benï¿½tigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
-REM DISPATCHER_PORT, SOLUTIONFILE, JAVA, DEPLOY_DIR) werden gesetzt
+REM Benötigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
+REM DISPATCHER_PORT, JAVA) werden gesetzt
 call setup.bat
 
 
-REM die Parameter fï¿½r die JVM
+REM die Parameter für die JVM
 set JVMPAR=
 set JVMPAR=%JVMPAR% -Djava.security.policy=%CONFIG_DIR%/transmitter.pol
 
-REM die Parameter fï¿½r die Anwendung
+REM die Parameter für die Anwendung
 set ARGS=
 set ARGS=%ARGS% %CLASSURL%
 set ARGS=%ARGS% %DISPATCHER_HOST%:%DISPATCHER_PORT%

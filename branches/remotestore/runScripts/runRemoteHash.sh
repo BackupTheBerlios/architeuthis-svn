@@ -1,19 +1,19 @@
 #!/bin/sh
 
-# Startet den Problem-Transmitter und ï¿½bermittelt dem Dispatcher
-# ein Problem zum Testen des RemoteStores
+# Startet den Problem-Transmitter und übermittelt dem Dispatcher ein
+# Problem zum Testen des RemoteStores.
 
 
-# Benï¿½tigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
-# DISPATCHER_PORT, SOLUTIONFILE, JAVA, DEPLOY_DIR) werden gesetzt
+# Benötigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
+# DISPATCHER_PORT, JAVA) werden gesetzt
 . ./setup.sh
 
 
-# die Parameter fï¿½r die JVM
+# die Parameter für die JVM
 JVMPAR=" "
 JVMPAR="$JVMPAR -Djava.security.policy=$CONFIG_DIR/transmitter.pol"
 
-# die Parameter fï¿½r die Anwendung
+# die Parameter für die Anwendung
 ARGS=" "
 ARGS="$ARGS $CLASSURL"
 ARGS="$ARGS $DISPATCHER_HOST:$DISPATCHER_PORT"
