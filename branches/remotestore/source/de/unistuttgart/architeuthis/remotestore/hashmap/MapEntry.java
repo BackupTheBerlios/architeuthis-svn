@@ -1,7 +1,7 @@
 /*
  * file:        MapEntry.java
  * created:     05.04.2005
- * last change: 05.04.2005 by Dietmar Lippold
+ * last change: 06.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -50,8 +50,8 @@ public class MapEntry {
     /**
      * Erzeugt eine neue Instanz aus einem key-Objekt und einem value-Objekt.
      *
-     * @param objectpair  Das key-Objekt.
-     * @param relayStore  Das value-Objekt.
+     * @param keyObject    Das key-Objekt.
+     * @param valueObject  Das value-Objekt.
      */
     public MapEntry(Object keyObject, Object valueObject) {
         this.keyObject = keyObject;

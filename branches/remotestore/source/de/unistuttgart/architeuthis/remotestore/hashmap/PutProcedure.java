@@ -30,7 +30,6 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashmap;
 
-import java.util.Map.Entry;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
