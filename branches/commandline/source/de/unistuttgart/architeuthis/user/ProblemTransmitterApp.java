@@ -1,12 +1,13 @@
 /*
  * file:        ProblemTransmitterApp.java
  * created:     08.08.2003
- * last change: 16.06.2004 by Dietmar Lippold
+ * last change: 18.01.2005 by Michael Wohlfart
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -43,8 +44,10 @@ import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.AccessException;
 
-import de.unistuttgart.architeuthis.misc.CommandLineParser;
 import de.unistuttgart.architeuthis.misc.Miscellaneous;
+import de.unistuttgart.architeuthis.misc.commandline.Option;
+import de.unistuttgart.architeuthis.misc.commandline.ParameterParser;
+import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
 import de.unistuttgart.architeuthis.systeminterfaces.ProblemManager;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.exec.ProblemStatistics;
@@ -95,21 +98,21 @@ public class ProblemTransmitterApp {
         SerializableProblem problem = null;
 
         if (serializableProb) {
-            try { 
+            try {
                 problemClass =
                     ClassLoader.getSystemClassLoader().loadClass(classname);
                 problem = (SerializableProblem) problemClass.newInstance();
             } catch (ClassNotFoundException e) {
                 System.out.println(
-                    "Die zentrale Problemklasse wurde nicht gefunden:"
-                    + classname);
+                        "Die zentrale Problemklasse wurde nicht gefunden:"
+                        + classname);
                 if (debugMode) {
                     e.printStackTrace();
                 }
             } catch (InstantiationException e) {
                 System.out.println(
-                    "Von der angegebenen Problemklasse konnte keine Instanz"
-                    + " erzeugt werden!");
+                        "Von der angegebenen Problemklasse konnte keine Instanz"
+                        + " erzeugt werden!");
                 if (debugMode) {
                     e.printStackTrace();
                 }
@@ -121,7 +124,7 @@ public class ProblemTransmitterApp {
                 }
             }
         }
- 
+
         try {
             if (serializableProb) {
                 return transmitter.transmitProblem(problem);
@@ -130,19 +133,19 @@ public class ProblemTransmitterApp {
             }
         } catch (ClassNotFoundException e) {
             System.out.println(
-                "Die zentrale Problemklasse wurde nicht gefunden:" + classname);
+                    "Die zentrale Problemklasse wurde nicht gefunden:" + classname);
             if (debugMode) {
                 e.printStackTrace();
             }
         } catch (ProblemComputeException e) {
             System.out.println(
-                "Fehler bei Berechnung des Problems: " + e.getMessage());
+                    "Fehler bei Berechnung des Problems: " + e.getMessage());
             if (debugMode) {
                 e.printStackTrace();
             }
         } catch (RemoteException e) {
             System.out.println(
-                "Fehler bei der Verbindung mit dem Dispatcher.");
+                    "Fehler bei der Verbindung mit dem Dispatcher.");
             if (debugMode) {
                 e.printStackTrace();
             }
@@ -157,7 +160,7 @@ public class ProblemTransmitterApp {
      */
     private static void usage(int status) {
         System.out.println(
-            "\n\nProblemUebermittler\n\n"
+                "\n\nProblemUebermittler\n\n"
                 + "Benutzung:\n"
                 + "ProblemTransmitterImpl -u <package url> -r <computesystem>"
                 + " -c <klassenname> -f <dateiname> [-d] [-n] [-p]\n\n"
@@ -191,7 +194,6 @@ public class ProblemTransmitterApp {
      * @param args  Kommandozeilenparameter, siehe <code>usage()</code>.
      */
     public static void main(String[] args) {
-        CommandLineParser parameters = new CommandLineParser(args);
         ProblemGUIStatisticsReader problemStatisticsReader = null;
         SystemGUIStatisticsReader systemStatisticReader = null;
         ProblemStatistics finalStat = null;
@@ -202,133 +204,167 @@ public class ProblemTransmitterApp {
         boolean graphicalMode = true;
         boolean onlyProblemGraphical = false;
 
+
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new RMISecurityManager());
         }
 
-        // Falls keine Parameter übergeben wurden:
-        if (args.length == 0) {
-            usage(0);
-        }
-        // Sonst: einlesen
-        try {
-            serializable = parameters.getSwitch("-s");
-            debugMode = parameters.getSwitch("-d");
-            graphicalMode = !parameters.getSwitch("-n");
-            onlyProblemGraphical = parameters.getSwitch("-p");
-            packageURL = new URL(parameters.getParameter("-u"));
-            classname = parameters.getParameter("-c");
-            filename = parameters.getParameter("-f");
-            problemManagerHost = parameters.getParameter("-r");
-        } catch (MalformedURLException e1) {
-            System.out.println("Fehler bei: -u");
-            usage(1);
-        } catch (IOException e1) {
-            System.out.println("Fehler bei: " + e1.getMessage());
-            usage(1);
-        }
-        // Falls noch unbehandelte Parameter übrig sind:
-        if (parameters.hasUnusedParameters()) {
-            System.out.println("Unbekannte Parameter übergeben!");
-            System.out.println(parameters.getUnusedParameters());
-            usage(1);
-        }
 
-        // Status ausgeben
-        Miscellaneous.printDebugMessage(
-            debugMode,
-            "\n\nStelle nun Verbindung her:\n"
-                + "URL: "
-                + packageURL
-                + "\n"
-                + "Klassenname: "
-                + classname
-                + "\n"
-                + "Computesystem: "
-                + problemManagerHost
-                + "\n"
-                + "Loesung: "
-                + filename
-                + "\n\n"
-                + "Debug-Modus ist AN\n\n");
+        ParameterParser parser = new ParameterParser();
 
-        if (serializable) {
-            // Die folgende Zeile muß gleich am Anfang stehen
-            System.setProperty("java.rmi.server.codebase", packageURL.toString());
-        }
+        // switches
+        Option serializableSwitch = new Option("s");
+        parser.addOption(serializableSwitch);
+
+        Option debugSwitch = new Option("d");
+        parser.addOption(debugSwitch);
+
+        Option noGraphicalModeSwitch = new Option("n");
+        parser.addOption(noGraphicalModeSwitch);
+
+        Option problemGraphicalSwitch = new Option("p");
+        parser.addOption(problemGraphicalSwitch);
+
+        // parameters
+        Option urlOption = new Option("u");
+        urlOption.setName("packageURL");
+        parser.addOption(urlOption);
+
+        Option classnameOption = new Option("c");
+        classnameOption.setName("classname");
+        parser.addOption(classnameOption);
+
+        Option filenameOption = new Option("f");
+        filenameOption.setName("filename");
+        parser.addOption(filenameOption);
+
+        Option problemManagerOption = new Option("r");
+        problemManagerOption.setName("problemManager");
+        parser.addOption(problemManagerOption);
+
 
         try {
-            // Erzeugung des Problem-Transmitters
-            transmitter = new ProblemTransmitterImpl(problemManagerHost,
-                                                     debugMode);
+            parser.parseAll(args);
 
-            // Die graphischen Statistik-Ausgaben starten
-            if (graphicalMode) {
-                problemStatisticsReader =
-                    new ProblemGUIStatisticsReader(transmitter, problemManagerHost,
-                                                   classname);
-                if (!onlyProblemGraphical) {
-                    systemStatisticReader =
-                        new SystemGUIStatisticsReader(problemManagerHost);
+            serializable = parser.isEnabled(serializableSwitch);
+            debugMode = parser.isEnabled(debugSwitch);
+            graphicalMode = !parser.isEnabled(noGraphicalModeSwitch);
+            onlyProblemGraphical = parser.isEnabled(problemGraphicalSwitch);
+
+            packageURL = new URL(parser.getParameter(urlOption));
+            classname = parser.getParameter(classnameOption);
+            filename = parser.getParameter(filenameOption);
+            problemManagerHost = parser.getParameter(problemManagerOption);
+
+
+            // Status ausgeben
+            Miscellaneous.printDebugMessage(
+                    debugMode,
+                    "\n\nStelle nun Verbindung her:\n"
+                    + "URL: "
+                    + packageURL
+                    + "\n"
+                    + "Klassenname: "
+                    + classname
+                    + "\n"
+                    + "Computesystem: "
+                    + problemManagerHost
+                    + "\n"
+                    + "Loesung: "
+                    + filename
+                    + "\n\n"
+                    + "Debug-Modus ist AN\n\n");
+
+            if (serializable) {
+                // Die folgende Zeile muß gleich am Anfang stehen
+                System.setProperty("java.rmi.server.codebase", packageURL.toString());
+            }
+
+            try {
+                // Erzeugung des Problem-Transmitters
+                transmitter = new ProblemTransmitterImpl(problemManagerHost,
+                        debugMode);
+
+                // Die graphischen Statistik-Ausgaben starten
+                if (graphicalMode) {
+                    problemStatisticsReader =
+                        new ProblemGUIStatisticsReader(transmitter, problemManagerHost,
+                                classname);
+                    if (!onlyProblemGraphical) {
+                        systemStatisticReader =
+                            new SystemGUIStatisticsReader(problemManagerHost);
+                    }
+                }
+            } catch (MalformedURLException e) {
+                System.out.println("Eingegebene URL fehlerhaft!");
+                if (debugMode) {
+                    e.printStackTrace();
+                }
+                System.exit(1);
+            } catch (AccessException e) {
+                System.out.println(
+                        "Der Zugriff auf den Problem-Manager war nicht erlaubt.\n"
+                        + "Vermutlich falsche policy-Datei angegeben.");
+                if (debugMode) {
+                    e.printStackTrace();
+                }
+                System.exit(1);
+            } catch (RemoteException e) {
+                System.out.println(
+                "Fehler bei der Verbindung mit dem Dispatcher.");
+                if (debugMode) {
+                    e.printStackTrace();
+                }
+                System.exit(1);
+            } catch (NotBoundException e) {
+                System.out.println(
+                "Dieser angegebene problemManagerHost existiert nicht.");
+                if (debugMode) {
+                    e.printStackTrace();
+                }
+                System.exit(1);
+            }
+
+            if (!graphicalMode) {
+                System.out.println("Beginne mit Übertragung des Problems");
+            }
+            solution = computedSolution(serializable);
+            if (solution == null) {
+                System.err.println(
+                "Fehler! Die zurückgegebene Lösung ist null");
+                System.exit(1);
+            }
+
+            Miscellaneous.printDebugMessage(
+                    debugMode,
+            "Schreibe Lösung in Datei");
+            Miscellaneous.writeSerializableToFile(solution, filename);
+            System.out.println("\nLösung erhalten und geschrieben!");
+            System.out.println("Berechnung beeendet!\n");
+
+            // Die letzte Problem-Statistik ausgeben
+            finalStat = transmitter.getFinalProblemStat();
+            if (finalStat != null) {
+                if (graphicalMode) {
+                    // außerdem Problem-Statistik-Ausgabe anhalten
+                    problemStatisticsReader.stopAndShowFinalStat(finalStat);
+                } else {
+                    System.out.println("Abschließende Statistik des Problems:\n");
+                    System.out.println(finalStat);
                 }
             }
-        } catch (MalformedURLException e) {
-            System.out.println("Eingegebene URL fehlerhaft!");
-            if (debugMode) {
-                e.printStackTrace();
-            }
-            System.exit(1);
-        } catch (AccessException e) {
-            System.out.println(
-                "Der Zugriff auf den Problem-Manager war nicht erlaubt.\n"
-                + "Vermutlich falsche policy-Datei angegeben.");
-            if (debugMode) {
-                e.printStackTrace();
-            }
-            System.exit(1);
-        } catch (RemoteException e) {
-            System.out.println(
-                "Fehler bei der Verbindung mit dem Dispatcher.");
-            if (debugMode) {
-                e.printStackTrace();
-            }
-            System.exit(1);
-        } catch (NotBoundException e) {
-            System.out.println(
-                "Dieser angegebene problemManagerHost existiert nicht.");
-            if (debugMode) {
-                e.printStackTrace();
-            }
-            System.exit(1);
+
+
+        } catch (MalformedURLException ex) {
+            System.out.println("Fehler bei: -u");
+            usage(1);
+        } catch (IOException ex) {
+            System.out.println("Fehler bei: " + ex.getMessage());
+            usage(1);
+        } catch (ParameterParserException ex) {
+            System.out.println("Fehler in der Kommandozeile: " + ex.getMessage());
+            usage(1);
         }
 
-        if (!graphicalMode) {
-            System.out.println("Beginne mit Übertragung des Problems");
-        }
-        solution = computedSolution(serializable);
-        if (solution == null) {
-            System.err.println(
-                "Fehler! Die zurückgegebene Lösung ist null");
-            System.exit(1);
-        }
-
-        Miscellaneous.printDebugMessage(
-            debugMode,
-            "Schreibe Lösung in Datei");
-        Miscellaneous.writeSerializableToFile(solution, filename);
-        System.out.println("\nLösung erhalten und geschrieben!");
-        System.out.println("Berechnung beeendet!\n");
-
-        // Die letzte Problem-Statistik ausgeben
-        finalStat = transmitter.getFinalProblemStat();
-        if (finalStat != null) {
-            if (graphicalMode) {
-                // außerdem Problem-Statistik-Ausgabe anhalten
-                problemStatisticsReader.stopAndShowFinalStat(finalStat);
-            } else {
-                System.out.println("Abschließende Statistik des Problems:\n");
-                System.out.println(finalStat);
-            }
-        }
     }
 }
