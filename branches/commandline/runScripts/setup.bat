@@ -28,11 +28,11 @@ set DISPATCHER_HOST=127.0.0.1
 REM Der Port, unter dem der Dispatcher von Architeuthis erreichbar ist
 set DISPATCHER_PORT=1854
 
-REM Der Port, unter dem der ClassFileServer läuft
-set CLASS_SERVER_PORT=1855
-
 REM Der Rechner, auf dem der Fileserver läuft
 set CLASS_SERVER_HOST=127.0.0.1
+
+REM Der Port, unter dem der ClassFileServer läuft
+set CLASS_SERVER_PORT=1855
 
 REM URL, unter dem die Problemklassen abrufbar sind
 set CLASSURL=http://%CLASS_SERVER_HOST%:%CLASS_SERVER_PORT%/

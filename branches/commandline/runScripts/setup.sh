@@ -27,11 +27,11 @@ DISPATCHER_HOST="127.0.0.1"
 # Der Port, unter dem der Dispatcher von Architeuthis erreichbar ist
 DISPATCHER_PORT="1854"
 
-# Der Port, unter dem der ClassFielServer läuft
-CLASS_SERVER_PORT="1855"
-
 # Der Rechner, auf dem der Fileserver läuft
 CLASS_SERVER_HOST="127.0.0.1"
+
+# Der Port, unter dem der ClassFielServer läuft
+CLASS_SERVER_PORT="1855"
 
 # URL, unter dem die Problemklassen abrufbar sind
 #CLASSURL=http://meinrechner:1855/
