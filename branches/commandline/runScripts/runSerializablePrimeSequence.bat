@@ -4,8 +4,8 @@ REM Startet den Problem-Transmitter und
 REM übermittelt dem Dispatcher das Primzahlbereich-Problem
 
 
-REM Benötigte Umgebungsvariablen (JAVA, INSTALLDIR, DISPATCHER_PORT)
-REM werden gesetzt
+REM Benötigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
+REM DISPATCHER_PORT, SOLUTIONFILE, JAVA) werden gesetzt
 call setup.bat
 
 

@@ -3,8 +3,8 @@
 # Startet den Problem-Transmitter und
 # übermittelt dem Dispatcher das Primzahlbereich-Problem
 
-# Benötigte Umgebungsvariablen (JAVA, INSTALLDIR, DISPATCHER_HOST, DISPATCHER_PORT, CLASSURL, SOLUTIONFILE)
-# werden gesetzt
+# Benötigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
+# DISPATCHER_PORT, SOLUTIONFILE, JAVA) werden gesetzt
 . ./setup.sh
 
 # die Parameter für die JVM
@@ -23,3 +23,4 @@ ARGS="$ARGS -f $SOLUTIONFILE"
 MAIN="de.unistuttgart.architeuthis.user.ProblemTransmitterApp"
 
 exec $JAVA -cp $DEPLOY_DIR/User.jar:$DEPLOY_DIR/Problems.jar $JVMPAR $MAIN $ARGS
+
