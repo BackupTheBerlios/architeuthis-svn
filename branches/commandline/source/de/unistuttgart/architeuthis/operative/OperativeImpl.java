@@ -375,7 +375,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         parser.addOption(debug2);
 
         StringBuffer binding = new StringBuffer();
-        boolean debug;
+        boolean debug = false;
 
         try {
             parser.parseAll(args);
