@@ -9,12 +9,12 @@
 . ./setup.sh
 
 POLICY_CONF="operative.pol"
-CLASSLOADER_SPI="de.unistuttgart.architeuthis.operative.NonCachinngRMIClSpi"
+CLASSLOADER_SPI="de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi"
 LOGGING_CONF="logging.properties"
 
 JVMPAR=" "
 JVMPAR="$JVMPAR -Djava.security.policy=$CONFIG_DIR/$POLICY_CONF"
-# set JVMPAR="$JVMPAR -Djava.rmi.server.RMIClassLoaderSpi=$CLASSLOADER_SPI"
+JVMPAR="$JVMPAR -Djava.rmi.server.RMIClassLoaderSpi=$CLASSLOADER_SPI"
 JVMPAR="$JVMPAR -Djava.util.logging.config.file=$CONFIG_DIR/$LOGGING_CONF"
 
 # die Main-Klasse ist

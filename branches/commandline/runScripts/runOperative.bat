@@ -10,13 +10,13 @@ call setup.bat
 
 
 set POLICY_CONF=operative.pol
-set CLASSLOADER_SPI=de.unistuttgart.architeuthis.operative.NonCachinngRMIClSpi
+set CLASSLOADER_SPI=de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi
 set LOGGING_CONF=operativeLogging.properties
 
 
 set JVMPAR= 
 set JVMPAR=%JVMPAR% -Djava.security.policy=%CONFIG_DIR%/%POLICY_CONF%
-REM set JVMPAR=%JVMPAR% -Djava.rmi.server.RMIClassLoaderSpi=%CLASSLOADER_SPI%
+set JVMPAR=%JVMPAR% -Djava.rmi.server.RMIClassLoaderSpi=%CLASSLOADER_SPI%
 set JVMPAR=%JVMPAR% -Djava.util.logging.config.file=%CONFIG_DIR%/%LOGGING_CONF%
 
 
