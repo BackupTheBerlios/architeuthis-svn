@@ -1,7 +1,7 @@
 /*
  * file:        DispatcherImpl.java
  * created:     18.12.20003
- * last change: 10.02.2005 by Dietmar Lippold
+ * last change: 12.02.2005 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -55,7 +55,7 @@ import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
 /**
  * Der Dispatcher startet den ComputeMananger und ProblemManager.
  *
- * @author Jürgen Heit, Andreas Heydlauff, Dietmar Lippold
+ * @author Jürgen Heit, Andreas Heydlauff, Dietmar Lippold, Michael Wohlfart
  */
 public final class DispatcherImpl {
 
@@ -117,6 +117,7 @@ public final class DispatcherImpl {
 
         Option configOption = new Option("c");
         configOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+        portOption.setName("configfile");
         parser.addOption(configOption);
 
         Option portOption = new Option("port");
