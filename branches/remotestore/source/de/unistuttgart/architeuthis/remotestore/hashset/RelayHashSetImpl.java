@@ -32,11 +32,11 @@ package de.unistuttgart.architeuthis.remotestore.hashset;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.rmi.RemoteException;
 
+import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.AbstractRemoteStore;
 
 /**
