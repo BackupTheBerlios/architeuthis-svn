@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!-- build-file fuer Ant zum Projekt Architeuthis                     -->
-<!-- Letzte Aenderung: 14.02.2005 durch Dietmar Lippold               -->
+<!-- Letzte Aenderung: 16.02.2005 durch Dietmar Lippold               -->
 
 <!-- Hinweise zur Benutzung werden nach Aufruf von "ant" ohne weitere -->
 <!-- Parameter ausgegeben.                                            -->
@@ -92,10 +92,11 @@
     	   debug="true"
            includes="de/unistuttgart/architeuthis/dispatcher/**/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/*.java,
-                     de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl.java,
-                     de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl.java,
                      de/unistuttgart/architeuthis/operative/OperativeImpl.java,
-                     de/unistuttgart/architeuthis/user/ProblemTransmitterImpl.java"
+                     de/unistuttgart/architeuthis/user/ProblemTransmitterImpl.java,
+                     de/unistuttgart/architeuthis/misc/**/*.java,
+                     de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
+                     de/unistuttgart/architeuthis/userinterfaces/**/*.java"
     />
   </target>
 
@@ -109,7 +110,10 @@
     	   debug="true"
            includes="de/unistuttgart/architeuthis/operative/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/ContainerPartialSolution.java,
-                     de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl.java"
+                     de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl.java,
+                     de/unistuttgart/architeuthis/misc/**/*.java,
+                     de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
+                     de/unistuttgart/architeuthis/userinterfaces/**/*.java"
     />
   </target>
 
@@ -123,7 +127,10 @@
            debug="true"   
            includes="de/unistuttgart/architeuthis/user/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/*.java,
-                     de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl.java"
+                     de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl.java,
+                     de/unistuttgart/architeuthis/misc/**/*.java,
+                     de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
+                     de/unistuttgart/architeuthis/userinterfaces/**/*.java"
     />
   </target>
 
@@ -135,7 +142,12 @@
            destdir="${build}"
            encoding="ISO-8859-1"
            debug="true"   
-           includes="de/unistuttgart/architeuthis/testenvironment/**/*.java"
+           includes="de/unistuttgart/architeuthis/testenvironment/**/*.java,
+                     de/unistuttgart/architeuthis/abstractproblems/*.java,
+                     de/unistuttgart/architeuthis/user/ProblemTransmitterImpl.java,
+                     de/unistuttgart/architeuthis/misc/Miscellaneous.java,
+                     de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
+                     de/unistuttgart/architeuthis/userinterfaces/**/*.java"
     />
   </target>
 
