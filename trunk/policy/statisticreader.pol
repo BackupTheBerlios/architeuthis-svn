@@ -1,0 +1,9 @@
+// Policy fuer den StatisticReader und StatisticReaderFrame
+
+grant {
+  // Es muss Verbindung zum Dispatcher und zum Webserver (fuer das Laden
+  // der Klassen) hergestellt werden koennen, evtl auch so:
+  // permission java.net.SocketPermission "<Name des Dispatcher>", "accept, connect, listen, resolve";
+  // permission java.net.SocketPermission "<Name des WebServers>", "accept, connect, listen, resolve";
+  permission java.net.SocketPermission "*", "accept, connect, listen, resolve";
+};

@@ -1,0 +1,221 @@
+%% Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+%% Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+%% Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+%% entwickelt.
+
+\chapter{Kurzübersicht}
+
+\section{Vorwort}
+Dieses Kapitel des Dokuments ist ursprünglich als Spezifikation der hier
+dokumentierten Software entstanden. Jedoch scheint es sich ebenfalls sehr gut
+als Kurzübersicht zu den Funktionen und Möglichkeiten des Compute-Systems zu
+eignen. Deswegen war es nur eine sinnvolle Konsequenz, es gleich an den Anfang
+des Benutzerhandbuches zu stellen, um einen hoffentlich verständlichen Einstieg
+zu ermöglichen.
+
+\section{Grundsätzliches:}
+
+\begin{itemize}
+
+   \item Der Name des Compute-Systems ist Architeuthis.
+
+   \item Zu erstellen ist ein Compute-System, das die Verwaltung für die
+         parallele Berechnung einer beliebigen parallelisierbaren Aufgabe
+         (im folgenden {\em Problem} genannt, siehe auch Glossar)
+         übernimmt.
+
+   \item Die Implementierung erfolgt platformunabhängig in Java mit Hilfe von
+         RMI.
+
+   \item Die Implementierung besteht aus mehreren Programmteilen:
+         Operative, Dispatcher, Problem-Übermittler,
+           sowie einer Testumgebung (mit Beispielen von Problemen).
+         Für die korrekte Funktionalität muss eine RMI-fähige Verbindung
+         (Netzwerkverbindung) zwischen Problem-Übermittler und Dispatcher
+         und ebenso zwischen Operative und Dispatcher bereitstehen.
+
+\end{itemize}
+
+
+\section{Dispatcher:}
+
+Der Dispatcher ist ein ausführbares Java-Programm, das pro
+Compute-System genau einmal zur Verfügung steht. Er besteht aus drei
+Komponenten:
+
+\begin{enumerate}
+        \item Dem Problem-Manager 
+      \item Dem Compute-Manager
+      \item Einer Statistik-Komponente
+\end{enumerate}
+
+\subsection{Problem-Manager}
+\begin{itemize}
+\item Die ben"otigten Klassen des Problems werden vom Problem-Übermittler an den
+        Problem-Manager ``übertragen''. Der Problem-Übermittler "ubergibt ihm die
+        URL an der das Problem-Paket inklusive ihrer Hauptproblemklasse liegt
+        (deren Name explizit beim Starten des Pro\-blem-Über\-mitt\-lers als Parameter
+        angegeben werden muss). Die Klassen werden von dem Webserver geladen
+        und das Problem wird initialisiert.
+\item Nach der Problemübergabe weist er das Problem an, sich in Teilprobleme
+        zu unterteilen, dabei wird vom Dispatcher eine Anzahl von Teilen 
+        vorgeschlagen, die sich nach der Anzahl der momentan verfügbaren Operatives
+        richtet. Diese Teilprobleme werden einzeln von der Problemklasse
+        geholt und über den Compute-Manager an Operatives verteilt.
+\item Gibt die erhaltene Teillösung vom Compute-Manager an das Problem weiter.
+        Falls die Gesamtlösung durch diese Teillösung erzeugt werden konnte,
+        wird diese an den Problem-Übermittler gesendet.
+\end{itemize}
+
+
+\subsection{Compute-Manager}
+\begin{itemize}
+\item Operatives können sich bei ihm durch ein Interface registieren
+      und abmelden.
+\item Er erledigt die Verteilung der Teilprobleme eines Problems an die
+      Operatives.
+\item  Falls Teilprobleme vorhanden sind, bekommen anmeldende 
+      Operatives eines zum Berechnen.
+\item Teilprobleme können auch mehrfach vergeben werden, sobald keine neuen
+  Teilprobleme mehr vorhanden sind, aber noch welche in Berechnung sind.
+\item Empf"angt die Teill"osungen der Operatives. Diese werden dann
+  an den Problem-Manager weitergeleitet. Dadurch frei werdende Operatives
+  bekommen ein neues Teilproblem zum Berechnen, falls eines vorhanden ist.
+\item Wenn der Dispatcher keine Teilprobleme mehr hat und auch keine 
+      mehr in Berechnung sind, wird jeder Operative, der eine Teillösung 
+      zurück gibt, als verfügbar markiert, so dass ihm ein neues Teilproblem 
+      geschickt wird, sobald welche vorhanden sind.
+\item "Uberwacht die Operatives auf Erreichbarkeit.
+\end{itemize}
+
+\subsection{Statistik}
+Es werden verschiedene Statistiken für den Benutzer geführt. 
+Sie enthalten Informationen über den aktuellen Zustand des 
+Dispatchers oder über einzelne Probleme.
+\begin{itemize}
+\item Eine allgemeine Statistik des
+  Dispatchers enthält folgende Punkte:
+        \begin{enumerate}
+         \item Anzahl der angemeldeten Operatives
+         \item Anzahl der Operatives, die gerade kein Teilproblem berechnen
+         \item Anzahl der noch nicht fertig berechneten Probleme
+         \item Anzahl der insgesamt erhaltenen Probleme
+         \item Anzahl der berechnete Teilprobleme
+         \item Anzahl der gerade in Berechnung befindlichen Teilprobleme
+         \item durchschnittliche Dauer der fertig berechneten Teilprobleme
+         \item Berechungsdauer aller fertig berechneten Teilprobleme
+         \item Alter des Dispatcher
+      \end{enumerate}
+\item  Folgende Punkte werden in der problemspezifischen Statistik für jedes einzelne Problem geführt:
+        \begin{enumerate}
+         \item Anzahl der fertigen Teilprobleme
+         \item Anzahl der gerade in Berechnung befindlichen Teilprobleme
+         \item durchschnittliche Dauer der fertig berechneten Teilprobleme
+         \item Berechnungsdauer der fertig berechneten Teilprobleme
+         \item Anzahl der vorgeschlagenen Teilprobleme vom Compute-Manager
+         (entspricht der Anzahl der momentan freien Operatives beim
+         Initialisieren des Problems)   
+         \item Alter des Problems auf dem Dispatcher
+      \end{enumerate}
+\end{itemize}
+Während des Betriebs kann eine Momentaufnahme jeder Statistik vom Benutzer 
+in extra Programmen abgefragt werden und dort grafisch aufbereitet 
+angezeigt werden.
+Eine problemspezifische Endstatistik wird mit der Gesamtlösung an 
+den Problem-Übermittler gesandt.
+
+
+\section{Operative:}
+
+\begin{itemize}
+
+   \item Der Operative ist ein ausführbares Java-Programm, das beliebig
+         oft pro Compute-System existiert (Größenordung 20-200 mal). Er
+         berechnet ein Teilproblem.
+
+   \item Ein Operative verbindet sich mit einem anzugebenden
+         Dispatcher über RMI und registriert sich über das Interface,
+         das der Dispatcher anbietet. Informationen über die Adresse des
+         Dispatchers werden dem Operative über die Kommando-Zeile
+         übergeben.
+
+   \item Der Verfügbarkeitsstatus eines Operatives für neue Teilprobleme
+         wird vom Compute-Manager verwaltet. Bei der Anmeldung des Operatives
+           am Dispatcher berechnet der Operative noch keine Teilaufgabe.
+         Sofern der Dispatcher noch Teilprobleme hat, wird dem
+         Operative unmittelbar nach der Anmeldung ein Teilproblem
+         "ubertragen.
+
+   \item Sobald der Operative die Berechnung einer Teilaufgabe 
+         abgeschlossen hat, schickt er seine Teillösung an den Dispatcher. 
+         Der Dispatcher weiß jetzt, dass der Operative wieder verfügbar
+         ist und kann ihm eine neue Teilaufgabe zuweisen.
+
+   \item Vor Beenden des Operatives meldet er sich beim Dispatcher ab.
+
+\end{itemize}
+
+
+\section{Problem-Übermittler:}
+
+\begin{itemize}
+
+   \item Der Problem-Übermittler ist ein lauffähiges Java-Programm, das URL und
+         ``Hauptklassenname''  eines speziellen Problems an den Dispatcher
+         übermittelt. 
+   \item Er ist die Schnittstelle zwischen Benutzer und Compute-Systems.  "Uber
+           ihn l"auft die Kommunikation.
+   \item Konkret wird dem Compute-Manager ein Webserver, auf dem die Klassendateien
+         liegen, und eine Startklasse übermittelt, so dass er ein
+           Objekt dieser Klasse instanzieren kann. 
+   \item Er bekommt die L"osung des Problems vom Dispatcher, damit sie f"ur
+           den Benutzer verf"ugbar ist. Der Problem-Übermittler wartet, bis der
+	 Problem-Manager das
+      Ergebnis zurückliefert.
+  
+\end{itemize}
+
+\section{Problem}
+
+\subsection{Anforderungen an das Problem:}
+
+Das Problem muss an den Dispatcher übermittelbar sein. Es muss ein
+konkretes Interface implementieren, das folgende Funktionen bietet:
+         \begin{itemize}
+            \item Teilprobleme bereitstellen, solange keine Lösung für das
+			Problem erstellt werden kann
+            \item Teillösung entgegen nehmen
+            \item Lösung in endlicher Zeit erstellen
+         \end{itemize}
+
+\subsection{Anforderungen an die Lösung:}
+Eine Lösung wird von einem Problem in endlicher Zeit erzeugt und muss an
+den Problem-"Ubermittler übermittelbar sein.
+
+\subsection{Anforderungen an das Teilproblem:}
+Ein Teilproblem muss von der Problemklasse bereitgestellt werden.
+Teilprobleme müssen von Dispatcher zu Operatives
+übermittelbar sein und außerdem ein Interface implementieren, das
+die Funktion 
+\begin{itemize}
+\item Berechne das Teilproblem und erzeuge Teillösung
+ \end{itemize}
+bietet.
+
+\subsection{Anforderungen an die Teillösungen:}
+Eine Teillösung wird von einem Teilproblem in endlicher Zeit erzeugt und muss von
+Operative über Dispatcher zur Problemklasse übermittelbar sein.
+
+\section{Testumgebung}
+Programm dient zum Vergleich eines implementierten Problems zwischen der Berechnung
+auf einem einzelnen Computer und der Berechnung auf dem Compute-Sys\-tem.
+\begin{itemize}
+        \item Bei der Berechnung auf einem einzelnen Computer wird \textit{ein} 
+			Teilproblem erzeugt und dieses berechnet.
+        \item Bei der Berechnung auf dem Compute-System wird dem Problem-"Uber\-mitt\-ler
+                die Adresse des Webservers, auf dem das Problem liegt, der Name des
+                Problems und die Adresse des Compute-Systems übergeben.
+        \item Es wird die gebrauchte Zeit, sowie die L"osung von beiden Berechnungen
+                ausgegeben.
+\end{itemize}
+

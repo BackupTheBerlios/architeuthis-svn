@@ -1,0 +1,113 @@
+Datei          : ReadmeTestenvironment
+Letzte Änderung: 24.09.2004 durch Dietmar Lippold
+
+
+This file is part of Architeuthis.
+
+Architeuthis is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+Architeuthis is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Architeuthis; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+Funktion vom Testenvironment
+----------------------------
+
+Das Testenvironment ist einer Erweiterung des Userenvironment und enthält
+zusätzlich einige Testprobleme. Sie können dazu dienen, ein vorhandenes
+Architeuthis-System aus Dispatcher und Operatives zu testen oder den Umgang
+damit kennen zu lernen.
+
+
+Benutzung vom Testenvironment
+-----------------------------
+
+Das Distributionspaket vom Testenvironment enthält folgende Dateien:
+
+ * Readme                : Datei mit allgemeinen Hinweisen zu Architeuthis.
+ * ReadmeTestenvironment : Diese Datei mit Hinweisen zum Testenvironment.
+ * ReadmeProblemTransmitterApp : Datei mit Hinweisen zur ausführbaren
+                                 Klasse ProblemTransmitterApp.
+ * ReadmeStatistics      : Datei mit Hinweisen zur Statistik.
+ * ReadmeClassFileServer : Datei mit Hinweisen zum ClassFileServer.
+ * User.jar              : Die Klassen zur Benutzung von Architeuthis.
+ * Problems.jar          : Die Klassen der Testprobleme.
+ * setup.sh              : Einstellungen zur Ausführung der Scripte zur
+                           Statistik.
+ * runConsoleSysStat.sh  : Script zur Ausgabe der Text-Statistik des
+                           Systems. Weiter Informationen stehen in der
+                           Datei ReadmeStatistics.
+ * runGuiSysStat.sh      : Script zur Ausführung der graphischen Statistik
+                           des Systems. Weiter Informationen stehen in der
+                           Datei ReadmeStatistics.
+ * runClassFileServer.sh : Script zum Starten des ClassFileServers. Weitere
+                           Informationen stehen in der Datei
+                           ReadmeClassFileServer.
+ * transmitter.pol       : Die Festlegung die Rechte, die der
+                           ProblemTransmitter auf dem Rechner hat, auf dem
+                           er läuft.
+ * statisticreader.pol   : Die Festlegung die Rechte, die die
+                           Statistik-Ausgabe auf dem Rechner hat, auf dem
+                           sie läuft.
+
+Außerdem sind eine Reihe von run-Scripten zur Ausführung der in
+Problems.jar enthaltenen Testprobleme vorhanden.
+
+Zum Starten der Testproblem-Scripte muß man die environment-Variable
+JAVA_HOME auf das Verzeichnis vom JRE oder JDK setzen. In der tcsh kann der
+Befehl z.B. folgendermaßen aussehen:
+
+  setenv JAVA_HOME /usr/java/jdk
+
+Alternativ kann man auch die Variable JAVA in der Datei setup.sh setzen.
+In dieser Datei kann bzw. muß man außerdem noch folgende Einträge ändern:
+
+ * CLASSURL        : URL, unter dem die class-Dateien des Problems abrufbar
+                     sind. Dies kann ein Verzeichnis auf einem WWW-Server
+                     sein oder ein Verzeichnis, dessen Inhalt über den
+                     ClassFileServer bereitgestellt wird (s. dazu die
+                     Hinweise in ReadmeClassFileServer). Anzugeben ist das
+                     Verzeichnis des äußersten Packages der Klassen.
+ * SOLUTIONFILE    : Der Name der Datei, in die die serialisierte
+                     Gesamtlösung geschrieben wird.
+ * DISPATCHER_HOST : Diesem Eintrag muß der Name oder die IP-Nummer des
+                     Rechners zugewiesen werden, auf dem der Dispatcher
+                     läuft.
+ * DISPATCHER_PORT : Der Port, unter dem der Dispatcher erreichbar ist.
+                     Dieser muß geändert werden, wenn er auch beim Start
+                     des Dispatchers geändert wurde. Dies kann man vom
+                     Betreuer des Dispatchers erfahren.
+ * INSTALLDIR      : Kann den Wert "." behalten, wenn das Script
+                     runDispatcher.sh aus dem Verzeichnis mit den anderen
+                     Dateien gestartet wird.
+
+In der Regel wird man nur den ersten und dritten und eventuell den zweiten
+Eintrag ändern.
+
+Anschließend muß man die in Problems.jar enthaltenen class-Dateien in das
+bei CLASSURL angegebene Verzeichnis auspacken. Dazu führt man in dem
+entsprechenden Verzeichnis folgenden Befehl aus (wobei "pfad" der Pfad zur
+Datei Problems.jar ist):
+
+  jar -xvf /pfad/Problems.jar
+
+Prinzipiell ist es auch möglich, die Datei Problems.jar als solche im
+Verzeichnis abzulegen und den CLASSURL um Problems.jar zu ergänzen. Dann
+werden die Klassen aber im Cache vom Dispatcher und Operative gehalten, so
+daß anschließende Änderungen an den Klassen nicht berücksichtigt werden.
+
+Zur Ausführung der Testprobleme ruft man dann einfach das entsprechende
+Start-Scripts auf, z.B.: ./runPrimeSequence.sh
+
+Hinweise zur Ausgabe der System-Statistik finden sich in der Datei
+ReadmeStatistics.
+
