@@ -32,7 +32,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment;
+package de.unistuttgart.architeuthis.user;
 
 import java.io.IOException;
 import java.io.Serializable;
