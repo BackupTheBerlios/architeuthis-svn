@@ -20,7 +20,10 @@ set DEPLOY_DIR=..\deploy
 REM Der Pfad, unter dem die Anwendungs-Klassen bzw. deren äußerstes
 REM Package liegen. Wird für den Classfileserver verwendet und normalerweise
 REM als äußere Umgebungsvariable gesetzt.
-REM set CLASS_FILE_PATH=..\classes
+if not "%CLASS_FILE_PATH%"=="" goto skip
+  set CLASS_FILE_PATH=..\classes
+:skip
+
 
 REM Der Rechner, auf dem der Dispatcher von Architeuthis läuft
 set DISPATCHER_HOST=127.0.0.1
