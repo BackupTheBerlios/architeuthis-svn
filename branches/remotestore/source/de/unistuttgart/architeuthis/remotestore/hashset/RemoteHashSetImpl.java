@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 01.04.2005 by Dietmar Lippold
+ * last change: 05.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -41,7 +41,9 @@ import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 
 /**
  * Diese Klasse implementiert das RemoteStore Interface als HashSet. Derzeit
- * sind nur wenige Methode von <CODE>HashSet</CODE> implementiert.
+ * sind nur wenige Methode von <CODE>HashSet</CODE> implementiert.<P>
+ *
+ * ToDo: Für addAll kann ein eigener Transmitter vorgesehen werden.
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
@@ -70,6 +72,12 @@ public class RemoteHashSetImpl implements RemoteHashSet {
     private RelayHashSet relayHasSet = null;
 
     /**
+     * Der <CODE>Transmitter</CODE>, an den die Objekte der Methode
+     * <CODE>add</CODE> übergeben werden.
+     */
+    private Transmitter addTransmitter = null;
+
+    /**
      * Konstruktor ohne spezielle Wirkung.
      *
      * @throws RemoteException  Bei einem RMI-Problem.
@@ -86,8 +94,9 @@ public class RemoteHashSetImpl implements RemoteHashSet {
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public void registerRemoteStore(RemoteStore remoteStore) throws RemoteException {
-        if (relayHasSet != null) {
+        if (remoteStore != null) {
             relayHasSet = (RelayHashSet) remoteStore;
+            addTransmitter = new Transmitter(relayHasSet, new AddProcedure());
         }
     }
 
@@ -100,6 +109,8 @@ public class RemoteHashSetImpl implements RemoteHashSet {
      */
     public void unregisterRemoteStore(RemoteStore remoteStore) throws RemoteException {
         relayHasSet = null;
+        addTransmitter.terminate();
+        addTransmitter = null;
     }
 
     /**
@@ -138,9 +149,10 @@ public class RemoteHashSetImpl implements RemoteHashSet {
         // Erstmal lokal updaten.
         addLocal(object);
 
-        // Dann das Objekt an die anderen RemoteHashSets weiterleiten.
-        if (relayHasSet != null) {
-            relayHasSet.addRemote(this, object);
+        // Dann das Objekt an den Transmitter zur Weiterleitung an den
+        // RelayStore und damit an die anderen RemoteHashSets übergeben.
+        if (addTransmitter != null) {
+            addTransmitter.enqueue(object);
         }
     }
 
