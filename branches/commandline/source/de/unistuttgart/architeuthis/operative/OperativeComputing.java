@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeComputing.java
  * created:     26.04.2004
- * last change: 10.02.2005 by Dietmar Lippold
+ * last change: 13.02.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -167,6 +167,9 @@ public class OperativeComputing extends Thread {
                     "Debug: RuntimeException ist aufgetreten : " + e);
                 operativeImpl.reportException(
                     ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
+            } catch (ThreadDeath e) {
+                // Dieser Error darf nicht abgefangen werden.
+                throw e;
             } catch (Error e) {
                 partialProblem = null;
                 Miscellaneous.printDebugMessage(
