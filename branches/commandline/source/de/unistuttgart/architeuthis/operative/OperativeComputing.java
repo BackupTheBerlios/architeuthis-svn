@@ -7,7 +7,7 @@
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
- *				Michael Wohlfart,  michael.wohlfart@zsw-bw.de
+ *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -70,7 +70,10 @@ public class OperativeComputing extends Thread {
      * der Ableitung von <code>UnicastRemoteObject</code> überschrieben
      * werden.
      *
-     * @throws RemoteException  bei RMI-Verbindungsproblemen
+     * @param debug  Flag für Debug Meldungen
+     * @param operativeImpl die OperativeImpl Implementierung,
+     *         die diesen Operative Computing verwendet um
+     *         Berechnungen durchzuführen
      */
     OperativeComputing(OperativeImpl operativeImpl, boolean debug) {
         this.operativeImpl = operativeImpl;
@@ -133,6 +136,7 @@ public class OperativeComputing extends Thread {
                     try {
                         wait();
                     } catch (InterruptedException e) {
+                        // empty
                     }
                 }
             }

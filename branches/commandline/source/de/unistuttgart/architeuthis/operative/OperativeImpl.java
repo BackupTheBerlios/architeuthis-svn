@@ -7,7 +7,7 @@
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
- *				Michael Wohlfart,  michael.wohlfart@zsw-bw.de
+ *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  * This file is part of Architeuthis.
  *
@@ -40,8 +40,6 @@ import java.rmi.AccessException;
 import java.rmi.RemoteException;
 import java.rmi.RMISecurityManager;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import de.unistuttgart.architeuthis.systeminterfaces.ComputeManager;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
@@ -65,6 +63,12 @@ import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
  * @author Jürgen Heit, Ralf Kible, Dietmar Lippold
  */
 public class OperativeImpl extends UnicastRemoteObject implements Operative {
+
+    /**
+     * generierte SerialVersionUID, muss geändert werden, sobald
+     * strukurelle Änderungen an dieser KLasse durchgeführt worden sind
+     */
+    private static final long serialVersionUID = 3257569516132447543L;
 
     /**
      * Ist die Anzahl der Versuche, Verbindung mit dem ComputeManager
@@ -121,21 +125,17 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      *                            falls <code>true</code>
      * @throws MalformedURLException  Die Angabe vom <code>compManager</code>
      *                                war kein zulässiger Name.
-     * @throws AccessException        Fehler beim Zugriff auf die Registry.
-     *                                Vermutlich wurde eine falsche policy-Datei
-     *                                benutzt.
      * @throws RemoteException        Kommunikationsproblem über RMI.
      * @throws NotBoundException      Der Dispatcher war auf der Registry nicht
      *                                eingetragen.
      */
     private OperativeImpl(ComputeManager computeManager, boolean debug)
         throws MalformedURLException,
-               AccessException,
                RemoteException,
                NotBoundException {
-    	
-    	this.computeManager = computeManager;
-    
+
+        this.computeManager = computeManager;
+
 
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new RMISecurityManager());
@@ -143,8 +143,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
         debugMode = debug;
     }
-    
-    
+
+
     /**
      * Startet den Berechnungs-Thread, der im Hintergrund läuft. Zur
      * Berechnung eines tatsächlichen PartialProblmes muss noch die
@@ -166,7 +166,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
 
         backgroundComputation = new OperativeComputing(this, this.debugMode);
-        
+
     }
 
     /**
@@ -358,8 +358,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * @param args  Die obligatorischen Kommandozeilenargumente
      */
     public static void main(String[] args) {
-    	
-    	
+
+
         ParameterParser parser = new ParameterParser();
 
         // debug option
@@ -382,11 +382,11 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
         StringBuffer binding = new StringBuffer();
         boolean debug = false;
-        
+
         try {
             parser.parseAll(args);
 
-            
+
             // ist debuging aktiviert?
             debug = (parser.isEnabled(debug1) || parser.isEnabled(debug2));
 
@@ -412,7 +412,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             OperativeImpl operative = new OperativeImpl(computeManager, debug);
 
 
-            
+
             // erst wenn das funktioniert hat, computing starten
             operative.startComputation();
 
@@ -420,11 +420,11 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             Miscellaneous.printDebugMessage(
                 debug,
                 "Debug: Melde Operative an!");
-            
+
             computeManager.registerOperative(operative);
 
             Miscellaneous.printDebugMessage(debug, "Debug: Gestartet!");
-            
+
 
         } catch (ParameterParserException ex) {
             // usage ausgeben:

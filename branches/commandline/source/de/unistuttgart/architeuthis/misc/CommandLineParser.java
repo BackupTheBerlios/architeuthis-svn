@@ -29,6 +29,11 @@
  * entwickelt.
  */
 
+
+// TODO: evtl. sollte die Funktionalität zum Handling von Properties files nicht
+//       im parser enthalten sein. Alternativ könnte der Parser ein properties 
+//       file zurückliefern, in dem alle optionen eingetragen sind ?!
+
 package de.unistuttgart.architeuthis.misc;
 
 import java.io.IOException;

@@ -42,6 +42,8 @@
   <property name="build" location="build"/>
   <property name="deploy" location="deploy"/>
 
+  <!-- junit library -->
+  <property name="junitJar" location="libs/junit-3.8.1.jar"/>
 
   <!-- Festlegung der class-Dateien der einzelnen Komponenten         -->
 
@@ -96,9 +98,7 @@
     <javac srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
-           includes="de/unistuttgart/architeuthis/operative/*.java,
-                     de/unistuttgart/architeuthis/abstractproblems/ContainerPartialSolution.java,
-                     de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl.java"
+           includes="de/unistuttgart/architeuthis/operative/*.java"
     />
   </target>
 
@@ -124,15 +124,20 @@
     />
   </target>
 
+  <!-- Compilieren aller Klassen                                      -->
   <target name="compile">
     <mkdir dir="${build}"/>
 
-    <javac srcdir="${source}"
+    <javac source="1.4"
+           srcdir="${source}"
            destdir="${build}"
-           includes="de/**/*.java"
-    />
+    	   includes="**/*.java"
+    	>
+      <classpath>
+      	<pathelement path="${junitJar}"/>
+      </classpath>
+    </javac>
   </target>
-
 
   <!-- Erzeugung der jar-Dateien                                      -->
 
@@ -141,21 +146,25 @@
 
     <rmic base="${build}"
           stubversion="1.2"
-          classname="de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl"/>
+          classname="de.unistuttgart.architeuthis.dispatcher.computemanaging.ComputeManagerImpl"/>
     <rmic base="${build}"
           stubversion="1.2"
-          classname="de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl"/>
+          classname="de.unistuttgart.architeuthis.dispatcher.problemmanaging.ProblemManagerImpl"/>
     <rmic base="${build}"
           stubversion="1.2"
-          classname="de/unistuttgart/architeuthis/operative/OperativeImpl"/>
+          classname="de.unistuttgart.architeuthis.operative.OperativeImpl"/>
     <rmic base="${build}"
           stubversion="1.2"
-          classname="de/unistuttgart/architeuthis/user/ProblemTransmitterImpl"/>
+          classname="de.unistuttgart.architeuthis.user.ProblemTransmitterImpl"/>
 
     <mkdir dir="${deploy}"/>
 
     <jar destfile="${deploy}/Dispatcher.jar"
          encoding="ISO-8859-1">
+      <manifest>
+        <attribute name="Main-Class"
+        	 	   value="de.unistuttgart.architeuthis.dispatcher.DispatcherImpl"/>
+      </manifest>
       <fileset refid="dispatcherClasses"/>
       <fileset dir="${build}"
                includes="de/unistuttgart/architeuthis/operative/OperativeImpl_Stub.class,
@@ -164,23 +173,27 @@
     </jar>
   </target>
 
-  <target name="operativeJar" depends="compileOp"
+  <target name="operativeJar" depends="compile"
     description="Erstellt die jar-Datei der Operative-Klassen">
 
     <rmic base="${build}"
           stubversion="1.2"
-          classname="de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl"/>
+          classname="de.unistuttgart.architeuthis.dispatcher.computemanaging.ComputeManagerImpl"/>
     <rmic base="${build}"
           stubversion="1.2"
-          classname="de/unistuttgart/architeuthis/operative/OperativeImpl"/>
+          classname="de.unistuttgart.architeuthis.operative.OperativeImpl"/>
 
     <mkdir dir="${deploy}"/>
                                                                                 
     <jar destfile="${deploy}/Operative.jar"
          encoding="ISO-8859-1">
+      <manifest>
+      	<attribute name="Main-Class"
+      	 	       value="de.unistuttgart.architeuthis.operative.OperativeImpl"/>
+      </manifest>
       <fileset refid="operativeClasses"/>
       <fileset dir="${build}"
-               includes="de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl_Stub.class"/>
+               includes="de.unistuttgart.architeuthis.dispatcher.computemanaging.ComputeManagerImpl_Stub.class"/>
     </jar>
   </target>
 
@@ -189,10 +202,10 @@
 
     <rmic base="${build}"
           stubversion="1.2"
-          classname="de/unistuttgart/architeuthis/user/ProblemTransmitterImpl"/>
+          classname="de.unistuttgart.architeuthis.user.ProblemTransmitterImpl"/>
     <rmic base="${build}"
           stubversion="1.2"
-          classname="de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl"/>
+          classname="de.unistuttgart.architeuthis.dispatcher.problemmanaging.ProblemManagerImpl"/>
 
     <mkdir dir="${deploy}"/>
 
