@@ -1,7 +1,7 @@
 /*
  * file:        DispatcherImpl.java
  * created:     18.12.20003
- * last change: 16.02.2005 by Dietmar Lippold
+ * last change: 22.02.2005 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
