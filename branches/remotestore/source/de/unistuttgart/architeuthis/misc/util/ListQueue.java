@@ -1,7 +1,7 @@
 /*
  * file:        ListQueue.java
  * created:     06.01.2004
- * last change: 25.05.2004 by Dietmar Lippold
+ * last change: 06.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@t-online.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -30,7 +30,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.dispatcher.problemmanaging;
+package de.unistuttgart.architeuthis.misc.util;
 
 import java.util.LinkedList;
 

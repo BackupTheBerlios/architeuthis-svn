@@ -31,10 +31,12 @@
 
 package de.unistuttgart.architeuthis.dispatcher.problemmanaging;
 
+import de.unistuttgart.architeuthis.misc.util.BlockingBuffer;
+
 /**
- * Ruft vom
- * {@link de.unistuttgart.architeuthis.interfaces.ProblemManager} die jeweils
- * nächsten Teilproblem-Wrapper ab und speichert diese in einer Schlange.
+ * Ruft vom {@link de.unistuttgart.architeuthis.interfaces.ProblemManager}
+ * die jeweils nächsten Teilproblem-Wrapper ab und speichert diese in einer
+ * Schlange.
  *
  * @author Jürgen Heit, Dietmar Lippold
  */
