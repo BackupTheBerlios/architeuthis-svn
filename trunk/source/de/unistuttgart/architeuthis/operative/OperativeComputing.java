@@ -1,12 +1,13 @@
 /*
  * filename:    OperativeComputing.java
  * created:     26.04.2004
- * last change: 21.06.2004 by Dietmar Lippold
+ * last change: 13.02.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -69,7 +70,10 @@ public class OperativeComputing extends Thread {
      * der Ableitung von <code>UnicastRemoteObject</code> überschrieben
      * werden.
      *
-     * @throws RemoteException  bei RMI-Verbindungsproblemen
+     * @param debug          Flag für debug-Meldungen.
+     * @param operativeImpl  Die OperativeImpl Implementierung, die diesen
+     *                       OperativeComputing verwendet um Berechnungen
+     *                       durchzuführen.
      */
     OperativeComputing(OperativeImpl operativeImpl, boolean debug) {
         this.operativeImpl = operativeImpl;
@@ -132,6 +136,8 @@ public class OperativeComputing extends Thread {
                     try {
                         wait();
                     } catch (InterruptedException e) {
+                        // Wenn ein Teilproblem zu bearbeiten ist, die
+                        // Berechnung beginnen.
                     }
                 }
             }
@@ -161,6 +167,9 @@ public class OperativeComputing extends Thread {
                     "Debug: RuntimeException ist aufgetreten : " + e);
                 operativeImpl.reportException(
                     ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
+            } catch (ThreadDeath e) {
+                // Dieser Error darf nicht abgefangen werden.
+                throw e;
             } catch (Error e) {
                 partialProblem = null;
                 Miscellaneous.printDebugMessage(

@@ -1,5 +1,5 @@
 Datei          : ReadmeDispatcher
-Letzte Änderung: 12.09.2004 durch Dietmar Lippold
+Letzte Änderung: 15.02.2005 durch Dietmar Lippold
 
 
 This file is part of Architeuthis.
@@ -47,29 +47,48 @@ Das Distributionspaket vom Dispatcher enthält folgende Dateien:
  * ReadmeDispatcher   : Diese Datei mit Hinweise zum Dispatcher.
  * Dispatcher.jar     : Die Klassen der Dispatchers.
  * logging.properties : Die Einstellungen zum Logging.
+ * compserv.conf      : Vorgegebene Optionen für den Dispatcher (optional).
  * dispatcher.pol     : Die Festlegung Rechte, die der Dispatcher auf dem
                         Rechner hat, auf dem er läuft.
  * setup.sh           : Einstellungen zum Betrieb des jeweiligen
-                        Dispatchers.
- * runDispatcher.sh   : Script zum Starten des Dispatchers.
+                        Dispatchers unter Linux/Unix.
+ * setup.bat          : Einstellungen zum Betrieb des jeweiligen
+                        Dispatchers unter Windows.
+ * runDispatcher.sh   : Script zum Starten des Dispatchers unter Linux/Unix.
+ * runDispatcher.bat  : Script zum Starten des Dispatchers unter Windows.
 
-Zum Starten des Dispatchers muß man die environment-Variable JAVA_HOME
-auf das Verzeichnis vom JRE oder JDK setzen. In der tcsh kann der Befehl
-z.B. folgendermaßen aussehen:
+Die Dateien zum Starten des Dispatchers liegen im Verzeichnis runScripts.
+
+Zum Starten des Dispatchers muß man die environment-Variable JAVA_HOME auf
+das Verzeichnis vom JRE oder JDK setzen. In der tcsh unter Linux/Unix kann
+der Befehl z.B. folgendermaßen aussehen:
 
   setenv JAVA_HOME /usr/java/jdk
 
-Alternativ kann man auch die Variable JAVA in der Datei setup.sh setzen.
-In dieser Datei kann man außerdem noch folgende Einträge ändern:
+Alternativ kann man auch die Variable JAVA in der Datei setup.sh bzw. in
+setup.bat setzen. In dieser Datei kann man außerdem noch folgende Einträge
+ändern:
 
- * INSTALLDIR      : Kann den Wert "." behalten, wenn das Script
-                     runDispatcher.sh aus dem Verzeichnis mit den anderen
-                     Dateien gestartet wird.
+ * DEPLOY_DIR      : Das Verzeichnis mit der jar-Datei vom Dispatcher.
+                     Vorgegeben ist dieses relativ zum Verzeichnis
+                     runScripts. Man braucht diese Variable also nicht zu
+                     ändern, wenn man den Dispatcher aus diesem Verzeichnis
+                     startet.
+
+ * CONFIG_DIR      : Das Verzeichnis mit den Konfigurationsdateien
+                     dispatcher.pol und logging.properties. Vorgegeben ist
+                     dieses relativ zum Verzeichnis runScripts. Man braucht
+                     diese Variable also nicht zu ändern, wenn man den
+                     Dispatcher aus diesem Verzeichnis startet.
+
  * DISPATCHER_PORT : Der Port, unter dem der Dispatcher erreichbar ist.
-                     Der default-Port ist 1854.
+                     Der default-Port ist 1854. In der Regel wird man
+                     diese Variable nicht ändern.
 
-In der Regel wird man diese Einträge aber nicht ändern.
+Um die Datei compserv.conf zu verwenden, kopiert man sie in das Verzeichnis,
+aus dem man den Dispatcher startet.
 
-Zum Starten des Dispatchers ruft man dann einfach das Start-Scripts auf:
-./runDispatcher.sh
+Zum Starten des Dispatchers ruft man dann einfach das Start-Scripts auf.
+Unter Linux/Unix: ./runDispatcher.sh
+Unter Windows   : runDispatcher.bat
 
