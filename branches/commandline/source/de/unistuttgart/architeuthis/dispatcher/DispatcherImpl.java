@@ -117,7 +117,7 @@ public final class DispatcherImpl {
 
         Option configOption = new Option("c");
         configOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
-        portOption.setName("configfile");
+        configOption.setName("configfile");
         parser.addOption(configOption);
 
         Option portOption = new Option("port");
