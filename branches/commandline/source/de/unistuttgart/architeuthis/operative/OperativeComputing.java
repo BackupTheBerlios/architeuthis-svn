@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeComputing.java
- * created:     <???>
- * last change: 18.01.2005 by Michael Wohlfart
+ * created:     26.04.2004
+ * last change: 10.02.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -70,10 +70,10 @@ public class OperativeComputing extends Thread {
      * der Ableitung von <code>UnicastRemoteObject</code> überschrieben
      * werden.
      *
-     * @param debug  Flag für Debug Meldungen
-     * @param operativeImpl die OperativeImpl Implementierung,
-     *         die diesen Operative Computing verwendet um
-     *         Berechnungen durchzuführen
+     * @param debug          Flag für debug-Meldungen.
+     * @param operativeImpl  Die OperativeImpl Implementierung, die diesen
+     *                       OperativeComputing verwendet um Berechnungen
+     *                       durchzuführen.
      */
     OperativeComputing(OperativeImpl operativeImpl, boolean debug) {
         this.operativeImpl = operativeImpl;
@@ -136,7 +136,8 @@ public class OperativeComputing extends Thread {
                     try {
                         wait();
                     } catch (InterruptedException e) {
-                        // empty
+                        // Wenn ein Teilproblem zu bearbeiten ist, die
+                        // Berechnung beginnen.
                     }
                 }
             }
