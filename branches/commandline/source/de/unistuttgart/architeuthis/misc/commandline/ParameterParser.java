@@ -1,7 +1,7 @@
 /*
  * file:        ParameterParser.java
  * created:     21.10.2004
- * last change: 07.12.2004 by Michael Wohlfart
+ * last change: 22.02.2005 by Michael Wohlfart
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -201,6 +201,7 @@ public class ParameterParser {
         }
 
         if (i >= argv.length) {
+        	// found no match, set the option to disabled
             option.setEnabled(false);
         } else {
             option.setEnabled(true);
