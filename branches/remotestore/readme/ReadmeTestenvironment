@@ -1,5 +1,5 @@
 Datei          : ReadmeTestenvironment
-Letzte Änderung: 24.09.2004 durch Dietmar Lippold
+Letzte Änderung: 15.02.2005 durch Dietmar Lippold
 
 
 This file is part of Architeuthis.
@@ -41,15 +41,15 @@ Das Distributionspaket vom Testenvironment enthält folgende Dateien:
  * ReadmeClassFileServer : Datei mit Hinweisen zum ClassFileServer.
  * User.jar              : Die Klassen zur Benutzung von Architeuthis.
  * Problems.jar          : Die Klassen der Testprobleme.
- * setup.sh              : Einstellungen zur Ausführung der Scripte zur
+ * setup.*               : Einstellungen zur Ausführung der Scripte zur
                            Statistik.
- * runConsoleSysStat.sh  : Script zur Ausgabe der Text-Statistik des
+ * runConsoleSysStat.*   : Script zur Ausgabe der Text-Statistik des
                            Systems. Weiter Informationen stehen in der
                            Datei ReadmeStatistics.
- * runGuiSysStat.sh      : Script zur Ausführung der graphischen Statistik
+ * runGuiSysStat.*       : Script zur Ausführung der graphischen Statistik
                            des Systems. Weiter Informationen stehen in der
                            Datei ReadmeStatistics.
- * runClassFileServer.sh : Script zum Starten des ClassFileServers. Weitere
+ * runClassFileServer.*  : Script zum Starten des ClassFileServers. Weitere
                            Informationen stehen in der Datei
                            ReadmeClassFileServer.
  * transmitter.pol       : Die Festlegung die Rechte, die der
@@ -59,12 +59,17 @@ Das Distributionspaket vom Testenvironment enthält folgende Dateien:
                            Statistik-Ausgabe auf dem Rechner hat, auf dem
                            sie läuft.
 
+Die Dateien, deren Name mit einem Stern endet, sind entweder für Linux/Unix
+mit der Endung "sh" oder für Windows mit der Endung "bat" vorhanden.
+
 Außerdem sind eine Reihe von run-Scripten zur Ausführung der in
 Problems.jar enthaltenen Testprobleme vorhanden.
 
+Alle Scripte liegen im Verzeichnis runScripts.
+
 Zum Starten der Testproblem-Scripte muß man die environment-Variable
-JAVA_HOME auf das Verzeichnis vom JRE oder JDK setzen. In der tcsh kann der
-Befehl z.B. folgendermaßen aussehen:
+JAVA_HOME auf das Verzeichnis vom JRE oder JDK setzen. In der tcsh unter
+Linux/Unix kann der Befehl z.B. folgendermaßen aussehen:
 
   setenv JAVA_HOME /usr/java/jdk
 
@@ -76,27 +81,42 @@ In dieser Datei kann bzw. muß man außerdem noch folgende Einträge ändern:
                      sein oder ein Verzeichnis, dessen Inhalt über den
                      ClassFileServer bereitgestellt wird (s. dazu die
                      Hinweise in ReadmeClassFileServer). Anzugeben ist das
-                     Verzeichnis des äußersten Packages der Klassen.
+                     Verzeichnis des äußersten Packages der Klassen. Bei
+                     Verwendung des ClassFileServer reicht es in der Regel,
+                     der Variablen CLASS_SERVER_HOST in setup.sh bzw. in
+                     setup.bat den Namen des Rechners, auf dem der
+                     ClassFileServer läuft, zuzuweisen.
+
  * SOLUTIONFILE    : Der Name der Datei, in die die serialisierte
                      Gesamtlösung geschrieben wird.
- * DISPATCHER_HOST : Diesem Eintrag muß der Name oder die IP-Nummer des
+
+ * DISPATCHER_HOST : Dieser Variablen muß der Name oder die IP-Nummer des
                      Rechners zugewiesen werden, auf dem der Dispatcher
                      läuft.
- * DISPATCHER_PORT : Der Port, unter dem der Dispatcher erreichbar ist.
-                     Dieser muß geändert werden, wenn er auch beim Start
-                     des Dispatchers geändert wurde. Dies kann man vom
-                     Betreuer des Dispatchers erfahren.
- * INSTALLDIR      : Kann den Wert "." behalten, wenn das Script
-                     runDispatcher.sh aus dem Verzeichnis mit den anderen
-                     Dateien gestartet wird.
 
-In der Regel wird man nur den ersten und dritten und eventuell den zweiten
-Eintrag ändern.
+ * DISPATCHER_PORT : Der Port, unter dem der Dispatcher erreichbar ist.
+                     Dieser muß geändert werden, wenn er auch beim Start des
+                     Dispatchers geändert wurde. Dies kann man vom Betreuer
+                     des Dispatchers erfahren. Per default ist das der Port
+                     1854.
+
+ * DEPLOY_DIR      : Das Verzeichnis mit der jar-Datei vom Transmitter.
+                     Vorgegeben ist dieses relativ zum Verzeichnis
+                     runScripts. Man braucht diese Variable also nicht zu
+                     ändern, wenn man die Testprobleme aus diesem
+                     Verzeichnis startet.
+
+ * CONFIG_DIR      : Das Verzeichnis mit der Konfigurationsdatei
+                     transmitter.pol. Vorgegeben ist dieses relativ zum
+                     Verzeichnis runScripts. Man braucht diese Variable
+                     also nicht zu ändern, wenn man die Testprobleme aus
+                     diesem Verzeichnis startet.
 
 Anschließend muß man die in Problems.jar enthaltenen class-Dateien in das
-bei CLASSURL angegebene Verzeichnis auspacken. Dazu führt man in dem
-entsprechenden Verzeichnis folgenden Befehl aus (wobei "pfad" der Pfad zur
-Datei Problems.jar ist):
+vom ClassFileServer oder WWW-Server benuzte Verzeichnis (auf das sich
+CLASSURL bezieht) auspacken. Per default ist das das Verzeichnis classes.
+Dazu führt man in dem entsprechenden Verzeichnis folgenden Befehl aus (wobei
+"pfad" der Pfad zur Datei Problems.jar ist):
 
   jar -xvf /pfad/Problems.jar
 
@@ -106,8 +126,8 @@ werden die Klassen aber im Cache vom Dispatcher und Operative gehalten, so
 daß anschließende Änderungen an den Klassen nicht berücksichtigt werden.
 
 Zur Ausführung der Testprobleme ruft man dann einfach das entsprechende
-Start-Scripts auf, z.B.: ./runPrimeSequence.sh
+Start-Scripts auf, z.B. unter Linux/Unix ./runPrimeSequence.sh bzw. unter
+Windows runPrimeSequence.bat .
 
-Hinweise zur Ausgabe der System-Statistik finden sich in der Datei
-ReadmeStatistics.
+Hinweise zur Statistik finden sich in der Datei ReadmeStatistics.
 

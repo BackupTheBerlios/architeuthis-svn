@@ -1,5 +1,5 @@
 Datei          : ReadmeOperative
-Letzte ƒnderung: 13.09.2004 durch Dietmar Lippold
+Letzte ƒnderung: 15.02.2005 durch Dietmar Lippold
 
 
 This file is part of Architeuthis.
@@ -59,31 +59,47 @@ Das Distributionspaket vom Operative enth‰lt folgende Dateien:
  * operative.pol      : Die Festlegung Rechte, die der Operative auf dem
                         Rechner hat, auf dem er l‰uft.
  * setup.sh           : Einstellungen zum Betrieb des jeweiligen
-                        Operatives.
- * runDispatcher.sh   : Script zum Starten des Operatives.
+                        Operatives unter Linux/Unix.
+ * setup.bat          : Einstellungen zum Betrieb des jeweiligen
+                        Operatives unter Windows.
+ * runDispatcher.sh   : Script zum Starten des Operatives unter Linux/Unix.
+ * runDispatcher.bat  : Script zum Starten des Operatives unter Windows.
 
-Zum Starten des Operatives muﬂ man die environment-Variable JAVA_HOME
-auf das Verzeichnis vom JRE oder JDK setzen. In der tcsh kann der Befehl
-z.B. folgendermaﬂen aussehen:
+Die Dateien zum Starten des Operatives liegen im Verzeichnis runScripts.
+
+Zum Starten des Operatives muﬂ man die environment-Variable JAVA_HOME auf
+das Verzeichnis vom JRE oder JDK setzen. In der tcsh unter Linux/Unix kann
+der Befehl z.B. folgendermaﬂen aussehen:
 
   setenv JAVA_HOME /usr/java/jdk
 
-Alternativ kann man auch die Variable JAVA in der Datei setup.sh setzen. In
-dieser Datei kann bzw. muﬂ man auﬂerdem noch folgende Eintr‰ge ‰ndern:
+Alternativ kann man auch die Variable JAVA in der Datei setup.sh bzw. in
+setup.bat setzen. In dieser Datei kann bzw. muﬂ man auﬂerdem noch folgende
+Eintr‰ge ‰ndern:
 
- * DISPATCHER_HOST : Diesem Eintrag muﬂ der Name oder die IP-Nummer des
+ * DISPATCHER_HOST : Dieser Variablen muﬂ der Name oder die IP-Nummer des
                      Rechners zugewiesen werden, auf dem der Dispatcher
                      l‰uft.
+
  * DISPATCHER_PORT : Der Port, unter dem der Dispatcher erreichbar ist.
                      Dieser muﬂ ge‰ndert werden, wenn er auch beim Start des
                      Dispatchers ge‰ndert wurde. Dies kann man vom Betreuer
-                     des Dispatchers erfahren.
- * INSTALLDIR      : Kann den Wert "." behalten, wenn das Script
-                     runDispatcher.sh aus dem Verzeichnis mit den anderen
-                     Dateien gestartet wird.
+                     des Dispatchers erfahren. Per default ist das der Port
+                     1854.
 
-In der Regel wird man nur den ersten Eintrag ‰ndern.
+ * DEPLOY_DIR      : Das Verzeichnis mit der jar-Datei vom Operative.
+                     Vorgegeben ist dieses relativ zum Verzeichnis
+                     runScripts. Man braucht diese Variable also nicht zu
+                     ‰ndern, wenn man den Operative aus diesem Verzeichnis
+                     startet.
 
-Zum Starten des Operatives ruft man dann einfach das Start-Scripts auf:
-./runOperative.sh
+ * CONFIG_DIR      : Das Verzeichnis mit der Konfigurationsdatei
+                     operative.pol. Vorgegeben ist dieses relativ zum
+                     Verzeichnis runScripts. Man braucht diese Variable
+                     also nicht zu ‰ndern, wenn man den Dispatcher aus
+                     diesem Verzeichnis startet.
+
+Zum Starten des Operatives ruft man dann einfach das Start-Scripts auf.
+Unter Linux/Unix: ./runOperative.sh
+Unter Windows   : runOperative.bat
 
