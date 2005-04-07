@@ -5,7 +5,7 @@ REM ein Problem zum Testen des RemoteStores.
 
 
 REM Benötigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
-REM DISPATCHER_PORT, JAVA) werden gesetzt
+REM DISPATCHER_PORT, JAVA, DEPLOY_DIR, CLASS_FILE_PATH) werden gesetzt
 call setup.bat
 
 
@@ -22,4 +22,4 @@ set ARGS=%ARGS% %DISPATCHER_HOST%:%DISPATCHER_PORT%
 REM die Main-Klasse
 set MAIN=de.unistuttgart.architeuthis.testenvironment.hashstore.HashStoreMain
 
-%JAVA% -cp ../build %JVMPAR% %MAIN% %ARGS%
+%JAVA% -cp %DEPLOY_DIR%/User.jar;%CLASS_FILE_PATH%/Problems.jar %JVMPAR% %MAIN% %ARGS%
