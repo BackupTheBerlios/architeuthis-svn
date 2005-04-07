@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 06.04.2005 by Dietmar Lippold
+ * last change: 07.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -304,6 +304,15 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                                                + " centralStore aber ungleich null");
         }
 
+        Miscellaneous.printDebugMessage(debugMode,
+                                        "\nDebug: OperativeImpl hat Aufgabe"
+                                        + " vom ComputeManager empfangen.");
+        Miscellaneous.printDebugMessage(debugMode,
+                                        "\nDebug: centralStore: "
+                                        + centralStore
+                                        + ", generator: "
+                                        + generator);
+
         // Zentralen RemoteStore merken, um den distRemoteStore dort später
         // abzumelden
         centralRemoteStore = centralStore;
@@ -322,15 +331,6 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                 distRemoteStore = centralRemoteStore;
             }
         }
-
-        Miscellaneous.printDebugMessage(debugMode,
-                                        "\nDebug: OperativeImpl hat Aufgabe"
-                                        + " vom ComputeManager empfangen.");
-        Miscellaneous.printDebugMessage(debugMode,
-                                        "\nDebug: centralStore: "
-                                        + centralStore
-                                        + ", generator: "
-                                        + generator);
 
         backgroundComputation.fetchPartialProblem(parProb, distRemoteStore);
     }
