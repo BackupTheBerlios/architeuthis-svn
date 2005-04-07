@@ -186,13 +186,12 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * @throws RemoteException  Bei einem RMI Problem.
      */
     private void unregisterRemoteStore() throws RemoteException {
-        if (centralRemoteStore != null) {
-            if (distRemoteStore != null) {
-                centralRemoteStore.unregisterRemoteStore(distRemoteStore);
-                distRemoteStore.unregisterRemoteStore(centralRemoteStore);
-                centralRemoteStore = null;
-                distRemoteStore = null;
-            }
+        if ((centralRemoteStore != null) && (distRemoteStore != null)
+                && (distRemoteStore != centralRemoteStore)) {
+            centralRemoteStore.unregisterRemoteStore(distRemoteStore);
+            distRemoteStore.unregisterRemoteStore(centralRemoteStore);
+            centralRemoteStore = null;
+            distRemoteStore = null;
         }
     }
 
