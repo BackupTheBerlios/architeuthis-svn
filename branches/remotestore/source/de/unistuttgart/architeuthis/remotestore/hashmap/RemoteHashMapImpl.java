@@ -86,9 +86,10 @@ public class RemoteHashMapImpl implements RemoteHashMap {
     }
 
     /**
-     * Anmelden eines <CODE>RelayHashMap</CODE>.
+     * Anmelden einer <CODE>RelayHashMap</CODE>.
      *
-     * @param remoteStore  Das anzumendende Speicherobjekt.
+     * @param remoteStore  Das anzumendende Speicherobjekt. Wenn der Wert
+     *                     <CODE>null</CODE> ist, passiert nichts.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
@@ -102,18 +103,22 @@ public class RemoteHashMapImpl implements RemoteHashMap {
     }
 
     /**
-     * Abmelden eines <CODE>RelayHashMap</CODE>.
+     * Abmelden einer <CODE>RelayHashMap</CODE>.
      *
-     * @param remoteStore  Das abzumendende Speicherobjekt.
+     * @param remoteStore  Das abzumendende Speicherobjekt. Wenn der Wert
+     *                     <CODE>null</CODE> ist oder ein anderer RemoteStore
+     *                     als der registrierte, passiert nichts.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public synchronized void unregisterRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
-        relayHashMap = null;
-        putTransmitter.terminate();
-        putTransmitter = null;
+        if ((remoteStore != null) && (remoteStore == relayHashMap)) {
+            relayHashMap = null;
+            putTransmitter.terminate();
+            putTransmitter = null;
+        }
     }
 
     /**

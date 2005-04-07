@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 05.04.2005 by Dietmar Lippold
+ * last change: 07.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -90,7 +90,8 @@ public class RemoteHashSetImpl implements RemoteHashSet {
     /**
      * Anmelden eines <CODE>RelayHashSet</CODE>.
      *
-     * @param remoteStore  Das anzumendende Speicherobjekt.
+     * @param remoteStore  Das anzumendende Speicherobjekt. Wenn der Wert
+     *                     <CODE>null</CODE> ist, passiert nichts.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
@@ -106,16 +107,20 @@ public class RemoteHashSetImpl implements RemoteHashSet {
     /**
      * Abmelden eines <CODE>RelayHashSet</CODE>.
      *
-     * @param remoteStore  Das abzumendende Speicherobjekt.
+     * @param remoteStore  Das abzumendende Speicherobjekt. Wenn der Wert
+     *                     <CODE>null</CODE> ist oder ein anderer RemoteStore
+     *                     als der registrierte, passiert nichts.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public synchronized void unregisterRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
-        relayHashSet = null;
-        addTransmitter.terminate();
-        addTransmitter = null;
+        if ((remoteStore != null) && (remoteStore == relayHashSet)) {
+            relayHashSet = null;
+            addTransmitter.terminate();
+            addTransmitter = null;
+        }
     }
 
     /**
