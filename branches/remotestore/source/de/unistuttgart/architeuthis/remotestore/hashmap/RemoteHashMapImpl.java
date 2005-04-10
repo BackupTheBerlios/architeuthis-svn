@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapImpl.java
  * created:     08.02.2005
- * last change: 06.04.2005 by Michael Wohlfart
+ * last change: 10.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -30,10 +30,11 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashmap;
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.Transmitter;
@@ -46,7 +47,7 @@ import de.unistuttgart.architeuthis.remotestore.Transmitter;
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
-public class RemoteHashMapImpl implements RemoteHashMap {
+public class RemoteHashMapImpl extends UnicastRemoteObject implements RemoteHashMap {
 
     /**
      * Generierte <code>serialVersionUID</code>.

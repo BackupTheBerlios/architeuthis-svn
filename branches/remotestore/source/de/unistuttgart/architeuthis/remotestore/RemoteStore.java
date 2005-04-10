@@ -1,7 +1,7 @@
 /*
  * file:        RemoteStore.java
  * created:     08.02.2005
- * last change: 01.04.2005 by Dietmar Lippold
+ * last change: 10.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -43,7 +43,7 @@ import java.rmi.RemoteException;
  *
  * @author Michael Wohlfart
  */
-public interface RemoteStore extends Remote, Serializable  {
+public interface RemoteStore extends Remote  {
 
     /**
      * Anmelden eines Speicherobjekts.

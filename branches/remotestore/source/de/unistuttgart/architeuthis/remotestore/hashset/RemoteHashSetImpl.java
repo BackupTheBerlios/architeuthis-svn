@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 07.04.2005 by Dietmar Lippold
+ * last change: 10.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.Transmitter;
@@ -48,7 +49,7 @@ import de.unistuttgart.architeuthis.remotestore.Transmitter;
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
-public class RemoteHashSetImpl implements RemoteHashSet {
+public class RemoteHashSetImpl extends UnicastRemoteObject implements RemoteHashSet {
 
     /**
      * Generierte <code>serialVersionUID</code>.
