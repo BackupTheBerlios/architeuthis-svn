@@ -38,7 +38,9 @@ import de.unistuttgart.architeuthis.remotestore.RemoteStore;
  * Dieses Interface gibt die Methoden vor, die für einen RemoteStore zu
  * implementieren sind, der die Funktionalität einer <CODE>HashMap</CODE> hat
  * und Daten nur lokal speichert, ohne sie an andere Remote-Stores
- * weiterzugeben.
+ * weiterzugeben.<P>
+ *
+ * ToDo: Methode putAllLocal ergänzen.
  *
  * @author Dietmar Lippold
  */
