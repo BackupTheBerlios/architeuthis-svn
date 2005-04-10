@@ -32,7 +32,7 @@ package de.unistuttgart.architeuthis.testenvironment.hashstore;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMap;
+import de.unistuttgart.architeuthis.remotestore.hashmap.UserRemoteHashMap;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
@@ -85,8 +85,8 @@ public class HashStorePut implements CommunicationPartialProblem {
     public PartialSolution compute(RemoteStore store)
         throws ProblemComputeException, RemoteException {
 
-        if (store instanceof RemoteHashMap) {
-            ((RemoteHashMap) store).put(key, value);
+        if (store instanceof UserRemoteHashMap) {
+            ((UserRemoteHashMap) store).put(key, value);
         } else {
             System.err.println("wrong remotestore parameter: " + store);
         }

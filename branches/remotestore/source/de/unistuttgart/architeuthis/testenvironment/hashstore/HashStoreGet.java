@@ -34,7 +34,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMap;
+import de.unistuttgart.architeuthis.remotestore.hashmap.UserRemoteHashMap;
 import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
@@ -82,8 +82,8 @@ public class HashStoreGet implements CommunicationPartialProblem {
 
         Serializable partialSolution = null;
 
-        if (store instanceof RemoteHashMap) {
-            partialSolution = (Serializable) ((RemoteHashMap) store).get(key);
+        if (store instanceof UserRemoteHashMap) {
+            partialSolution = (Serializable) ((UserRemoteHashMap) store).get(key);
         } else {
             System.err.println("wrong remotestore parameter: " + store);
         }

@@ -47,7 +47,8 @@ import de.unistuttgart.architeuthis.remotestore.Transmitter;
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
-public class RemoteHashMapImpl extends UnicastRemoteObject implements RemoteHashMap {
+public class RemoteHashMapImpl extends UnicastRemoteObject
+    implements UserRemoteHashMap, LocalRemoteHashMap {
 
     /**
      * Generierte <code>serialVersionUID</code>.
@@ -132,7 +133,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject implements RemoteHash
      *
      * @throws RemoteException RMI-Probleme
      */
-    synchronized void putLocal(Object key, Object value)
+    public synchronized void putLocal(Object key, Object value)
         throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINE)) {

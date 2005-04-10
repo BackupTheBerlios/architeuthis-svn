@@ -1,6 +1,6 @@
 /*
- * file:        UserRemoteHashMap.java
- * created:     08.02.2005
+ * file:        LocalRemoteHashMap.java
+ * created:     10.04.2005
  * last change: 10.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
@@ -36,17 +36,17 @@ import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 
 /**
  * Dieses Interface gibt die Methoden vor, die für einen RemoteStore zu
- * implementieren sind, der die Funktionalität einer <CODE>HashMap</CODE> hat.
- * Er wird von einem Teilproblem verwendet.
+ * implementieren sind, der die Funktionalität einer <CODE>HashMap</CODE> hat
+ * und Daten nur lokal speichert, ohne sie an andere Remote-Stores
+ * weiterzugeben.
  *
- * @author Michael Wohlfart, Dietmar Lippold
+ * @author Dietmar Lippold
  */
-public interface UserRemoteHashMap extends RemoteStore {
+public interface LocalRemoteHashMap extends RemoteStore {
 
     /**
-     * Speichert zu einen key-Objekt ein value-Objekt. Das Objekt-Paar wird
-     * zur Speicherung an andere RemoteStores weitergegeben, wenn eine
-     * <CODE>RelayMap</CODE> angemeldet wurde.
+     * Speichert zu einen key-Objekt ein value-Objekt nur lokal, ohne das
+     * Objekt-Paar an andere Remote-Stores weiterzugeben.
      *
      * @param key    Das key-Objekt, unter dem das value-Objekt gespeichert
      *               wird.
@@ -54,27 +54,6 @@ public interface UserRemoteHashMap extends RemoteStore {
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void put(Object key, Object value) throws RemoteException;
-
-    /**
-     * Liefert zu einem key-Objekt das lokal gespeicherte value-Objekt.
-     *
-     * @param key  Das Key-Objekt, zu dem das zugehörige value-Objekt
-     *             geliefert wird.
-     *
-     * @throws RemoteException  Bei einm RMI Problem.
-     *
-     * @return  Das zugehörige Objekt.
-     */
-    public Object get(Object key) throws RemoteException;
-
-    /**
-     * Liefert die Anzahl der in dieser loaklen Map enthaltenen Objekt-Paare.
-     *
-     * @return  Die Anzahl der enthaltenen Objekt-Paare.
-     *
-     * @throws RemoteException  Bei einem RMI Problem.
-     */
-    public int size() throws RemoteException;
+    public void putLocal(Object key, Object value) throws RemoteException;
 }
 
