@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSetImpl.java
  * created:     08.02.2005
- * last change: 05.04.2005 by Dietmar Lippold
+ * last change: 10.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -83,7 +83,7 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
     public synchronized void registerRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
-        RemoteHashSetImpl remoteHashSet = (RemoteHashSetImpl) remoteStore;
+        LocalRemoteHashSet remoteHashSet = (LocalRemoteHashSet) remoteStore;
 
         // Die aktuellen Elemente dem zu registrierenden RemoteStore
         // hinzufügen.
@@ -117,7 +117,7 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
         // Das Objekt an alle RemoteHashSets übertragen.
         Iterator iterator = getRemoteStoreIterator();
         while (iterator.hasNext()) {
-            RemoteHashSetImpl peer = (RemoteHashSetImpl) iterator.next();
+            LocalRemoteHashSet peer = (LocalRemoteHashSet) iterator.next();
             peer.addLocal(object);
         }
     }

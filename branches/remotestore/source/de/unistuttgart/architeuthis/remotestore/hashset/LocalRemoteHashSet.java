@@ -1,6 +1,6 @@
 /*
- * file:        UserRemoteHashSet.java
- * created:     08.02.2005
+ * file:        LocalRemoteHashSet.java
+ * created:     10.02.2005
  * last change: 10.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
@@ -30,7 +30,6 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
-import java.util.Collection;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
@@ -40,38 +39,20 @@ import de.unistuttgart.architeuthis.remotestore.RemoteStore;
  * implementieren sind, der die Funktionalität eines <CODE>HashSet</CODE> hat.
  * Er wird von einem Teilproblem verwendet.
  *
- * @author Michael Wohlfart, Dietmar Lippold
+ * ToDo: Methode addAllLocal ergänzen.
+ *
+ * @author Dietmar Lippold
  */
-public interface UserRemoteHashSet extends RemoteStore {
+public interface LocalRemoteHashSet extends RemoteStore {
 
     /**
-     * Nimmt ein Objekt in den lokalen Speicher auf und gibt dieses an andere
-     + RemoteStores weiter, wenn ein <CODE>RelayHashSet</CODE> angemeldet
-     * wurde.
+     * Speichert ein Objekt nur im lokalen HashSet, ohne es an das
+     * <CODE>RelayHashSet</CODE> weiterzugeben.
      *
-     * @param object  Das aufzunehmende Objekt.
+     * @param object  Das zu speichernde Objekt.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void add(Object object) throws RemoteException;
-
-    /**
-     * Nimmt die Objekte in den lokalen Speicher auf und gibt sie an andere
-     + RemoteStores weiter, wenn welche vorhanden sind.
-     *
-     * @param objects  Die aufzunehmenden Objekte.
-     *
-     * @throws RemoteException  Bei einem RMI Problem.
-     */
-    public void addAll(Collection objects) throws RemoteException;
-
-    /**
-     * Liefert die Anzahl der in dieser Menge enthaltenen Objekte.
-     *
-     * @return  Die Anzahl der enthaltenen Objekte.
-     *
-     * @throws RemoteException  Bei einem RMI Problem.
-     */
-    public int size() throws RemoteException;
+    public void addLocal(Object object) throws RemoteException;
 }
 
