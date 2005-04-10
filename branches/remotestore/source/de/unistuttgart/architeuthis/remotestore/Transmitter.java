@@ -1,7 +1,7 @@
 /*
  * file:        Transmitter.java
  * created:     05.04.2005
- * last change: 06.04.2005 by Dietmar Lippold
+ * last change: 10.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -113,7 +113,10 @@ public class Transmitter extends Thread {
     public void run() {
         try {
             while (!terminated) {
-                transmitProc.transmit(objectBuffer.dequeue(), relayStore);
+                Object transmitObject = objectBuffer.dequeue();
+                if (!terminated) {
+                    transmitProc.transmit(transmitObject, relayStore);
+                }
             }
         } catch (RemoteException e) {
             if (LOGGER.isLoggable(Level.FINE)) {
