@@ -85,7 +85,7 @@ public final class HashStoreMain {
                                                        dispatcher, codebase);
 
                 // Lösung ausgeben.
-                System.out.println("Gefundenen Lösung: " + solution);
+                System.out.println("Ermittelte Lösung: " + solution);
 
             } catch (ProblemComputeException ex) {
                 ex.printStackTrace();
