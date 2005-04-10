@@ -1,8 +1,12 @@
 /*
  * file:        HashStoreMain.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 15.02.2005 von Michael Wohlfart
- * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
+ * last change: 10.04.2005 von Dietmar Lippold
+ * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
+ *
+ * This software was developed at the Institute for Intelligent Systems at the
+ * University of Stuttgart (http://www.iis.uni-stuttgart.de/) under leadership
+ * of Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de).
  *
  *
  * This file is part of Architeuthis.
@@ -20,12 +24,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
+
+
 package de.unistuttgart.architeuthis.testenvironment.hashstore;
 
 import java.io.Serializable;
@@ -34,69 +35,70 @@ import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
-import de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMapGenerator;
 import de.unistuttgart.architeuthis.user.ProblemComputation;
+import de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMapGenerator;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 
 /**
- * @author michael
+ * Die Testanwendung, die Architeuthis verwendet.
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * @author Michael Wohlfart, Dietmar Lippold
  */
-public class HashStoreMain {
+public final class HashStoreMain {
 
-
-    //private static final String DISPATCHER = "127.0.0.1:1099";
-
-    //private static final String CODEBASE = "http://127.0.0.1:3456/";
-
-
-
-    public static void main(String[] args) {
-        try {
-        	
-        	String codebase = args[0];
-        	String dispatcher = args[1];
-
-            // Archi User-Interface:
-            ProblemComputation computation = new ProblemComputation();
-
-            // ein Problem:
-            HashStoreProblemImpl problem = new HashStoreProblemImpl();
-
-            // ein Speicher-Generator:
-            RemoteHashMapGenerator generator = new RemoteHashMapGenerator();
-
-
-            System.out.println("Problem wird abgeschickt");
-
-            // Problem abschicken und auf Lösung warte:
-            Serializable solution =
-                computation.transmitProblem(problem, generator, dispatcher, codebase);
-
-            System.out.println(solution);
-            // Lösung noch auspacken:
-            Object sol = ((HashStorePartialSolution) solution).getSolution();
-
-            // Lösung ausgeben:
-            System.out.println("gefundenen Lösung: " + sol);
-
-
-        } catch (ProblemComputeException ex) {
-            ex.printStackTrace();
-        } catch (AccessException ex) {
-            ex.printStackTrace();
-        } catch (MalformedURLException ex) {
-            ex.printStackTrace();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        } catch (NotBoundException ex) {
-            ex.printStackTrace();
-        }
-
+    /**
+     * Konstruktur, der nicht aufgerufen werden soll.
+     */
+    private HashStoreMain() {
     }
 
+    /**
+     * Die ausführbare Methode. Übergibt Architeuthis ein Problem und gibt
+     * nach Erhalt die Lösung aus.
+     *
+     * @param args  Die Codebase und die Angabe des Dispatchers.
+     */
+    public static void main(String[] args) {
+        Serializable solution = null;
 
+        if (args.length != 2) {
+            System.out.println("Bitte Codebase-URL und Dispather als Argumente"
+                               + " angeben");
+        } else {
+            String codebase = args[0];
+            String dispatcher = args[1];
+
+            try {
+                // Archi User-Interface.
+                ProblemComputation computation = new ProblemComputation();
+
+                // Ein Problem.
+                HashStoreProblemImpl problem = new HashStoreProblemImpl();
+
+                // Ein RemoteStore-Generator.
+                RemoteHashMapGenerator generator = new RemoteHashMapGenerator();
+
+                System.out.println("Problem wird abgeschickt");
+
+                // Problem abschicken und auf Lösung warten.
+                solution = computation.transmitProblem(problem, generator,
+                                                       dispatcher, codebase);
+
+                // Lösung ausgeben.
+                System.out.println("Gefundenen Lösung: " + solution);
+
+            } catch (ProblemComputeException ex) {
+                ex.printStackTrace();
+            } catch (AccessException ex) {
+                ex.printStackTrace();
+            } catch (MalformedURLException ex) {
+                ex.printStackTrace();
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            } catch (NotBoundException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 }
+

@@ -1,8 +1,13 @@
 /*
  * file:        HashStoreGet.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 15.02.2005 von Michael Wohlfart
- * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
+ * last change: 10.04.2005 von Dietmar Lippold
+ * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
+ *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
+ *
+ * This software was developed at the Institute for Intelligent Systems at the
+ * University of Stuttgart (http://www.iis.uni-stuttgart.de/) under leadership
+ * of Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de).
  *
  *
  * This file is part of Architeuthis.
@@ -20,62 +25,69 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
+
+
 package de.unistuttgart.architeuthis.testenvironment.hashstore;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMap;
+import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 
-
-public class HashStoreGet implements
-        CommunicationPartialProblem {
+/**
+ * Ruft ein value-Objekt zu einem key-Objekt, das dem Konstruktor übergeben
+ * wurde, bei Ausführung der Methode <CODE>compute</CODE> aus einem
+ * <CODE>RemoteStore</CODE> ab und liefert es als Teillösung.
+ *
+ * @author Michael Wohlfart, Dietmar Lippold
+ */
+public class HashStoreGet implements CommunicationPartialProblem {
 
     /**
-     * Key unter dem die Lösung im RemoteStore liegt
+     * Key-Objekt, zu dem das value-Objekt aus dem <CODE>RemoteStore</CODE>
+     * geliefert wird.
      */
     private String key;
 
-
     /**
-     * Konstruktor
+     * Konstruktor.
      *
-     * @param key ID unter der das Objekt im RemoteStore liegt
+     * @param key  Das key-Objekt, zu dem das value-Objekt aus dem
+     *             <CODE>RemoteStore</CODE> abgerufen werden soll.
      */
     public HashStoreGet(String key) {
         this.key = key;
     }
 
     /**
-     * Erzeugt eine Teillösung, das aus einem Objekt aus
-     * dem RemoteStore besteht.
+     * Liefert als Teillösung das value-Objekt, das zum key-Objekt im
+     * übergebenen <CODE>RemoteStore</CODE> gespeichert ist.
      *
-     * @param store der RemoteStore
+     * @param store  Der <CODE>RemoteStore</CODE>, aus dem das value-Objekt
+     *               abgerufen wird.
      *
-     * @return die Teillösung
+     * @return  Das abgerufene value-Objekt.
      *
-     * @throws ProblemComputeException Compute Probleme
-     * @throws RemoteException RMI Probleme
+     * @throws ProblemComputeException  Sollte nicht auftreten.
+     * @throws RemoteException          Bei einem RMI Problem.
      */
-    public PartialSolution compute(RemoteStore store) throws ProblemComputeException, RemoteException {
+    public PartialSolution compute(RemoteStore store)
+        throws ProblemComputeException, RemoteException {
 
-        Object solution = null;
+        Serializable partialSolution = null;
 
         if (store instanceof RemoteHashMap) {
-            solution = ((RemoteHashMap)store).get(key);
+            partialSolution = (Serializable) ((RemoteHashMap) store).get(key);
         } else {
-        	System.err.println("wrong remotestore parameter: " + store);
+            System.err.println("wrong remotestore parameter: " + store);
         }
-        return new HashStorePartialSolution(solution);
+        return new ContainerPartialSolution(partialSolution);
     }
-
 }
+
