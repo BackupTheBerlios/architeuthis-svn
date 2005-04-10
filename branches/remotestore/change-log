@@ -13,6 +13,13 @@ Operative gelegentlich ein Fehler in der JVM auf, der zu deren Absturz
 führte.
 
 
+Stand 10.04.2005
+----------------
+
+ * Ein deadlock-Problem beseitigt, das auftreten konnte, wenn die
+   Berechnungsdauer eines Teilproblems extrem kurz war.
+
+
 Release 1.4
 -----------
 
