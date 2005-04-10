@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 07.04.2005 by Dietmar Lippold
+ * last change: 10.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -180,16 +180,16 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
     /**
      * Meldet, wenn sowohl ein zentraler wie ein dezentraler RemoteStore
-     * vorhanden ist, zuerst den dezentralen beim zentralen und dann den
-     * zentralen beim dezentralen ab.
+     * vorhanden ist, zuerst den zentralen beim dezentralen und dann den
+     * dezentralen beim zentralen ab.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
     private void unregisterRemoteStore() throws RemoteException {
         if ((centralRemoteStore != null) && (distRemoteStore != null)
                 && (distRemoteStore != centralRemoteStore)) {
-            centralRemoteStore.unregisterRemoteStore(distRemoteStore);
             distRemoteStore.unregisterRemoteStore(centralRemoteStore);
+            centralRemoteStore.unregisterRemoteStore(distRemoteStore);
             centralRemoteStore = null;
             distRemoteStore = null;
         }
