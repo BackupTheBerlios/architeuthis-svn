@@ -53,27 +53,38 @@ public final class HashStoreMain {
     }
 
     /**
+     * Die Anzahl der zu erzeugenden Put-Teilprobleme.
+     */
+    private static int putCreateNr = 1;
+
+    /**
      * Die ausführbare Methode. Übergibt Architeuthis ein Problem und gibt
-     * nach Erhalt die Lösung aus.
+     * nach Erhalt die Lösung aus. Wenn nicht angegeben wird, wie viele
+     * Teilprobleme erzeugt werden sollen, wird eines erzeugt.
      *
-     * @param args  Die Codebase und die Angabe des Dispatchers.
+     * @param args  Die Codebase und die Angabe des Dispatchers sowie optional
+     *              die Anzahl der zu erzeugenden Put-Teilprobleme.
      */
     public static void main(String[] args) {
         Serializable solution = null;
 
-        if (args.length != 2) {
-            System.out.println("Bitte Codebase-URL und Dispather als Argumente"
-                               + " angeben");
+        if ((args.length < 2) || (args.length > 3)) {
+            System.out.println("Bitte Codebase-URL und Dispather sowie"
+                               + " optional die Anzahl der Put-Teilprobleme"
+                               + " als Argumente angeben");
         } else {
             String codebase = args[0];
             String dispatcher = args[1];
+            if (args.length == 3) {
+                putCreateNr = Integer.parseInt(args[2]);
+            }
 
             try {
                 // Archi User-Interface.
                 ProblemComputation computation = new ProblemComputation();
 
                 // Ein Problem.
-                HashStoreProblemImpl problem = new HashStoreProblemImpl();
+                HashStoreProblemImpl problem = new HashStoreProblemImpl(putCreateNr);
 
                 // Ein RemoteStore-Generator.
                 RemoteHashMapGenerator generator = new RemoteHashMapGenerator();

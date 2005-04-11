@@ -8,6 +8,9 @@ REM Benötigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
 REM DISPATCHER_PORT, JAVA, DEPLOY_DIR, CLASS_FILE_PATH) werden gesetzt
 call setup.bat
 
+REM die Anzahl der zu erzeugenden Put-Teilprobleme
+set PUT_PAR_PROB_NR=3
+
 
 REM die Parameter für die JVM
 set JVMPAR=
@@ -17,6 +20,7 @@ REM die Parameter für die Anwendung
 set ARGS=
 set ARGS=%ARGS% %CLASSURL%
 set ARGS=%ARGS% %DISPATCHER_HOST%:%DISPATCHER_PORT%
+set ARGS=%ARGS% %PUT_PAR_PROB_NR%
 
 
 REM die Main-Klasse

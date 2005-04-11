@@ -8,6 +8,9 @@
 # DISPATCHER_PORT, JAVA, DEPLOY_DIR, CLASS_FILE_PATH) werden gesetzt
 . ./setup.sh
 
+# die Anzahl der zu erzeugenden Put-Teilprobleme
+PUT_PAR_PROB_NR=3
+
 
 # die Parameter für die JVM
 JVMPAR=" "
@@ -17,6 +20,7 @@ JVMPAR="$JVMPAR -Djava.security.policy=$CONFIG_DIR/transmitter.pol"
 ARGS=" "
 ARGS="$ARGS $CLASSURL"
 ARGS="$ARGS $DISPATCHER_HOST:$DISPATCHER_PORT"
+ARGS="$ARGS $PUT_PAR_PROB_NR"
 
 
 # die Main-Klasse

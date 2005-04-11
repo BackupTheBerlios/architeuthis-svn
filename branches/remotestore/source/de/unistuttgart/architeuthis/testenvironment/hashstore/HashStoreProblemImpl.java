@@ -1,7 +1,7 @@
 /*
  * file:        HashStoreProblemImpl.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 10.04.2005 von Dietmar Lippold
+ * last change: 11.04.2005 von Dietmar Lippold
  * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -40,10 +40,11 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 
 /**
- * Erzeugt zwei Teilprobleme zur Benutzung eines <CODE>RemoteStore</CODE>. Das
- * erste Teilproblem legt ein Objekt in den RemoteStore und das zweite ruft es
- * daraus wieder ab. Das zweite Teilproblem wird erst geliefert, wenn das
- * erste beendet ist.
+ * Erzeugt zwei Arten von Teilproblemen zur Benutzung eines
+ * <CODE>RemoteStore</CODE>. Die erste Art von Teilproblemen legt ein Objekt
+ * in den RemoteStore und die zweite Art, von der nur eine Instanz erzeugt
+ * wird, ruft es daraus wieder ab. Das Teilproblem der zweiten Art wird erst
+ * geliefert, wenn alle der erste Art beendet sind.
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
@@ -58,7 +59,7 @@ public class HashStoreProblemImpl implements SerializableProblem {
      * Generierte SerialVersionUID. Diese muss geändert werden, sobald
      * strukurelle Änderungen an dieser Klasse durchgeführt worden sind.
      */
-    private static final long serialVersionUID = 3258135769033094193L;
+//    private static final long serialVersionUID = 3258135769033094193L;
 
     /**
      * Key-Objekt für den <CODE>RemoteStore</CODE>.
@@ -66,7 +67,7 @@ public class HashStoreProblemImpl implements SerializableProblem {
     private static final String KEY = "key";
 
     /**
-     * Value-Objekt für den <CODE>RemoteStore</CODE>.
+     * Anfangsbestandteil des Value-Objekts für den <CODE>RemoteStore</CODE>.
      */
     private static final  String LOESUNG = "loesung";
 
@@ -76,32 +77,49 @@ public class HashStoreProblemImpl implements SerializableProblem {
     private Serializable solution = null;
 
     /**
-     * <CODE>PartialProblem</CODE>, das die Lösung in den RemoteStore ablegt.
+     * Anzahl der zu erzeugenden Teilprobleme vom Typ
+     * <CODE>HashStorePut</CODE>.
      */
-    private HashStorePut put = new HashStorePut(KEY, LOESUNG);
+    private int putCreateNr;
 
     /**
-     * <CODE>PartialProblem</CODE>, das die Lösung aus dem RemoteStore abruft.
+     * Anzahl der vergebenen Teilprobleme vom Typ <CODE>HashStorePut</CODE>.
      */
-    private HashStoreGet get = new HashStoreGet(KEY);
+    private int putDeliveredNr = 0;
 
     /**
-     * Flag, das anzeigt, ob <CODE>HashStorePut</CODE> bereits vergeben wurde.
+     * Anzahl der erhaltenen Teillösungen zu Teilprobleme vom Typ
+     * <CODE>HashStorePut</CODE>. 
      */
-    private  boolean putDelivered = false;
+    private int putReturnedNr = 0;
 
     /**
-     * Flag, das anzeigt, ob <CODE>HashStorePut</CODE> bereits bearbeitet
-     * wurde.
-     */
-    private  boolean putReturned = false;
-
-    /**
-     * Flag, das anzeigt, ob <CODE>HashStoreGet</CODE> bereits vergeben wurde.
-     * Dies kann erst auf <CODE>true</CODE> gesetzt werden, wenn das
-     * Teilproblem <CODE>HashStorePut</CODE> bearbeitet wurde.
+     * Flag, das anzeigt, ob das Teilproblem vom Typ <CODE>HashStoreGet</CODE>
+     * bereits vergeben wurde. Dies kann erst auf <CODE>true</CODE> gesetzt
+     * werden, wenn die vorgegebene Anzahl von Teilproblemen vom Typ
+     * <CODE>HashStorePut</CODE> bearbeitet wurde.
      */
     private  boolean getDelivered = false;
+
+    /**
+     * Erzeugt eine Instanz, wobei die Anzahl der zu erzeugenden Teilprobleme
+     * vom Typ <CODE>HashStorePut</CODE> angegeben wird.
+     *
+     * @param putParProbNumber  Anzahl zu generierender Teilprobleme vom Typ
+     *                          <CODE>HashStorePut</CODE>.
+     */
+    public HashStoreProblemImpl(int putParProbNumber) {
+        putCreateNr = putParProbNumber;
+    }
+
+    /**
+     * Erzeugt eine Instanz, wobei die Anzahl der zu erzeugenden Teilprobleme
+     * nicht angegeben wird. Es wird daher ein Teilproblem vom Typ
+     * <CODE>HashStorePut</CODE> erzeugt.
+     */
+    public HashStoreProblemImpl() {
+        this(1);
+    }
 
     /**
      * Erzeugt die Teilprobleme.
@@ -113,20 +131,20 @@ public class HashStoreProblemImpl implements SerializableProblem {
      *          erzeugt wurde.
      */
     public PartialProblem getPartialProblem(long number) {
-        if (!putDelivered) {
-            putDelivered = true;
+        if (putDeliveredNr < putCreateNr) {
+            putDeliveredNr++;
             if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("sent put");
+                LOGGER.fine("sent put " + putDeliveredNr);
             }
-            return put;
+            return (new HashStorePut(KEY, LOESUNG + "-" + putDeliveredNr));
         }
 
-        if (putReturned && (!getDelivered)) {
+        if ((putReturnedNr == putCreateNr) && (!getDelivered)) {
             getDelivered = true;
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("sent get");
             }
-            return get;
+            return (new HashStoreGet(KEY));
         }
 
         return null;
@@ -141,14 +159,14 @@ public class HashStoreProblemImpl implements SerializableProblem {
      * @param parSol   Die gelieferte Teillösung.
      */
     public void collectResult(PartialSolution parSol, PartialProblem parProb) {
-        if (parProb == put) {
+        if (parProb instanceof HashStorePut) {
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("put returned");
             }
-            putReturned = true;
+            putReturnedNr++;
         }
 
-        if (parProb == get) {
+        if (parProb instanceof HashStoreGet) {
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("get returned");
             }
