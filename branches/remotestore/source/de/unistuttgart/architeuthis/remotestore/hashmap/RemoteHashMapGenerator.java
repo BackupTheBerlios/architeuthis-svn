@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapGenerator.java
  * created:     08.02.2005
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 12.02.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -42,7 +42,7 @@ import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
  * Über ein Flag im Konstruktor kann gesteuert werden, ob ein
  * zentraler oder mehrere dezentrale Speicher verwendet werden.
  *
- * @author Michael Wohlfart
+ * @author Michael Wohlfart, Dietmar Lippold
  *
  */
 public class RemoteHashMapGenerator implements RemoteStoreGenerator {
@@ -58,27 +58,40 @@ public class RemoteHashMapGenerator implements RemoteStoreGenerator {
     private static final Logger LOGGER = Logger.getLogger(RemoteHashMapGenerator.class.getName());
 
     /**
-     * Defaulmässig wird lediglich zentraler Speicher verwendet.
+     * Gibt an, ob ausschließlich ein zentraler Speicher verwendet werden
+     * soll.
      */
-    private boolean isCentralOnly = true;
+    private boolean isCentralOnly;
 
     /**
-     * Einfacher Konstruktor für die Defaulteinstellungen.
+     * Gibt an, ob die verteilten RemoteStores bei Verwendung eines
+     * RelayStore dessen Methoden synchron aufrufen sollen. Falls kein
+     * RelayStore verwendet wird, ist der Wert dieses Attributs ohne
+     * Bedeutung.
+     */
+    private boolean synchronComm;
+
+    /**
+     * Konstruktor, bei dem nur ein zentraler und kein verteilter
+     * RemoteStore von der erzeugten Instanz erzeugt wird.
      */
     public RemoteHashMapGenerator() {
+        this.isCentralOnly = true;
     }
 
     /**
-     * Konstruktor, bei dem anzugeben ist, ob ein verteilter Speicher
-     * verwendet werden soll.
+     * Konstruktor, bei dem sowohl ein zentraler wie verteilte RemoteStores
+     * von der erzeugten Instanz erzeugt wird. Als Parameter ist anzugeben,
+     * ob die Aufrufe der verteilten beim zentralen RemoteStore synchron
+     * erfolgen sollen.
      *
-     * @param isCentralOnly  <CODE>true</CODE>, wenn nur ein zentraler Speicher
-     *                       verwendet werden soll, anderenfalls, wenn
-     *                       dezentrale Speicher verwendet werden sollen,
-     *                       <CODE>false</CODE>.
+     * @param synchronComm  <CODE>true</CODE>, wenn die Aufrufe der
+     *                      verteilten beim zentralen RemoteStore synchron
+     *                      erfolgen sollen, anderenfalls <CODE>false</CODE>.
      */
-    public RemoteHashMapGenerator(boolean isCentralOnly) {
-        this.isCentralOnly = isCentralOnly;
+    public RemoteHashMapGenerator(boolean synchronComm) {
+        this.isCentralOnly = false;
+        this.synchronComm = synchronComm;
     }
 
     /**
@@ -118,9 +131,13 @@ public class RemoteHashMapGenerator implements RemoteStoreGenerator {
         } else {
             try {
                 if (LOGGER.isLoggable(Level.INFO)) {
-                    LOGGER.info("Erzeuge dezentralen RemoteStore.");
+                    if (synchronComm) {
+                        LOGGER.info("Erzeuge dezentralen synchronen RemoteStore.");
+                    } else {
+                        LOGGER.info("Erzeuge dezentralen asynchronen RemoteStore.");
+                    }
                 }
-                return new RemoteHashMapImpl();
+                return (new RemoteHashMapImpl(synchronComm));
             } catch (RemoteException ex) {
                 ex.printStackTrace();
                 return null;

@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapImpl.java
  * created:     08.02.2005
- * last change: 10.04.2005 by Dietmar Lippold
+ * last change: 11.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -79,12 +79,34 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
     private Transmitter putTransmitter = null;
 
     /**
-     * Konstruktor ohne spezielle Wirkung.
+     * Gibt an, ob diese Instanz bei Verwendung eines RelayStore dessen
+     * Methoden synchron aufrufen soll. Falls kein RelayStore verwendet
+     * wird, ist der Wert dieses Attributs ohne Bedeutung.
+     */
+    private boolean synchronComm;
+
+    /**
+     * Konstruktor, der festlegt, daß bei Verwendung eines RelayStore dessen
+     * Methoden asynchron aufgerufen werden sollen.
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
     protected RemoteHashMapImpl() throws RemoteException {
-        super();
+        synchronComm = false;
+    }
+
+    /**
+     * Konstruktor, mit dem festlegt werden kann, ob bei Verwendung eines
+     * RelayStore dessen Methoden synchron aufgerufen werden sollen.
+     *
+     * @param synchronComm  Genau dann <CODE>true</CODE>, wenn bei
+     *                      Verwendung eines RelayStore dessen Methoden
+     *                      synchron aufgerufen werden sollen.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    protected RemoteHashMapImpl(boolean synchronComm) throws RemoteException {
+        this.synchronComm = synchronComm;
     }
 
     /**
@@ -100,7 +122,9 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
 
         if (remoteStore != null) {
             relayHashMap = (RelayHashMap) remoteStore;
-            putTransmitter = new Transmitter(relayHashMap, new PutProcedure());
+            if (!synchronComm) {
+                putTransmitter = new Transmitter(relayHashMap, new PutProcedure());
+            }
         }
     }
 
@@ -118,8 +142,10 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
 
         if ((remoteStore != null) && (remoteStore == relayHashMap)) {
             relayHashMap = null;
-            putTransmitter.terminate();
-            putTransmitter = null;
+            if (!synchronComm) {
+                putTransmitter.terminate();
+                putTransmitter = null;
+            }
         }
     }
 
@@ -148,7 +174,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      * Speichert zu einen key-Objekt ein value-Objekt. Das Objekt-Paar wird
      * zur Speicherung an andere RemoteStores weitergegeben, wenn eine
      * <CODE>RelayMap</CODE> angemeldet wurde. Für den Anwendungsentwickler
-     *  ist transparent, ob hier ein lokales Objekt distStore) angesprochen
+     * ist transparent, ob hier ein lokales Objekt (distStore) angesprochen
      * wird oder dies ein RMI-Aufruf ist und das angesprochene Storage-Objekt
      * (centralStore) auf den Dispatcher liegt.
      *
@@ -158,16 +184,22 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      *
      * @throws RemoteException RMI-Probleme
      */
-    public synchronized void put(Object key, Object value)
-        throws RemoteException {
+    public void put(Object key, Object value) throws RemoteException {
 
         // Erstmal lokal updaten.
         putLocal(key, value);
 
-        // Dann das Objekt-Paar an den Transmitter zur Weiterleitung an den
-        // RelayStore und damit an die anderen RemoteHashMaps übergeben.
-        if (putTransmitter != null) {
-            putTransmitter.enqueue(new MapEntry(key, value));
+        if (relayHashMap != null) {
+            if (synchronComm) {
+                // Das Objekt-Paar direkt an den RelayStore und damit an
+                // die anderen RemoteHashMaps übergeben.
+                relayHashMap.put(key, value);
+            } else {
+                // Das Objekt-Paar an den Transmitter zur Weiterleitung an
+                // den RelayStore und damit an die anderen RemoteHashMaps
+                // übergeben.
+                putTransmitter.enqueue(new MapEntry(key, value));
+            }
         }
     }
 
