@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapGenerator.java
  * created:     08.02.2005
- * last change: 12.02.2005 by Dietmar Lippold
+ * last change: 12.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -38,9 +38,11 @@ import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 
 /**
- * Klasse zur Erzeugung HashMap ähnlicher RemoteStores für Architeuthis.
- * Über ein Flag im Konstruktor kann gesteuert werden, ob ein
- * zentraler oder mehrere dezentrale Speicher verwendet werden.
+ * Klasse, die RemoteStores mit der Funktionalität einer <CODE>HashMap</CODE>
+ * erzeugt. Über den Konstruktor kann angegeben werden, ob nur ein zentraler
+ * oder zusätzlich mehrere dezentrale RemoteStores verwendet werden sollen und
+ * ob im zweiten Fall die Methoden des zentralen synchron oder asynchron
+ * aufgerufen werden sollen.
  *
  * @author Michael Wohlfart, Dietmar Lippold
  *
@@ -85,9 +87,9 @@ public class RemoteHashMapGenerator implements RemoteStoreGenerator {
      * ob die Aufrufe der verteilten beim zentralen RemoteStore synchron
      * erfolgen sollen.
      *
-     * @param synchronComm  <CODE>true</CODE>, wenn die Aufrufe der
-     *                      verteilten beim zentralen RemoteStore synchron
-     *                      erfolgen sollen, anderenfalls <CODE>false</CODE>.
+     * @param synchronComm  <CODE>true</CODE>, wenn die Aufrufe der verteilten
+     *                      beim zentralen RemoteStore synchron erfolgen
+     *                      sollen, anderenfalls <CODE>false</CODE>.
      */
     public RemoteHashMapGenerator(boolean synchronComm) {
         this.isCentralOnly = false;
@@ -106,9 +108,9 @@ public class RemoteHashMapGenerator implements RemoteStoreGenerator {
 
         try {
             if (isCentralOnly) {
-                return new RemoteHashMapImpl();
+                return (new RemoteHashMapImpl());
             } else {
-                return new RelayHashMapImpl();
+                return (new RelayHashMapImpl());
             }
         } catch (RemoteException ex) {
             ex.printStackTrace();
