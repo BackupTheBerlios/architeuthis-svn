@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 10.04.2005 by Dietmar Lippold
+ * last change: 12.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -81,12 +81,34 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     private Transmitter addTransmitter = null;
 
     /**
-     * Konstruktor ohne spezielle Wirkung.
+     * Gibt an, ob diese Instanz bei Verwendung eines RelayStore dessen
+     * Methoden synchron aufrufen soll. Falls kein RelayStore verwendet
+     * wird, ist der Wert dieses Attributs ohne Bedeutung.
+     */
+    private boolean synchronComm;
+
+    /**
+     * Konstruktor, der festlegt, daß bei Verwendung eines RelayStore dessen
+     * Methoden asynchron aufgerufen werden sollen.
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
     protected RemoteHashSetImpl() throws RemoteException {
-        super();
+        synchronComm = false;
+    }
+
+    /**
+     * Konstruktor, mit dem festlegt werden kann, ob bei Verwendung eines
+     * RelayStore dessen Methoden synchron aufgerufen werden sollen.
+     *
+     * @param synchronComm  Genau dann <CODE>true</CODE>, wenn bei
+     *                      Verwendung eines RelayStore dessen Methoden
+     *                      synchron aufgerufen werden sollen.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    protected RemoteHashSetImpl(boolean synchronComm) throws RemoteException {
+        this.synchronComm = synchronComm;
     }
 
     /**
@@ -102,7 +124,9 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
 
         if (remoteStore != null) {
             relayHashSet = (RelayHashSet) remoteStore;
-            addTransmitter = new Transmitter(relayHashSet, new AddProcedure());
+            if (!synchronComm) {
+                addTransmitter = new Transmitter(relayHashSet, new AddProcedure());
+            }
         }
     }
 
@@ -120,8 +144,10 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
 
         if ((remoteStore != null) && (remoteStore == relayHashSet)) {
             relayHashSet = null;
-            addTransmitter.terminate();
-            addTransmitter = null;
+            if (!synchronComm) {
+                addTransmitter.terminate();
+                addTransmitter = null;
+            }
         }
     }
 
@@ -155,15 +181,22 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public synchronized void add(Object object) throws RemoteException {
+    public void add(Object object) throws RemoteException {
 
         // Erstmal lokal updaten.
         addLocal(object);
 
-        // Dann das Objekt an den Transmitter zur Weiterleitung an den
-        // RelayStore und damit an die anderen RemoteHashSets übergeben.
-        if (addTransmitter != null) {
-            addTransmitter.enqueue(object);
+        if (relayHashSet != null) {
+            if (synchronComm) {
+                // Das Objekt direkt an den RelayStore und damit an die
+                // anderen RemoteHashSets übergeben.
+                relayHashSet.add(object);
+            } else {
+                // Das Objekt an den Transmitter zur Weiterleitung an den
+                // RelayStore und damit an die anderen RemoteHashSets
+                // übergeben.
+                addTransmitter.enqueue(object);
+            }
         }
     }
 
