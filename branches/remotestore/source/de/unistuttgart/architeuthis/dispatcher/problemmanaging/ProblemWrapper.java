@@ -1,7 +1,7 @@
 /*
  * file:        ProblemWrapper.java
  * created:     29.06.2003
- * last change: 06.04.2005 by Dietmar Lippold
+ * last change: 15.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -555,6 +555,11 @@ class ProblemWrapper extends Thread {
                 } catch (InterruptedException e) {
                 }
             }
+        }
+
+        // zentralen RemoteStore beenden
+        if (centralRemoteStore != null) {
+            centralRemoteStore.terminate();
         }
 
         // URLs des ClassLoader des Problems abmelden
