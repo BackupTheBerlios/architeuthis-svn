@@ -1,7 +1,7 @@
 /*
  * file:        RemoteStore.java
  * created:     08.02.2005
- * last change: 10.04.2005 by Dietmar Lippold
+ * last change: 15.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -41,7 +41,7 @@ import java.rmi.RemoteException;
  * einer konkreten Implementierung noch weitere Methoden für den Zugriff auf
  * den Speicher implementiert werden.
  *
- * @author Michael Wohlfart
+ * @author  Michael Wohlfart, Dietmar Lippold
  */
 public interface RemoteStore extends Remote  {
 
@@ -62,5 +62,13 @@ public interface RemoteStore extends Remote  {
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public void unregisterRemoteStore(RemoteStore remoteStore) throws RemoteException;
+
+    /**
+     * Beendet dieses RemoteStore und meldet ihn insbesondere als RMI-Dienst
+     * ab.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void terminate() throws RemoteException;
 }
 

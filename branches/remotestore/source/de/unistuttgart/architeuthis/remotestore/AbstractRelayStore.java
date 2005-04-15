@@ -1,7 +1,7 @@
 /*
  * file:        AbstractRemoteStore.java
  * created:     08.02.2005
- * last change: 05.04.2005 by Dietmar Lippold
+ * last change: 15.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -110,6 +110,20 @@ public abstract class AbstractRelayStore extends UnicastRemoteObject
         }
 
         registeredStores.remove(remoteStore);
+    }
+
+    /**
+     * Beendet dieses RemoteStore und meldet ihn insbesondere als RMI-Dienst
+     * ab.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void terminate() throws RemoteException {
+
+        boolean success = unexportObject(this, true);
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info("unexportObject: " + success);
+        }
     }
 
     /**
