@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 10.04.2005 by Dietmar Lippold
+ * last change: 15.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -190,7 +190,11 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                 && (distRemoteStore != centralRemoteStore)) {
             distRemoteStore.unregisterRemoteStore(centralRemoteStore);
             centralRemoteStore.unregisterRemoteStore(distRemoteStore);
+            distRemoteStore.terminate();
             centralRemoteStore = null;
+            distRemoteStore = null;
+        } if ((centralRemoteStore == null) && (distRemoteStore != null)) {
+            distRemoteStore.terminate();
             distRemoteStore = null;
         }
     }
