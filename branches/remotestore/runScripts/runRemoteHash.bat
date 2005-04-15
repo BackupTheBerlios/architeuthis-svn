@@ -11,6 +11,11 @@ call setup.bat
 REM die Anzahl der zu erzeugenden Put-Teilprobleme
 set PUT_PAR_PROB_NR=3
 
+REM Nachfolgende Zeile einkommentieren, wenn verteilte RemoteStores verwendet
+REM werden sollen. Der Wert true steht für synchrone, Wert false für
+REM asynchrone Methodenaufrufe.
+REM DIST_COMM=false
+
 
 REM die Parameter für die JVM
 set JVMPAR=
@@ -21,6 +26,7 @@ set ARGS=
 set ARGS=%ARGS% %CLASSURL%
 set ARGS=%ARGS% %DISPATCHER_HOST%:%DISPATCHER_PORT%
 set ARGS=%ARGS% %PUT_PAR_PROB_NR%
+set ARGS=%ARGS% %DIST_COMM%
 
 
 REM die Main-Klasse

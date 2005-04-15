@@ -11,6 +11,11 @@
 # die Anzahl der zu erzeugenden Put-Teilprobleme
 PUT_PAR_PROB_NR=3
 
+# Nachfolgende Zeile einkommentieren, wenn verteilte RemoteStores verwendet
+# werden sollen. Der Wert true steht für synchrone, Wert false für
+# asynchrone Methodenaufrufe.
+# DIST_COMM="false"
+
 
 # die Parameter für die JVM
 JVMPAR=" "
@@ -21,6 +26,7 @@ ARGS=" "
 ARGS="$ARGS $CLASSURL"
 ARGS="$ARGS $DISPATCHER_HOST:$DISPATCHER_PORT"
 ARGS="$ARGS $PUT_PAR_PROB_NR"
+ARGS="$ARGS $DIST_COMM"
 
 
 # die Main-Klasse
