@@ -1,7 +1,7 @@
 /*
  * file:        ExceptionCodes.java
  * created:     18.01.2004
- * last change: 14.05.2004 by Dietmar Lippold
+ * last change: 15.04.2005 by Dietmar Lippold
  * developers:  Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -85,39 +85,51 @@ public class ExceptionCodes {
     public static final int PARTIALPROBLEM_COMPUTE_EXCEPTION = 6;
 
     /**
+     * Signalisiert, dass ein <CODE>RemoteStore</CODE> nicht erzeugt werden
+     * konnte.
+     */
+    public static final int REMOTE_STORE_GEN_EXCEPTION = 7;
+
+    /**
+     * Signalisiert, dass <CODE>RemoteStore</CODE> nicht angemeldet,
+     * abgemeldet oder beendet werden konnte.
+     */
+    public static final int REMOTE_STORE_EXCEPTION = 8;
+
+    /**
      * Signalisiert, dass bei der Berechnung eines Teilproblems eine
      * Runtime-Exception auftrat. Der Grund für diese Ausnahme liegt
      * wahrscheinlich an der Klasse, die {@link PartialProblem#compute()}
      * implementiert.
      */
-    public static final int PARTIALPROBLEM_ERROR = 7;
+    public static final int PARTIALPROBLEM_ERROR = 9;
      
     /**
      * Signalisiert, dass das Problem einerseites keine Teilprobleme mehr
      * bereitstellt und andererseits keine Gesamtlösung liefert.
      */
-    public static final int PROBLEM_INCORRECT_ERROR = 8;
+    public static final int PROBLEM_INCORRECT_ERROR = 10;
 
     /**
      * Signalisiert, dass der ComputeManager heruntergefahren wird und alle
      * Probleme abgebrochen werden.
      */
-    public static final int DISPATCHER_SHUTDOWN = 9;
+    public static final int DISPATCHER_SHUTDOWN = 11;
 
     /**
      * Signalisiert, dass keine Operatives am System angemeldet sind.
      */
-    public static final int NO_OPERATIVES_REGISTERED = 10;
+    public static final int NO_OPERATIVES_REGISTERED = 12;
 
     /**
      * Signalisiert, dass sich wieder ein Operative am System angemeldet hat,
      * nachdem zuvor keiner mehr angemeldet war.
      */
-    public static final int NEW_OPERATIVES_REGISTERED = 11;
+    public static final int NEW_OPERATIVES_REGISTERED = 13;
 
     /**
      * Signalisiert, dass der Benutzter sein Problem abgebrochen hat.
      */
-    public static final int USER_ABORT_PROBLEM = 12;   
+    public static final int USER_ABORT_PROBLEM = 14;   
     
 }
