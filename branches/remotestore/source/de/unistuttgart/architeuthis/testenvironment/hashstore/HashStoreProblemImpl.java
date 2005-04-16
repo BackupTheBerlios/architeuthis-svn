@@ -1,7 +1,7 @@
 /*
  * file:        HashStoreProblemImpl.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 11.04.2005 von Dietmar Lippold
+ * last change: 16.04.2005 von Dietmar Lippold
  * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -69,7 +69,13 @@ public class HashStoreProblemImpl implements SerializableProblem {
     /**
      * Anfangsbestandteil des Value-Objekts für den <CODE>RemoteStore</CODE>.
      */
-    private static final  String LOESUNG = "loesung";
+    private static final String LOESUNG = "Loesung";
+
+    /**
+     * Wert der geliefert wird, wenn kein Value-Objekts ermittelt werden
+     * konnte.
+     */
+    private static final String KEINE_LOESUNG = "Keine Loesung";
 
     /**
      * Die ermttelte Lösung.
@@ -171,12 +177,16 @@ public class HashStoreProblemImpl implements SerializableProblem {
                 LOGGER.fine("get returned");
             }
             solution = ((ContainerPartialSolution) parSol).getPartialSolution();
+            if (solution == null) {
+                solution = KEINE_LOESUNG;
+            }
         }
     }
 
     /**
      * Liefert die Gesamtlösung.  Dies ist das aus dem <CODE>RemoteStore</CODE>
-     * abgerufene Objekt.
+     * abgerufene Objekt oder ein Ersatzobjekt, falls kein Objekt abgerufen
+     * werden konnte.
      *
      * @return  Die Gesamtlösung.
      */
