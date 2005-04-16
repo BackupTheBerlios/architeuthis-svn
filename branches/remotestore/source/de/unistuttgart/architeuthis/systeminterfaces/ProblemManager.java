@@ -1,7 +1,7 @@
 /*
  * file:        ProblemManager.java
  * created:     29.06.2003
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 16.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -41,6 +41,7 @@ import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreGenException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 import de.unistuttgart.architeuthis.userinterfaces.exec.ProblemStatistics;
 import de.unistuttgart.architeuthis.userinterfaces.exec.SystemStatistics;
@@ -77,19 +78,24 @@ public interface ProblemManager extends Remote {
      * an Operatives verteilt und nach erfolgreicher Berechnung deren
      * Lösung dem Problem zum Zusammenfügen übergeben.<br>
      *
-     * @param transmitter  Problem-übermittler, der das Problem sendet und die
-     *                     Lösung empfangen soll
-     * @param url          Pfad zu den Quelldateien auf einem HTTP-Server
-     * @param className    {@link Problem}-spezifischer Name, das die Berechnung
-     *                     startet
+     * @param transmitter        Problem-Übermittler, der das Problem sendet
+     *                           und die Lösung empfangen soll.
+     * @param url                Pfad zu den Quelldateien auf einem HTTP-Server.
+     * @param className          {@link Problem}-spezifischer Name, das die
+     *                           Berechnung startet.
      * @param problemParameters  Die formalen Parameter des vom Problem zu
      *                           startenden Konstruktors.
+     * @param generator          Zum Erzeugen der RemoteStores benötigter
+     *                           Generator oder <CODE>null</CODE>, falls keiner
+     *                           verwendet wird.
      *
-     * @throws RemoteException  bei RMI-Verbindungsproblemen.
-     * @throws ClassNotFoundException  falls die angegebene Klasse nicht
-     *                                 auf dem HTTP-Server unter <code>url</code>
-     *                                 gefunden wurde.
-     * @throws ProblemComputeException  bei Berechnungsfehler.
+     * @throws RemoteException          Bei einem RMI-Verbindungsproblem.
+     * @throws ClassNotFoundException   Falls die angegebene Klasse nicht
+     *                                  auf dem HTTP-Server unter <code>url</code>
+     *                                  gefunden wurde.
+     * @throws ProblemComputeException  Bei einem Berechnungsfehler.
+     * @throws RemoteStoreGenException  Der zentrale <CODE>RemoteStore</CODE>
+     *                                  konnte nicht erzeugt werden.
      *
      * @see  Problem
      * @see  PartialProblem
@@ -97,7 +103,8 @@ public interface ProblemManager extends Remote {
     public void loadProblem(ProblemTransmitter transmitter, URL url,
                             String className, Object[] problemParameters,
                             RemoteStoreGenerator generator)
-        throws RemoteException, ClassNotFoundException, ProblemComputeException;
+        throws RemoteException, ClassNotFoundException,
+               ProblemComputeException, RemoteStoreGenException;
 
     /**
      * Schickt dem Problem-Manager ein neues serialisierbares Problem und
@@ -113,8 +120,10 @@ public interface ProblemManager extends Remote {
      * @param problem      serialisierbares Problem, das verteilt berechnet werden soll.
      * @param generator    RemoteStoreGenerator zum erzeugen des verteilten Speichers
      *
-     * @throws RemoteException  bei RMI-Verbindungsproblemen.
-     * @throws ProblemComputeException  bei Berechnungsfehler.
+     * @throws RemoteException          Bei einem RMI-Verbindungsproblem.
+     * @throws ProblemComputeException  Bei einem Berechnungsfehler.
+     * @throws RemoteStoreGenException  Der zentrale <CODE>RemoteStore</CODE>
+     *                                  konnte nicht erzeugt werden.
      *
      * @see  SerializableProblem
      * @see  PartialProblem
@@ -122,7 +131,7 @@ public interface ProblemManager extends Remote {
     public void receiveProblem(ProblemTransmitter transmitter,
                                SerializableProblem problem,
                                RemoteStoreGenerator generator)
-        throws RemoteException, ProblemComputeException;
+        throws RemoteException, ProblemComputeException, RemoteStoreGenException;
 
     /**
      * Liefert problemespezifische Statistik-Werte zurück.
@@ -160,3 +169,4 @@ public interface ProblemManager extends Remote {
     public void abortProblemByUser(ProblemTransmitter transmitter)
         throws RemoteException;
 }
+

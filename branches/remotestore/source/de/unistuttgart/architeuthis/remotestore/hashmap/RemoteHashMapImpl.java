@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapImpl.java
  * created:     08.02.2005
- * last change: 15.04.2005 by Dietmar Lippold
+ * last change: 16.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -159,7 +159,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
 
         boolean success = unexportObject(this, true);
         if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("unexportObject: " + success);
+            LOGGER.info("unexportObject Erfolg : " + success);
         }
     }
 

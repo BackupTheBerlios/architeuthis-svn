@@ -1,7 +1,7 @@
 /*
  * file:        Operative.java
  * created:     <???>
- * last change: 15.02.2005 by Michael Wohlfart
+ * last change: 16.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -41,15 +41,16 @@ import java.rmi.RemoteException;
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreException;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreGenException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 
 /**
- * RMI Remote-Interface des Operative
+ * RMI Remote-Interface des Operative.
  *
  * @author Jürgen Heit
  */
-public interface Operative
-    extends Remote {
+public interface Operative extends Remote {
 
     /**
      * Dummy-Prozedur, deren Aufruf einen Fehler ergeben würde, falls die RMI-
@@ -66,21 +67,26 @@ public interface Operative
      * Wird vom ComputeManager aufgerufen um einem untätigen Operative ein
      * neues Teilproblem zuzuweisen.
      *
-     * @param parProb  vom Operative zu berechnendes Teilproblem
-     * 
-     * @param remoteStore zentraler RemoteStore oder null, falls keiner
-     *                    verwendet wird
-     * 
-     * @param gernerator zum Erzeugen des dezentralen RemoteStores benötigter
-     *                   RemoteStoreGenerator oder null falls keiner verwendet wird
+     * @param parProb      Vom Operative zu berechnendes Teilproblem
+     * @param remoteStore  Zentraler RemoteStore oder <CODE>null</CODE>, falls
+     *                     keiner verwendet wird
+     * @param generator    Zum Erzeugen der RemoteStores benötigter
+     *                     Generator oder <CODE>null</CODE>, falls keiner
+     *                     verwendet wird.
      *
-     * @throws RemoteException  bei Kommunikationsproblemen über RMI
-     * @throws ProblemComputeException  falls ein Berechnungsfehler auftritt
+     * @throws RemoteException          Bei Kommunikationsproblemen über RMI.
+     * @throws ProblemComputeException  Falls ein Berechnungsfehler auftritt.
+     * @throws RemoteStoreGenException  Der lokale <CODE>RemoteStore</CODE>
+     *                                  konnte nicht erzeugt werden.
+     * @throws RemoteStoreException     Die gegenseitige Anmeldung von lokalem
+     *                                  und zentralem <CODE>RemoteStore</CODE>
+     *                                  war nicht möglich.
      */
     public void fetchPartialProblem(PartialProblem parProb,
-            RemoteStore remStor,
-            RemoteStoreGenerator generator) throws
-        RemoteException, ProblemComputeException;
+                                    RemoteStore remoteStore,
+                                    RemoteStoreGenerator generator)
+        throws RemoteException, ProblemComputeException,
+               RemoteStoreGenException, RemoteStoreException;
 
     /**
      * Wird vom ComputeManager aufgerufen, um die aktuelle Berechnung eines
@@ -99,5 +105,5 @@ public interface Operative
      * @throws RemoteException  bei Kommunikationsproblemen über RMI
      */
     public void doExit() throws RemoteException;
-
 }
+

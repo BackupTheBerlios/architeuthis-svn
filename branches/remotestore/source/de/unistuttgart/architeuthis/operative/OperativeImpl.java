@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 15.04.2005 by Dietmar Lippold
+ * last change: 16.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -52,6 +52,8 @@ import de.unistuttgart.architeuthis.systeminterfaces.ComputeManager;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.systeminterfaces.Operative;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreException;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreGenException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 
@@ -70,7 +72,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * Generierte SerialVersionUID. Diese muss geändert werden, sobald
      * strukurelle Änderungen an dieser Klasse durchgeführt worden sind.
      */
-    private static final long serialVersionUID = 3257569516132447543L;
+//    private static final long serialVersionUID = 3257569516132447543L;
 
     /**
      * Ist die Anzahl der Versuche, Verbindung mit dem ComputeManager
@@ -183,18 +185,31 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * vorhanden ist, zuerst den zentralen beim dezentralen und dann den
      * dezentralen beim zentralen ab.
      *
-     * @throws RemoteException  Bei einem RMI Problem.
+     * @throws RemoteException       Bei einem RMI Problem.
+     * @throws RemoteStoreException  Bei der Abmeldung oder Beendigung des
+     *                               zentralen oder dezentralen RemoteStore.
      */
-    private void unregisterRemoteStore() throws RemoteException {
-        if ((centralRemoteStore != null) && (distRemoteStore != null)
-                && (distRemoteStore != centralRemoteStore)) {
-            distRemoteStore.unregisterRemoteStore(centralRemoteStore);
-            centralRemoteStore.unregisterRemoteStore(distRemoteStore);
-            distRemoteStore.terminate();
+    private void unregisterRemoteStore()
+        throws RemoteException, RemoteStoreException {
+
+        try {
+            if ((centralRemoteStore != null) && (distRemoteStore != null)
+                    && (distRemoteStore != centralRemoteStore)) {
+                distRemoteStore.unregisterRemoteStore(centralRemoteStore);
+                centralRemoteStore.unregisterRemoteStore(distRemoteStore);
+                distRemoteStore.terminate();
+            } else if ((centralRemoteStore == null) && (distRemoteStore != null)) {
+                distRemoteStore.terminate();
+            }
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Throwable e) {
+            Miscellaneous.printDebugMessage(
+                debugMode,
+                "Debug: Fehler bei der Abmeldung oder Beendigung eines RemoteStore");
+            throw new RemoteStoreException(e.getMessage(), e.getCause());
+        } finally {
             centralRemoteStore = null;
-            distRemoteStore = null;
-        } if ((centralRemoteStore == null) && (distRemoteStore != null)) {
-            distRemoteStore.terminate();
             distRemoteStore = null;
         }
     }
@@ -221,7 +236,13 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             backgroundComputation = null;
 
             // RemoteStore abmelden
-            unregisterRemoteStore();
+            try {
+                unregisterRemoteStore();
+            } catch (RemoteStoreException e) {
+                Miscellaneous.printDebugMessage(
+                    debugMode,
+                    "Debug: RemoteStoreException wird nicht mehr gemeldet");
+            }
 
             // Vom RMI-Server abmelden
             unexportObject(this, true);
@@ -292,6 +313,11 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * @throws RemoteException           Bei RMI-Verbindungsproblemen.
      * @throws ProblemComputeException   Wenn bereits ein Teilproblem berechnet
      *                                   wird.
+     * @throws RemoteStoreGenException   Der lokale <CODE>RemoteStore</CODE>
+     *                                   konnte nicht erzeugt werden.
+     * @throws RemoteStoreException      Die gegenseitige Anmeldung von lokalem
+     *                                   und zentralem <CODE>RemoteStore</CODE>
+     *                                   war nicht möglich.
      * @throws IllegalArgumentException  Der Wert von <CODE>generator</CODE>
      *                                   ist <CODE>null</CODE>, der Wert von
      *                                   <CODE>centralStore</CODE> ist aber
@@ -300,7 +326,10 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
     public void fetchPartialProblem(PartialProblem parProb,
                                     RemoteStore centralStore,
                                     RemoteStoreGenerator generator)
-        throws RemoteException, ProblemComputeException {
+        throws RemoteException,
+               ProblemComputeException,
+               RemoteStoreGenException,
+               RemoteStoreException {
 
         if ((generator == null) && (centralStore != null)) {
             throw new IllegalArgumentException("generator ist gleich null,"
@@ -323,13 +352,29 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         if (generator != null) {
             // Falls der Generator vorhanden ist, einen dezentralen RemoteStore
             // erzeugen.
-            distRemoteStore = generator.generateDistRemoteStore();
+            try {
+                distRemoteStore = generator.generateDistRemoteStore();
+            } catch (Throwable e) {
+                Miscellaneous.printDebugMessage(
+                    debugMode,
+                    "Debug: Fehler bei der Erzeugung vom RemoteStore");
+                throw new RemoteStoreGenException(e.getMessage(), e.getCause());
+            }
+
             // Registriert die RemoteStores gegenseitig. Falls der Generator
             // keinen dezentralen RemoteStore geliefert hat, wird der zentrale
             // RemoteStore verwendet.
             if ((distRemoteStore != null) && (centralRemoteStore != null)) {
-                distRemoteStore.registerRemoteStore(centralRemoteStore);
-                centralRemoteStore.registerRemoteStore(distRemoteStore);
+                try {
+                    distRemoteStore.registerRemoteStore(centralRemoteStore);
+                    centralRemoteStore.registerRemoteStore(distRemoteStore);
+                } catch (Throwable e) {
+                    Miscellaneous.printDebugMessage(
+                        debugMode,
+                        "Debug: Fehler bei der Anmeldung oder Abmeldung eines"
+                        + " RemoteStore");
+                    throw new RemoteStoreException(e.getMessage(), e.getCause());
+                }
             } else if (distRemoteStore == null) {
                 distRemoteStore = centralRemoteStore;
             }
@@ -352,10 +397,22 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                 this,
                 exceptionCode,
                 exceptionMessage);
-            unregisterRemoteStore();
         } catch (RemoteException e) {
             // Dispatcher ist nicht erreichbar, Operative beenden
             shutdown();
+        }
+
+        // RemoteStore abmelden wenn möglich
+        try {
+            unregisterRemoteStore();
+        } catch (RemoteStoreException e) {
+            Miscellaneous.printDebugMessage(
+                debugMode,
+                "Debug: RemoteStoreException wird nicht mehr gemeldet");
+        } catch (RemoteException e) {
+            Miscellaneous.printDebugMessage(
+                debugMode,
+                "Debug: RemoteException wird nicht mehr gemeldet");
         }
     }
 
@@ -371,9 +428,25 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         long versuche = CONNECT_RETRIES;
         boolean transmitted = false;
         String exceptionMessage = null;
+        int exceptionCode = -1;
 
         // Den oder die ClassLoader löschen
         CacheFlushingRMIClSpi.flushClassLoaders();
+
+        // RemoteStore abmelden
+        try {
+            unregisterRemoteStore();
+            Miscellaneous.printDebugMessage(
+                debugMode,
+                "Debug: RemoteStore abgemeldet");
+        } catch (Exception e) {
+            exceptionCode = ExceptionCodes.REMOTE_STORE_EXCEPTION;
+            exceptionMessage = e.getMessage();
+            Miscellaneous.printDebugMessage(
+                debugMode,
+                "Debug: Abmeldung von RemoteStore fehlgeschlagen");
+            versuche = 0;
+        }
 
         // Mehrmals versuchen, die Teillösung zu senden
         while ((versuche > 0) && (!transmitted)) {
@@ -382,17 +455,13 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                                             + " abzumelden und Teilergebnis"
                                             + " zurückzugeben");
             try {
-                unregisterRemoteStore();
-                Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: RemoteStore abgemeldet");
-
                 computeManager.returnPartialSolution(parSol, this);
                 Miscellaneous.printDebugMessage(
                     debugMode,
                     "Debug: Teilergebnis zurückgegeben");
                 transmitted = true;
             } catch (RemoteException e) {
+                exceptionCode = ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION;
                 exceptionMessage = e.getMessage();
                 try {
                     Miscellaneous.printDebugMessage(
@@ -407,8 +476,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         }
 
         if (!transmitted) {
-            reportException(ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION,
-                            exceptionMessage);
+            reportException(exceptionCode, exceptionMessage);
         }
     }
 

@@ -1,7 +1,7 @@
 /*
  * file:        ProblemManagerImpl.java
  * created:     29.06.2003
- * last change: 06.04.2005 by Dietmar Lippold
+ * last change: 16.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@t-online.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -55,6 +55,7 @@ import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.systeminterfaces.ProblemManager;
 import de.unistuttgart.architeuthis.systeminterfaces.ProblemTransmitter;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreGenException;
 import de.unistuttgart.architeuthis.userinterfaces.exec.SystemStatistics;
 import de.unistuttgart.architeuthis.userinterfaces.exec.ProblemStatistics;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
@@ -517,6 +518,32 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
                 }
             }
             break;
+        case ExceptionCodes.REMOTE_STORE_GEN_EXCEPTION :
+            log.severe("Exception REMOTE_STORE_GEN_EXCEPTION zu "
+                    + parProbWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
+                }
+            }
+            break;
+        case ExceptionCodes.REMOTE_STORE_EXCEPTION :
+            log.severe("Exception REMOTE_STORE_EXCEPTION zu "
+                    + parProbWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
+                }
+            }
+            break;
         case ExceptionCodes.PARTIALPROBLEM_ERROR :
             log.severe("Exception PARTIALPROBLEM_ERROR zu "
                     + parProbWrapper + " : " + exceptionMessage);
@@ -735,6 +762,8 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
      *                                  möglicherweise wegen einer falschen URL.
      * @throws ProblemComputeException  Wenn nicht genung Compute-System-Resourcen
      *                                  vorhanden sind.
+     * @throws RemoteStoreGenException  Der zentrale <CODE>RemoteStore</CODE>
+     *                                  konnte nicht erzeugt werden.
      *
      * @see  Problem
      * @see  PartialProblem
@@ -744,7 +773,8 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
                                          String className,
                                          Object[] problemParameters,
                                          RemoteStoreGenerator generator)
-        throws RemoteException, ClassNotFoundException, ProblemComputeException {
+        throws RemoteException, ClassNotFoundException,
+               ProblemComputeException, RemoteStoreGenException {
 
         if (terminated) {
             throw new RemoteException("Dispatcher ist beim Shutdown");
@@ -797,7 +827,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
                 log.severe("<E> unerwartete Ausnahme");
                 e.printStackTrace();
                 throw new ProblemComputeException("Exception: "
-                        + e.toString());
+                                                  + e.toString());
             } catch (Error e) {
                 // Fängt insbesondere einen NoClassDefFoundError ab.
                 log.severe("<E> unerwarteter Error");
@@ -805,8 +835,8 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
                 throw new ProblemComputeException("Error: " + e.toString());
             }
         } else {
-            throw new ProblemComputeException(
-            "Keine Resourcen für neues Problem mehr frei.");
+            throw new ProblemComputeException("Keine Resourcen für neues"
+                                              + " Problem mehr frei.");
         }
     }
 
@@ -826,8 +856,10 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
      *                     <CODE>null</CODE>, falls kein RemoteStoreGenerator
      *                     verwendet wird.
      *
-     * @throws RemoteException  bei RMI-Verbindungsproblemen.
-     * @throws ProblemComputeException  bei Berechnungsfehler.
+     * @throws RemoteException          Bei einem RMI-Verbindungsproblem.
+     * @throws ProblemComputeException  Bei einem Berechnungsfehler.
+     * @throws RemoteStoreGenException  Der zentrale <CODE>RemoteStore</CODE>
+     *                                  konnte nicht erzeugt werden.
      *
      * @see  SerializableProblem
      * @see  PartialProblem
@@ -835,7 +867,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
     public synchronized void receiveProblem(ProblemTransmitter transmitter,
                                             SerializableProblem problem,
                                             RemoteStoreGenerator generator)
-        throws RemoteException, ProblemComputeException {
+        throws RemoteException, ProblemComputeException, RemoteStoreGenException {
 
         if (terminated) {
             throw new RemoteException("Dispatcher ist beim Shutdown");
@@ -846,8 +878,8 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             "Kein gültiger Problem-Übermittler angegeben.");
         } else {
             if (probWrapTransmitter.containsValue(transmitter)) {
-                throw new ProblemComputeException(
-                "Problem-Übermittler wird bereits verwendet.");
+                throw new ProblemComputeException("Problem-Übermittler wird"
+                                                  + " bereits verwendet.");
             }
         }
 
@@ -866,7 +898,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             parProbWrapperBuffer.removeNullElements();
         } else {
             throw new ProblemComputeException("Keine Resourcen für neues"
-                    + " Problem mehr frei.");
+                                              + " Problem mehr frei.");
         }
     }
 

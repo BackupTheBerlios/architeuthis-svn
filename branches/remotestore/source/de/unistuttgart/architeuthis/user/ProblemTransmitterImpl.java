@@ -1,7 +1,7 @@
 /*
  * file:        ProblemTransmitterImpl.java
  * created:     08.07.2003
- * last change: 06.04.2005 by Dietmar Lippold
+ * last change: 16.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -470,6 +470,26 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
         case ExceptionCodes.PARTIALPROBLEM_COMPUTE_EXCEPTION :
             errorMessage = "Teilproblem meldet eine Ausnahme bei der"
                 + " Berechnung";
+            if (message != null) {
+                errorMessage += ": " + message;
+            } else {
+                errorMessage += ".";
+            }
+            notifyAll();
+            break;
+        case ExceptionCodes.REMOTE_STORE_GEN_EXCEPTION :
+            errorMessage = "Teilproblem meldet eine Ausnahme bei der"
+                + " Erzeugung eines RemoteStore";
+            if (message != null) {
+                errorMessage += ": " + message;
+            } else {
+                errorMessage += ".";
+            }
+            notifyAll();
+            break;
+        case ExceptionCodes.REMOTE_STORE_EXCEPTION :
+            errorMessage = "Teilproblem meldet eine Ausnahme bei der"
+                + " Anmeldung, Abmeldung oder Beendigung eines RemoteStore";
             if (message != null) {
                 errorMessage += ": " + message;
             } else {

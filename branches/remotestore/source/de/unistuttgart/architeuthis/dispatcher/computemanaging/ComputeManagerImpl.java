@@ -1,7 +1,7 @@
 /*
  * file:        ComputeManagerImpl.java
  * created:     <Erstellungsdatum>
- * last change: 10.04.2005 by Dietmar Lippold
+ * last change: 16.04.2005 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -79,6 +79,8 @@ import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.systeminterfaces.Operative;
 import de.unistuttgart.architeuthis.systeminterfaces.ProblemManager;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreException;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreGenException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 
 /**
@@ -432,6 +434,7 @@ public final class ComputeManagerImpl
         RemoteStoreGenerator generator;
         RemoteStore centralRemoteStore;
         String exceptionMessage = null;
+        int exceptionCode = -1;
         boolean transmitted = false;
 
         synchronized (sendingParProbLocker.get(operativeInfoObj)) {
@@ -462,6 +465,7 @@ public final class ComputeManagerImpl
                         } catch (RemoteException e) {
                             log.fine("Senden des Teilproblems an "
                                      + operativeInfoObj + " fehlgeschlagen");
+                            exceptionCode = ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION;
                             exceptionMessage = e.toString();
                             try {
                                 Thread.sleep(REMOTE_FAIL_WAIT_TIMEOUT);
@@ -469,14 +473,24 @@ public final class ComputeManagerImpl
                                 // Unterbrechung sollte hier nicht stören
                             }
                             continue;
+                        } catch (RemoteStoreGenException e) {
+                            log.info("Erzeugung von RemoteStore fehlgeschlagen");
+                            exceptionCode = ExceptionCodes.REMOTE_STORE_GEN_EXCEPTION;
+                            exceptionMessage = e.toString();
+                        } catch (RemoteStoreException e) {
+                            log.info("Anmeldung von RemoteStore fehlgeschlagen");
+                            exceptionCode = ExceptionCodes.REMOTE_STORE_EXCEPTION;
+                            exceptionMessage = e.toString();
                         } catch (ProblemComputeException e) {
-                            log.severe(
-                                "<E> "
-                                    + operativeInfoObj.toString()
-                                    + " ist bereits beschäftigt.");
+                            log.severe("<E> "
+                                       + operativeInfoObj.toString()
+                                       + " ist bereits beschäftigt.");
+                            exceptionCode = ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION;
+                            exceptionMessage = e.toString();
                         } catch (RuntimeException e) {
                             log.fine("Senden des Teilproblems an "
                                      + operativeInfoObj + " fehlgeschlagen");
+                            exceptionCode = ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION;
                             exceptionMessage = e.toString();
                             tries = remoteOperativeMaxTries;
                         }
@@ -519,7 +533,7 @@ public final class ComputeManagerImpl
                                 problemManager.reportException(
                                     null,
                                     partProbInfoObj.getParProbWrapper(),
-                                    ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION,
+                                    exceptionCode,
                                     exceptionMessage);
                             } else {
                                 // Die Ursache lag beim Operative
@@ -1215,6 +1229,7 @@ public final class ComputeManagerImpl
         throws RemoteException {
 
         InfoOperative operativeInfoObj = findOperativeInfo(operative);
+        InfoParProbWrapper partProbInfoObj = null;
         ParProbWrapper parProbWrap;
         boolean inList;
 
@@ -1222,10 +1237,14 @@ public final class ComputeManagerImpl
         // von Operatives, die nicht erreichbar waren und aus der
         // Verwaltung entfernt wurden wird keine Exception angenommen
         if (operativeInfoObj != null) {
-            // testen, ob TeilproblemInfoObjekt im InfoParProbWrapperQueue
-            // enthalten war
-            InfoParProbWrapper partProbInfoObj =
-                operativeInfoObj.getInfoParProbWrapper();
+            // Testen, ob das vom Operative berechnete Teilproblem in der
+            // Liste der aktuell berechneten Teilprobleme enthalten ist.
+
+            // Das Teilproblem kann erst ermittelt werden, wenn das Senden
+            // des Teilproblems an den Operative abgeschlossen ist.
+            synchronized (sendingParProbLocker.get(operativeInfoObj)) {
+                partProbInfoObj = operativeInfoObj.getInfoParProbWrapper();
+            }
 
             if (partProbInfoObj != null) {
                 log.severe(

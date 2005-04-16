@@ -1,7 +1,7 @@
 /*
  * file:        ProblemWrapper.java
  * created:     29.06.2003
- * last change: 15.04.2005 by Dietmar Lippold
+ * last change: 16.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -50,6 +50,7 @@ import de.unistuttgart.architeuthis.dispatcher.statistic.ProblemStatisticsCollec
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreGenException;
 import de.unistuttgart.architeuthis.userinterfaces.exec.SystemStatistics;
 import de.unistuttgart.architeuthis.userinterfaces.exec.ProblemStatistics;
 import de.unistuttgart.architeuthis.userinterfaces.develop.Problem;
@@ -148,6 +149,9 @@ class ProblemWrapper extends Thread {
      * aufgerufen und setzt eine Referenz auf das zu verwaltende Problem sowie
      * die System-Statistik.
      *
+     * @throws RemoteStoreGenException  Der zentrale <CODE>RemoteStore</CODE>
+     *                                  konnte nicht erzeugt werden.
+     *
      * @param probMan       Zentraler Problem-Manager.
      * @param prob          Zu verwaltendes Problem.
      * @param sysStatistic  Statistik des ComputeSystems.
@@ -156,20 +160,27 @@ class ProblemWrapper extends Thread {
     ProblemWrapper(ProblemManagerImpl probMan,
                    Problem prob,
                    RemoteStoreGenerator generator,
-                   SystemStatisticsCollector sysStatistic) {
+                   SystemStatisticsCollector sysStatistic)
+        throws RemoteStoreGenException {
 
         super();
+
+        // Zuerst wird ein zentraler RemoteStore erzeugt
+        try {
+            if (generator != null) {
+                centralRemoteStore = generator.generateCentralRemoteStore();
+            }
+            remoteStoreGenerator = generator;
+        } catch (Throwable e) {
+            log.info("Fehler bei der Erzeugung vom zentralen RemoteStore");
+            throw new RemoteStoreGenException(e.getMessage(), e.getCause());
+        }
+
         problem = prob;
         problemManager = probMan;
         systemStatistic = sysStatistic;
         problemStatistic = new ProblemStatisticsCollector(sysStatistic);
         problemId = problemIdNumerator.nextNumber();
-
-        // hier wird der zentrale RemoteStore erzeugt
-        remoteStoreGenerator = generator;
-        if (generator != null) {
-            centralRemoteStore = generator.generateCentralRemoteStore();
-        }
 
         // URLs des ClassLoader des Problems registrieren
         URLClassLoader ucl = (URLClassLoader) problem.getClass().getClassLoader();
@@ -492,22 +503,14 @@ class ProblemWrapper extends Thread {
                 // der von der Methode terminate hinzugefügt wurde.
                 if (parProbWrapSolPair != null) {
                     parPropWrapper = parProbWrapSolPair.getParProbWrapper();
+                    problemStatistic.notifyProcessedPartialProblem();
                     try {
-                        problemStatistic.notifyProcessedPartialProblem();
                         problem.collectResult(
                             parProbWrapSolPair.getPartialSolution(),
                             parPropWrapper.getPartialProblem());
 
-                    } catch (RuntimeException e) {
-                        problemManager.reportException(
-                            this,
-                            parPropWrapper,
-                            ExceptionCodes.PARTIALSOLUTION_COLLECT_EXCEPTION,
-                            e.toString());
-                        terminate();
-                        break;
-                    } catch (Error e) {
-                        // Fängt insbesondere einen NoClassDefFoundError ab.
+                    } catch (Throwable e) {
+                        log.info("Fehler bei der Verarbeitung einer Teillösung");
                         problemManager.reportException(
                             this,
                             parPropWrapper,
@@ -559,7 +562,16 @@ class ProblemWrapper extends Thread {
 
         // zentralen RemoteStore beenden
         if (centralRemoteStore != null) {
-            centralRemoteStore.terminate();
+            try {
+                centralRemoteStore.terminate();
+            } catch (Throwable e) {
+                log.info("Fehler beim Beenden vom zentralen RemoteStore");
+                problemManager.reportException(
+                    this,
+                    parPropWrapper,
+                    ExceptionCodes.REMOTE_STORE_EXCEPTION,
+                    e.toString());
+            }
         }
 
         // URLs des ClassLoader des Problems abmelden

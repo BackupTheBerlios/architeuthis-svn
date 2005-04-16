@@ -1,6 +1,6 @@
 /*
  * file:        RemoteStoreException.java
- * last change: 15.04.2005 by Dietmar Lippold
+ * last change: 16.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -39,7 +39,7 @@ package de.unistuttgart.architeuthis.userinterfaces;
  *
  * @author Andreas Heydlauff, Dietmar Lippold
  */
-public class RemoteStoreException extends Exception {
+public class RemoteStoreException extends ProblemComputeException {
 
     /**
      * Constructs a new exception with null as its detail message. The cause is
