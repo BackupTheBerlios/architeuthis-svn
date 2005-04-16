@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeComputing.java
  * created:     26.04.2004
- * last change: 30.03.2005 by Dietmar Lippold
+ * last change: 16.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -213,14 +213,7 @@ public class OperativeComputing extends Thread {
             } catch (ThreadDeath e) {
                 // Dieser Error darf nicht abgefangen werden.
                 throw e;
-            } catch (RemoteException e) {
-                partialProblem = null;
-                Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Error ist aufgetreten : " + e);
-                operativeImpl.reportException(
-                    ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
-            } catch (Error e) {
+            } catch (Throwable e) {
                 partialProblem = null;
                 Miscellaneous.printDebugMessage(
                     debugMode,
