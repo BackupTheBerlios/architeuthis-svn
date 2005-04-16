@@ -9,7 +9,7 @@
 . ./setup.sh
 
 # die Anzahl der zu erzeugenden Put-Teilprobleme
-PUT_PAR_PROB_NR=3
+PUT_PAR_PROB_NO=3
 
 # Nachfolgende Zeile einkommentieren, wenn verteilte RemoteStores verwendet
 # werden sollen. Der Wert true steht für synchrone, Wert false für
@@ -25,7 +25,7 @@ JVMPAR="$JVMPAR -Djava.security.policy=$CONFIG_DIR/transmitter.pol"
 ARGS=" "
 ARGS="$ARGS $CLASSURL"
 ARGS="$ARGS $DISPATCHER_HOST:$DISPATCHER_PORT"
-ARGS="$ARGS $PUT_PAR_PROB_NR"
+ARGS="$ARGS $PUT_PAR_PROB_NO"
 ARGS="$ARGS $DIST_COMM"
 
 

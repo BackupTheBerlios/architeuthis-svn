@@ -9,7 +9,7 @@ REM DISPATCHER_PORT, JAVA, DEPLOY_DIR, CLASS_FILE_PATH) werden gesetzt
 call setup.bat
 
 REM die Anzahl der zu erzeugenden Put-Teilprobleme
-set PUT_PAR_PROB_NR=3
+set PUT_PAR_PROB_NO=3
 
 REM Nachfolgende Zeile einkommentieren, wenn verteilte RemoteStores verwendet
 REM werden sollen. Der Wert true steht für synchrone, Wert false für
@@ -25,7 +25,7 @@ REM die Parameter für die Anwendung
 set ARGS=
 set ARGS=%ARGS% %CLASSURL%
 set ARGS=%ARGS% %DISPATCHER_HOST%:%DISPATCHER_PORT%
-set ARGS=%ARGS% %PUT_PAR_PROB_NR%
+set ARGS=%ARGS% %PUT_PAR_PROB_NO%
 set ARGS=%ARGS% %DIST_COMM%
 
 
