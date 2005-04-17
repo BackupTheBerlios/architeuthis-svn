@@ -45,10 +45,9 @@ import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
 public class PutAllProcedure implements TransmitProcedure {
 
     /**
-     * Übertragt die beiden Objekte aus dem übergebenen Objekt-Paar, das an
-     * den <CODE>Transmitter</CODE> übergeben wurde, zur zentralen
-     * <CODE>RelayHashMap</CODE>, indem es dort die Methode <CODE>put</CODE>
-     * aufruft.
+     * Übertragt die übergebenen Map, die an den <CODE>Transmitter</CODE>
+     * übergeben wurde, zur zentralen <CODE>RelayHashMap</CODE>, indem es
+     * dort die Methode <CODE>putAll</CODE> aufruft.
      *
      * @param mapObject   Das zu übertragende Map.
      * @param relayStore  Der RelayStore, zu dem das Objekt übertragen werden
