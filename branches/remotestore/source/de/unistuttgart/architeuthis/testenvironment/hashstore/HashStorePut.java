@@ -1,7 +1,7 @@
 /*
  * file:        HashStorePut.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 10.04.2005 von Dietmar Lippold
+ * last change: 17.04.2005 von Dietmar Lippold
  * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
  *
  * This software was developed at the Institute for Intelligent Systems at the
@@ -31,11 +31,11 @@ package de.unistuttgart.architeuthis.testenvironment.hashstore;
 
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.hashmap.UserRemoteHashMap;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
  * Legt bei Ausfü+hrung der Methode <CODE>compute</CODE> ein value-Objekt

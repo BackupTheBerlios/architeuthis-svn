@@ -37,8 +37,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.AbstractRelayStore;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
  * Diese Klasse vermittelt zwischen Instanzen von Klassen, die

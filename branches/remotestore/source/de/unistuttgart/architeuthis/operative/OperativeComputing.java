@@ -37,14 +37,14 @@ package de.unistuttgart.architeuthis.operative;
 
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
+import de.unistuttgart.architeuthis.misc.Miscellaneous;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
-import de.unistuttgart.architeuthis.misc.Miscellaneous;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
  * Implementierung den Thread zur Berechnung eines Teilproblems.

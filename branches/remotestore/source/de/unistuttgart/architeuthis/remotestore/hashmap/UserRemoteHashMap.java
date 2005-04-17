@@ -33,7 +33,7 @@ package de.unistuttgart.architeuthis.remotestore.hashmap;
 import java.util.Map;
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
  * Dieses Interface gibt die Methoden vor, die für einen RemoteStore zu

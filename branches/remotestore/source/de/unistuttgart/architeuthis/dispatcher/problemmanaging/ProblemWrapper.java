@@ -1,7 +1,7 @@
 /*
  * file:        ProblemWrapper.java
  * created:     29.06.2003
- * last change: 16.04.2005 by Dietmar Lippold
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -47,8 +47,6 @@ import de.unistuttgart.architeuthis.misc.util.BlockingBuffer;
 import de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi;
 import de.unistuttgart.architeuthis.dispatcher.statistic.SystemStatisticsCollector;
 import de.unistuttgart.architeuthis.dispatcher.statistic.ProblemStatisticsCollector;
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreGenException;
 import de.unistuttgart.architeuthis.userinterfaces.exec.SystemStatistics;
@@ -56,6 +54,8 @@ import de.unistuttgart.architeuthis.userinterfaces.exec.ProblemStatistics;
 import de.unistuttgart.architeuthis.userinterfaces.develop.Problem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 
 /**
  * Die Klasse kapselt ein Problem mit den schon erzeugten Teilproblemen und

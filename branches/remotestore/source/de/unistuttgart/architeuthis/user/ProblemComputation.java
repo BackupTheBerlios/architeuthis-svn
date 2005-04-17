@@ -1,7 +1,7 @@
 /*
  * file:        ProblemComputation.java
  * created:     19.02.2004
- * last change: 06.04.2005 by Dietmar Lippold
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit, juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
@@ -39,8 +39,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.misc.Numerator;
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.dispatcher.statistic.ProblemStatisticsCollector;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
@@ -49,6 +47,8 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.userinterfaces.exec.ProblemStatistics;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 
 /**
  * Die Klasse ProblemComputation berechnet ein Problem.

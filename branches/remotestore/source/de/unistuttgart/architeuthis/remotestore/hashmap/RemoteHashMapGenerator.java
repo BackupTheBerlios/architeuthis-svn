@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapGenerator.java
  * created:     08.02.2005
- * last change: 12.04.2005 by Dietmar Lippold
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -34,8 +34,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 
 /**
  * Klasse, die RemoteStores mit der Funktionalität einer <CODE>HashMap</CODE>

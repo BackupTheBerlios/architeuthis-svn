@@ -37,8 +37,8 @@ import java.util.HashSet;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.Transmitter;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
  * Diese Klasse implementiert das RemoteStore Interface als HashSet. Derzeit

@@ -37,6 +37,8 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+
 /**
  * Diese Klasse implementiert die allgemeine Funktionalität eines RelayStore,
  * d.h. die Methoden zur Register- und Unregister-Funktionalität und die

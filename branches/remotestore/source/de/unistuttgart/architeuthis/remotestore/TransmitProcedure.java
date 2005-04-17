@@ -1,7 +1,7 @@
 /*
  * file:        TransmitProcedure.java
  * created:     05.04.2005
- * last change: 05.04.2005 by Dietmar Lippold
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -31,6 +31,8 @@
 package de.unistuttgart.architeuthis.remotestore;
 
 import java.rmi.RemoteException;
+
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
  * Definiert eine Methode zur Übertragung eines Objekt zu einem zentralen

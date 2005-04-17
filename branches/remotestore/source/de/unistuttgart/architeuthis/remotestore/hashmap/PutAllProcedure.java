@@ -33,8 +33,8 @@ package de.unistuttgart.architeuthis.remotestore.hashmap;
 import java.util.Map;
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
  * Implementiert eine Methode, die beim RelayStore für eine Map die Methode

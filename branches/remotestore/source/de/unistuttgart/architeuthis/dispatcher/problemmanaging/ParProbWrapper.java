@@ -1,6 +1,6 @@
 /*
  * file:        ParProbWrapper.java
- * last change: 06.04.2005 by Dietmar Lippold
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
  *
  *
@@ -37,9 +37,9 @@ import de
     .statistic
     .ProblemStatisticsCollector;
 import de.unistuttgart.architeuthis.misc.Numerator;
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 
 /**
  * Wrapper für ein <CODE>PartialProblem</CODE>-Objekt.

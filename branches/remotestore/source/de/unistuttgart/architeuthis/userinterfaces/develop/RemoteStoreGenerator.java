@@ -1,7 +1,7 @@
 /*
  * file:        RemoteStoreGenerator.java
  * created:     08.02.2005
- * last change: 29.03.2005 by Dietmar Lippold
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -28,7 +28,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.remotestore;
+package de.unistuttgart.architeuthis.userinterfaces.develop;
 
 import java.io.Serializable;
 

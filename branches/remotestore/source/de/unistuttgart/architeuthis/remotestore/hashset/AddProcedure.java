@@ -1,7 +1,7 @@
 /*
  * file:        AddProcedure.java
  * created:     05.04.2005
- * last change: 05.04.2005 by Dietmar Lippold
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -32,8 +32,8 @@ package de.unistuttgart.architeuthis.remotestore.hashset;
 
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
  * Implementiert eine Methode, die beim RelayStore für ein Objekt die Methode

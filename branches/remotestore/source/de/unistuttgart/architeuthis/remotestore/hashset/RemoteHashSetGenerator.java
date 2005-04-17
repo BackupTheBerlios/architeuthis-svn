@@ -34,8 +34,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 
 /**
  * Klasse, die RemoteStores mit der Funktionalität eines <CODE>HashSet</CODE>

@@ -1,7 +1,7 @@
 /*
  * file:        HashStoreGet.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 10.04.2005 von Dietmar Lippold
+ * last change: 17.04.2005 von Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -33,12 +33,12 @@ package de.unistuttgart.architeuthis.testenvironment.hashstore;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.hashmap.UserRemoteHashMap;
 import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
  * Ruft ein value-Objekt zu einem key-Objekt, das dem Konstruktor übergeben
