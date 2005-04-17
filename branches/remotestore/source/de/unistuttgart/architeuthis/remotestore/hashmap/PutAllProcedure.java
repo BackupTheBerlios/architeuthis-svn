@@ -1,6 +1,6 @@
 /*
- * file:        LocalRemoteHashMap.java
- * created:     10.04.2005
+ * file:        PutAllProcedure.java
+ * created:     17.04.2005
  * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
@@ -34,37 +34,34 @@ import java.util.Map;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
+import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
 
 /**
- * Dieses Interface gibt die Methoden vor, die für einen RemoteStore zu
- * implementieren sind, der die Funktionalität einer <CODE>HashMap</CODE> hat
- * und Daten nur lokal speichert, ohne sie an andere Remote-Stores
- * weiterzugeben.
+ * Implementiert eine Methode, die beim RelayStore für eine Map die Methode
+ * <CODE>putAll</CODE> aufruft.
  *
  * @author Dietmar Lippold
  */
-public interface LocalRemoteHashMap extends RemoteStore {
+public class PutAllProcedure implements TransmitProcedure {
 
     /**
-     * Speichert zu einen key-Objekt ein value-Objekt nur lokal, ohne das
-     * Objekt-Paar an andere Remote-Stores weiterzugeben.
+     * Übertragt die beiden Objekte aus dem übergebenen Objekt-Paar, das an
+     * den <CODE>Transmitter</CODE> übergeben wurde, zur zentralen
+     * <CODE>RelayHashMap</CODE>, indem es dort die Methode <CODE>put</CODE>
+     * aufruft.
      *
-     * @param key    Das key-Objekt, unter dem das value-Objekt gespeichert
-     *               wird.
-     * @param value  Das value-Objekt, das zum key-Objekt gespeichert wird.
+     * @param map         Das zu übertragende Map.
+     * @param relayStore  Der RelayStore, zu dem das Objekt übertragen werden
+     *                    soll. Dabei handelt es sich um eine
+     *                    <CODE>RelayHashMap</CODE>.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void putLocal(Object key, Object value) throws RemoteException;
+    public void transmit(Object mapObject, RemoteStore relayStore)
+        throws RemoteException {
 
-    /**
-     * Speichert die Einträge der übergebenen Map lokal, ohne die Objekt-Paare
-     * an die RelayMap weiterzugeben.
-     *
-     * @param map  Die Map, deren Einträge gespeichert werden.
-     *
-     * @throws RemoteException  Bei einem RMI Problem.
-     */
-    public void putAllLocal(Map map) throws RemoteException;
+        Map map = (Map) mapObject;
+        ((RelayHashMap) relayStore).putAll(map);
+    }
 }
 

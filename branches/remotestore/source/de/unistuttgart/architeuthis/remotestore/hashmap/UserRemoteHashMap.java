@@ -1,7 +1,7 @@
 /*
  * file:        UserRemoteHashMap.java
  * created:     08.02.2005
- * last change: 10.04.2005 by Dietmar Lippold
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -30,6 +30,7 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashmap;
 
+import java.util.Map;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.RemoteStore;
@@ -55,6 +56,17 @@ public interface UserRemoteHashMap extends RemoteStore {
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public void put(Object key, Object value) throws RemoteException;
+
+    /**
+     * Speichert die Einträge der übergebenen Map. Die Map wird zur
+     * Speicherung an andere RemoteStores weitergegeben, wenn eine
+     * <CODE>RelayMap</CODE> angemeldet wurde.
+     *
+     * @param map  Die Map, deren Einträge gespeichert werden.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void putAll(Map map) throws RemoteException;
 
     /**
      * Liefert zu einem key-Objekt das lokal gespeicherte value-Objekt.

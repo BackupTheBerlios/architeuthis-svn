@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashMapImpl.java
  * created:     08.02.2005
- * last change: 10.04.2005 by Dietmar Lippold
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -30,6 +30,7 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashmap;
 
+import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -88,20 +89,15 @@ public class RelayHashMapImpl extends AbstractRelayStore implements RelayHashMap
 
         // Die aktuellen Elemente dem zu registrierenden RemoteStore
         // hinzufügen.
-        Iterator iter = hashMap.entrySet().iterator();
-        while (iter.hasNext()) {
-            Entry mapEntry = (Entry) iter.next();
-            remoteHashMap.putLocal(mapEntry.getKey(), mapEntry.getValue());
-        }
+        remoteHashMap.putAllLocal(hashMap);
 
         // Den zu registrierenden RemoteStore speichern.
         super.registerRemoteStore(remoteStore);
     }
 
     /**
-     * Diese Methode wird von RemoteHashSets aufgerufen, denen ein neuen
-     * Objekt-Paar zur Speicherung übergeben wurde. Dieses Objekt-Paar wird
-     * an alle RemoteHashSets weitergegeben.
+     * Speichert zu einen key-Objekt ein value-Objekt. Das Objekt-Paar wird
+     * zur Speicherung an alle RemoteStores weitergegeben.
      *
      * @param key    Das key-Objekt.
      * @param value  Das value-Objekt.
@@ -123,6 +119,31 @@ public class RelayHashMapImpl extends AbstractRelayStore implements RelayHashMap
         while (iterator.hasNext()) {
             LocalRemoteHashMap peer = (LocalRemoteHashMap) iterator.next();
             peer.putLocal(key, value);
+        }
+    }
+
+    /**
+     * Speichert die Einträge der übergebenen Map. Die Map wird zur
+     * Speicherung an alle RemoteStores weitergegeben.
+     *
+     * @param map  Die Map, deren Einträge gespeichert werden.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public synchronized void putAll(Map map) throws RemoteException {
+
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("called putAll, number of entries = " + map.size());
+        }
+
+        // Erstmal den Delegatee updaten.
+        hashMap.putAll(map);
+
+        // Die Map an alle RemoteHashMaps übertragen.
+        Iterator iterator = getRemoteStoreIterator();
+        while (iterator.hasNext()) {
+            LocalRemoteHashMap peer = (LocalRemoteHashMap) iterator.next();
+            peer.putAllLocal(map);
         }
     }
 
