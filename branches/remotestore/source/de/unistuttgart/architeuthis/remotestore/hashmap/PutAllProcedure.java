@@ -50,7 +50,7 @@ public class PutAllProcedure implements TransmitProcedure {
      * <CODE>RelayHashMap</CODE>, indem es dort die Methode <CODE>put</CODE>
      * aufruft.
      *
-     * @param map         Das zu übertragende Map.
+     * @param mapObject   Das zu übertragende Map.
      * @param relayStore  Der RelayStore, zu dem das Objekt übertragen werden
      *                    soll. Dabei handelt es sich um eine
      *                    <CODE>RelayHashMap</CODE>.
