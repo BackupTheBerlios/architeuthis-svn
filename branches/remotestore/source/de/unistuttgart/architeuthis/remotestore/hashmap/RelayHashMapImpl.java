@@ -33,7 +33,6 @@ package de.unistuttgart.architeuthis.remotestore.hashmap;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.rmi.RemoteException;
