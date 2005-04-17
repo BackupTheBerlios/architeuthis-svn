@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 16.04.2005 by Dietmar Lippold
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -32,8 +32,8 @@ package de.unistuttgart.architeuthis.remotestore.hashset;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.HashSet;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -81,6 +81,12 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     private Transmitter addTransmitter = null;
 
     /**
+     * Der <CODE>Transmitter</CODE>, an den die Objekte der Methode
+     * <CODE>addAll</CODE> übergeben werden.
+     */
+    private Transmitter addAllTransmitter = null;
+
+    /**
      * Gibt an, ob diese Instanz bei Verwendung eines RelayStore dessen
      * Methoden synchron aufrufen soll. Falls kein RelayStore verwendet
      * wird, ist der Wert dieses Attributs ohne Bedeutung.
@@ -126,6 +132,8 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
             relayHashSet = (RelayHashSet) remoteStore;
             if (!synchronComm) {
                 addTransmitter = new Transmitter(relayHashSet, new AddProcedure());
+                addAllTransmitter = new Transmitter(relayHashSet,
+                                                    new AddAllProcedure());
             }
         }
     }
@@ -147,6 +155,8 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
             if (!synchronComm) {
                 addTransmitter.terminate();
                 addTransmitter = null;
+                addAllTransmitter.terminate();
+                addAllTransmitter = null;
             }
         }
     }
@@ -184,6 +194,27 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     }
 
     /**
+     * Speichert die Objekte der übergebenen <CODE>Collection</CODE> nur im
+     * lokalen HashSet, ohne sie an das <CODE>RelayHashSet</CODE>
+     * weiterzugeben.
+     *
+     * @param collection  Die Collection der zu speichernden Objekte.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    public synchronized void addAllLocal(Collection collection)
+        throws RemoteException {
+
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("called addAll, number of elements = "
+                        + collection.size());
+        }
+
+        // Den Delegatee updaten.
+        hashSet.addAll(collection);
+    }
+
+    /**
      * Speichert ein Objekt im lokalen HashSet und sendet es an andere
      * RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE> angemeldet
      * wurde. Diese Methode wird vom Teilproblem aufgerufen. Für den
@@ -215,18 +246,34 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     }
 
     /**
-     * Speichert Objekte im lokalen HashSet und sendet sie an andere
-     * RemoteHashSets weiter. Diese Methode wird vom Teilproblem aufgerufen.
+     * Speichert die Objekte der <CODE>Collection</CODE> im lokalen HashSet
+     * und sendet sie an andere RemoteHashSets weiter, wenn ein
+     * <CODE>RelayHashSet</CODE> angemeldet wurde. Diese Methode wird vom
+     * Teilproblem aufgerufen. Für den Anwendungsentwickler ist es
+     * transparent, ob hier ein lokales Objekt (distStore) angesprochen wird
+     * oder dies ein RMI-Aufruf ist und das angesprochene Storage-Objekt
+     * (centralStore) auf den Dispatcher liegt.
      *
-     * @param objects  Die aufzunehmenden Objekte.
+     * @param collection  Die aufzunehmenden Objekte.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public synchronized void addAll(Collection objects) throws RemoteException {
+    public void addAll(Collection collection) throws RemoteException {
 
-        Iterator iter = objects.iterator();
-        while (iter.hasNext()) {
-            add(iter.next());
+        // Erstmal lokal updaten.
+        addAllLocal(collection);
+
+        if (relayHashSet != null) {
+            if (synchronComm) {
+                // Die Collection direkt an den RelayStore und damit an die
+                // anderen RemoteHashSets übergeben.
+                relayHashSet.addAll(collection);
+            } else {
+                // Die Collection an den Transmitter zur Weiterleitung an den
+                // RelayStore und damit an die anderen RemoteHashSets
+                // übergeben.
+                addAllTransmitter.enqueue(collection);
+            }
         }
     }
 

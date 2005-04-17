@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSetImpl.java
  * created:     08.02.2005
- * last change: 10.04.2005 by Dietmar Lippold
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -32,6 +32,7 @@ package de.unistuttgart.architeuthis.remotestore.hashset;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.rmi.RemoteException;
@@ -87,19 +88,15 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
 
         // Die aktuellen Elemente dem zu registrierenden RemoteStore
         // hinzufügen.
-        Iterator iter = hashSet.iterator();
-        while (iter.hasNext()) {
-            remoteHashSet.addLocal(iter.next());
-        }
+        remoteHashSet.addAllLocal(hashSet);
 
         // Den zu registrierenden RemoteStore speichern.
         super.registerRemoteStore(remoteStore);
     }
 
     /**
-     * Diese Methode wird von RemoteHashSets aufgerufen, denen ein neuen
-     * Objekt zur Speicherung übergeben wurde. Dieses Objekt wird an alle
-     * RemoteHashSets weitergegeben.
+     * Speichert das übergebene Objekt und gibt es an alle RemoteHashSets
+     * zur Speicherung weiter.
      *
      * @param object  Das neue Objekt.
      *
@@ -108,7 +105,7 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
     public synchronized void add(Object object) throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("called addRemote for : " + object);
+            LOGGER.fine("called add for : " + object);
         }
 
         // Erstmal den Delegatee updaten.
@@ -119,6 +116,32 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
         while (iterator.hasNext()) {
             LocalRemoteHashSet peer = (LocalRemoteHashSet) iterator.next();
             peer.addLocal(object);
+        }
+    }
+
+    /**
+     * Speichert das übergebene Objekt und gibt es an alle RemoteHashSets
+     * zur Speicherung weiter.
+     *
+     * @param collection  Die Collection der zu speichernden Objekte.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    public synchronized void addAll(Collection collection) throws RemoteException {
+
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("called addAll, number of elements = "
+                        + collection.size());
+        }
+
+        // Erstmal den Delegatee updaten.
+        hashSet.addAll(collection);
+
+        // Das Objekt an alle RemoteHashSets übertragen.
+        Iterator iterator = getRemoteStoreIterator();
+        while (iterator.hasNext()) {
+            LocalRemoteHashSet peer = (LocalRemoteHashSet) iterator.next();
+            peer.addAllLocal(collection);
         }
     }
 
