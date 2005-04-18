@@ -1,7 +1,7 @@
 /*
  * file:        HashStoreProblemImpl.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 16.04.2005 von Dietmar Lippold
+ * last change: 18.04.2005 von Dietmar Lippold
  * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -140,7 +140,7 @@ public class HashStoreProblemImpl implements SerializableProblem {
         if (putDeliveredNr < putCreateNr) {
             putDeliveredNr++;
             if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("sent put " + putDeliveredNr);
+                LOGGER.fine("delivered put " + putDeliveredNr);
             }
             return (new HashStorePut(KEY, LOESUNG + "-" + putDeliveredNr));
         }
@@ -148,7 +148,7 @@ public class HashStoreProblemImpl implements SerializableProblem {
         if ((putReturnedNr == putCreateNr) && (!getDelivered)) {
             getDelivered = true;
             if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("sent get");
+                LOGGER.fine("delivered get");
             }
             return (new HashStoreGet(KEY));
         }
@@ -167,14 +167,14 @@ public class HashStoreProblemImpl implements SerializableProblem {
     public void collectResult(PartialSolution parSol, PartialProblem parProb) {
         if (parProb instanceof HashStorePut) {
             if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("put returned");
+                LOGGER.fine("put received");
             }
             putReturnedNr++;
         }
 
         if (parProb instanceof HashStoreGet) {
             if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("get returned");
+                LOGGER.fine("get received");
             }
             solution = ((ContainerPartialSolution) parSol).getPartialSolution();
             if (solution == null) {
