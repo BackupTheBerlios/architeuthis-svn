@@ -55,15 +55,24 @@
                  includes="de/unistuttgart/architeuthis/dispatcher/**"/>
     <rootfileset dir="${build}"
                  includes="de/unistuttgart/architeuthis/abstractproblems/*"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/remotestore/**"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/operative/OperativeImpl_Stub.class"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/user/ProblemTransmitterImpl_Stub.class"/>
   </classfileset>
 
   <classfileset id="operativeClasses" dir="${build}">
     <rootfileset dir="${build}"
                  includes="de/unistuttgart/architeuthis/operative/*"/>
     <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/remotestore/**"/>
+    <rootfileset dir="${build}"
                  includes="de/unistuttgart/architeuthis/abstractproblems/ContainerPartialSolution.class"/>
     <rootfileset dir="${build}"
                  includes="de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl_Stub.class"/>
+
   </classfileset>
 
   <classfileset id="userClasses" dir="${build}">
@@ -71,16 +80,32 @@
                  includes="de/unistuttgart/architeuthis/user/*"/>
     <rootfileset dir="${build}"
                  includes="de/unistuttgart/architeuthis/abstractproblems/*"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/remotestore/**"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl_Stub.class"/>
   </classfileset>
 
   <classfileset id="problemClasses" dir="${build}">
     <rootfileset dir="${build}"
-                 includes="de/unistuttgart/architeuthis/testenvironment/**"
-    />
+                 includes="de/unistuttgart/architeuthis/testenvironment/**"/>
+    <exclude name="de/unistuttgart/architeuthis/remotestore/**"/>
   </classfileset>
 
 
   <!-- Compilierung der java-Dateien                                  -->
+
+  <target name="_compileStore">
+    <mkdir dir="${build}"/>
+
+    <javac source="1.4"
+           srcdir="${source}"
+           destdir="${build}"
+           encoding="ISO-8859-1"
+           debug="true"
+           includes="de/unistuttgart/architeuthis/remotestore/**/*.java"
+    />
+  </target>
 
   <target name="compileDis">
     <mkdir dir="${build}"/>
@@ -177,7 +202,28 @@
 
   <!-- Erzeugung der jar-Dateien                                      -->
 
-  <target name="dispatcherJar" depends="compileDis"
+  <target name="_remotestoreStubs" depends="_compileStore"
+    description="Erstellt die Stub-Dateien im Package remotestore">
+
+    <rmic base="${build}"
+          stubversion="1.2"    	
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMapImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashmap.RelayHashMapImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashset.RemoteHashSetImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashset.RelayHashSetImpl"/>
+  </target>
+
+  <target name="dispatcherJar" depends="compileDis, _remotestoreStubs"
     description="Erstellt die jar-Datei der User-Klassen">
 
     <rmic base="${build}"
@@ -208,14 +254,10 @@
                    value="de.unistuttgart.architeuthis.dispatcher.DispatcherImpl"/>
       </manifest>
       <fileset refid="dispatcherClasses"/>
-      <fileset dir="${build}"
-               includes="de/unistuttgart/architeuthis/operative/OperativeImpl_Stub.class,
-                         de/unistuttgart/architeuthis/user/ProblemTransmitterImpl_Stub.class"
-      />
     </jar>
   </target>
 
-  <target name="operativeJar" depends="compileOp"
+  <target name="operativeJar" depends="compileOp, _remotestoreStubs"
     description="Erstellt die jar-Datei der Operative-Klassen">
 
     <rmic base="${build}"
@@ -243,7 +285,7 @@
     </jar>
   </target>
 
-  <target name="userJar" depends="compileUser"
+  <target name="userJar" depends="compileUser, _remotestoreStubs"
     description="Erstellt die jar-Datei der User-Klassen">
 
     <rmic base="${build}"
@@ -252,24 +294,6 @@
     <rmic base="${build}"
           stubversion="1.2"
           classname="de.unistuttgart.architeuthis.dispatcher.problemmanaging.ProblemManagerImpl"/>
-
-    <!-- Implementierungen von RemoteStore                                -->
-    <rmic base="${build}"
-          stubversion="1.2"    	
-          debug="true"
-          classname="de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMapImpl"/>
-    <rmic base="${build}"
-          stubversion="1.2"
-          debug="true"
-          classname="de.unistuttgart.architeuthis.remotestore.hashmap.RelayHashMapImpl"/>
-    <rmic base="${build}"
-          stubversion="1.2"
-          debug="true"
-          classname="de.unistuttgart.architeuthis.remotestore.hashset.RemoteHashSetImpl"/>
-    <rmic base="${build}"
-          stubversion="1.2"
-          debug="true"
-          classname="de.unistuttgart.architeuthis.remotestore.hashset.RelayHashSetImpl"/>
 
     <mkdir dir="${deploy}"/>
 
@@ -282,8 +306,6 @@
     <jar destfile="${deploy}/User.jar"
          encoding="ISO-8859-1">
       <fileset refid="userClasses"/>
-      <fileset dir="${build}"
-               includes="de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl_Stub.class"/>
     </jar>
   </target>
 
@@ -379,6 +401,7 @@
       <tarfileset dir="${config}"
                   mode="644"
                   prefix="/operative/config">
+        <include name="logging.properties"/>
         <include name="operative.pol"/>
       </tarfileset>
 
