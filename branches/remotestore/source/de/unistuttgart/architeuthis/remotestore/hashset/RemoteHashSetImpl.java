@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 18.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -30,10 +30,11 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -193,8 +194,8 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     }
 
     /**
-     * Speichert die Objekte der übergebenen <CODE>Collection</CODE> nur im
-     * lokalen HashSet, ohne sie an das <CODE>RelayHashSet</CODE>
+     * Speichert die Objekte der übergebenen <CODE>Collection</CODE> nur
+     * im lokalen HashSet, ohne sie an das <CODE>RelayHashSet</CODE>
      * weiterzugeben.
      *
      * @param collection  Die Collection der zu speichernden Objekte.
@@ -225,7 +226,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public void add(Object object) throws RemoteException {
+    public void add(Serializable object) throws RemoteException {
 
         // Erstmal lokal updaten.
         addLocal(object);

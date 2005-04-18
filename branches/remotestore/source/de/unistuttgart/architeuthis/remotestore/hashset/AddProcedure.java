@@ -1,7 +1,7 @@
 /*
  * file:        AddProcedure.java
  * created:     05.04.2005
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 18.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -30,6 +30,7 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
@@ -58,7 +59,7 @@ public class AddProcedure implements TransmitProcedure {
     public void transmit(Object object, RemoteStore relayStore)
         throws RemoteException {
 
-        ((RelayHashSet) relayStore).add(object);
+        ((RelayHashSet) relayStore).add((Serializable) object);
     }
 }
 

@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSetImpl.java
  * created:     08.02.2005
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 18.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -30,11 +30,12 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.AbstractRelayStore;
@@ -102,7 +103,7 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public synchronized void add(Object object) throws RemoteException {
+    public synchronized void add(Serializable object) throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("called add for : " + object);
@@ -120,8 +121,9 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
     }
 
     /**
-     * Speichert das übergebene Objekt und gibt es an alle RemoteHashSets
-     * zur Speicherung weiter.
+     * Speichert die Objekte der übergebenen <CODE>Collection</CODE>, die
+     * serialisierbar sein müssen, und gibt die <CODE>Collection</CODE> an
+     * alle RemoteStores weiter.
      *
      * @param collection  Die Collection der zu speichernden Objekte.
      *

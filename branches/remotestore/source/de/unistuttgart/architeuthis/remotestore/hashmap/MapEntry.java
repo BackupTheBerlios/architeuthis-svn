@@ -1,7 +1,7 @@
 /*
  * file:        MapEntry.java
  * created:     05.04.2005
- * last change: 06.04.2005 by Dietmar Lippold
+ * last change: 18.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -30,6 +30,8 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashmap;
 
+import java.io.Serializable;
+
 /**
  * Implementiert ein Objekt-Paar aus einem key-Objekt und einem value-Objekt.
  *
@@ -40,12 +42,12 @@ public class MapEntry {
     /**
      * Das enthaltene key-Objekt.
      */
-    private Object keyObject;
+    private Serializable keyObject;
 
     /**
      * Das enthaltene value-Objekt.
      */
-    private Object valueObject;
+    private Serializable valueObject;
 
     /**
      * Erzeugt eine neue Instanz aus einem key-Objekt und einem value-Objekt.
@@ -53,7 +55,7 @@ public class MapEntry {
      * @param keyObject    Das key-Objekt.
      * @param valueObject  Das value-Objekt.
      */
-    public MapEntry(Object keyObject, Object valueObject) {
+    public MapEntry(Serializable keyObject, Serializable valueObject) {
         this.keyObject = keyObject;
         this.valueObject = valueObject;
     }
@@ -63,7 +65,7 @@ public class MapEntry {
      *
      * @return  Das enthaltene key-Objekt.
      */
-    public Object getKey() {
+    public Serializable getKey() {
         return keyObject;
     }
 
@@ -72,7 +74,7 @@ public class MapEntry {
      *
      * @return  Das enthaltene value-Objekt.
      */
-    public Object getValue() {
+    public Serializable getValue() {
         return valueObject;
     }
 }

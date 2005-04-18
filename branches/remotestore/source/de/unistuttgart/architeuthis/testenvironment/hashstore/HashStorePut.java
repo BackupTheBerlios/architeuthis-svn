@@ -1,7 +1,7 @@
 /*
  * file:        HashStorePut.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 17.04.2005 von Dietmar Lippold
+ * last change: 18.04.2005 von Dietmar Lippold
  * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
  *
  * This software was developed at the Institute for Intelligent Systems at the
@@ -29,6 +29,7 @@
 
 package de.unistuttgart.architeuthis.testenvironment.hashstore;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.hashmap.UserRemoteHashMap;
@@ -55,7 +56,7 @@ public class HashStorePut implements CommunicationPartialProblem {
      * Value-Object, das unter dem key-Objekt im <CODE>RemoteStore</CODE>
      * abgelegt wird.
      */
-    private Object value;
+    private Serializable value;
 
     /**
      * Konstruktor.
@@ -65,7 +66,7 @@ public class HashStorePut implements CommunicationPartialProblem {
      * @param value  Das value-Objekt, das unter dem key-Objekt im
      *               <CODE>RemoteStore</CODE> abgelegt wird.
      */
-    public HashStorePut(String key, Object value) {
+    public HashStorePut(String key, Serializable value) {
         this.key = key;
         this.value = value;
     }

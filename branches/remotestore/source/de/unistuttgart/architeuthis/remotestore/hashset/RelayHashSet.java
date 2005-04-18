@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSet.java
  * created:     08.02.2005
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 18.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -30,6 +30,7 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.rmi.RemoteException;
@@ -53,11 +54,12 @@ public interface RelayHashSet extends RemoteStore {
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void add(Object object) throws RemoteException;
+    public void add(Serializable object) throws RemoteException;
 
     /**
-     * Speichert die Objekte der übergebenen Collection und gibt es an alle
-     * RemoteStores weiter.
+     * Speichert die Objekte der übergebenen <CODE>Collection</CODE>, die
+     * serialisierbar sein müssen, und gibt die <CODE>Collection</CODE> an
+     * alle RemoteStores weiter.
      *
      * @param collection  Die Collection der zu speichernden Objekte.
      *

@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapImpl.java
  * created:     08.02.2005
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 18.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -30,6 +30,7 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashmap;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -227,7 +228,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      *
      * @throws RemoteException RMI-Probleme
      */
-    public void put(Object key, Object value) throws RemoteException {
+    public void put(Serializable key, Serializable value) throws RemoteException {
 
         // Erstmal lokal updaten.
         putLocal(key, value);
@@ -247,12 +248,12 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
     }
 
     /**
-     * Speichert die Einträge der übergebenen Map. Die Map wird zur
-     * Speicherung an andere RemoteStores weitergegeben, wenn eine
-     * <CODE>RelayMap</CODE> angemeldet wurde. Für den Anwendungsentwickler
-     * ist transparent, ob hier ein lokales Objekt (distStore) angesprochen
-     * wird oder dies ein RMI-Aufruf ist und das angesprochene Storage-Objekt
-     * (centralStore) auf den Dispatcher liegt.
+     * Speichert die Einträge der übergebenen Map, die serialisierbar sein
+     * müssen. Die Map wird zur Speicherung an andere RemoteStores
+     * weitergegeben, wenn eine <CODE>RelayMap</CODE> angemeldet wurde. Für
+     * den Anwendungsentwickler ist transparent, ob hier ein lokales Objekt
+     * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
+     * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
      *
      * @param map  Die Map, deren Einträge gespeichert werden.
      *
@@ -287,13 +288,13 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public synchronized Object get(Object key) throws RemoteException {
+    public synchronized Serializable get(Serializable key) throws RemoteException {
 
         if (LOGGER.isLoggable(Level.INFO)) {
             LOGGER.info("called get, key: " + key);
         }
 
-        return hashMap.get(key);
+        return ((Serializable) hashMap.get(key));
     }
 
     /**

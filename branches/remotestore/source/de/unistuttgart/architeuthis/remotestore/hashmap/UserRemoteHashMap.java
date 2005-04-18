@@ -1,7 +1,7 @@
 /*
  * file:        UserRemoteHashMap.java
  * created:     08.02.2005
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 18.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -30,6 +30,7 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashmap;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.rmi.RemoteException;
 
@@ -38,7 +39,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 /**
  * Dieses Interface gibt die Methoden vor, die für einen RemoteStore zu
  * implementieren sind, der die Funktionalität einer <CODE>HashMap</CODE> hat.
- * Er wird von einem Teilproblem verwendet.
+ * Es wird von einem Teilproblem verwendet.
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
@@ -55,12 +56,12 @@ public interface UserRemoteHashMap extends RemoteStore {
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void put(Object key, Object value) throws RemoteException;
+    public void put(Serializable key, Serializable value) throws RemoteException;
 
     /**
-     * Speichert die Einträge der übergebenen Map. Die Map wird zur
-     * Speicherung an andere RemoteStores weitergegeben, wenn eine
-     * <CODE>RelayMap</CODE> angemeldet wurde.
+     * Speichert die Einträge der übergebenen Map, die serialisierbar sein
+     * müssen. Die Map wird zur Speicherung an andere RemoteStores
+     * weitergegeben, wenn eine <CODE>RelayMap</CODE> angemeldet wurde.
      *
      * @param map  Die Map, deren Einträge gespeichert werden.
      *
@@ -78,7 +79,7 @@ public interface UserRemoteHashMap extends RemoteStore {
      *
      * @return  Das zugehörige Objekt.
      */
-    public Object get(Object key) throws RemoteException;
+    public Serializable get(Serializable key) throws RemoteException;
 
     /**
      * Liefert die Anzahl der in dieser loaklen Map enthaltenen Objekt-Paare.

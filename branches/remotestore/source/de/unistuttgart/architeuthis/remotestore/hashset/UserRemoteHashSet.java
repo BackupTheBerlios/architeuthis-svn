@@ -1,7 +1,7 @@
 /*
  * file:        UserRemoteHashSet.java
  * created:     08.02.2005
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 18.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -30,6 +30,7 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.rmi.RemoteException;
 
@@ -38,7 +39,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 /**
  * Dieses Interface gibt die Methoden vor, die für einen RemoteStore zu
  * implementieren sind, der die Funktionalität eines <CODE>HashSet</CODE> hat.
- * Er wird von einem Teilproblem verwendet.
+ * Es wird von einem Teilproblem verwendet.
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
@@ -53,12 +54,12 @@ public interface UserRemoteHashSet extends RemoteStore {
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void add(Object object) throws RemoteException;
+    public void add(Serializable object) throws RemoteException;
 
     /**
-     * Speichert die Objekte der <CODE>Collection</CODE> im lokalen HashSet
-     * und sendet sie an andere RemoteHashSets weiter, wenn ein
-     * <CODE>RelayHashSet</CODE> angemeldet wurde.
+     * Speichert die Objekte der <CODE>Collection</CODE>, die serialisierbar
+     * sein müssen, im lokalen HashSet und sendet sie an andere RemoteHashSets
+     * weiter, wenn ein <CODE>RelayHashSet</CODE> angemeldet wurde.
      *
      * @param collection  Die aufzunehmenden Objekte.
      *
