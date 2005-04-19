@@ -55,7 +55,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     /**
      * Generierte <code>serialVersionUID</code>.
      */
-//    private static final long serialVersionUID = 3257847679689505078L;
+    private static final long serialVersionUID = -4903409536268811819L;
 
     /**
      * Standard Logger Pattern.

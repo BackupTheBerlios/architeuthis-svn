@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapGenerator.java
  * created:     08.02.2005
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 19.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -52,7 +52,7 @@ public class RemoteHashMapGenerator implements RemoteStoreGenerator {
     /**
      * Generierte <code>serialVersionUID</code>.
      */
-//    private static final long serialVersionUID = 3545517322140727097L;
+    private static final long serialVersionUID = -4022863673565035332L;
 
     /**
      * Standard Logger.

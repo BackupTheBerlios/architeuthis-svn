@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 19.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -72,7 +72,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * Generierte SerialVersionUID. Diese muss geändert werden, sobald
      * strukurelle Änderungen an dieser Klasse durchgeführt worden sind.
      */
-//    private static final long serialVersionUID = 3257569516132447543L;
+    private static final long serialVersionUID = 5113486114169274887L;
 
     /**
      * Ist die Anzahl der Versuche, Verbindung mit dem ComputeManager

@@ -1,7 +1,7 @@
 /*
  * file:        HashStoreProblemImpl.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 18.04.2005 von Dietmar Lippold
+ * last change: 19.04.2005 von Dietmar Lippold
  * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -51,15 +51,15 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 public class HashStoreProblemImpl implements SerializableProblem {
 
     /**
-     * Logger für diese Klasse.
-     */
-    private static final Logger LOGGER = Logger.getLogger(HashStoreProblemImpl.class.getName());
-
-    /**
      * Generierte SerialVersionUID. Diese muss geändert werden, sobald
      * strukurelle Änderungen an dieser Klasse durchgeführt worden sind.
      */
-//    private static final long serialVersionUID = 3258135769033094193L;
+    private static final long serialVersionUID = -6909831455731796208L;
+
+    /**
+     * Logger für diese Klasse.
+     */
+    private static final Logger LOGGER = Logger.getLogger(HashStoreProblemImpl.class.getName());
 
     /**
      * Key-Objekt für den <CODE>RemoteStore</CODE>.

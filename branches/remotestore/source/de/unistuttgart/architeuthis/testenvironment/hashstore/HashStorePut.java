@@ -1,7 +1,7 @@
 /*
  * file:        HashStorePut.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 18.04.2005 von Dietmar Lippold
+ * last change: 19.04.2005 von Dietmar Lippold
  * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
  *
  * This software was developed at the Institute for Intelligent Systems at the
@@ -39,12 +39,18 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
- * Legt bei Ausfü+hrung der Methode <CODE>compute</CODE> ein value-Objekt
+ * Legt bei Ausführung der Methode <CODE>compute</CODE> ein value-Objekt
  * unter einem key-Objekt in einem <CODE>RemoteStore</CODE> ab.
  *
  * @author Michael Wohlfart
  */
 public class HashStorePut implements CommunicationPartialProblem {
+
+    /**
+     * Generierte SerialVersionUID. Diese muss geändert werden, sobald
+     * strukurelle Änderungen an dieser Klasse durchgeführt worden sind.
+     */
+    private static final long serialVersionUID = 3782977219878029505L;
 
     /**
      * Key-Objekt, unter dem das value-Objekt im <CODE>RemoteStore</CODE>

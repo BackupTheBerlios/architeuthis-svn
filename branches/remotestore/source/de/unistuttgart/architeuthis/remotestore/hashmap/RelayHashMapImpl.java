@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashMapImpl.java
  * created:     08.02.2005
- * last change: 18.04.2005 by Dietmar Lippold
+ * last change: 19.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -52,7 +52,7 @@ public class RelayHashMapImpl extends AbstractRelayStore implements RelayHashMap
     /**
      * Generierte <code>serialVersionUID</code>.
      */
-//    private static final long serialVersionUID = 3905239013777553205L;
+    private static final long serialVersionUID = 4034843940855473757L;
 
     /**
      * Standard Logger.

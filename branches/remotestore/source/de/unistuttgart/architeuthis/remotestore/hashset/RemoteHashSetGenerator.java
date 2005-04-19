@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetGenerator.java
  * created:     08.02.2005
- * last change: 12.04.2005 by Dietmar Lippold
+ * last change: 19.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -51,7 +51,7 @@ public class RemoteHashSetGenerator implements RemoteStoreGenerator {
     /**
      * Generierte <code>serialVersionUID</code>.
      */
-//    private static final long serialVersionUID = 3258688797494424632L;
+    private static final long serialVersionUID = 2402593243405762040L;
 
     /**
      * Standard Logger.

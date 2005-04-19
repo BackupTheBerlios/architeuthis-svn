@@ -1,7 +1,7 @@
 /*
  * file:        HashStoreGet.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 17.04.2005 von Dietmar Lippold
+ * last change: 19.04.2005 von Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -48,6 +48,12 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
  * @author Michael Wohlfart, Dietmar Lippold
  */
 public class HashStoreGet implements CommunicationPartialProblem {
+
+    /**
+     * Generierte SerialVersionUID. Diese muss geändert werden, sobald
+     * strukurelle Änderungen an dieser Klasse durchgeführt worden sind.
+     */
+    private static final long serialVersionUID = 6101356856106293837L;
 
     /**
      * Key-Objekt, zu dem das value-Objekt aus dem <CODE>RemoteStore</CODE>
