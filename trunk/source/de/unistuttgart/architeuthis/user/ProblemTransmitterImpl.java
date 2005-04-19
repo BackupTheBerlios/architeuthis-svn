@@ -1,12 +1,13 @@
 /*
  * file:        ProblemTransmitterImpl.java
  * created:     08.07.2003
- * last change: 16.06.2004 by Dietmar Lippold
+ * last change: 15.02.2005 by Michael Wohlfart
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -43,6 +44,7 @@ import java.rmi.AccessException;
 import java.rmi.RMISecurityManager;
 import java.rmi.server.UnicastRemoteObject;
 
+import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.systeminterfaces.ProblemManager;
 import de.unistuttgart.architeuthis.systeminterfaces.ProblemTransmitter;
@@ -62,9 +64,13 @@ import de.unistuttgart.architeuthis.misc.Miscellaneous;
  *
  * @author Ralf Kible, Andreas Heydlauff, Dietmar Lippold
  */
-public class ProblemTransmitterImpl
-    extends UnicastRemoteObject
+public class ProblemTransmitterImpl extends UnicastRemoteObject
     implements ProblemTransmitter, UserProblemTransmitter {
+
+    /**
+     * generierte <code>serialVersionUID</code>
+     */
+    private static final long serialVersionUID = 4121128130447750709L;
 
     /**
      * Der ProblemManager, an den das letzte Problem zur Berechnung übermittelt
@@ -128,10 +134,11 @@ public class ProblemTransmitterImpl
      *                                eingetragen.
      */
     public ProblemTransmitterImpl(String dispatcherHost, boolean debugMode)
-        throws MalformedURLException,
-               AccessException,
-               RemoteException,
-               NotBoundException {
+        throws
+            MalformedURLException,
+            AccessException,  // ist Unterklasse von RemoteException
+            RemoteException,
+            NotBoundException {
 
         this.debugMode = debugMode;
 
@@ -218,9 +225,9 @@ public class ProblemTransmitterImpl
      *                                  Compute-System ist aufgetreten.
      */
     public synchronized Serializable transmitProblem(
-        URL packageUrl,
-        String classname,
-        Object[] problemParameters)
+            URL packageUrl,
+            String classname,
+            Object[] problemParameters)
         throws
             ClassNotFoundException,
             RemoteException,
@@ -245,19 +252,19 @@ public class ProblemTransmitterImpl
 
         try {
             Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: Versuche, Problem zu ProblemManager zu schicken");
+                    debugMode,
+                    "Debug: Versuche, Problem zu ProblemManager zu schicken");
             if  (problemParameters == null) {
                 problemManager.loadProblem(this, packageUrl,
-                                           classname, new Object[0]);
+                        classname, new Object[0], null);
             } else {
                 problemManager.loadProblem(this, packageUrl,
-                                           classname, problemParameters);
+                        classname, problemParameters, null);
             }
 
             Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: Warte auf Lösung....");
+                    debugMode,
+                    "Debug: Warte auf Lösung....");
             while ((solution == null) && (errorMessage == null)) {
                 try {
                     wait();
@@ -274,8 +281,8 @@ public class ProblemTransmitterImpl
 
         if (solution != null) {
             Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: Lösung empfangen, wird zurückgegeben");
+                    debugMode,
+                    "Debug: Lösung empfangen, wird zurückgegeben");
         }
 
         if (errorMessage != null) {
@@ -287,9 +294,7 @@ public class ProblemTransmitterImpl
     }
 
     /**
-     * Übermittelt ein serialisierbares Problem an ein ProblemManager. Ist
-     * bereits ein Problem dieses Objekts in Berechnung, wartet der Aufruf,
-     * bis das Problem fertig berechnet ist.<p>
+     * Übermittelt ein serialisierbares Problem an ein ProblemManager.
      *
      * Die Fehlerbehandlung muss vom aufrufenden Programm übernommen werden.
      *
@@ -302,7 +307,36 @@ public class ProblemTransmitterImpl
      *                                  Compute-System ist aufgetreten.
      */
     public synchronized Serializable transmitProblem(
-        SerializableProblem problem)
+            SerializableProblem problem)
+        throws
+            RemoteException,
+            ProblemComputeException {
+        return transmitProblem(problem, null);
+    }
+
+
+    /**
+     * Übermittelt ein serialisierbares Problem und einen RemoteSToreGenerator
+     * an ein ProblemManager.
+     * Ist bereits ein Problem dieses Objekts in Berechnung, wartet der Aufruf,
+     * bis das Problem fertig berechnet ist.<p>
+     *
+     * Die Fehlerbehandlung muss vom aufrufenden Programm übernommen werden.
+     *
+     * @param problem  Zentrale Problemklasse, die übertragen wird.
+     *
+     * @param generator RemoteStoreGenerator der verwendet werden soll 
+     *                  oder null falls kein RemoteStoreGenerator benötigt wird
+     *
+     * @return  Die Lösung für das übergebene Problem.
+     *
+     * @throws RemoteException          Kommunikationsproblem über RMI.
+     * @throws ProblemComputeException  Ein Fehler bei der Berechnung auf dem
+     *                                  Compute-System ist aufgetreten.
+     */
+    public synchronized Serializable transmitProblem(
+            SerializableProblem problem,
+            RemoteStoreGenerator generator)
         throws
             RemoteException,
             ProblemComputeException {
@@ -326,13 +360,13 @@ public class ProblemTransmitterImpl
 
         try {
             Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: Versuche, Problem zu ProblemManager zu schicken");
-            problemManager.receiveProblem(this, problem);
+                    debugMode,
+                    "Debug: Versuche, Problem zu ProblemManager zu schicken");
+            problemManager.receiveProblem(this, problem, generator);
 
             Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: Warte auf Lösung....");
+                    debugMode,
+                    "Debug: Warte auf Lösung....");
             while ((solution == null) && (errorMessage == null)) {
                 try {
                     wait();
@@ -349,8 +383,8 @@ public class ProblemTransmitterImpl
 
         if (solution != null) {
             Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: Lösung empfangen, wird zurückgegeben");
+                    debugMode,
+                    "Debug: Lösung empfangen, wird zurückgegeben");
         }
 
         if (errorMessage != null) {
@@ -375,145 +409,118 @@ public class ProblemTransmitterImpl
         throws RemoteException {
 
         switch (messageID) {
-            case ExceptionCodes.PARTIALPROBLEM_CREATE_EXCEPTION :
-                {
-                    errorMessage = "Beim Erzeugen eines Teilproblems trat"
-                                   + " eine Ausnahme auf";
-                    if (message != null) {
-                        errorMessage += ": " + message;
-                    } else {
-                        errorMessage += ".";
-                    }
-                    notifyAll();
-                    break;
-                }
-            case ExceptionCodes.PARTIALSOLUTION_COLLECT_EXCEPTION :
-                {
-                    errorMessage = "Beim Entgegennehmen einer Teillösung trat"
-                                   + " eine Ausnahme auf";
-                    if (message != null) {
-                        errorMessage += ": " + message;
-                    } else {
-                        errorMessage += ".";
-                    }
-                    notifyAll();
-                    break;
-                }
-            case ExceptionCodes.SOLUTION_CREATE_EXCEPTION :
-                {
-                    errorMessage = "Beim Erzeugen der Lösung trat eine"
-                                   + " Ausnahme auf";
-                    if (message != null) {
-                        errorMessage += ": " + message;
-                    } else {
-                        errorMessage += ".";
-                    }
-                    notifyAll();
-                    break;
-                }
-            case ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION :
-                {
-                    errorMessage = "Ein Teilproblem konnte nicht gesendet"
-                                   + " werden";
-                    if (message != null) {
-                        errorMessage += ": " + message;
-                    } else {
-                        errorMessage += ".";
-                    }
-                    notifyAll();
-                    break;
-                }
-            case ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION :
-                {
-                    errorMessage = "Eine Teillösung konnte nicht gesendet"
-                                   + " werden";
-                    if (message != null) {
-                        errorMessage += ": " + message;
-                    } else {
-                        errorMessage += ".";
-                    }
-                    notifyAll();
-                    break;
-                }
-            case ExceptionCodes.SOLUTION_SEND_EXCEPTION :
-                {
-                    errorMessage = "Die Gesamtlösung konnte nicht gesendet"
-                                   + " werden";
-                    if (message != null) {
-                        errorMessage += ": " + message;
-                    } else {
-                        errorMessage += ".";
-                    }
-                    notifyAll();
-                    break;
-                }
-            case ExceptionCodes.PARTIALPROBLEM_COMPUTE_EXCEPTION :
-                {
-                    errorMessage = "Teilproblem meldet eine Ausnahme bei der"
-                                   + " Berechnung";
-                    if (message != null) {
-                        errorMessage += ": " + message;
-                    } else {
-                        errorMessage += ".";
-                    }
-                    notifyAll();
-                    break;
-                }
-            case ExceptionCodes.PARTIALPROBLEM_ERROR :
-                {
-                    errorMessage = "Bei der Berechnung eines Teilproblems trat"
-                                   + " ein unerwarteteter Fehler auf";
-                    if (message != null) {
-                        errorMessage += ": " + message;
-                    } else {
-                        errorMessage += ".";
-                    }
-                    notifyAll();
-                    break;
-                }
-            case ExceptionCodes.PROBLEM_INCORRECT_ERROR :
-                {
-                    errorMessage = "Problem liefert einerseits keine neuen"
-                                   + " Teilprobleme und andererseits keine"
-                                   + " Gesamtlösung.";
-                    notifyAll();
-                    break;
-                }
-            case ExceptionCodes.DISPATCHER_SHUTDOWN :
-                {
-                    errorMessage = "Der Dispatcher wurde beendet!";
-                    notifyAll();
-                    break;
-                }
-            case ExceptionCodes.USER_ABORT_PROBLEM :
-                {
-                    errorMessage = "Abbruch durch den Benutzer.";
-                    notifyAll();
-                    break;
-                }
-            case ExceptionCodes.NO_OPERATIVES_REGISTERED :
-                {
-                    Miscellaneous.printDebugMessage(
-                        debugMode,
-                        "Keine Operatives mehr angemeldet!");
-                    break;
-                }
-            case ExceptionCodes.NEW_OPERATIVES_REGISTERED :
-                {
-                    Miscellaneous.printDebugMessage(
-                        debugMode,
-                        "Neuer Operative hat sich angemeldet!");
-                    break;
-                }
-            default :
-                System.err.println("Unbekannte Nachricht vom Dispatcher"
-                                   + " bekommen");
-                if (message != null) {
-                    System.err.println(": " + message);
-                } else {
-                    System.err.println(".");
-                }
-                break;
+        case ExceptionCodes.PARTIALPROBLEM_CREATE_EXCEPTION :
+            errorMessage = "Beim Erzeugen eines Teilproblems trat"
+                + " eine Ausnahme auf";
+            if (message != null) {
+                errorMessage += ": " + message;
+            } else {
+                errorMessage += ".";
+            }
+            notifyAll();
+            break;
+        case ExceptionCodes.PARTIALSOLUTION_COLLECT_EXCEPTION :
+            errorMessage = "Beim Entgegennehmen einer Teillösung trat"
+                + " eine Ausnahme auf";
+            if (message != null) {
+                errorMessage += ": " + message;
+            } else {
+                errorMessage += ".";
+            }
+            notifyAll();
+            break;
+        case ExceptionCodes.SOLUTION_CREATE_EXCEPTION :
+            errorMessage = "Beim Erzeugen der Lösung trat eine"
+                + " Ausnahme auf";
+            if (message != null) {
+                errorMessage += ": " + message;
+            } else {
+                errorMessage += ".";
+            }
+            notifyAll();
+            break;
+        case ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION :
+            errorMessage = "Ein Teilproblem konnte nicht gesendet"
+                + " werden";
+            if (message != null) {
+                errorMessage += ": " + message;
+            } else {
+                errorMessage += ".";
+            }
+            notifyAll();
+            break;
+        case ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION :
+            errorMessage = "Eine Teillösung konnte nicht gesendet"
+                + " werden";
+            if (message != null) {
+                errorMessage += ": " + message;
+            } else {
+                errorMessage += ".";
+            }
+            notifyAll();
+            break;
+        case ExceptionCodes.SOLUTION_SEND_EXCEPTION :
+            errorMessage = "Die Gesamtlösung konnte nicht gesendet"
+                + " werden";
+            if (message != null) {
+                errorMessage += ": " + message;
+            } else {
+                errorMessage += ".";
+            }
+            notifyAll();
+            break;
+        case ExceptionCodes.PARTIALPROBLEM_COMPUTE_EXCEPTION :
+            errorMessage = "Teilproblem meldet eine Ausnahme bei der"
+                + " Berechnung";
+            if (message != null) {
+                errorMessage += ": " + message;
+            } else {
+                errorMessage += ".";
+            }
+            notifyAll();
+            break;
+        case ExceptionCodes.PARTIALPROBLEM_ERROR :
+            errorMessage = "Bei der Berechnung eines Teilproblems trat"
+                + " ein unerwarteteter Fehler auf";
+            if (message != null) {
+                errorMessage += ": " + message;
+            } else {
+                errorMessage += ".";
+            }
+            notifyAll();
+            break;
+        case ExceptionCodes.PROBLEM_INCORRECT_ERROR :
+            errorMessage = "Problem liefert einerseits keine neuen"
+                + " Teilprobleme und andererseits keine"
+                + " Gesamtlösung.";
+            notifyAll();
+            break;
+        case ExceptionCodes.DISPATCHER_SHUTDOWN :
+            errorMessage = "Der Dispatcher wurde beendet!";
+            notifyAll();
+            break;
+        case ExceptionCodes.USER_ABORT_PROBLEM :
+            errorMessage = "Abbruch durch den Benutzer.";
+            notifyAll();
+            break;
+        case ExceptionCodes.NO_OPERATIVES_REGISTERED :
+            Miscellaneous.printDebugMessage(
+                    debugMode,
+                    "Keine Operatives mehr angemeldet!");
+            break;
+        case ExceptionCodes.NEW_OPERATIVES_REGISTERED :
+            Miscellaneous.printDebugMessage(
+                    debugMode,
+                    "Neuer Operative hat sich angemeldet!");
+            break;
+        default :
+            System.err.println("Unbekannte Nachricht vom Dispatcher bekommen");
+            if (message != null) {
+                System.err.println(": " + message);
+            } else {
+                System.err.println(".");
+            }
+            break;
         }
     }
 
@@ -528,15 +535,15 @@ public class ProblemTransmitterImpl
      * @throws RemoteException  Kommunikationsproblem über RMI.
      */
     public synchronized void fetchSolution(Serializable sol,
-                                           ProblemStatistics stat)
+            ProblemStatistics stat)
         throws RemoteException {
 
         solution = sol;
         finalStat = stat;
         notifyAll();
         Miscellaneous.printDebugMessage(
-            debugMode,
-            "Debug: Loesung wurde vom Dispatcher uebermittelt!");
+                debugMode,
+                "Debug: Loesung wurde vom Dispatcher uebermittelt!");
     }
 
     /**
