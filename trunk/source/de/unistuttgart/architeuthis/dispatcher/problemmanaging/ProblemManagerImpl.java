@@ -1,7 +1,7 @@
 /*
  * file:        ProblemManagerImpl.java
  * created:     29.06.2003
- * last change: 15.02.2005 by Michael Wohlfart
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@t-online.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -36,7 +36,6 @@ package de.unistuttgart.architeuthis.dispatcher.problemmanaging;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.rmi.RemoteException;
 import java.rmi.server.RMIClassLoader;
 import java.rmi.server.UnicastRemoteObject;
@@ -48,28 +47,20 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import de
-    .unistuttgart
-    .architeuthis
-    .dispatcher
-    .computemanaging
-    .ComputeManagerImpl;
-import de
-    .unistuttgart
-    .architeuthis
-    .dispatcher
-    .statistic
-    .SystemStatisticsCollector;
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
+import de.unistuttgart.architeuthis.misc.util.BlockingBuffer;
+import de.unistuttgart.architeuthis.dispatcher.computemanaging.ComputeManagerImpl;
+import de.unistuttgart.architeuthis.dispatcher.statistic.SystemStatisticsCollector;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.systeminterfaces.ProblemManager;
 import de.unistuttgart.architeuthis.systeminterfaces.ProblemTransmitter;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreGenException;
 import de.unistuttgart.architeuthis.userinterfaces.exec.SystemStatistics;
 import de.unistuttgart.architeuthis.userinterfaces.exec.ProblemStatistics;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.userinterfaces.develop.Problem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 
 /**
  * Der <code>ProblemManager</code> ermöglicht es mehere Probleme gleichzeitig
@@ -77,9 +68,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
  *
  * @author Jürgen Heit, Andreas Heydlauff, Dietmar Lippold
  */
-public class ProblemManagerImpl
-    extends UnicastRemoteObject
-    implements ProblemManager {
+public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemManager {
 
     /**
      * Die Größe des Puffers, in dem die erzeugten Teilprobleme aller Probleme
@@ -140,17 +129,18 @@ public class ProblemManagerImpl
     /**
      * Dieser Constructor wird vom {@link ComputeManagerImpl} aufgerufen.
      *
-     * @param computeManager  Referenz auf aufrufenden ComputeManager
-     * @throws RemoteException  falls es zu Fehlern bei der RMI-Kommunikation
+     * @param computeManager    Referenz auf aufrufenden ComputeManager.
+     * @param sysStatCollector  Statistik Collector.
+     *
+     * @throws RemoteException  Falls es zu Fehlern bei der RMI-Kommunikation
      *                          kommt.
      */
-    public ProblemManagerImpl(
-        ComputeManagerImpl computeManager,
-        SystemStatisticsCollector systemStatisticsCollector)
+    public ProblemManagerImpl(ComputeManagerImpl computeManager,
+                              SystemStatisticsCollector sysStatCollector)
         throws RemoteException {
 
         cmpManager = computeManager;
-        systemStatistic = systemStatisticsCollector;
+        systemStatistic = sysStatCollector;
         parProbWrapperBuffer = new BlockingBuffer(BLOCKING_BUFFER_SIZE);
         partialProblemCollectorThread =
             new PartialProblemCollector(this, parProbWrapperBuffer);
@@ -195,12 +185,11 @@ public class ProblemManagerImpl
                     if (nextProbWrap.newParProbWrapperAvailable()) {
                         nextTime = nextProbWrap.estimatedComputationTime();
                         if ((minTimeProbWrap == null) || (nextTime < minTime)) {
-                                minTimeProbWrap = nextProbWrap;
-                                minTime = nextTime;
-                                if (minTime == 0) {
-                                    minCompRatio =
-                                        minTimeProbWrap.computationRatio();
-                                }
+                            minTimeProbWrap = nextProbWrap;
+                            minTime = nextTime;
+                            if (minTime == 0) {
+                                minCompRatio = minTimeProbWrap.computationRatio();
+                            }
                         } else if (nextTime == 0) {
                             // Es ist auch minTime == 0
                             nextCompRatio = nextProbWrap.computationRatio();
@@ -276,6 +265,7 @@ public class ProblemManagerImpl
      * Gesamtlösung ermittelt wurde, aus der Verwaltung.
      *
      * @param probWrapper  ProblemWrapper vom zu entfernenden Problem.
+     *
      * @return  Den <code>ProblemTransmitter</code>, der das Problem, das
      *          entfernt wurde, übertragen hat.
      */
@@ -299,7 +289,7 @@ public class ProblemManagerImpl
 
         if (removedTransmitter != null) {
             log.info("Breche für " + probWrapper.toString()
-                                   + " alle Teilprobleme ab");
+                     + " alle Teilprobleme ab");
 
             // Alle noch in Berechnung befindlichen Teilprobleme abbrechen.
             abortAllPartialProblems(parProbWrapper);
@@ -332,6 +322,8 @@ public class ProblemManagerImpl
     /**
      * Liefert den nächsten Teilproblem-Wrapper ({@link ParProbWrapper}) aus
      * dem Puffer der zur Berechnung stehenden Teilprobleme.
+     *
+     * @return  Wrapper für das Teilproblem.
      */
     public ParProbWrapper getParProbWrapper() {
         ParProbWrapper partProbWrap =
@@ -345,11 +337,10 @@ public class ProblemManagerImpl
      * @param partSol       zurückzuliefernde Teillösung
      *                      ({@link PartialSolution})
      * @param partProbWrap  Wrapper des zur Teillösung gehörenden Teilproblems
-     *                      ({@link ParProbWrapper})     
+     *                      ({@link ParProbWrapper})
      */
-    public void collectPartialSolution(
-        PartialSolution partSol,
-        ParProbWrapper partProbWrap) {
+    public void collectPartialSolution(PartialSolution partSol,
+                                       ParProbWrapper partProbWrap) {
 
         ProblemWrapper probWrap;
 
@@ -372,21 +363,18 @@ public class ProblemManagerImpl
      * @param messageID     Code der Nachricht.
      * @param message       Nachrichtentext.
      */
-    private void sendMessage(
-        ProblemTransmitter transmitter,
-        int messageID,
-        String message) {
+    private void sendMessage(ProblemTransmitter transmitter,
+                             int messageID,
+                             String message) {
 
         try {
-            log.info(
-                "Sende Nachricht \""
-                    + String.valueOf(message)
-                    + "\" an Problem-Übermittler");
+            log.info("Sende Nachricht \""
+                     + String.valueOf(message)
+                     + "\" an Problem-Übermittler");
             transmitter.fetchMessage(messageID, message);
         } catch (RemoteException e) {
-            log.severe(
-                "<E> Nachricht konnte nicht an den Problem-Uebermittler "
-                    + "geschickt werden");
+            log.severe("<E> Nachricht konnte nicht an den Problem-Uebermittler"
+                       + " geschickt werden");
         }
     }
 
@@ -404,9 +392,9 @@ public class ProblemManagerImpl
             while (probWrapIter.hasNext()) {
                 probWrap = (ProblemWrapper) probWrapIter.next();
                 sendMessage(
-                    (ProblemTransmitter) probWrapTransmitter.get(probWrap),
-                    messageID,
-                    message);
+                        (ProblemTransmitter) probWrapTransmitter.get(probWrap),
+                        messageID,
+                        message);
             }
         }
     }
@@ -421,7 +409,6 @@ public class ProblemManagerImpl
      * @param exceptionCode     Integerwert, der die Ausnahme charakterisisert
      * @param exceptionMessage  Fehlermeldung um die Ausnahme näher zu
      *                          beschreiben.
-     * @throws RemoteException  bei RMI-Verbindungsproblemen.
      */
     public void reportException(ProblemWrapper problemWrapper,
                                 ParProbWrapper parProbWrapper,
@@ -440,191 +427,189 @@ public class ProblemManagerImpl
         }
 
         switch (exceptionCode) {
-            case ExceptionCodes.PARTIALPROBLEM_CREATE_EXCEPTION :
-                {
-                    log.severe("Exception PARTIALPROBLEM_CREATE_EXCEPTION zu "
-                               + parProbWrapper + " : " + exceptionMessage);
-                    if (probWrap != null) {
-                        transmitter = removeProblem(probWrap);
-                        if (transmitter != null) {
-                            systemStatistic.notifyProblemAborted();
-                            sendMessage(transmitter,
-                                        exceptionCode,
-                                        exceptionMessage);
-                        }
-                    }
-                    break;
+        case ExceptionCodes.PARTIALPROBLEM_CREATE_EXCEPTION :
+            log.severe("Exception PARTIALPROBLEM_CREATE_EXCEPTION zu "
+                    + parProbWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
                 }
-            case ExceptionCodes.PARTIALSOLUTION_COLLECT_EXCEPTION :
-                {
-                    log.severe("Exception PARTIALSOLUTION_COLLECT_EXCEPTION zu "
-                               + parProbWrapper + " : " + exceptionMessage);
-                    if (probWrap != null) {
-                        transmitter = removeProblem(probWrap);
-                        if (transmitter != null) {
-                            systemStatistic.notifyProblemAborted();
-                            sendMessage(transmitter,
-                                        exceptionCode,
-                                        exceptionMessage);
-                        }
-                    }
-                    break;
+            }
+            break;
+        case ExceptionCodes.PARTIALSOLUTION_COLLECT_EXCEPTION :
+            log.severe("Exception PARTIALSOLUTION_COLLECT_EXCEPTION zu "
+                    + parProbWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
                 }
-            case ExceptionCodes.SOLUTION_CREATE_EXCEPTION :
-                {
-                    log.severe("Exception SOLUTION_CREATE_EXCEPTION zu "
-                               + problemWrapper + " : " + exceptionMessage);
-                    if (probWrap != null) {
-                        transmitter = removeProblem(probWrap);
-                        if (transmitter != null) {
-                            systemStatistic.notifyProblemAborted();
-                            sendMessage(transmitter,
-                                        exceptionCode,
-                                        exceptionMessage);
-                        }
-                    }
-                    break;
+            }
+            break;
+        case ExceptionCodes.SOLUTION_CREATE_EXCEPTION :
+            log.severe("Exception SOLUTION_CREATE_EXCEPTION zu "
+                    + problemWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
                 }
-            case ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION :
-                {
-                    log.severe("Exception PARTIALPROBLEM_SEND_EXCEPTION zu "
-                               + parProbWrapper + " : " + exceptionMessage);
-                    if (probWrap != null) {
-                        transmitter = removeProblem(probWrap);
-                        if (transmitter != null) {
-                            systemStatistic.notifyProblemAborted();
-                            sendMessage(transmitter,
-                                        exceptionCode,
-                                        exceptionMessage);
-                        }
-                    }
-                    break;
+            }
+            break;
+        case ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION :
+            log.severe("Exception PARTIALPROBLEM_SEND_EXCEPTION zu "
+                    + parProbWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
                 }
-            case ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION :
-                {
-                    log.severe("Exception PARTIALSOLUTION_SEND_EXCEPTION zu "
-                               + parProbWrapper + " : " + exceptionMessage);
-                    if (probWrap != null) {
-                        transmitter = removeProblem(probWrap);
-                        if (transmitter != null) {
-                            systemStatistic.notifyProblemAborted();
-                            sendMessage(transmitter,
-                                        exceptionCode,
-                                        exceptionMessage);
-                        }
-                    }
-                    break;
+            }
+            break;
+        case ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION :
+            log.severe("Exception PARTIALSOLUTION_SEND_EXCEPTION zu "
+                    + parProbWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
                 }
-            case ExceptionCodes.SOLUTION_SEND_EXCEPTION :
-                {
-                    log.severe("Exception SOLUTION_SEND_EXCEPTION zu "
-                               + problemWrapper + " : " + exceptionMessage);
-                    if (probWrap != null) {
-                        transmitter = removeProblem(probWrap);
-                        if (transmitter != null) {
-                            systemStatistic.notifyProblemAborted();
-                            sendMessage(transmitter,
-                                        exceptionCode,
-                                        exceptionMessage);
-                        }
-                    }
-                    break;
+            }
+            break;
+        case ExceptionCodes.SOLUTION_SEND_EXCEPTION :
+            log.severe("Exception SOLUTION_SEND_EXCEPTION zu "
+                    + problemWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
                 }
-            case ExceptionCodes.PARTIALPROBLEM_COMPUTE_EXCEPTION :
-                {
-                    log.severe("Exception PARTIALPROBLEM_COMPUTE_EXCEPTION zu "
-                               + parProbWrapper + " : " + exceptionMessage);
-                    if (probWrap != null) {
-                        transmitter = removeProblem(probWrap);
-                        if (transmitter != null) {
-                            systemStatistic.notifyProblemAborted();
-                            sendMessage(transmitter,
-                                        exceptionCode,
-                                        exceptionMessage);
-                        }
-                    }
-                    break;
+            }
+            break;
+        case ExceptionCodes.PARTIALPROBLEM_COMPUTE_EXCEPTION :
+            log.severe("Exception PARTIALPROBLEM_COMPUTE_EXCEPTION zu "
+                    + parProbWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
                 }
-            case ExceptionCodes.PARTIALPROBLEM_ERROR :
-                {
-                    log.severe("Exception PARTIALPROBLEM_ERROR zu "
-                               + parProbWrapper + " : " + exceptionMessage);
-                    if (probWrap != null) {
-                        transmitter = removeProblem(probWrap);
-                        if (transmitter != null) {
-                            systemStatistic.notifyProblemAborted();
-                            sendMessage(transmitter,
-                                        exceptionCode,
-                                        exceptionMessage);
-                        }
-                    }
-                    break;
+            }
+            break;
+        case ExceptionCodes.REMOTE_STORE_GEN_EXCEPTION :
+            log.severe("Exception REMOTE_STORE_GEN_EXCEPTION zu "
+                    + parProbWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
                 }
-            case ExceptionCodes.PROBLEM_INCORRECT_ERROR :
-                {
-                    log.severe("Exception PROBLEM_INCORRECT_ERROR zu "
-                               + problemWrapper + " : " + exceptionMessage);
-                    if (probWrap != null) {
-                        transmitter = removeProblem(probWrap);
-                        if (transmitter != null) {
-                            systemStatistic.notifyProblemAborted();
-                            sendMessage(transmitter,
-                                        exceptionCode,
-                                        exceptionMessage);
-                        }
-                    }
-                    break;
+            }
+            break;
+        case ExceptionCodes.REMOTE_STORE_EXCEPTION :
+            log.severe("Exception REMOTE_STORE_EXCEPTION zu "
+                    + parProbWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
                 }
-            case ExceptionCodes.USER_ABORT_PROBLEM :
-                {
-                    log.severe("Exception USER_ABORT_PROBLEM zu "
-                               + problemWrapper + " : " + exceptionMessage);
-                    if (probWrap != null) {
-                        transmitter = removeProblem(probWrap);
-                        if (transmitter != null) {
-                            systemStatistic.notifyProblemAborted();
-                            sendMessage(transmitter,
-                                        exceptionCode,
-                                        exceptionMessage);
-                        }
-                    }
-                    break;
+            }
+            break;
+        case ExceptionCodes.PARTIALPROBLEM_ERROR :
+            log.severe("Exception PARTIALPROBLEM_ERROR zu "
+                    + parProbWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
                 }
-            case ExceptionCodes.DISPATCHER_SHUTDOWN :
-                {
-                    synchronized (this) {
-                        terminated = true;
-                    }
-                    sendMessageToAll(
-                        ExceptionCodes.DISPATCHER_SHUTDOWN,
-                        "Administratives Beenden.");
-                    abortAllProblems();
-                    partialProblemCollectorThread.terminate();
-                    break;
+            }
+            break;
+        case ExceptionCodes.PROBLEM_INCORRECT_ERROR :
+            log.severe("Exception PROBLEM_INCORRECT_ERROR zu "
+                    + problemWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
                 }
-            case ExceptionCodes.NO_OPERATIVES_REGISTERED :
-                {
-                    sendMessageToAll(
-                        ExceptionCodes.NO_OPERATIVES_REGISTERED,
-                        "Keine Operatives verfügbar.");
-                    break;
+            }
+            break;
+        case ExceptionCodes.USER_ABORT_PROBLEM :
+            log.severe("Exception USER_ABORT_PROBLEM zu "
+                    + problemWrapper + " : " + exceptionMessage);
+            if (probWrap != null) {
+                transmitter = removeProblem(probWrap);
+                if (transmitter != null) {
+                    systemStatistic.notifyProblemAborted();
+                    sendMessage(transmitter,
+                            exceptionCode,
+                            exceptionMessage);
                 }
-            case ExceptionCodes.NEW_OPERATIVES_REGISTERED :
-                {
-                    sendMessageToAll(
-                        ExceptionCodes.NEW_OPERATIVES_REGISTERED,
-                        "Neuer Operative hat sich angemeldet.");
-                    break;
-                }
-            default :
-                {
-                    log.warning(
-                        "Unbekannte Fehlermeldung: "
-                            + exceptionCode
-                            + " "
-                            + exceptionMessage);
-                    break;
-                }
+            }
+            break;
+        case ExceptionCodes.DISPATCHER_SHUTDOWN :
+            synchronized (this) {
+                terminated = true;
+            }
+            sendMessageToAll(
+                ExceptionCodes.DISPATCHER_SHUTDOWN,
+                "Administratives Beenden.");
+            abortAllProblems();
+            partialProblemCollectorThread.terminate();
+            break;
+        case ExceptionCodes.NO_OPERATIVES_REGISTERED :
+            sendMessageToAll(
+                ExceptionCodes.NO_OPERATIVES_REGISTERED,
+                "Keine Operatives verfügbar.");
+            break;
+        case ExceptionCodes.NEW_OPERATIVES_REGISTERED :
+            sendMessageToAll(
+                    ExceptionCodes.NEW_OPERATIVES_REGISTERED,
+            "Neuer Operative hat sich angemeldet.");
+            break;
+        default :
+            log.warning(
+                    "Unbekannte Fehlermeldung: "
+                    + exceptionCode
+                    + " "
+                    + exceptionMessage);
+        break;
         }
     }
 
@@ -651,15 +636,15 @@ public class ProblemManagerImpl
                 try {
                     // Gesamtlösung übermitteln
                     transmitter.fetchSolution(
-                        solution,
-                        problemWrapper.getStatistics());
+                            solution,
+                            problemWrapper.getStatistics());
                     sent = true;
                     log.info("Lösung erfolgreich an Benutzer gesendet.");
                 } catch (RemoteException e) {
                     exceptionMessage = e.toString();
                     log.severe(
-                        "<E> Problem-Übermittler nicht ereichbar für"
-                        + " Lösungsrückgabe.");
+                            "<E> Problem-Übermittler nicht ereichbar für"
+                            + " Lösungsrückgabe.");
                 } catch (RuntimeException e) {
                     exceptionMessage = e.toString();
                     log.fine("Senden der Lösung fehlgeschlagen");
@@ -679,10 +664,10 @@ public class ProblemManagerImpl
             systemStatistic.notifySolutionTransfered();
         } else {
             reportException(
-                problemWrapper,
-                null,
-                ExceptionCodes.SOLUTION_SEND_EXCEPTION,
-                exceptionMessage);
+                    problemWrapper,
+                    null,
+                    ExceptionCodes.SOLUTION_SEND_EXCEPTION,
+                    exceptionMessage);
             log.warning("Lösung konnte nicht zurückgeliefert werden.");
         }
     }
@@ -693,6 +678,7 @@ public class ProblemManagerImpl
      *
      * @param transmitter  ProblemTransmitter, zu dem der ProblemWrapper
      *                     ermittelt werden soll.
+     *
      * @return  ProblemWrapper des Problem-Übermittlers, der das Teilproblem
      *          übermittelt hat, oder <code>null</code>, wenn dieser nicht
      *          gespeichert ist.
@@ -749,43 +735,46 @@ public class ProblemManagerImpl
     }
 
     /**
-    * Teilt dem ProblemManager die Position der Quelldateien für ein neues
-    * Problem mit. Die nötigten Klassen werden von einem HTTP-Server geladen und
-    * das {@link Problem} wird initialisiert.<p>
-    *
-    * Zur Berechnung werden vom Problem erzeugte {@link PartialProblem}s
-    * an Operatives verteilt und nach erfolgreicher Berechnung deren
-    * Lösung dem Problem zum Zusammenfügen übergeben.<br>
-    * Wurden alle PartialProbleme berechnet, gibt <code>newProblem</code> die
-    * Gesamtlösung an den Problem-Übermittler zurück.
-    *
-    * @param transmitter  Problem-Übermittler, der das Problem sendet und die
-    *                     Lösung empfangen soll
-    * @param url          Pfad zu den Quelldateien auf einem HTTP-Server
-    * @param className    {@link Problem}-spezifischer Name, das die Berechnung
-    *                     startet
-    * @param problemParameters  Die formalen Parameter des vom Problem zu
-    *                           startenden Konstruktors.
-    * @throws RemoteException  RMI RemoteException wird bei Netzproblemen
-    *                          geworfen.
-    *
-    * @see  Problem
-    * @see  PartialProblem
-    * @throws RemoteException          Falls ein Netzproblemen aufgetreten ist
-    *                                  oder der Dispatcher gerade beendet wird
-    * @throws ClassNotFoundException   Tritt auf, wenn der Zugriff auf die
-    *                                  Problemklasse nicht funktioniert,
-    *                                  Möglicherweise wegen einer falschen URL.
-    * @throws ProblemComputeException  Wenn nicht genung Compute-System-Resourcen
-    *                                  vorhanden sind.
-    */
-    public synchronized void loadProblem(
-        ProblemTransmitter transmitter,
-        URL url,
-        String className,
-        Object[] problemParameters,
-        RemoteStoreGenerator generator)
-        throws RemoteException, ClassNotFoundException, ProblemComputeException {
+     * Teilt dem ProblemManager die Position der Quelldateien für ein neues
+     * Problem mit. Die nötigten Klassen werden von einem HTTP-Server geladen und
+     * das {@link Problem} wird initialisiert.<p>
+     *
+     * Zur Berechnung werden vom Problem erzeugte {@link PartialProblem}s
+     * an Operatives verteilt und nach erfolgreicher Berechnung deren
+     * Lösung dem Problem zum Zusammenfügen übergeben.<br>
+     * Wurden alle PartialProbleme berechnet, gibt <code>newProblem</code> die
+     * Gesamtlösung an den Problem-Übermittler zurück.
+     *
+     * @param transmitter        Problem-Übermittler, der das Problem sendet
+     *                           und die Lösung empfangen soll.
+     * @param url                Pfad zu den Quelldateien auf einem
+     *                           HTTP-Server.
+     * @param className          {@link Problem}-spezifischer Name, das die
+     *                           Berechnung startet.
+     * @param problemParameters  Die formalen Parameter des vom Problem zu
+     *                           startenden Konstruktors.
+     * @param generator          Der RemoteStore-Generator.
+     *
+     * @throws RemoteException          Falls ein Netzproblemen aufgetreten ist
+     *                                  oder der Dispatcher gerade beendet wird.
+     * @throws ClassNotFoundException   Tritt auf, wenn der Zugriff auf die
+     *                                  Problemklasse nicht funktioniert,
+     *                                  möglicherweise wegen einer falschen URL.
+     * @throws ProblemComputeException  Wenn nicht genung Compute-System-Resourcen
+     *                                  vorhanden sind.
+     * @throws RemoteStoreGenException  Der zentrale <CODE>RemoteStore</CODE>
+     *                                  konnte nicht erzeugt werden.
+     *
+     * @see  Problem
+     * @see  PartialProblem
+     */
+    public synchronized void loadProblem(ProblemTransmitter transmitter,
+                                         URL url,
+                                         String className,
+                                         Object[] problemParameters,
+                                         RemoteStoreGenerator generator)
+        throws RemoteException, ClassNotFoundException,
+               ProblemComputeException, RemoteStoreGenException {
 
         if (terminated) {
             throw new RemoteException("Dispatcher ist beim Shutdown");
@@ -793,11 +782,11 @@ public class ProblemManagerImpl
 
         if (transmitter == null) {
             throw new ProblemComputeException(
-                "Kein gültiger Problem-Übermittler angegeben.");
+            "Kein gültiger Problem-Übermittler angegeben.");
         } else {
             if (probWrapTransmitter.containsValue(transmitter)) {
                 throw new ProblemComputeException(
-                    "Problem-Übermittler wird bereits verwendet.");
+                "Problem-Übermittler wird bereits verwendet.");
             }
         }
 
@@ -846,8 +835,8 @@ public class ProblemManagerImpl
                 throw new ProblemComputeException("Error: " + e.toString());
             }
         } else {
-            throw new ProblemComputeException(
-                "Keine Resourcen für neues Problem mehr frei.");
+            throw new ProblemComputeException("Keine Resourcen für neues"
+                                              + " Problem mehr frei.");
         }
     }
 
@@ -859,24 +848,26 @@ public class ProblemManagerImpl
      * an Operatives verteilt und nach erfolgreicher Berechnung deren
      * Lösung dem Problem zum Zusammenfügen übergeben.<br>
      *
-     * @param transmitter  Problem-übermittler, der das Problem sendet und die
+     * @param transmitter  Problem-Übermittler, der das Problem sendet und die
      *                     Lösung empfangen soll
-     * @param problem      serialisierbares Problem, das verteilt berechnet
+     * @param problem      Serialisierbares Problem, das verteilt berechnet
      *                     werden soll.
-     * @param generator    Der verwendete RemoteStoreGenerator oder null, falls
-     *                     kein RemoteStoreGenerator verwendet wird.
-     *                     
-     * @throws RemoteException  bei RMI-Verbindungsproblemen.
-     * @throws ProblemComputeException  bei Berechnungsfehler.
+     * @param generator    Der verwendete RemoteStoreGenerator oder
+     *                     <CODE>null</CODE>, falls kein RemoteStoreGenerator
+     *                     verwendet wird.
+     *
+     * @throws RemoteException          Bei einem RMI-Verbindungsproblem.
+     * @throws ProblemComputeException  Bei einem Berechnungsfehler.
+     * @throws RemoteStoreGenException  Der zentrale <CODE>RemoteStore</CODE>
+     *                                  konnte nicht erzeugt werden.
      *
      * @see  SerializableProblem
      * @see  PartialProblem
      */
-    public synchronized void receiveProblem(
-        ProblemTransmitter transmitter,
-        SerializableProblem problem,
-        RemoteStoreGenerator generator)
-        throws RemoteException, ProblemComputeException {
+    public synchronized void receiveProblem(ProblemTransmitter transmitter,
+                                            SerializableProblem problem,
+                                            RemoteStoreGenerator generator)
+        throws RemoteException, ProblemComputeException, RemoteStoreGenException {
 
         if (terminated) {
             throw new RemoteException("Dispatcher ist beim Shutdown");
@@ -884,11 +875,11 @@ public class ProblemManagerImpl
 
         if (transmitter == null) {
             throw new ProblemComputeException(
-                "Kein gültiger Problem-Übermittler angegeben.");
+            "Kein gültiger Problem-Übermittler angegeben.");
         } else {
             if (probWrapTransmitter.containsValue(transmitter)) {
-                throw new ProblemComputeException(
-                    "Problem-Übermittler wird bereits verwendet.");
+                throw new ProblemComputeException("Problem-Übermittler wird"
+                                                  + " bereits verwendet.");
             }
         }
 
@@ -942,7 +933,8 @@ public class ProblemManagerImpl
     /**
      * Liefert einen Schnappschuß der allgemeinen Compute-System-Statistik.
      *
-     * @return allgemeine Statistik über den Zustand des Compute-Systems.
+     * @return  Allgemeine Statistik über den Zustand des Compute-Systems.
+     *
      * @throws RemoteException  RMI RemoteException wird bei Netzproblemen
      *                          geworfen.
      */
@@ -950,3 +942,4 @@ public class ProblemManagerImpl
         return systemStatistic.getSnapshot();
     }
 }
+

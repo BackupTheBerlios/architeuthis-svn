@@ -1,9 +1,9 @@
 /*
  * file:        ListQueue.java
  * created:     06.01.2004
- * last change: 25.05.2004 by Dietmar Lippold
+ * last change: 06.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
- *              Andreas Heydlauff, AndiHeydlauff@t-online.de 
+ *              Andreas Heydlauff, AndiHeydlauff@t-online.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
  *
  *
@@ -30,7 +30,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.dispatcher.problemmanaging;
+package de.unistuttgart.architeuthis.misc.util;
 
 import java.util.LinkedList;
 
@@ -38,7 +38,7 @@ import de.unistuttgart.architeuthis.systeminterfaces.Queue;
 
 /**
  * Implementiert eine Schlange mithilfe einer Liste.
- * 
+ *
  * @author Andreas Heydlauff, Jürgen Heit
  */
 public class ListQueue implements Queue {
@@ -66,10 +66,10 @@ public class ListQueue implements Queue {
      */
     public Object dequeue() {
         if (size() > 0) {
-            return queue.removeFirst();  
+            return queue.removeFirst();
         } else {
             return null;
-        }        
+        }
     }
 
     /**
@@ -95,7 +95,7 @@ public class ListQueue implements Queue {
      * Prüft auf das Vorhanden sein eines Objektes in der Schlange.
      *
      * @param o   zu suchendes Objekt
-     * @return  <code>true</code> genau dann, wenn das Objekt in der Schlange 
+     * @return  <code>true</code> genau dann, wenn das Objekt in der Schlange
      *          ist.
      */
     public boolean contains(Object o) {

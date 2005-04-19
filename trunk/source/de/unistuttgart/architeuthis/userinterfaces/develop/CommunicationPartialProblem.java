@@ -1,7 +1,7 @@
 /*
  * file:        CommunicationPartialProblem.java
  * created:     08.02.2005
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -26,28 +26,46 @@
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+
 package de.unistuttgart.architeuthis.userinterfaces.develop;
 
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 
 /**
- * @author Michael Wohlfart
+ * Interface muß von einem Teilproblem implementiert werden, das mit anderen
+ * Teilproblemen Daten austauschen will.
  *
+ * @author Michael Wohlfart
  */
 public interface CommunicationPartialProblem extends PartialProblem {
-    /**
-     * Startet die Berechnung des Teilproblems.
-     *
-     * @param store der Verteilte Speicher (RemoteStore)
-     *
-     * @return  berechnete Teillösung
-     *
-     * @throws ProblemComputeException  bei beliebigen Berechnungsproblemen
-     * @throws RemoteException bei Problemen bei der Kommunikation mit dem RemoteStore
-     */
-    public PartialSolution compute(RemoteStore store) throws ProblemComputeException, RemoteException;
 
+    /**
+     * Startet die Berechnung des Teilproblems.<P>
+     *
+     * Wenn ein <CODE>RemoteStoreGenerator</CODE> mit dem Problem zusammen
+     * übergeben wurde, wird dessen Methode <CODE>generateDistRemoteStore</CODE>
+     * vom Operative aufgerufen. Wenn diese ein Objekt liefert, wird dieses
+     * als Parameter <CODE>store</CODE> beim Aufruf dieser Methode übergeben.
+     * Wenn <CODE>generateDistRemoteStore</CODE> den Wert <CODE>null</CODE>
+     * geliefert hat, wird der Wert der Methode <CODE>generateCentralRemoteStore</CODE>
+     * die auf dem Dispatcher aufgerufen wurde, übergeben. Es wird der Wert
+     * <CODE>null</CODE> übergeben, wenn beide Methoden den Wert <CODE>null</CODE>
+     * geliefert haben oder wenn kein <CODE>RemoteStoreGenerator</CODE> mit
+     * dem Problem zusammen übergeben wurde.
+     *
+     * @param store  Der Verteilte Speicher (RemoteStore).
+     *
+     * @return  Die berechnete Teillösung.
+     *
+     * @throws ProblemComputeException  Bei beliebigen Fehlern bei der
+     *                                  Berechnung.
+     * @throws RemoteException          Bei Problemen bei der Kommunikation
+     *                                  mit dem RemoteStore.
+     */
+    public PartialSolution compute(RemoteStore store) throws ProblemComputeException,
+                                                             RemoteException;
 }
+

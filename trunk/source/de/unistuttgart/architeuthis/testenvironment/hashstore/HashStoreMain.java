@@ -1,8 +1,12 @@
 /*
  * file:        HashStoreMain.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 15.02.2005 von Michael Wohlfart
- * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
+ * last change: 12.04.2005 von Dietmar Lippold
+ * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
+ *
+ * This software was developed at the Institute for Intelligent Systems at the
+ * University of Stuttgart (http://www.iis.uni-stuttgart.de/) under leadership
+ * of Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de).
  *
  *
  * This file is part of Architeuthis.
@@ -20,12 +24,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
+
+
 package de.unistuttgart.architeuthis.testenvironment.hashstore;
 
 import java.io.Serializable;
@@ -34,69 +35,109 @@ import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
-import de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMapGenerator;
 import de.unistuttgart.architeuthis.user.ProblemComputation;
+import de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMapGenerator;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 
 /**
- * @author michael
+ * Die Testanwendung, die Architeuthis verwendet.
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * @author Michael Wohlfart, Dietmar Lippold
  */
-public class HashStoreMain {
+public final class HashStoreMain {
 
+    /**
+     * Die Anzahl der zu erzeugenden Put-Teilprobleme.
+     */
+    private static int putCreateNr = 1;
 
-    //private static final String DISPATCHER = "127.0.0.1:1099";
+    /**
+     * Gibt an, ob nur ein zentraler RemoteStore erzeugt werden soll.
+     */
+    private static boolean centralOnly = true;
 
-    //private static final String CODEBASE = "http://127.0.0.1:3456/";
+    /**
+     * Gibt an, ob die dezentralen RemoteStores Methoden des zentralen
+     * RemoteStore synchron aufrufen sollen.
+     */
+    private static boolean syncron;
 
-
-
-    public static void main(String[] args) {
-        try {
-        	
-        	String codebase = args[0];
-        	String dispatcher = args[1];
-
-            // Archi User-Interface:
-            ProblemComputation computation = new ProblemComputation();
-
-            // ein Problem:
-            HashStoreProblemImpl problem = new HashStoreProblemImpl();
-
-            // ein Speicher-Generator:
-            RemoteHashMapGenerator generator = new RemoteHashMapGenerator();
-
-
-            System.out.println("Problem wird abgeschickt");
-
-            // Problem abschicken und auf Lösung warte:
-            Serializable solution =
-                computation.transmitProblem(problem, generator, dispatcher, codebase);
-
-
-            // Lösung noch auspacken:
-            Serializable sol = ((ContainerPartialSolution) solution).getPartialSolution();
-
-            // Lösung ausgeben:
-            System.out.println("gefundenen Lösung: " + sol);
-
-
-        } catch (ProblemComputeException ex) {
-            ex.printStackTrace();
-        } catch (AccessException ex) {
-            ex.printStackTrace();
-        } catch (MalformedURLException ex) {
-            ex.printStackTrace();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        } catch (NotBoundException ex) {
-            ex.printStackTrace();
-        }
-
+    /**
+     * Konstruktur, der nicht aufgerufen werden soll.
+     */
+    private HashStoreMain() {
     }
 
+    /**
+     * Die ausführbare Methode. Übergibt Architeuthis ein Problem und gibt
+     * nach Erhalt die Lösung aus. Wenn nicht angegeben wird, wie viele
+     * Teilprobleme erzeugt werden sollen, wird eines erzeugt. Wenn als
+     * vierter Parameter <KBD>true</KBD> oder <KBD>false</KBD> angegeben
+     * wird, wird ruften die dezentralen RemoteStores die Methoden des
+     * zentralen synchron bzw. asynchron auf. Wenn weder das eine noch das
+     * andere angegeben wird, gibt es nur einen zentralen RemoteStore.
+     *
+     * @param args  Die Codebase und die Angabe des Dispatchers sowie optional
+     *              die Anzahl der zu erzeugenden Put-Teilprobleme.
+     */
+    public static void main(String[] args) {
+        ProblemComputation computation;
+        HashStoreProblemImpl problem;
+        RemoteHashMapGenerator generator;
+        Serializable solution = null;
 
+        if ((args.length < 2) || (args.length > 4)) {
+            System.out.println("Bitte Codebase-URL und Dispather sowie"
+                               + " optional die Anzahl der Put-Teilprobleme"
+                               + " und die Art der Aufrufe als Argumente"
+                               + " angeben");
+        } else {
+            String codebase = args[0];
+            String dispatcher = args[1];
+            if (args.length >= 3) {
+                putCreateNr = Integer.parseInt(args[2]);
+            }
+            if ((args.length == 4)
+                    && (args[3].equals("true") || args[3].equals("false"))) {
+                centralOnly = false;
+                syncron = args[3].equals("true");
+            }
+
+            try {
+                // Archi User-Interface.
+                computation = new ProblemComputation();
+
+                // Ein Problem.
+                problem = new HashStoreProblemImpl(putCreateNr);
+
+                // Ein RemoteStore-Generator.
+                if (centralOnly) {
+                    generator = new RemoteHashMapGenerator();
+                } else {
+                    generator = new RemoteHashMapGenerator(syncron);
+                }
+
+                System.out.println("Problem wird abgeschickt");
+
+                // Problem abschicken und auf Lösung warten.
+                solution = computation.transmitProblem(problem, generator,
+                                                       dispatcher, codebase);
+
+                // Lösung ausgeben.
+                System.out.println("Ermittelte Lösung: " + solution);
+
+            } catch (ProblemComputeException ex) {
+                ex.printStackTrace();
+            } catch (AccessException ex) {
+                ex.printStackTrace();
+            } catch (MalformedURLException ex) {
+                ex.printStackTrace();
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            } catch (NotBoundException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 }
+

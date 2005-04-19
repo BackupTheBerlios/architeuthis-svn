@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeComputing.java
  * created:     26.04.2004
- * last change: 13.02.2005 by Dietmar Lippold
+ * last change: 16.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -35,16 +35,21 @@
 
 package de.unistuttgart.architeuthis.operative;
 
+import java.rmi.RemoteException;
+
+import de.unistuttgart.architeuthis.misc.Miscellaneous;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
+import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
-import de.unistuttgart.architeuthis.misc.Miscellaneous;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
  * Implementierung den Thread zur Berechnung eines Teilproblems.
  *
- * @author Jürgen Heit, Ralf Kible, Dietmar Lippold
+ * @author Jürgen Heit, Ralf Kible, Dietmar Lippold, Michael Wohlfart
  */
 public class OperativeComputing extends Thread {
 
@@ -66,6 +71,13 @@ public class OperativeComputing extends Thread {
     private boolean debugMode = true;
 
     /**
+     * Der verwendete RemoteStore. Das ist entweder ein zentraler RemoteStore
+     * oder ein dezentraler RemoteStore oder <CODE>null</CODE>, falls kein
+     * RemoteStoreverwendet wird
+     */
+    private RemoteStore store;
+
+    /**
      * Dieser Konstruktor sollte nicht benutzt werden, muss aber wegen
      * der Ableitung von <code>UnicastRemoteObject</code> überschrieben
      * werden.
@@ -85,20 +97,32 @@ public class OperativeComputing extends Thread {
      * Wird vom <code>OperativeImpl</code> aufgerufen, um das übergebenen
      * Teilproblem berechnen zu lassen.
      *
-     * @param parProb  Neues Teilproblem für den Operative
+     * @param parProb  Neues Teilproblem für den Operative.
+     * @param store    Der RemoteStore für das Teilproblem.
      *
-     * @throws ProblemComputeException  wenn der Thread bereits ein Teilproblem
+     * @throws ProblemComputeException  Wenn der Thread bereits ein Teilproblem
      *                                  berechnet.
      */
-    synchronized void fetchPartialProblem(PartialProblem parProb)
+    synchronized void fetchPartialProblem(PartialProblem parProb,
+                                          RemoteStore store)
         throws ProblemComputeException {
+        /*
+         * note: Um die hässlichen instanceof-Tests in der run() Methode
+         *       loszuwerden, könnte man aus dieser Methode zwei Methoden
+         *       machen, die jeweils für CommunicationPartialProblem und
+         *       für NonCommPartialProblem implementiert werden.
+         *       Allerdings würde das die instanceof Tests wohl nur in die
+         *       OperativeImpl Klasse verschieben... (MW)
+         */
 
-        Miscellaneous.printDebugMessage(
-            debugMode,
-            "Debug: OperativeComputing hat Aufgabe vom ComputeManager"
-                + " empfangen.");
+        Miscellaneous.printDebugMessage(debugMode,
+                                        "Debug: OperativeComputing hat Aufgabe"
+                                        + " vom ComputeManager empfangen.");
+        Miscellaneous.printDebugMessage(debugMode,
+                                        "Debug: der RemoteStore ist " + store);
         if (partialProblem == null) {
             partialProblem = parProb;
+            this.store = store;
             notifyAll();
         } else {
             throw new ProblemComputeException("OperativeComputing bereits"
@@ -146,13 +170,32 @@ public class OperativeComputing extends Thread {
             try {
                 Miscellaneous.printDebugMessage(
                     debugMode,
-                    "Debug: Berechnung gestartet");
-                ps = partialProblem.compute();
-                Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Berechnung beendet");
-                partialProblem = null;
-                operativeImpl.returnPartialSolution(ps);
+                    "Debug: Starte Berechnung");
+
+                if (partialProblem instanceof NonCommPartialProblem) {
+                    ps = ((NonCommPartialProblem)partialProblem).compute();
+                } else if (partialProblem instanceof CommunicationPartialProblem) {
+                    ps = ((CommunicationPartialProblem)partialProblem).compute(store);
+                } else {
+                    // Fehler über den OperativeImpl an den Dispatcher weitergeben:
+                    System.err.println("Error: PartialProblem implementiert"
+                                       + " kein passendes Interface");
+                    operativeImpl.reportException(
+                        ExceptionCodes.PARTIALPROBLEM_ERROR,
+                        "PartialProblem implementiert kein passendes Interface");
+
+                    // Zum Teilproblem kann keine Teillösung berechnet werden
+                    partialProblem = null;
+                }
+
+                if (partialProblem != null) {
+                    Miscellaneous.printDebugMessage(
+                        debugMode,
+                        "Debug: Berechnung beendet");
+                    partialProblem = null;
+                    // Lösung zurückgeben
+                    operativeImpl.returnPartialSolution(ps);
+                }
             } catch (ProblemComputeException e) {
                 partialProblem = null;
                 Miscellaneous.printDebugMessage(
@@ -170,7 +213,7 @@ public class OperativeComputing extends Thread {
             } catch (ThreadDeath e) {
                 // Dieser Error darf nicht abgefangen werden.
                 throw e;
-            } catch (Error e) {
+            } catch (Throwable e) {
                 partialProblem = null;
                 Miscellaneous.printDebugMessage(
                     debugMode,
@@ -181,3 +224,4 @@ public class OperativeComputing extends Thread {
         }
     }
 }
+

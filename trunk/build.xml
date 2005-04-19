@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!-- build-file fuer Ant zum Projekt Architeuthis                     -->
-<!-- Letzte Aenderung: 16.02.2005 durch Dietmar Lippold               -->
+<!-- Letzte Aenderung: 17.04.2005 durch Dietmar Lippold               -->
 
 <!-- Hinweise zur Benutzung werden nach Aufruf von "ant" ohne weitere -->
 <!-- Parameter ausgegeben.                                            -->
@@ -55,15 +55,24 @@
                  includes="de/unistuttgart/architeuthis/dispatcher/**"/>
     <rootfileset dir="${build}"
                  includes="de/unistuttgart/architeuthis/abstractproblems/*"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/remotestore/**"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/operative/OperativeImpl_Stub.class"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/user/ProblemTransmitterImpl_Stub.class"/>
   </classfileset>
 
   <classfileset id="operativeClasses" dir="${build}">
     <rootfileset dir="${build}"
                  includes="de/unistuttgart/architeuthis/operative/*"/>
     <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/remotestore/**"/>
+    <rootfileset dir="${build}"
                  includes="de/unistuttgart/architeuthis/abstractproblems/ContainerPartialSolution.class"/>
     <rootfileset dir="${build}"
                  includes="de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl_Stub.class"/>
+
   </classfileset>
 
   <classfileset id="userClasses" dir="${build}">
@@ -71,16 +80,32 @@
                  includes="de/unistuttgart/architeuthis/user/*"/>
     <rootfileset dir="${build}"
                  includes="de/unistuttgart/architeuthis/abstractproblems/*"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/remotestore/**"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl_Stub.class"/>
   </classfileset>
 
   <classfileset id="problemClasses" dir="${build}">
     <rootfileset dir="${build}"
-                 includes="de/unistuttgart/architeuthis/testenvironment/**"
-    />
+                 includes="de/unistuttgart/architeuthis/testenvironment/**"/>
+    <exclude name="de/unistuttgart/architeuthis/remotestore/**"/>
   </classfileset>
 
 
   <!-- Compilierung der java-Dateien                                  -->
+
+  <target name="_compileStore">
+    <mkdir dir="${build}"/>
+
+    <javac source="1.4"
+           srcdir="${source}"
+           destdir="${build}"
+           encoding="ISO-8859-1"
+           debug="true"
+           includes="de/unistuttgart/architeuthis/remotestore/**/*.java"
+    />
+  </target>
 
   <target name="compileDis">
     <mkdir dir="${build}"/>
@@ -89,7 +114,7 @@
            srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
-    	   debug="true"
+           debug="true"
            includes="de/unistuttgart/architeuthis/dispatcher/**/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/*.java,
                      de/unistuttgart/architeuthis/operative/OperativeImpl.java,
@@ -97,6 +122,7 @@
                      de/unistuttgart/architeuthis/misc/**/*.java,
                      de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
                      de/unistuttgart/architeuthis/userinterfaces/**/*.java"
+           excludes="**/*Test.java, **/*Tests.java"
     />
   </target>
 
@@ -107,13 +133,14 @@
            srcdir="${source}"
            destdir="${build}"
            encoding="ISO-8859-1"
-    	   debug="true"
+           debug="true"
            includes="de/unistuttgart/architeuthis/operative/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/ContainerPartialSolution.java,
                      de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl.java,
                      de/unistuttgart/architeuthis/misc/**/*.java,
                      de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
                      de/unistuttgart/architeuthis/userinterfaces/**/*.java"
+           excludes="**/*Test.java, **/*Tests.java"
     />
   </target>
 
@@ -128,9 +155,11 @@
            includes="de/unistuttgart/architeuthis/user/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/*.java,
                      de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl.java,
+                     de/unistuttgart/architeuthis/remotestore/**/*.java,
                      de/unistuttgart/architeuthis/misc/**/*.java,
                      de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
                      de/unistuttgart/architeuthis/userinterfaces/**/*.java"
+           excludes="**/*Test.java, **/*Tests.java"
     />
   </target>
 
@@ -148,6 +177,7 @@
                      de/unistuttgart/architeuthis/misc/Miscellaneous.java,
                      de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
                      de/unistuttgart/architeuthis/userinterfaces/**/*.java"
+           excludes="**/*Test.java, **/*Tests.java"
     />
   </target>
 
@@ -155,22 +185,45 @@
   <target name="compile">
     <mkdir dir="${build}"/>
 
-  	<!-- durch debug="true" wird bei Exceptions die Zeile im Source mit ausgegeben -->
+    <!-- Durch debug="true" wird bei Exceptions die Zeile im Source   -->
+    <!-- mit ausgegeben                                               -->
     <javac source="1.4"
            srcdir="${source}"
            destdir="${build}"
-           debug="true"   
-           includes="**/*.java"
-        >
+           encoding="ISO-8859-1"
+           debug="true"
+           includes="**/*.java">
       <classpath>
         <pathelement path="${junitJar}"/>
       </classpath>
     </javac>
   </target>
 
+
   <!-- Erzeugung der jar-Dateien                                      -->
 
-  <target name="dispatcherJar" depends="compileDis"
+  <target name="_remotestoreStubs" depends="_compileStore"
+    description="Erstellt die Stub-Dateien im Package remotestore">
+
+    <rmic base="${build}"
+          stubversion="1.2"    	
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMapImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashmap.RelayHashMapImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashset.RemoteHashSetImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashset.RelayHashSetImpl"/>
+  </target>
+
+  <target name="dispatcherJar" depends="compileDis, _remotestoreStubs"
     description="Erstellt die jar-Datei der User-Klassen">
 
     <rmic base="${build}"
@@ -201,14 +254,10 @@
                    value="de.unistuttgart.architeuthis.dispatcher.DispatcherImpl"/>
       </manifest>
       <fileset refid="dispatcherClasses"/>
-      <fileset dir="${build}"
-               includes="de/unistuttgart/architeuthis/operative/OperativeImpl_Stub.class,
-                         de/unistuttgart/architeuthis/user/ProblemTransmitterImpl_Stub.class"
-      />
     </jar>
   </target>
 
-  <target name="operativeJar" depends="compileOp"
+  <target name="operativeJar" depends="compileOp, _remotestoreStubs"
     description="Erstellt die jar-Datei der Operative-Klassen">
 
     <rmic base="${build}"
@@ -236,7 +285,7 @@
     </jar>
   </target>
 
-  <target name="userJar" depends="compileUser"
+  <target name="userJar" depends="compileUser, _remotestoreStubs"
     description="Erstellt die jar-Datei der User-Klassen">
 
     <rmic base="${build}"
@@ -257,8 +306,6 @@
     <jar destfile="${deploy}/User.jar"
          encoding="ISO-8859-1">
       <fileset refid="userClasses"/>
-      <fileset dir="${build}"
-               includes="de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl_Stub.class"/>
     </jar>
   </target>
 
@@ -354,6 +401,7 @@
       <tarfileset dir="${config}"
                   mode="644"
                   prefix="/operative/config">
+        <include name="logging.properties"/>
         <include name="operative.pol"/>
       </tarfileset>
 
@@ -506,6 +554,7 @@
         <include name="runSerializablePrimeRange.sh"/>
         <include name="runPrimeSequence.sh"/>
         <include name="runSerializablePrimeSequence.sh"/>
+        <include name="runRemoteHash.sh"/>
         <include name="runMonte.sh"/>
         <include name="runRandom.sh"/>
         <include name="runCaching.sh"/>
@@ -561,6 +610,7 @@
         <include name="runSerializablePrimeRange.bat"/>
         <include name="runPrimeSequence.bat"/>
         <include name="runSerializablePrimeSequence.bat"/>
+        <include name="runRemoteHash.bat"/>
         <include name="runMonte.bat"/>
         <include name="runRandom.bat"/>
         <include name="runCaching.bat"/>

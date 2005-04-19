@@ -1,7 +1,7 @@
 /*
- * file:        RemoteStore.java
- * created:     08.02.2005
- * last change: 08.02.2005 by Michael Wohlfart
+ * file:        MapEntry.java
+ * created:     05.04.2005
+ * last change: 18.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -26,43 +26,56 @@
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package de.unistuttgart.architeuthis.remotestore;
+
+
+package de.unistuttgart.architeuthis.remotestore.hashmap;
 
 import java.io.Serializable;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
 
 /**
+ * Implementiert ein Objekt-Paar aus einem key-Objekt und einem value-Objekt.
  *
- * Interface für ein RemoteStore Objekt, das den verteilten Speicher
- * für Architeurthis implementiert.<BR>
- * Neben den hier vorgegebenen Methoden für die Synchronisation der
- * einzelnen Speicherobjekte untereinander, müssen in einer konkreten
- * Implementierung noch weitere Methoden für den Zugriff
- * auf den Speicher implementiert werden.
- *
- *
- * @author Michael Wohlfart
- *
+ * @author Dietmar Lippold
  */
-public interface RemoteStore extends Remote, Serializable  {
+public class MapEntry {
 
     /**
-     * Anmelden eines Speicherobjekts
-     *
-     * @param remoteStore peer store object
-     *
-     * @throws RemoteException RMI Probleme
+     * Das enthaltene key-Objekt.
      */
-    void registerRemoteStore(RemoteStore remoteStore) throws RemoteException;
+    private Serializable keyObject;
 
     /**
-     * Abmelden eines Speciehrobjekts
-     *
-     * @param remoteStore peer store object
-     *
-     * @throws RemoteException RMI Probleme
+     * Das enthaltene value-Objekt.
      */
-    void unregisterRemoteStore(RemoteStore remoteStore) throws RemoteException;
+    private Serializable valueObject;
 
+    /**
+     * Erzeugt eine neue Instanz aus einem key-Objekt und einem value-Objekt.
+     *
+     * @param keyObject    Das key-Objekt.
+     * @param valueObject  Das value-Objekt.
+     */
+    public MapEntry(Serializable keyObject, Serializable valueObject) {
+        this.keyObject = keyObject;
+        this.valueObject = valueObject;
+    }
+
+    /**
+     * Liefert das enthaltene key-Objekt.
+     *
+     * @return  Das enthaltene key-Objekt.
+     */
+    public Serializable getKey() {
+        return keyObject;
+    }
+
+    /**
+     * Liefert das enthaltene value-Objekt.
+     *
+     * @return  Das enthaltene value-Objekt.
+     */
+    public Serializable getValue() {
+        return valueObject;
+    }
 }
+

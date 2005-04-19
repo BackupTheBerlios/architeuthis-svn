@@ -5,7 +5,8 @@ REM serialisierte Primzahlbereich-Problem
 
 
 REM Benötigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
-REM DISPATCHER_PORT, SOLUTIONFILE, JAVA, DEPLOY_DIR) werden gesetzt
+REM DISPATCHER_PORT, SOLUTIONFILE, JAVA, DEPLOY_DIR, CLASS_FILE_PATH) werden
+REM gesetzt
 call setup.bat
 
 

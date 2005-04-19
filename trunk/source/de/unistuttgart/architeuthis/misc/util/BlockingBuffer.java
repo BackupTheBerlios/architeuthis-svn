@@ -1,11 +1,11 @@
 /*
  * file:        BlockingBuffer.java
  * created:     04.01.2004
- * last change: 25.05.2004 by Dietmar Lippold
+ * last change: 06.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@t-online.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
- * 
+ *
  * This file is part of Architeuthis.
  *
  * Architeuthis is free software; you can redistribute it and/or modify
@@ -29,7 +29,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.dispatcher.problemmanaging;
+package de.unistuttgart.architeuthis.misc.util;
 
 import java.util.LinkedList;
 
@@ -40,7 +40,7 @@ import de.unistuttgart.architeuthis.systeminterfaces.Queue;
  *
  * @author Andreas Heydlauff, Jürgen Heit, Dietmar Lippold
  */
-class BlockingBuffer implements Queue {
+public class BlockingBuffer implements Queue {
 
     /**
      * Die Schlange mit den Elementen des Puffers.
@@ -80,7 +80,7 @@ class BlockingBuffer implements Queue {
 
     /**
      * Testet ob der Puffer leer ist.
-     * 
+     *
      * @return   <code>true</code> genau dann, wenn der Puffer kein Element
      *           enthält.
      */
@@ -90,7 +90,7 @@ class BlockingBuffer implements Queue {
 
     /**
      * Testet ob der Puffer voll ist.
-     * 
+     *
      * @return   <code>true</code> genau dann, wenn der Puffer kein Element
      *           mehr aufnehmen kann.
      */
@@ -100,7 +100,7 @@ class BlockingBuffer implements Queue {
 
     /**
      * Gibt die Anzahl der Elemente im Puffer zurück.
-     * 
+     *
      * @return  Größe der Schlange.
      */
     public synchronized int size() {
@@ -109,9 +109,9 @@ class BlockingBuffer implements Queue {
 
     /**
      * Prüft auf das Vorhanden sein eines Objektes im Puffer.
-     * 
+     *
      * @param o   zu suchendes Objekt
-     * @return  <code>true</code> genau dann, wenn das Objekt im Puffer 
+     * @return  <code>true</code> genau dann, wenn das Objekt im Puffer
      *          enthalten ist.
      */
     public synchronized boolean contains(Object o) {
@@ -126,7 +126,7 @@ class BlockingBuffer implements Queue {
      * nicht aufgenommen. Gleiches gilt für den Wert <code>null</code>, wenn
      * seit dem letzten Aufruf dieser Methode die Methode
      * <code>removeNullElements</code> aufgerufen wurde.
-     * 
+     *
      * @param o  hinzuzufügendes Objekt
      */
     public synchronized void enqueue(Object o) {
@@ -152,7 +152,7 @@ class BlockingBuffer implements Queue {
      * Entnimmt dem Puffer ein Objekt. Wenn der Puffer leer ist, wird der
      * aufrufende Thread in den Wartezustand versetzt, bis ein Element zum
      * dem Puffer hinzugefügt wird.
-     * 
+     *
      * @return  entnommenes Objekt
      */
     public synchronized Object dequeue() {
@@ -199,7 +199,8 @@ class BlockingBuffer implements Queue {
             // Alle Threads benachrichtigen, die ein Element zum Puffer
             // hinzufügen wollen
             notifyAll();
-            while (queue.remove(null));
+            while (queue.remove(null)) {
+            };
             removed = true;
         }
         removedObjects.add(null);
@@ -218,3 +219,4 @@ class BlockingBuffer implements Queue {
         queue.clear();
     }
 }
+

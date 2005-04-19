@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 18.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -26,122 +26,266 @@
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import java.rmi.RemoteException;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.rmi.server.UnicastRemoteObject;
 
-import de.unistuttgart.architeuthis.remotestore.AbstractRemoteStore;
+import de.unistuttgart.architeuthis.remotestore.Transmitter;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
- * Diese Klasse implementiert das RemoteStore Interface als HashSet
+ * Diese Klasse implementiert das RemoteStore Interface als HashSet. Derzeit
+ * sind nur wenige Methode von <CODE>HashSet</CODE> implementiert.<P>
  *
- * @author Michael Wohlfart
+ * ToDo: Für addAll kann ein eigener Transmitter vorgesehen werden.
  *
- * FIXME: RMI-Stubs müssen im build.xml compiliert werden
+ * @author Michael Wohlfart, Dietmar Lippold
  */
-public class RemoteHashSetImpl extends AbstractRemoteStore implements RemoteHashSet {
+public class RemoteHashSetImpl extends UnicastRemoteObject
+    implements UserRemoteHashSet, LocalRemoteHashSet {
 
     /**
-     * generierte <code>serialVersionUID</code>
+     * Generierte <code>serialVersionUID</code>.
      */
-    private static final long serialVersionUID = 3257847679689505078L;
+    private static final long serialVersionUID = -4903409536268811819L;
 
     /**
-     * Standard Logger Pattern
+     * Standard Logger Pattern.
      */
-    private static final Logger LOGGER = Logger
-        .getLogger(RemoteHashSetImpl.class.getName());
-
+    private static final Logger LOGGER = Logger.getLogger(RemoteHashSetImpl.class.getName());
 
     /**
-     * Delegatee, das Objekt, das die eigentliche Arbeit macht
-     * (an das alle get()/put()-Aufrufe weitergeleitet werden)
+     * Delegatee, also das Objekt, das die lokale Arbeit macht (an das alle
+     * Aufrufe weitergeleitet werden).
      */
     private HashSet hashSet = new HashSet();
 
-
+    /**
+     * Das <CODE>RelayHashSet</CODE>, an das Veränderungen an diesem Objekt
+     * weitergeleitet werden.
+     */
+    private RelayHashSet relayHashSet = null;
 
     /**
-     * @throws RemoteException RMI-Probleme
+     * Der <CODE>Transmitter</CODE>, an den die Objekte der Methode
+     * <CODE>add</CODE> übergeben werden.
+     */
+    private Transmitter addTransmitter = null;
+
+    /**
+     * Der <CODE>Transmitter</CODE>, an den die Objekte der Methode
+     * <CODE>addAll</CODE> übergeben werden.
+     */
+    private Transmitter addAllTransmitter = null;
+
+    /**
+     * Gibt an, ob diese Instanz bei Verwendung eines RelayStore dessen
+     * Methoden synchron aufrufen soll. Falls kein RelayStore verwendet
+     * wird, ist der Wert dieses Attributs ohne Bedeutung.
+     */
+    private boolean synchronComm;
+
+    /**
+     * Konstruktor, der festlegt, daß bei Verwendung eines RelayStore dessen
+     * Methoden asynchron aufgerufen werden sollen.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
      */
     protected RemoteHashSetImpl() throws RemoteException {
-        super();
+        synchronComm = false;
     }
 
     /**
-     * Diese Methode wird vom Anwendungsentwickler verwendet, um Objekte
-     * zu einem Hash-Key abzulegen.
-     * Für den Anwendungsentwickler ist transparent, ob hier ein lokales
-     * Objekt (distStore) angesprochen wird, oder dies ein RMI-Aufruf ist
-     * und das angesprochene Storage-Objekt (centralStore) auf den Dispatcher
-     * liegt.
+     * Konstruktor, mit dem festlegt werden kann, ob bei Verwendung eines
+     * RelayStore dessen Methoden synchron aufgerufen werden sollen.
      *
-     * @param object das zu speichernde Objekt
+     * @param synchronComm  Genau dann <CODE>true</CODE>, wenn bei
+     *                      Verwendung eines RelayStore dessen Methoden
+     *                      synchron aufgerufen werden sollen.
      *
-     * @throws RemoteException RMI-Probleme
+     * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public synchronized void add(Object object)
-        throws RemoteException {
-        if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("called put,  for "
-                    + object);
-        }
-        addRemote(this, object);
+    protected RemoteHashSetImpl(boolean synchronComm) throws RemoteException {
+        this.synchronComm = synchronComm;
     }
 
     /**
-     * Diese Methode wird von der Plattform zur synchronisation der einzelnen
-     * Storage Objekte untereinander verwendet.
+     * Anmelden eines <CODE>RelayHashSet</CODE>.
      *
-     * @param origin the origin of a change to the data
+     * @param remoteStore  Das anzumendende Speicherobjekt. Wenn der Wert
+     *                     <CODE>null</CODE> ist, passiert nichts.
      *
-     * @param object hashmap data object
-     *
-     * @throws RemoteException RMI-Probleme
-     *
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    public synchronized void addRemote(Object origin, Object object)
+    public synchronized void registerRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
-        if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("called put, origin:"
-                    + origin
-                    + " for "
-                    + object);
-        }
-        // erstmal den Delegatee updaten:
-        hashSet.add(object);
 
-        // alle anderen Speicher benachrichtigen, wobei der Speicher
-        // ausgelassen wird, von welchen der Update kommt
-        Iterator iterator = getRemoteStoreIterator();
-        while (iterator.hasNext()) {
-            Object peer = iterator.next();
-            // nur updaten wenn das nicht der Ursprung ist
-            if (!peer.equals(origin)) {
-                ((RemoteHashSet) peer) .addRemote(origin, object);
+        if (remoteStore != null) {
+            relayHashSet = (RelayHashSet) remoteStore;
+            if (!synchronComm) {
+                addTransmitter = new Transmitter(relayHashSet, new AddProcedure());
+                addAllTransmitter = new Transmitter(relayHashSet,
+                                                    new AddAllProcedure());
             }
         }
-
     }
-
 
     /**
-     * Liefert clone des verwendeten HashSet
+     * Abmelden eines <CODE>RelayHashSet</CODE>.
      *
-     * @return Clone des HashSet
+     * @param remoteStore  Das abzumendende Speicherobjekt. Wenn der Wert
+     *                     <CODE>null</CODE> ist oder ein anderer RemoteStore
+     *                     als der registrierte, passiert nichts.
      *
-     * @throws RemoteException wenn bei der RMI Kommunikation ein
-     * Fehler auftritt
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    public synchronized HashSet getHashSet() throws RemoteException {
-        return ((HashSet) hashSet.clone());
+    public synchronized void unregisterRemoteStore(RemoteStore remoteStore)
+        throws RemoteException {
+
+        if ((remoteStore != null) && (remoteStore == relayHashSet)) {
+            relayHashSet = null;
+            if (!synchronComm) {
+                addTransmitter.terminate();
+                addTransmitter = null;
+                addAllTransmitter.terminate();
+                addAllTransmitter = null;
+            }
+        }
     }
 
+    /**
+     * Beendet dieses RemoteStore und meldet ihn insbesondere als RMI-Dienst
+     * ab.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void terminate() throws RemoteException {
 
+        boolean success = unexportObject(this, true);
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info("unexportObject Erfolg : " + success);
+        }
+    }
 
+    /**
+     * Speichert ein Objekt nur im lokalen HashSet, ohne es an das
+     * RelayHashSet weiterzugeben.
+     *
+     * @param object  Das zu speichernde Objekt.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    public synchronized void addLocal(Object object) throws RemoteException {
+
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("called add for " + object);
+        }
+
+        // Den Delegatee updaten.
+        hashSet.add(object);
+    }
+
+    /**
+     * Speichert die Objekte der übergebenen <CODE>Collection</CODE> nur
+     * im lokalen HashSet, ohne sie an das <CODE>RelayHashSet</CODE>
+     * weiterzugeben.
+     *
+     * @param collection  Die Collection der zu speichernden Objekte.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    public synchronized void addAllLocal(Collection collection)
+        throws RemoteException {
+
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("called addAll, number of elements = "
+                        + collection.size());
+        }
+
+        // Den Delegatee updaten.
+        hashSet.addAll(collection);
+    }
+
+    /**
+     * Speichert ein Objekt im lokalen HashSet und sendet es an andere
+     * RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE> angemeldet
+     * wurde. Diese Methode wird vom Teilproblem aufgerufen. Für den
+     * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
+     * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
+     * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
+     *
+     * @param object  Das zu speichernde Objekt.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    public void add(Serializable object) throws RemoteException {
+
+        // Erstmal lokal updaten.
+        addLocal(object);
+
+        if (relayHashSet != null) {
+            if (synchronComm) {
+                // Das Objekt direkt an den RelayStore und damit an die
+                // anderen RemoteHashSets übergeben.
+                relayHashSet.add(object);
+            } else {
+                // Das Objekt an den Transmitter zur Weiterleitung an den
+                // RelayStore und damit an die anderen RemoteHashSets
+                // übergeben.
+                addTransmitter.enqueue(object);
+            }
+        }
+    }
+
+    /**
+     * Speichert die Objekte der <CODE>Collection</CODE> im lokalen HashSet
+     * und sendet sie an andere RemoteHashSets weiter, wenn ein
+     * <CODE>RelayHashSet</CODE> angemeldet wurde. Diese Methode wird vom
+     * Teilproblem aufgerufen. Für den Anwendungsentwickler ist es
+     * transparent, ob hier ein lokales Objekt (distStore) angesprochen wird
+     * oder dies ein RMI-Aufruf ist und das angesprochene Storage-Objekt
+     * (centralStore) auf den Dispatcher liegt.
+     *
+     * @param collection  Die aufzunehmenden Objekte.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void addAll(Collection collection) throws RemoteException {
+
+        // Erstmal lokal updaten.
+        addAllLocal(collection);
+
+        if (relayHashSet != null) {
+            if (synchronComm) {
+                // Die Collection direkt an den RelayStore und damit an die
+                // anderen RemoteHashSets übergeben.
+                relayHashSet.addAll(collection);
+            } else {
+                // Die Collection an den Transmitter zur Weiterleitung an den
+                // RelayStore und damit an die anderen RemoteHashSets
+                // übergeben.
+                addAllTransmitter.enqueue(collection);
+            }
+        }
+    }
+
+    /**
+     * Liefert die Anzahl der in dieser Menge enthaltenen Objekte.
+     *
+     * @return  Die Anzahl der enthaltenen Objekte.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public synchronized int size() throws RemoteException {
+        return hashSet.size();
+    }
 }
+

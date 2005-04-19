@@ -1,25 +1,35 @@
 @echo off
 
-REM Startet den Problem-Transmitter und ï¿½bermittelt dem Dispatcher das
-REM Primzahlbereich-Problem
+REM Startet den Problem-Transmitter und übermittelt dem Dispatcher
+REM ein Problem zum Testen des RemoteStores.
 
 
-REM Benï¿½tigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
-REM DISPATCHER_PORT, SOLUTIONFILE, JAVA, DEPLOY_DIR) werden gesetzt
+REM Benötigte Umgebungsvariablen (CONFIG_DIR, CLASSURL, DISPATCHER_HOST,
+REM DISPATCHER_PORT, JAVA, DEPLOY_DIR, CLASS_FILE_PATH) werden gesetzt
 call setup.bat
 
+REM die Anzahl der zu erzeugenden Put-Teilprobleme
+set PUT_PAR_PROB_NO=3
 
-REM die Parameter fï¿½r die JVM
+REM Nachfolgende Zeile einkommentieren, wenn verteilte RemoteStores verwendet
+REM werden sollen. Der Wert true steht für synchrone, Wert false für
+REM asynchrone Methodenaufrufe.
+REM DIST_COMM=false
+
+
+REM die Parameter für die JVM
 set JVMPAR=
 set JVMPAR=%JVMPAR% -Djava.security.policy=%CONFIG_DIR%/transmitter.pol
 
-REM die Parameter fï¿½r die Anwendung
+REM die Parameter für die Anwendung
 set ARGS=
 set ARGS=%ARGS% %CLASSURL%
 set ARGS=%ARGS% %DISPATCHER_HOST%:%DISPATCHER_PORT%
+set ARGS=%ARGS% %PUT_PAR_PROB_NO%
+set ARGS=%ARGS% %DIST_COMM%
 
 
 REM die Main-Klasse
 set MAIN=de.unistuttgart.architeuthis.testenvironment.hashstore.HashStoreMain
 
-%JAVA% -cp ../build %JVMPAR% %MAIN% %ARGS%
+%JAVA% -cp %DEPLOY_DIR%/User.jar;%CLASS_FILE_PATH%/Problems.jar %JVMPAR% %MAIN% %ARGS%

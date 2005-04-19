@@ -1,8 +1,12 @@
 /*
  * file:        HashStorePut.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 15.02.2005 von Michael Wohlfart
+ * last change: 19.04.2005 von Dietmar Lippold
  * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
+ *
+ * This software was developed at the Institute for Intelligent Systems at the
+ * University of Stuttgart (http://www.iis.uni-stuttgart.de/) under leadership
+ * of Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de).
  *
  *
  * This file is part of Architeuthis.
@@ -20,68 +24,80 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
+
+
 package de.unistuttgart.architeuthis.testenvironment.hashstore;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMap;
+import de.unistuttgart.architeuthis.remotestore.hashmap.UserRemoteHashMap;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
-
-public class HashStorePut implements
-        CommunicationPartialProblem {
+/**
+ * Legt bei Ausführung der Methode <CODE>compute</CODE> ein value-Objekt
+ * unter einem key-Objekt in einem <CODE>RemoteStore</CODE> ab.
+ *
+ * @author Michael Wohlfart
+ */
+public class HashStorePut implements CommunicationPartialProblem {
 
     /**
-     * Object, das im RemoteSTore abgelegt wird
+     * Generierte SerialVersionUID. Diese muss geändert werden, sobald
+     * strukurelle Änderungen an dieser Klasse durchgeführt worden sind.
      */
-    private Object object;
+    private static final long serialVersionUID = 3782977219878029505L;
 
     /**
-     * Schlüssel, unter dem das Objekt im RemoteStore abgelegt wird
+     * Key-Objekt, unter dem das value-Objekt im <CODE>RemoteStore</CODE>
+     * abgelegt wird.
      */
     private String key;
 
-
+    /**
+     * Value-Object, das unter dem key-Objekt im <CODE>RemoteStore</CODE>
+     * abgelegt wird.
+     */
+    private Serializable value;
 
     /**
-     * Konstruktor
+     * Konstruktor.
      *
-     * @param key Schlüssel unter dem das Object im RemoteStore abgelegt wird
-     * @param object Objekt, das im RemoteSTore abgelegt wird
+     * @param key    Das key-Objekt, zu dem das value-Objekt aus dem
+     *               <CODE>RemoteStore</CODE> abgerufen werden soll.
+     * @param value  Das value-Objekt, das unter dem key-Objekt im
+     *               <CODE>RemoteStore</CODE> abgelegt wird.
      */
-    public HashStorePut(String key, Object object) {
+    public HashStorePut(String key, Serializable value) {
         this.key = key;
-        this.object = object;
+        this.value = value;
     }
 
-
-
     /**
-     * berechnet eine Teillösung
+     * Legt das value-Objekt unter dem key-Objekt im übergebenen
+     * <CODE>RemoteStore</CODE> ab.
      *
-     * @param store der RemoteStore
+     * @param store  Der <CODE>RemoteStore</CODE>, in dem das value-Objekt
+     *               unter dem key-Objekt abgelegt wird.
      *
-     * @return die Teillösung
+     * @return  Der Wert <CODE>null</CODE>.
      *
-     * @throws ProblemComputeException Berechnunsgprobleme
-     * @throws RemoteException RMI-Probleme
+     * @throws ProblemComputeException  Sollte nicht auftreten.
+     * @throws RemoteException          Bei einem RMI Problem.
      */
-    public PartialSolution compute(RemoteStore store) throws ProblemComputeException, RemoteException {
+    public PartialSolution compute(RemoteStore store)
+        throws ProblemComputeException, RemoteException {
 
-        if (store instanceof RemoteHashMap) {
-            ((RemoteHashMap)store).put(key, object);
+        if (store instanceof UserRemoteHashMap) {
+            ((UserRemoteHashMap) store).put(key, value);
+        } else {
+            System.err.println("wrong remotestore parameter: " + store);
         }
-
         return null;
     }
-
 }
+

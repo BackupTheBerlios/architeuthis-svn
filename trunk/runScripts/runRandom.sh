@@ -20,7 +20,7 @@ ARGS="$ARGS -c de.unistuttgart.architeuthis.testenvironment.random.RandomProblem
 ARGS="$ARGS -f $SOLUTIONFILE"
 
 # die Main-Klasse
-MAIN=de.unistuttgart.architeuthis.user.ProblemTransmitterApp
+MAIN="de.unistuttgart.architeuthis.user.ProblemTransmitterApp"
 
 exec $JAVA -cp $DEPLOY_DIR/User.jar $JVMPAR $MAIN $ARGS
 

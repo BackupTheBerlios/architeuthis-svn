@@ -34,6 +34,7 @@
 package de.unistuttgart.architeuthis.testenvironment.montecarlo;
 
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 
@@ -42,7 +43,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
  *
  * @author Achim Linke
  */
-public class PartialProblemImpl implements PartialProblem {
+public class PartialProblemImpl implements NonCommPartialProblem {
 
     /**
      * Die Anzahl der Berechnungen

@@ -1,8 +1,13 @@
 /*
  * file:        HashStoreProblemImpl.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 15.02.2005 von Michael Wohlfart
+ * last change: 19.04.2005 von Dietmar Lippold
  * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
+ *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
+ *
+ * This software was developed at the Institute for Intelligent Systems at the
+ * University of Stuttgart (http://www.iis.uni-stuttgart.de/) under leadership
+ * of Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de).
  *
  *
  * This file is part of Architeuthis.
@@ -20,111 +25,176 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
+
 
 package de.unistuttgart.architeuthis.testenvironment.hashstore;
 
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
-import de.unistuttgart.architeuthis.userinterfaces.develop.Problem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 
 /**
- * erzeugt zwei Teilprobleme:
- * - das erste Teilproblem legt ein Objekt in den RemoteStore
- * - das zweite Teilproblem liefert dieses Objekt zurück
+ * Erzeugt zwei Arten von Teilproblemen zur Benutzung eines
+ * <CODE>RemoteStore</CODE>. Die erste Art von Teilproblemen legt ein Objekt
+ * in den RemoteStore und die zweite Art, von der nur eine Instanz erzeugt
+ * wird, ruft es daraus wieder ab. Das Teilproblem der zweiten Art wird erst
+ * geliefert, wenn alle der erste Art beendet sind.
  *
- *
+ * @author Michael Wohlfart, Dietmar Lippold
  */
 public class HashStoreProblemImpl implements SerializableProblem {
 
     /**
-     * key für den RemoteStore
+     * Generierte SerialVersionUID. Diese muss geändert werden, sobald
+     * strukurelle Änderungen an dieser Klasse durchgeführt worden sind.
+     */
+    private static final long serialVersionUID = -6909831455731796208L;
+
+    /**
+     * Logger für diese Klasse.
+     */
+    private static final Logger LOGGER = Logger.getLogger(HashStoreProblemImpl.class.getName());
+
+    /**
+     * Key-Objekt für den <CODE>RemoteStore</CODE>.
      */
     private static final String KEY = "key";
+
     /**
-     * Lösung, die in den RemoteStore gelegt wird
+     * Anfangsbestandteil des Value-Objekts für den <CODE>RemoteStore</CODE>.
      */
-    private static final  String LOESUNG = "gefunden!!";
-
+    private static final String LOESUNG = "Loesung";
 
     /**
-     * die berechnetet Lösung
+     * Wert der geliefert wird, wenn kein Value-Objekts ermittelt werden
+     * konnte.
      */
-    private PartialSolution solution = null;
-
+    private static final String KEINE_LOESUNG = "Keine Loesung";
 
     /**
-     * PartialProblem, das die Lösung in den RemoteStore legt
+     * Die ermttelte Lösung.
      */
-    private HashStorePut put = new HashStorePut(KEY, LOESUNG);
+    private Serializable solution = null;
 
     /**
-     * PartialProblem, das die Lösung aus dem RemoteStore holt
+     * Anzahl der zu erzeugenden Teilprobleme vom Typ
+     * <CODE>HashStorePut</CODE>.
      */
-    private HashStoreGet get = new HashStoreGet(KEY);
+    private int putCreateNr;
 
     /**
-     * Flag, das anzeigt, ob HashStorePut bereits bearbeitet wird
+     * Anzahl der vergebenen Teilprobleme vom Typ <CODE>HashStorePut</CODE>.
      */
-    private  boolean putActive = false;
+    private int putDeliveredNr = 0;
 
     /**
-     * Flag, das anzeigt, ob HashStorePut bereits bearbeitet wurde
+     * Anzahl der erhaltenen Teillösungen zu Teilprobleme vom Typ
+     * <CODE>HashStorePut</CODE>. 
      */
-    private  boolean putReturned = false;
-
+    private int putReturnedNr = 0;
 
     /**
-     * Erzeugt die Teilprobleme
+     * Flag, das anzeigt, ob das Teilproblem vom Typ <CODE>HashStoreGet</CODE>
+     * bereits vergeben wurde. Dies kann erst auf <CODE>true</CODE> gesetzt
+     * werden, wenn die vorgegebene Anzahl von Teilproblemen vom Typ
+     * <CODE>HashStorePut</CODE> bearbeitet wurde.
+     */
+    private  boolean getDelivered = false;
+
+    /**
+     * Erzeugt eine Instanz, wobei die Anzahl der zu erzeugenden Teilprobleme
+     * vom Typ <CODE>HashStorePut</CODE> angegeben wird.
      *
-     * @param number  Anzahl zu generierender Teilprobleme, wird nicht
+     * @param putParProbNumber  Anzahl zu generierender Teilprobleme vom Typ
+     *                          <CODE>HashStorePut</CODE>.
+     */
+    public HashStoreProblemImpl(int putParProbNumber) {
+        putCreateNr = putParProbNumber;
+    }
+
+    /**
+     * Erzeugt eine Instanz, wobei die Anzahl der zu erzeugenden Teilprobleme
+     * nicht angegeben wird. Es wird daher ein Teilproblem vom Typ
+     * <CODE>HashStorePut</CODE> erzeugt.
+     */
+    public HashStoreProblemImpl() {
+        this(1);
+    }
+
+    /**
+     * Erzeugt die Teilprobleme.
+     *
+     * @param number  Anzahl zu generierender Teilprobleme. Wird nicht
      *                verwendet.
-     * @return das Teilproblem
+     *
+     * @return  Das erzeugte Teilproblem oder <CODE>null</CODE>, wenn keines
+     *          erzeugt wurde.
      */
     public PartialProblem getPartialProblem(long number) {
-        synchronized (this) {
-            if (!putActive) {
-                putActive = true;
-                return put;
+        if (putDeliveredNr < putCreateNr) {
+            putDeliveredNr++;
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("delivered put " + putDeliveredNr);
             }
-            if (putReturned) {
-                return get;
-            }
+            return (new HashStorePut(KEY, LOESUNG + "-" + putDeliveredNr));
         }
+
+        if ((putReturnedNr == putCreateNr) && (!getDelivered)) {
+            getDelivered = true;
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("delivered get");
+            }
+            return (new HashStoreGet(KEY));
+        }
+
         return null;
     }
 
     /**
-     * Erzeugt die gesamtlösung aus den Teillösungen
+     * Nimmt eine Teillösung entgegen. Wenn es sich dabei um die Teillösung
+     * des get-Teilproblems handelt, wird sie als Gesamtlösung verwendet.
      *
-     * @param parProb Teilproblem
-     * @param parSol Teillösung
+     * @param parProb  Das Teilproblem, zu dem die Teillösung geliefert
+     *                 wird.
+     * @param parSol   Die gelieferte Teillösung.
      */
     public void collectResult(PartialSolution parSol, PartialProblem parProb) {
-        if (parProb == put) {
-            putReturned = true;
+        if (parProb instanceof HashStorePut) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("put received");
+            }
+            putReturnedNr++;
         }
-        if (parProb == get) {
-            solution = parSol;
+
+        if (parProb instanceof HashStoreGet) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("get received");
+            }
+            solution = ((ContainerPartialSolution) parSol).getPartialSolution();
+            if (solution == null) {
+                solution = KEINE_LOESUNG;
+            }
         }
     }
 
     /**
-     * liefert die Lösung an die Anwendung zurück
+     * Liefert die Gesamtlösung.  Dies ist das aus dem <CODE>RemoteStore</CODE>
+     * abgerufene Objekt oder ein Ersatzobjekt, falls kein Objekt abgerufen
+     * werden konnte.
      *
-     * @return die Lösung
+     * @return  Die Gesamtlösung.
      */
     public Serializable getSolution() {
-    	System.out.println(solution);
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("Lösung bisher: " + solution);
+        }
         return solution;
     }
-
 }
+

@@ -33,11 +33,12 @@
 package de.unistuttgart.architeuthis.testenvironment.fail;
 
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 
 
-public class FailPartialProblemImpl implements PartialProblem {
+public class FailPartialProblemImpl implements NonCommPartialProblem {
 
     /**
      * Die Nummer des <code>PartialProblem</code> Objekts, die zur internen

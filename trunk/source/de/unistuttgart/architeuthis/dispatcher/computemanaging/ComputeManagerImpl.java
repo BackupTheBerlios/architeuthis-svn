@@ -1,7 +1,7 @@
 /*
  * file:        ComputeManagerImpl.java
  * created:     <Erstellungsdatum>
- * last change: 08.10.2004 by Dietmar Lippold
+ * last change: 17.04.2005 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -48,7 +48,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import de
@@ -57,7 +59,6 @@ import de
     .dispatcher
     .problemmanaging
     .ProblemManagerImpl;
-import de.unistuttgart.architeuthis.dispatcher.problemmanaging.ProblemWrapper;
 import de
     .unistuttgart
     .architeuthis
@@ -71,14 +72,16 @@ import de
     .statistic
     .ProblemStatisticsCollector;
 import de.unistuttgart.architeuthis.dispatcher.problemmanaging.ParProbWrapper;
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.systeminterfaces.ComputeManager;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.systeminterfaces.Operative;
 import de.unistuttgart.architeuthis.systeminterfaces.ProblemManager;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreException;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreGenException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 
 /**
  * Implementierung des ComputeManager. Dies ist eine ausführbare Anwendung, die
@@ -132,6 +135,14 @@ public final class ComputeManagerImpl
     private List infosPassiveStateOperatives =
         Collections.synchronizedList(new LinkedList());
 
+    /**
+     * Zu jedem Operative bzw. zu jeder zugehörigen Instanz der Klasse
+     * <CODE>InfoOperative</CODE> ist ein Objekt gespeichert, das gelockt
+     * wird, wenn dem Operative ein Teilproblem zur Berechnung gesandt wird.
+     */
+    private Map sendingParProbLocker =
+        Collections.synchronizedMap(new HashMap());
+
     // Referenzen zu anderen Komponenten
 
     /**
@@ -184,6 +195,14 @@ public final class ComputeManagerImpl
      * gestartet, der die Verfügbarkeit von angemeldeten Operative überwacht.
      *
      * @param port  Portnummer der zu startenden RMI-Registry
+     * @param additionalThreads gibt an, ob neue Threads für den
+     *                          Aufruf des Operative verwendet werden sollen
+     * @param operativeMaxTries maximale Anzahl der Versuche mit dem Operative
+     *                          zu kommunizieren
+     * @param operativeMonitoringInterval Zeitinterval in ms in dem der Operative
+     *                                    überwacht wird
+     *
+     *
      * @throws UnknownHostException  Falls die IP-Adresse von localhost nicht
      *                               ermittelt werden konnte.
      * @throws MalformedURLException Falls der URL für die Anmeldung bei der
@@ -330,6 +349,9 @@ public final class ComputeManagerImpl
             // jetzt aus der Überwachung entfernt und die Statistik
             // aktualisiert werden.
             if (contained) {
+                // locking-Objekt entfernen
+                sendingParProbLocker.remove(operativeInfoObj);
+
                 // aus OperativeMonitoringUnit austragen
                 operativeMonitoring.stopMonitoring(operativeInfoObj.getOperative());
 
@@ -376,7 +398,7 @@ public final class ComputeManagerImpl
                 try {
 // Für GC-Fehler auf Operative nachfolgende Zeile auskommentieren
                     log.fine("Versuche Berechnung auf "
-                             + operativeInfo + " abzubrechen"); 
+                             + operativeInfo + " abzubrechen");
                     operativeInfo.getOperative().stopComputation();
                     log.fine("Berechnung auf " + operativeInfo
                              + " erfolgreich abgebrochen");
@@ -401,120 +423,126 @@ public final class ComputeManagerImpl
      * Teilproblem oder beim Operative lag und je nachdem wird entweder das
      * Teilproblem oder der Operative entfernt.
      *
-     * @param partProbInfoObj   InfoObjekt des Teilproblemes
-     * @param operativeInfoObj  InfoObjekt des Operatives
-     * @return  <code>true</code>, wenn das Teilproblem dem Operative übergeben
-     *          werden konnte, anderenfalls <code>false</code>.
+     * @param partProbInfoObj   InfoObjekt des Teilproblems.
+     * @param operativeInfoObj  InfoObjekt des Operatives.
+     *
+     * @return  <code>true</code>, wenn das Teilproblem dem Operative
+     *          übergeben werden konnte, anderenfalls <code>false</code>.
      */
-    private boolean sendPartialProblemToOperative(
-        InfoParProbWrapper partProbInfoObj,
-        InfoOperative operativeInfoObj) {
-
+    private boolean sendPartialProblemToOperative(InfoParProbWrapper partProbInfoObj,
+                                                  InfoOperative operativeInfoObj) {
+        RemoteStoreGenerator generator;
+        RemoteStore centralRemoteStore;
         String exceptionMessage = null;
+        int exceptionCode = -1;
         boolean transmitted = false;
 
-        synchronized (operativeInfoObj) {
-            synchronized (partProbInfoObj) {
+        synchronized (sendingParProbLocker.get(operativeInfoObj)) {
+            synchronized (operativeInfoObj) {
+                synchronized (partProbInfoObj) {
 
-                long tries = 0;
-                ParProbWrapper parProbWrap = partProbInfoObj.getParProbWrapper();
-                Operative operative = operativeInfoObj.getOperative();
-                // Teilproblem versuchen zu senden
-                while (!transmitted && (tries < remoteOperativeMaxTries)) {
-                    tries++;
-                    try {
-                        log.fine("Versuche Teilproblem an "
-                                 + operativeInfoObj + " zu senden");
-                        
-                       // der zentrale remoteStore und remoteStoreGenerator
-                       // sitzt im ProblemWrapper:                        
-                       ProblemWrapper probWrap = parProbWrap.getCreatingWrapper();
-                       
-                       log.fine("Problem Wrapper erhalten!");
-                       
-                       // hier muss vermutlich ein RMI-lookup her !!!
-                       RemoteStore centralRemoteStore = probWrap.getCentralRemoteStore();
-                       
-                       log.fine("RemoteStore erhalten!");
-                       
-                       RemoteStoreGenerator generator = probWrap.getRemoteStoreGenerator();
-                       
-                       log.fine("RemoteStoreGenerator erhalten!");
-                        
-                        operative.fetchPartialProblem(parProbWrap.getPartialProblem(),
-                        		centralRemoteStore, generator);
-                        log.fine("Teilproblem erfolgreich an "
-                                 + operativeInfoObj + " gesendet");
-                        transmitted = true;
-                    } catch (RemoteException e) {
-                        log.fine("Senden des Teilproblems an "
-                                 + operativeInfoObj + " fehlgeschlagen");
-                        exceptionMessage = e.toString();
+                    long tries = 0;
+                    ParProbWrapper parProbWrap = partProbInfoObj.getParProbWrapper();
+                    Operative operative = operativeInfoObj.getOperative();
+                    // Teilproblem versuchen zu senden
+                    while (!transmitted && (tries < remoteOperativeMaxTries)) {
+                        tries++;
                         try {
-                            Thread.sleep(REMOTE_FAIL_WAIT_TIMEOUT);
-                        } catch (InterruptedException e1) {
-                            // Unterbrechung sollte hier nicht stören
+                            log.fine("Versuche Teilproblem an "
+                                     + operativeInfoObj + " zu senden");
+
+                            centralRemoteStore = parProbWrap.getCentralRemoteStore();
+                            log.fine("RemoteStore erhalten!");
+
+                            generator = parProbWrap.getRemoteStoreGenerator();
+                            log.fine("RemoteStoreGenerator erhalten!");
+
+                            operative.fetchPartialProblem(parProbWrap.getPartialProblem(),
+                                    centralRemoteStore, generator);
+                            log.fine("Teilproblem erfolgreich an "
+                                     + operativeInfoObj + " gesendet");
+                            transmitted = true;
+                        } catch (RemoteException e) {
+                            log.fine("Senden des Teilproblems an "
+                                     + operativeInfoObj + " fehlgeschlagen");
+                            exceptionCode = ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION;
+                            exceptionMessage = e.toString();
+                            try {
+                                Thread.sleep(REMOTE_FAIL_WAIT_TIMEOUT);
+                            } catch (InterruptedException e1) {
+                                // Unterbrechung sollte hier nicht stören
+                            }
+                            continue;
+                        } catch (RemoteStoreGenException e) {
+                            log.info("Erzeugung von RemoteStore fehlgeschlagen");
+                            exceptionCode = ExceptionCodes.REMOTE_STORE_GEN_EXCEPTION;
+                            exceptionMessage = e.toString();
+                        } catch (RemoteStoreException e) {
+                            log.info("Anmeldung von RemoteStore fehlgeschlagen");
+                            exceptionCode = ExceptionCodes.REMOTE_STORE_EXCEPTION;
+                            exceptionMessage = e.toString();
+                        } catch (ProblemComputeException e) {
+                            log.severe("<E> "
+                                       + operativeInfoObj.toString()
+                                       + " ist bereits beschäftigt.");
+                            exceptionCode = ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION;
+                            exceptionMessage = e.toString();
+                        } catch (RuntimeException e) {
+                            log.fine("Senden des Teilproblems an "
+                                     + operativeInfoObj + " fehlgeschlagen");
+                            exceptionCode = ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION;
+                            exceptionMessage = e.toString();
+                            tries = remoteOperativeMaxTries;
                         }
-                        continue;
-                    } catch (ProblemComputeException e) {
-                        log.severe(
-                            "<E> "
-                                + operativeInfoObj.toString()
-                                + " ist bereits beschäftigt.");
-                    } catch (RuntimeException e) {
-                        log.fine("Senden des Teilproblems an "
-                                 + operativeInfoObj + " fehlgeschlagen");
-                        exceptionMessage = e.toString();
-                        tries = remoteOperativeMaxTries;
                     }
-                }
 
-                if (transmitted) {
-                    // Referenzen setzen falls Teilproblem erfolgreich an
-                    // Operative übermittelt wurde.
+                    if (transmitted) {
+                        // Referenzen setzen falls Teilproblem erfolgreich an
+                        // Operative übermittelt wurde.
 
-                    InfoParProbWrapper pp =
-                        operativeInfoObj.getInfoParProbWrapper();
-                    if (pp != null) {
-                        log.severe(
-                            "<E> "
-                                + operativeInfoObj.toString()
-                                + " "
-                                + partProbInfoObj.toString()
-                                + " ist ein anderes");
-                        log.severe("nämlich " + pp.toString());
-                    }
-                    operativeInfoObj.setInfoParProbWrapper(partProbInfoObj);
+                        InfoParProbWrapper pp =
+                            operativeInfoObj.getInfoParProbWrapper();
+                        if (pp != null) {
+                            log.severe(
+                                "<E> "
+                                    + operativeInfoObj.toString()
+                                    + " "
+                                    + partProbInfoObj.toString()
+                                    + " ist ein anderes");
+                            log.severe("nämlich " + pp.toString());
+                        }
+                        operativeInfoObj.setInfoParProbWrapper(partProbInfoObj);
 
-                    if (partProbInfoObj.getOperativeInfos()
-                                       .contains(operativeInfoObj)) {
-                        log.severe(
-                            "<E> "
-                                + partProbInfoObj.toString()
-                                + " "
-                                + operativeInfoObj.toString()
-                                + " schon drin");
-                    }
-                    partProbInfoObj.addOperativeInfo(operativeInfoObj);
-                } else {
-                    // Ermittlen, ob die fehlgeschlagene Übertragung vom
-                    // Teilproblem oder am Operative verursacht wurde und je
-                    // nachdem das Teilproblem oder den Operative entfernen
-                    try {
-                        if (operativeInfoObj.getOperative().isReachable()) {
-                            // Die Ursache lag beim Teilproblem
-                            problemManager.reportException(
-                                null,
-                                partProbInfoObj.getParProbWrapper(),
-                                ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION,
-                                exceptionMessage);
-                        } else {
+                        if (partProbInfoObj.getOperativeInfos()
+                                           .contains(operativeInfoObj)) {
+                            log.severe(
+                                "<E> "
+                                    + partProbInfoObj.toString()
+                                    + " "
+                                    + operativeInfoObj.toString()
+                                    + " schon drin");
+                        }
+                        partProbInfoObj.addOperativeInfo(operativeInfoObj);
+                    } else {
+                        // Ermittlen, ob die fehlgeschlagene Übertragung vom
+                        // Teilproblem oder am Operative verursacht wurde und je
+                        // nachdem das Teilproblem oder den Operative entfernen
+                        try {
+                            if (operativeInfoObj.getOperative().isReachable()) {
+                                // Die Ursache lag beim Teilproblem
+                                problemManager.reportException(
+                                    null,
+                                    partProbInfoObj.getParProbWrapper(),
+                                    exceptionCode,
+                                    exceptionMessage);
+                            } else {
+                                // Die Ursache lag beim Operative
+                                removeDeadOperative(operativeInfoObj);
+                            }
+                        } catch (RemoteException e) {
                             // Die Ursache lag beim Operative
                             removeDeadOperative(operativeInfoObj);
                         }
-                    } catch (RemoteException e) {
-                        // Die Ursache lag beim Operative
-                        removeDeadOperative(operativeInfoObj);
                     }
                 }
             }
@@ -688,7 +716,7 @@ public final class ComputeManagerImpl
      * ({@link ParProbWrapper}) zuzuweisen. Operatives, bei denen das nicht
      * möglich war, werden passiv gesetzt.
      *
-     * @param operative  Collection unbeschäftigter aber aktiver Operatives
+     * @param operatives  Collection unbeschäftigter aber aktiver Operatives
      * @see  #distributePartialProblem(InfoOperative)
      */
     private void distributePartialProblem(Collection operatives) {
@@ -703,7 +731,7 @@ public final class ComputeManagerImpl
             if (createNewThreads) {
                 final InfoOperative opInfo = operativeInfoObj;
                 new Thread() {
-                    InfoOperative infoOperative;
+                    private InfoOperative infoOperative;
                     public void run() {
                         distributePartialProblem(opInfo);
                     }
@@ -753,7 +781,7 @@ public final class ComputeManagerImpl
         distributePartialProblem(passiveOperatives);
         passiveOperatives.clear();
 
-        // überprüfe welche Operatives in der Zwischenzeit inaktiv 
+        // überprüfe welche Operatives in der Zwischenzeit inaktiv
         // geworden sind.
         Iterator activeOpIter = activeOperatives.iterator();
         while (activeOpIter.hasNext()) {
@@ -897,6 +925,7 @@ public final class ComputeManagerImpl
                 // neues Objekt wird am Ende der Liste eingefügt
                 InfoOperative operativeInfoObj = new InfoOperative(operative);
                 infosActiveStateOperatives.add(operativeInfoObj);
+                sendingParProbLocker.put(operativeInfoObj, new Object());
 
                 // Statistik aktualisieren und log-Ausgabe
                 systemStatistics.notifyOperativesRegistration();
@@ -1124,6 +1153,7 @@ public final class ComputeManagerImpl
         throws RemoteException {
 
         InfoOperative operativeInfoObj = findOperativeInfo(operative);
+        InfoParProbWrapper partProbInfoObj = null;
         ParProbWrapper parProbWrap;
         boolean inList = false;
 
@@ -1131,10 +1161,14 @@ public final class ComputeManagerImpl
         // von Operatives, die nicht erreichbar waren und aus der
         // Verwaltung entfernt wurden wird keine Teillösung angenommen
         if (operativeInfoObj != null) {
-            // testen, ob TeilproblemInfoObjekt im InfoParProbWrapperQueue
-            // enthalten war
-            InfoParProbWrapper partProbInfoObj =
-                operativeInfoObj.getInfoParProbWrapper();
+            // Testen, ob das vom Operative berechnete Teilproblem in der
+            // Liste der aktuell berechneten Teilprobleme enthalten ist.
+
+            // Das Teilproblem kann erst ermittelt werden, wenn das Senden
+            // des Teilproblems an den Operative abgeschlossen ist.
+            synchronized (sendingParProbLocker.get(operativeInfoObj)) {
+                partProbInfoObj = operativeInfoObj.getInfoParProbWrapper();
+            }
 
             if (partProbInfoObj != null) {
                 log.info(
@@ -1182,7 +1216,7 @@ public final class ComputeManagerImpl
     /**
      * Ausnahmen bei der Arbeit von Operatives werden über diese Methode an
      * den Compute-Manager gemeldet.
-     * 
+     *
      * @param operative         Referenz auf den Operative, auf dem der Fehler
      *                          auftrat.
      * @param exceptionCode     Integerwert, der die Ausnahme charakterisisert.
@@ -1195,6 +1229,7 @@ public final class ComputeManagerImpl
         throws RemoteException {
 
         InfoOperative operativeInfoObj = findOperativeInfo(operative);
+        InfoParProbWrapper partProbInfoObj = null;
         ParProbWrapper parProbWrap;
         boolean inList;
 
@@ -1202,10 +1237,14 @@ public final class ComputeManagerImpl
         // von Operatives, die nicht erreichbar waren und aus der
         // Verwaltung entfernt wurden wird keine Exception angenommen
         if (operativeInfoObj != null) {
-            // testen, ob TeilproblemInfoObjekt im InfoParProbWrapperQueue
-            // enthalten war
-            InfoParProbWrapper partProbInfoObj =
-                operativeInfoObj.getInfoParProbWrapper();
+            // Testen, ob das vom Operative berechnete Teilproblem in der
+            // Liste der aktuell berechneten Teilprobleme enthalten ist.
+
+            // Das Teilproblem kann erst ermittelt werden, wenn das Senden
+            // des Teilproblems an den Operative abgeschlossen ist.
+            synchronized (sendingParProbLocker.get(operativeInfoObj)) {
+                partProbInfoObj = operativeInfoObj.getInfoParProbWrapper();
+            }
 
             if (partProbInfoObj != null) {
                 log.severe(

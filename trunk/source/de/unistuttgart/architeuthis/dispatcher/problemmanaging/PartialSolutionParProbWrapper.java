@@ -55,6 +55,10 @@ class PartialSolutionParProbWrapper {
     /**
      * Konstruktor, der die Verbindung zwischen Teillösung und Wrapper eines
      * Teilproblems herstellt.
+     *
+     * @param parProbWrapper ein Wrapper für das Teilproblem
+     * @param partialSolution die Teillösung
+     *
      */
     public PartialSolutionParProbWrapper(
         ParProbWrapper parProbWrapper,
@@ -66,7 +70,7 @@ class PartialSolutionParProbWrapper {
 
     /**
      * Gibt den Wrapper zum Teilproblem der Verbindung zurück.
-     * 
+     *
      * @return  das Teilproblem der Verbindung
      */
     public ParProbWrapper getParProbWrapper() {
@@ -75,7 +79,7 @@ class PartialSolutionParProbWrapper {
 
     /**
      * Gibt die Teillösung der Verbindung zurück.
-     * 
+     *
      * @return  die Teillösung der Verbindung.
      */
     public PartialSolution getPartialSolution() {

@@ -1,6 +1,6 @@
 /*
  * file:        ParProbWrapper.java
- * last change: 08.10.2004 by Dietmar Lippold
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
  *
  *
@@ -29,7 +29,6 @@
 
 package de.unistuttgart.architeuthis.dispatcher.problemmanaging;
 
-import java.io.Serializable;
 
 import de
     .unistuttgart
@@ -39,6 +38,8 @@ import de
     .ProblemStatisticsCollector;
 import de.unistuttgart.architeuthis.misc.Numerator;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 
 /**
  * Wrapper für ein <CODE>PartialProblem</CODE>-Objekt.
@@ -81,7 +82,7 @@ public class ParProbWrapper {
      * @param partialProblem    Das konkrete Teilproblem.
      * @param creatingWrapper   Der <CODE>ProblemWrapper</CODE>, der dieses
      *                          Objekt erzeugt hat.
-     * @param parProbStatistic  Die zum Problem vom <CODE>partialProblem</CODE>
+     * @param problemStatisticCollector  Die zum Problem vom <CODE>partialProblem</CODE>
      *                          gehörende Statistik.
      */
     ParProbWrapper(PartialProblem partialProblem,
@@ -119,6 +120,24 @@ public class ParProbWrapper {
      */
     public ProblemStatisticsCollector getProblemStatisticCollector() {
         return problemStatisticCollector;
+    }
+
+    /**
+     * Liefert den zentralen RemoteStore zum Problem.
+     *
+     * @return  Den zentralen RemoteStore zum Problem.
+     */
+    public RemoteStore getCentralRemoteStore() {
+        return creatingWrapper.getCentralRemoteStore();
+    }
+
+    /**
+     * Liefert den RemoteStoreGenerator zum Problem.
+     *
+     * @return  Den für diese Problem verwendeten RemoteStoreGenerator.
+     */
+    public RemoteStoreGenerator getRemoteStoreGenerator() {
+        return creatingWrapper.getRemoteStoreGenerator();
     }
 
     /**

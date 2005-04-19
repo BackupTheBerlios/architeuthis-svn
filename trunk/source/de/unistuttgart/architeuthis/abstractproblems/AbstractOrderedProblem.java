@@ -26,7 +26,7 @@
  * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
  * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
  * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt. 
+ * entwickelt.
  */
 
 
@@ -90,10 +90,10 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
      * @param parProb  Referenz auf das Teilproblem, das bearbeitet wurde.
      */
     public void collectResult(PartialSolution parSol, PartialProblem parProb) {
-        
+
         //Die Teillösung in die Hashmap einfügen.
         partialSolutions.put(parProb, parSol);
-        
+
         //solange die gesuchte Teillösung vorhanden ist
         while ((!dispensedPartialProblems.isEmpty())
             && (partialSolutions.containsKey(dispensedPartialProblems.getFirst()))
@@ -106,7 +106,7 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
             //finalSolution bleibt null, wenn die Gesamtlösung noch nicht
             //vorhanden ist
             finalSolution = receivePartialSolution(userParSol);
-            
+
             //Die verschickte Teillösung kann nun aus der Hashmap und der Liste
             //entfernt werden
             partialSolutions.remove(dispensedPartialProblems.removeFirst());

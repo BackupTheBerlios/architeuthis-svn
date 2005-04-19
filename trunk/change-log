@@ -13,6 +13,24 @@ Operative gelegentlich ein Fehler in der JVM auf, der zu deren Absturz
 führte.
 
 
+Stand 19.04.2005
+----------------
+
+ * Ein deadlock-Problem beseitigt, das auftreten konnte, wenn die
+   Berechnungsdauer eines Teilproblems extrem kurz war.
+
+ * Das Konzept des RemoteStore realisiert. Die Teilprobleme können dadurch
+   auf einen gemeinsamen Speicher zugreifen. Dieser kann vom Benutzer selbst
+   implementiert werden. Konkret wurde das Package remotestore sowie die
+   Unterpackages hashmap und hashset als einfache Implementierungen und
+   alle damit verbundenen Änderungen (z.B. zur Fehlerbehandlung)
+   aufgenommen.
+
+ * Eine Testanwendung im Package testenvironment.hashstore, die die neuen
+   RemoteStores testet, und ein zugehöriges runScript runRemoteHash
+   aufgenommen.
+
+
 Release 1.4
 -----------
 

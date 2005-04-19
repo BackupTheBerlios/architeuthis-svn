@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 10.02.2005 by Dietmar Lippold
+ * last change: 19.04.2005 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -37,22 +37,25 @@ package de.unistuttgart.architeuthis.operative;
 
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
-import java.rmi.AccessException;
-import java.rmi.RemoteException;
 import java.rmi.RMISecurityManager;
+import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi;
+import de.unistuttgart.architeuthis.misc.Miscellaneous;
+import de.unistuttgart.architeuthis.misc.commandline.Option;
+import de.unistuttgart.architeuthis.misc.commandline.ParameterParser;
+import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
 import de.unistuttgart.architeuthis.systeminterfaces.ComputeManager;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.systeminterfaces.Operative;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreException;
+import de.unistuttgart.architeuthis.userinterfaces.RemoteStoreGenException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
-import de.unistuttgart.architeuthis.misc.Miscellaneous;
-import de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi;
-import de.unistuttgart.architeuthis.misc.commandline.Option;
-import de.unistuttgart.architeuthis.misc.commandline.ParameterParser;
-import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 
 /**
  * Implementierung die Operative Remote-Anwendung und nimmt die Kommunikation
@@ -61,15 +64,15 @@ import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
  * ein erzeugtes Thread-Objekt wiederverwendet wird, wenn der Thread nicht
  * abgebrochen werden mußte.
  *
- * @author Jürgen Heit, Ralf Kible, Dietmar Lippold
+ * @author Jürgen Heit, Ralf Kible, Dietmar Lippold, Michael Wohlfart
  */
 public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
     /**
      * Generierte SerialVersionUID. Diese muss geändert werden, sobald
-     * strukurelle Änderungen an dieser KLasse durchgeführt worden sind.
+     * strukurelle Änderungen an dieser Klasse durchgeführt worden sind.
      */
-    private static final long serialVersionUID = 3257569516132447543L;
+    private static final long serialVersionUID = 5113486114169274887L;
 
     /**
      * Ist die Anzahl der Versuche, Verbindung mit dem ComputeManager
@@ -100,6 +103,18 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * Dieses Flag schaltet zusätzliche Debug-Meldungen ein.
      */
     private boolean debugMode = true;
+
+    /**
+     * Der dezentrale Speichers oder <CODE>null</CODE>, falls keiner verwendet
+     * wird.
+     */
+    private RemoteStore distRemoteStore = null;
+
+    /**
+     * Der zentrale Speicher oder <CODE>null</CODE>, falls keiner verwendet
+     * wird.
+     */
+    private RemoteStore centralRemoteStore = null;
 
     /**
      * Dieser Konstruktor sollte nicht benutzt werden, muss aber wegen
@@ -166,6 +181,40 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
     }
 
     /**
+     * Meldet, wenn sowohl ein zentraler wie ein dezentraler RemoteStore
+     * vorhanden ist, zuerst den zentralen beim dezentralen und dann den
+     * dezentralen beim zentralen ab.
+     *
+     * @throws RemoteException       Bei einem RMI Problem.
+     * @throws RemoteStoreException  Bei der Abmeldung oder Beendigung des
+     *                               zentralen oder dezentralen RemoteStore.
+     */
+    private void unregisterRemoteStore()
+        throws RemoteException, RemoteStoreException {
+
+        try {
+            if ((centralRemoteStore != null) && (distRemoteStore != null)
+                    && (distRemoteStore != centralRemoteStore)) {
+                distRemoteStore.unregisterRemoteStore(centralRemoteStore);
+                centralRemoteStore.unregisterRemoteStore(distRemoteStore);
+                distRemoteStore.terminate();
+            } else if ((centralRemoteStore == null) && (distRemoteStore != null)) {
+                distRemoteStore.terminate();
+            }
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Throwable e) {
+            Miscellaneous.printDebugMessage(
+                debugMode,
+                "Debug: Fehler bei der Abmeldung oder Beendigung eines RemoteStore");
+            throw new RemoteStoreException(e.getMessage(), e.getCause());
+        } finally {
+            centralRemoteStore = null;
+            distRemoteStore = null;
+        }
+    }
+
+    /**
      * Diese Methode beendet den Operative lokal, das heißt die
      * Hintergrundberechnung wird gestoppt und er wird vom lokalen RMI-Server
      * abgemeldet. Es wird keine Verbindung zum ComputeManager mehr
@@ -175,7 +224,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * Die Methode kann außerdem vom ComputeManager via RMI aufgerufen werden,
      * um den Operative zu beenden, falls der ComputeManager beendet wird.
      *
-     * @throws RemoteException  bei RMI-Verbindungsproblemen
+     * @throws RemoteException  Bei RMI-Verbindungsproblemen.
      */
     public synchronized void doExit() throws RemoteException {
         if (backgroundComputation != null) {
@@ -185,6 +234,15 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                 "Debug: Berechnung wird gestoppt");
             backgroundComputation.stop();
             backgroundComputation = null;
+
+            // RemoteStore abmelden
+            try {
+                unregisterRemoteStore();
+            } catch (RemoteStoreException e) {
+                Miscellaneous.printDebugMessage(
+                    debugMode,
+                    "Debug: RemoteStoreException wird nicht mehr gemeldet");
+            }
 
             // Vom RMI-Server abmelden
             unexportObject(this, true);
@@ -228,7 +286,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * erreichbar ist, wird auf dem Server eine <code>RemoteException</code>
      * ausgelößt.
      *
-     * @throws RemoteException bei RMI-Verbindungsproblemen
+     * @throws RemoteException  Bei RMI-Verbindungsproblemen.
      *
      * @return <code>true</code>, falls der Operative erreichbar ist, sonst
      *         ergibt sich ein Verbindungsfehler.
@@ -239,26 +297,95 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
     /**
      * Wird vom <code>ComputeManager</code> aufgerufen, um dem Operative ein
-     * neues Teilproblem zur Berechnung zuzuweisen.
+     * neues Teilproblem zur Berechnung zuzuweisen. Wenn <CODE>generator</CODE>
+     * nicht <CODE>null</CODE> ist, wird versucht, einen dezentralen
+     * RemoteStore zu erzeugen, um diesen dem Teilproblem zu übergeben. Wenn
+     * kein dezentraler RemoteStore erzeugt werden kann oder <CODE>generator</CODE>
+     * <CODE>null</CODE> ist, wird den Teilproblem der Wert <CODE>null</CODE>
+     * übergeben. Wenn sowohl ein zentraler wie ein dezentraler RemoteStore
+     * vorhanden ist, wird zuerst der zentrale beim dezentralen und dann der
+     * dezentrale beim zentralen registiert.
      *
-     * @param parProb  Neues Teilproblem für den Operative.
+     * @param parProb       Neues Teilproblem für den Operative.
+     * @param centralStore  Der zentrale RemoteStore.
+     * @param generator     Der Generator eines lokalen RemoteStore.
      *
-     * @throws RemoteException          bei RMI-Verbindungsproblemen
-     * @throws ProblemComputeException  wenn bereits ein Teilproblem berechnet
-     *                                  wird
+     * @throws RemoteException           Bei RMI-Verbindungsproblemen.
+     * @throws ProblemComputeException   Wenn bereits ein Teilproblem berechnet
+     *                                   wird.
+     * @throws RemoteStoreGenException   Der lokale <CODE>RemoteStore</CODE>
+     *                                   konnte nicht erzeugt werden.
+     * @throws RemoteStoreException      Die gegenseitige Anmeldung von lokalem
+     *                                   und zentralem <CODE>RemoteStore</CODE>
+     *                                   war nicht möglich.
+     * @throws IllegalArgumentException  Der Wert von <CODE>generator</CODE>
+     *                                   ist <CODE>null</CODE>, der Wert von
+     *                                   <CODE>centralStore</CODE> ist aber
+     *                                   ungleich <CODE>null</CODE>.
      */
-    public void fetchPartialProblem(PartialProblem parProb)
-        throws RemoteException, ProblemComputeException {
+    public void fetchPartialProblem(PartialProblem parProb,
+                                    RemoteStore centralStore,
+                                    RemoteStoreGenerator generator)
+        throws RemoteException,
+               ProblemComputeException,
+               RemoteStoreGenException,
+               RemoteStoreException {
 
-        Miscellaneous.printDebugMessage(
-            debugMode,
-            "\nDebug: OperativeImpl hat Aufgabe vom ComputeManager empfangen.");
-        backgroundComputation.fetchPartialProblem(parProb);
+        if ((generator == null) && (centralStore != null)) {
+            throw new IllegalArgumentException("generator ist gleich null,"
+                                               + " centralStore aber ungleich null");
+        }
+
+        Miscellaneous.printDebugMessage(debugMode,
+                                        "\nDebug: OperativeImpl hat Aufgabe"
+                                        + " vom ComputeManager empfangen.");
+        Miscellaneous.printDebugMessage(debugMode,
+                                        "\nDebug: centralStore: "
+                                        + centralStore
+                                        + ", generator: "
+                                        + generator);
+
+        // Zentralen RemoteStore merken, um den distRemoteStore dort später
+        // abzumelden
+        centralRemoteStore = centralStore;
+
+        if (generator != null) {
+            // Falls der Generator vorhanden ist, einen dezentralen RemoteStore
+            // erzeugen.
+            try {
+                distRemoteStore = generator.generateDistRemoteStore();
+            } catch (Throwable e) {
+                Miscellaneous.printDebugMessage(
+                    debugMode,
+                    "Debug: Fehler bei der Erzeugung vom RemoteStore");
+                throw new RemoteStoreGenException(e.getMessage(), e.getCause());
+            }
+
+            // Registriert die RemoteStores gegenseitig. Falls der Generator
+            // keinen dezentralen RemoteStore geliefert hat, wird der zentrale
+            // RemoteStore verwendet.
+            if ((distRemoteStore != null) && (centralRemoteStore != null)) {
+                try {
+                    distRemoteStore.registerRemoteStore(centralRemoteStore);
+                    centralRemoteStore.registerRemoteStore(distRemoteStore);
+                } catch (Throwable e) {
+                    Miscellaneous.printDebugMessage(
+                        debugMode,
+                        "Debug: Fehler bei der Anmeldung oder Abmeldung eines"
+                        + " RemoteStore");
+                    throw new RemoteStoreException(e.getMessage(), e.getCause());
+                }
+            } else if (distRemoteStore == null) {
+                distRemoteStore = centralRemoteStore;
+            }
+        }
+
+        backgroundComputation.fetchPartialProblem(parProb, distRemoteStore);
     }
 
     /**
-     * Übrmittelt dem Dispatcher eine Fehlermeldung. Wenn dies nicht möglich
-     * ist, wird der Operative beendet.
+     * Übrmittelt dem Dispatcher eine Fehlermeldung und meldet den distRemoteStore ab.
+     * Wenn dies nicht möglich ist, wird der Operative beendet.
      *
      * @param exceptionCode     Integerwert, der die Ausnahme charakterisisert.
      * @param exceptionMessage  Fehlermeldung, die die Ausnahme näher beschreibt.
@@ -274,6 +401,19 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             // Dispatcher ist nicht erreichbar, Operative beenden
             shutdown();
         }
+
+        // RemoteStore abmelden wenn möglich
+        try {
+            unregisterRemoteStore();
+        } catch (RemoteStoreException e) {
+            Miscellaneous.printDebugMessage(
+                debugMode,
+                "Debug: RemoteStoreException wird nicht mehr gemeldet");
+        } catch (RemoteException e) {
+            Miscellaneous.printDebugMessage(
+                debugMode,
+                "Debug: RemoteException wird nicht mehr gemeldet");
+        }
     }
 
     /**
@@ -282,21 +422,38 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * neues Teilproblem übernehmen kann.
      *
      * @param parSol  Teillösung, die dem ComputeManager übermittelt werden
-     *                soll
+     *                soll.
      */
     synchronized void returnPartialSolution(PartialSolution parSol) {
         long versuche = CONNECT_RETRIES;
         boolean transmitted = false;
         String exceptionMessage = null;
+        int exceptionCode = -1;
 
         // Den oder die ClassLoader löschen
         CacheFlushingRMIClSpi.flushClassLoaders();
 
-        // Mehrmals versuchen, die Teillösung zu senden
-        while ((versuche > 0) && (!transmitted)) {
+        // RemoteStore abmelden
+        try {
+            unregisterRemoteStore();
             Miscellaneous.printDebugMessage(
                 debugMode,
-                "Debug: Versuche, Teilergebnis zurückzugeben");
+                "Debug: RemoteStore abgemeldet");
+        } catch (Exception e) {
+            exceptionCode = ExceptionCodes.REMOTE_STORE_EXCEPTION;
+            exceptionMessage = e.getMessage();
+            Miscellaneous.printDebugMessage(
+                debugMode,
+                "Debug: Abmeldung von RemoteStore fehlgeschlagen");
+            versuche = 0;
+        }
+
+        // Mehrmals versuchen, die Teillösung zu senden
+        while ((versuche > 0) && (!transmitted)) {
+            Miscellaneous.printDebugMessage(debugMode,
+                                            "Debug: Versuche, RemoteStore"
+                                            + " abzumelden und Teilergebnis"
+                                            + " zurückzugeben");
             try {
                 computeManager.returnPartialSolution(parSol, this);
                 Miscellaneous.printDebugMessage(
@@ -304,6 +461,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                     "Debug: Teilergebnis zurückgegeben");
                 transmitted = true;
             } catch (RemoteException e) {
+                exceptionCode = ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION;
                 exceptionMessage = e.getMessage();
                 try {
                     Miscellaneous.printDebugMessage(
@@ -316,9 +474,9 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             }
             versuche--;
         }
+
         if (!transmitted) {
-            reportException(ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION,
-                            exceptionMessage);
+            reportException(exceptionCode, exceptionMessage);
         }
     }
 
@@ -328,7 +486,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * Falls gerade keine Hintergrundberechnung durchgeführt wird, so
      * geschieht nichts.
      *
-     * @throws RemoteException  bei RMI-Verbindungsproblemen
+     * @throws RemoteException  Bei RMI-Verbindungsproblemen.
      */
     public synchronized void stopComputation() throws RemoteException {
         Miscellaneous.printDebugMessage(
@@ -351,7 +509,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * Kommandozeilenargument kann der Debug-Modus mittels
      * <code>--debug</code> angeschaltet werden.
      *
-     * @param args  Die obligatorischen Kommandozeilenargumente
+     * @param args  Die obligatorischen Kommandozeilenargumente.
      */
     public static void main(String[] args) {
         ParameterParser parser = new ParameterParser();

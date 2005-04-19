@@ -1,7 +1,7 @@
 /*
- * file:        RemoteHashSet.java
- * created:     08.02.2005
- * last change: 08.02.2005 by Michael Wohlfart
+ * file:        LocalRemoteHashSet.java
+ * created:     10.02.2005
+ * last change: 17.04.2005 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -26,55 +26,45 @@
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
+import java.util.Collection;
 import java.rmi.RemoteException;
-import java.util.HashSet;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-
+import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
- * Dieses Interface gibt die Methoden vor, die für einen RemoteStore
- * mit HashSet-Funktionalität implementiert werden.
+ * Dieses Interface gibt die Methoden vor, die für einen RemoteStore zu
+ * implementieren sind, der die Funktionalität eines <CODE>HashSet</CODE> hat.
+ * Er wird von einem Teilproblem verwendet.
  *
- * FIXME: beim Anmelden eines neuen RemoteStire müssen die im zentralen RemoteStore
- * vorhandenen Daten zunächst eingetragen werden.
+ * ToDo: Methode addAllLocal ergänzen.
  *
- * @author Michael Wohlfart
+ * @author Dietmar Lippold
  */
-public interface RemoteHashSet extends RemoteStore {
+public interface LocalRemoteHashSet extends RemoteStore {
 
     /**
-     * Schnittstelle für den Anwendungsprogrammierer, um Objekte im
-     * Speicher abzulegen.
+     * Speichert ein Objekt nur im lokalen HashSet, ohne es an das
+     * <CODE>RelayHashSet</CODE> weiterzugeben.
      *
-     * @param object hashobject to store
+     * @param object  Das zu speichernde Objekt.
      *
-     * @throws RemoteException RMI Probleme
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    void add(Object object) throws RemoteException;
-
+    public void addLocal(Object object) throws RemoteException;
 
     /**
-     * Schnittstelle für die Plattform um die Speicher zu synchronisieren
+     * Speichert die Objekte der übergebenen <CODE>Collection</CODE> nur im
+     * lokalen HashSet, ohne sie an das <CODE>RelayHashSet</CODE>
+     * weiterzugeben.
      *
-     * @param origin RemoteStore von dem die Änderung kommt
-     * @param object neues Objekt für den Speicher
+     * @param collection  Die Collection der zu speichernden Objekte.
      *
-     * @throws RemoteException RMI Probleme
+     * @throws RemoteException  Bei einem RMI Problem.
      */
-    void addRemote(Object origin, Object object) throws RemoteException;
-
-
-
-    /**
-     * liefert eine Kopie des Inhalts des Speichers zurück
-     *
-     * @return Speicherinhalt
-     *
-     * @throws RemoteException RMI Probleme
-     */
-    HashSet getHashSet() throws RemoteException;
-
+    public void addAllLocal(Collection collection) throws RemoteException;
 }
+
