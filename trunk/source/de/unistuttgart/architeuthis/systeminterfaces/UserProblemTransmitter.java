@@ -1,12 +1,13 @@
 /*
  * file:        UserProblemTransmitter.java
  * created:     08.08.2003
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 08.02.2005 by Michael Wohlfart
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -24,14 +25,18 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * 
+ *
  * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
  * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
  * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
  * entwickelt.
  */
 
-
+// letzte Änderung:
+//  neue Methode transmitProblem(SerializableProblem, RemoteStoreGenerator)
+//  vorgegeben
+//
+//
 package de.unistuttgart.architeuthis.systeminterfaces;
 
 import java.io.Serializable;
@@ -40,6 +45,7 @@ import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 import de.unistuttgart.architeuthis.userinterfaces.exec.ProblemStatistics;
@@ -82,7 +88,8 @@ public interface UserProblemTransmitter {
      * @throws ProblemComputeException  Fehler bei der Berechnung auf dem
      *                                  Compute-System ist aufgetreten.
      */
-    public Serializable transmitProblem(URL webserver,  String classname,
+    public Serializable transmitProblem(URL webserver,
+                                        String classname,
                                         Object[] problemParameters)
         throws ClassNotFoundException, ProblemComputeException,
             MalformedURLException, RemoteException, NotBoundException;
@@ -102,10 +109,32 @@ public interface UserProblemTransmitter {
      *                                  Compute-System ist aufgetreten.
      */
     public Serializable transmitProblem(SerializableProblem problem)
-    throws RemoteException, NotBoundException, MalformedURLException, ProblemComputeException;
+        throws RemoteException, NotBoundException, MalformedURLException, ProblemComputeException;
+
+    /**
+     * Übermittelt ein Problem an ein ProblemManager zusammen mit einem
+     * RemoteStore Generator.
+     * Die Fehlerbehandlung muss vom aufrufenden Programm übernommen werden.
+     *
+     * @param problem Zentrale Problemklasse, die übertragen wird.
+     * @param generator RemoteStoreGenerator, der verwendet wird.
+     *
+     * @return die Lösung für das übergebene Problem.
+     *
+     * @throws MalformedURLException  URL der Registry ist falsch.
+     * @throws NotBoundException  Verzeichnis wurde auf Registry nicht gefunden
+     * @throws RemoteException  bei Kommunikationsproblemen über RMI
+     * @throws ProblemComputeException  Fehler bei der Berechnung auf dem
+     *                                  Compute-System ist aufgetreten.
+     */
+    public Serializable transmitProblem(SerializableProblem problem,
+                                        RemoteStoreGenerator generator)
+        throws RemoteException, NotBoundException, MalformedURLException, ProblemComputeException;
 
     /**
      * Bricht die Berechnung eines Problems ab.
+     *
+     * @throws RemoteException bei RMI Problemen
      */
     public void abortProblem() throws RemoteException;
 
