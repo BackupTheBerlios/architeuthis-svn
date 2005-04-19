@@ -1,11 +1,10 @@
 /*
  * file:        ProblemWrapper.java
  * created:     29.06.2003
- * last change: 15.02.2005 by Michael Wohlfart
+ * last change: 08.10.2004 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
- *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -57,8 +56,6 @@ import de
     .ProblemStatisticsCollector;
 import de.unistuttgart.architeuthis.misc.Numerator;
 import de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi;
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.userinterfaces.exec.SystemStatistics;
 import de.unistuttgart.architeuthis.userinterfaces.exec.ProblemStatistics;
@@ -72,7 +69,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
  *
  * @author Jürgen Heit, Andreas Heydlauff, Dietmar Lippold
  */
-public class ProblemWrapper extends Thread {
+class ProblemWrapper extends Thread {
 
     /**
      * Ein Zähler für die Anzahl der erzeugten Instanzen diesert Klasse.
@@ -109,19 +106,6 @@ public class ProblemWrapper extends Thread {
      * Referenz auf das zugeordnete Problem.
      */
     private Problem problem;
-    
-    /**
-     * zentrales Speicherobjekt für dieses Problem
-     */
-    private RemoteStore centralRemoteStore = null;
-
-    /**
-     * RemoteStoreGenerator für dieses Problem, mit dem 
-     * der centralRemoteStore erzeugt wurde
-     *
-     */
-    private RemoteStoreGenerator remoteStoreGenerator = null;
-
 
     /**
      * Signalisiert dem Thread, sich zu beenden.
@@ -167,7 +151,6 @@ public class ProblemWrapper extends Thread {
     ProblemWrapper(
         ProblemManagerImpl probMan,
         Problem prob,
-        RemoteStoreGenerator generator,
         SystemStatisticsCollector sysStatistic) {
 
         super();
@@ -176,12 +159,6 @@ public class ProblemWrapper extends Thread {
         systemStatistic = sysStatistic;
         problemStatistic = new ProblemStatisticsCollector(sysStatistic);
         problemId = problemIdNumerator.nextNumber();
-        
-        // hier wird der zentrale RemoteStore erzeugt
-        remoteStoreGenerator = generator;
-        if (generator != null) {
-            centralRemoteStore = generator.generateCentralRemoteStore();
-        }
 
         // URLs des ClassLoader des Problems registrieren
         URLClassLoader ucl = (URLClassLoader) problem.getClass().getClassLoader();
@@ -557,20 +534,4 @@ public class ProblemWrapper extends Thread {
     public String toString() {
         return "Problem " + problemId;
     }
-
-	/**
-	 * @return liefert den im Konstruktor erzeugten centralRemoteStore
-	 *         zurück.
-	 */
-	public RemoteStore getCentralRemoteStore() {
-	    return centralRemoteStore;
-	}
-
-	/**
-	 * @return liefert den für diese Problem verwendeten RemoteStoreGenerator
-	 *         zurück.
-	 */
-	public RemoteStoreGenerator getRemoteStoreGenerator() {
-	    return remoteStoreGenerator;
-	}
 }

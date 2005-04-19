@@ -29,7 +29,6 @@
  * entwickelt.
  */
 
-// FIXME: transmitProblem Methoden überarbeiten
 
 package de.unistuttgart.architeuthis.user;
 
@@ -41,9 +40,7 @@ import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.misc.Numerator;
 import de.unistuttgart.architeuthis.dispatcher.statistic.ProblemStatisticsCollector;
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
-import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
@@ -103,7 +100,7 @@ public class ProblemComputation {
      * der erzeugten und der angeforderten Teilprobleme.
      *
      * @param problem                Zu berechnendes Problem.
-     * @param numberPartialProblems  Die vorgeschlagene Anzahl von
+     * @param numberPartialProblems  Die vorgeschlagene Anzahl von 
      *                               Teilproblemen, die vom konkreten Problem
      *                               erzeugt werden soll.
      *
@@ -133,14 +130,7 @@ public class ProblemComputation {
 
                 // Teillösung berechnen
                 probStatCollector.startTimeMeasurement(null);
-                // FIXME:
-                // Implementierung des RemoteStores für lokale Berechnung ???
-                if (partialProblem instanceof NonCommPartialProblem) {
-                    partialSolution = ((NonCommPartialProblem)partialProblem).compute();
-                } else {
-                    System.err.println(
-                        "Verwendung von RemoteStores für die lokale Berechnung ist noch nicht Implementiert");
-                }
+                partialSolution = partialProblem.compute();
                 probStatCollector.stopTimeMeasurement(null);
 
                 // Teillösung dem Problem zurückgeben, damit es die
@@ -187,49 +177,6 @@ public class ProblemComputation {
      * @param problem         Zu berechnendes Problem.
      * @param dispatcherHost  Adresse des ComputeSystems. Wenn kein Port
      *                        angegeben ist, wird der Standard-Port verwendet.
-     * @param generator       RemoteStoreGenerator zur Erzeugung der verteilten
-     *                        Speicher.
-     *
-     * @return  Lösung des Problems.
-     *
-     * @throws MalformedURLException    URL der Registry ist falsch.
-     * @throws NotBoundException        Der Server war auf der Registry nicht
-     *                                  eingetragen.
-     * @throws RemoteException          Kommunikationsproblem über RMI.
-     * @throws ProblemComputeException  Fehler bei der Berechnung auf dem
-     *                                  Compute-System ist aufgetreten.
-     */
-    public Serializable transmitProblem(
-        SerializableProblem problem,
-        RemoteStoreGenerator generator,
-        String dispatcherHost)
-        throws
-            MalformedURLException,
-            RemoteException,
-            NotBoundException,
-            ProblemComputeException {
-
-        // dies ist die zentrale transmitProblem-Methode
-        // auf die alle anderen TransmitProblem Methoden zugreifen
-
-        ProblemTransmitterImpl transmitter;
-        Serializable solution = null;
-
-        transmitter = new ProblemTransmitterImpl(dispatcherHost, debugMode);
-        solution = transmitter.transmitProblem(problem, generator);
-        finalProbStat = transmitter.getFinalProblemStat();
-
-        return solution;
-    }
-
-    /**
-     * Berechnet ein <code>Problem</code> durch einen <code>Dispatcher</code>.
-     * Die URLs, unter denen die Klassen liegen, müssen beim Aufruf der JVM
-     * durch das Property <code>java.rmi.server.codebase</code> angeben sein.
-     *
-     * @param problem         Zu berechnendes Problem.
-     * @param dispatcherHost  Adresse des ComputeSystems. Wenn kein Port
-     *                        angegeben ist, wird der Standard-Port verwendet.
      *
      * @return  Lösung des Problems.
      *
@@ -259,162 +206,6 @@ public class ProblemComputation {
         return solution;
     }
 
-
-    /**
-     * Berechnet ein <code>Problem</code> durch einen <code>Dispatcher</code>.
-     * <code>codebases</code> geben die URLs an, von denen vom Problem
-     * benötigte Klassen geladen werden können. Jede darin enthaltene URL wird
-     * zu java.rmi.server.codebase hinzugefügt, falls noch nicht vorhanden.
-     *
-     * @param problem         Zu berechnendes Problem.
-     * @param dispatcherHost  Adresse des ComputeSystems. Wenn kein Port
-     *                        angegeben ist, wird der Standard-Port verwendet.
-     * @param codebases       URLs zu den vom Problem benötigten Klassen.
-     * @param generator       RemoteStoreGenerator zur Erzeugung der verteilten
-     *                        Speicher.
-     *
-     * @return  Lösung des Problems.
-     *
-     * @throws MalformedURLException    URL der Registry ist falsch.
-     * @throws NotBoundException        Der Server war auf der Registry nicht
-     *                                  eingetragen.
-     * @throws RemoteException          Kommunikationsproblem über RMI.
-     * @throws ProblemComputeException  Fehler bei der Berechnung auf dem
-     *                                  Compute-System ist aufgetreten.
-     */
-    public Serializable transmitProblem(
-        SerializableProblem problem,
-        RemoteStoreGenerator generator,
-        String dispatcherHost,
-        URL[] codebases)
-        throws
-            MalformedURLException,
-            RemoteException,
-            NotBoundException,
-            ProblemComputeException {
-
-        addToCodebase(codebases);
-        return transmitProblem(problem, generator, dispatcherHost);
-    }
-    /**
-     * Berechnet ein <code>Problem</code> durch einen <code>Dispatcher</code>.
-     * <code>codebases</code> geben die URLs an, von denen vom Problem
-     * benötigte Klassen geladen werden können. Jede darin enthaltene URL wird
-     * zu java.rmi.server.codebase hinzugefügt, falls noch nicht vorhanden.
-     *
-     * @param problem         Zu berechnendes Problem.
-     * @param dispatcherHost  Adresse des ComputeSystems. Wenn kein Port
-     *                        angegeben ist, wird der Standard-Port verwendet.
-     * @param codebases       URLs zu den vom Problem benötigten Klassen.
-     *
-     * @return  Lösung des Problems.
-     *
-     * @throws MalformedURLException    URL der Registry ist falsch.
-     * @throws NotBoundException        Der Server war auf der Registry nicht
-     *                                  eingetragen.
-     * @throws RemoteException          Kommunikationsproblem über RMI.
-     * @throws ProblemComputeException  Fehler bei der Berechnung auf dem
-     *                                  Compute-System ist aufgetreten.
-     */
-    public Serializable transmitProblem(
-        SerializableProblem problem,
-        String dispatcherHost,
-        URL[] codebases)
-        throws
-            MalformedURLException,
-            RemoteException,
-            NotBoundException,
-            ProblemComputeException {
-
-        addToCodebase(codebases);
-        return transmitProblem(problem, dispatcherHost);
-    }
-
-    /**
-     * Berechnet ein <code>Problem</code> durch einen <code>Dispatcher</code>.
-     * Der URL, von dem vom Problem benötigte Klassen geladen werden, ist als
-     * String zu übergeben. Er wird zu java.rmi.server.codebase hinzugefügt,
-     * falls darin noch nicht vorhanden.
-     *
-     * @param problem         Zu berechnendes Problem.
-     * @param dispatcherHost  Adresse des ComputeSystems. Wenn kein Port
-     *                        angegeben ist, wird der Standard-Port verwendet.
-     * @param codebase        URLs zu den vom Problem benötigten Klassen.
-     * @param generator       RemoteStoreGenerator zur Erzeugung der verteilten
-     *                        Speicher.
-     *
-     * @return  Lösung des Problems.
-     *
-     * @throws MalformedURLException    URL der Registry ist falsch.
-     * @throws NotBoundException        Der Server war auf der Registry nicht
-     *                                  eingetragen.
-     * @throws RemoteException          Kommunikationsproblem über RMI.
-     * @throws ProblemComputeException  Fehler bei der Berechnung auf dem
-     *                                  Compute-System ist aufgetreten.
-     */
-    public Serializable transmitProblem(
-        SerializableProblem problem,
-        RemoteStoreGenerator generator,
-        String dispatcherHost,
-        String codebase)
-        throws
-            MalformedURLException,
-            RemoteException,
-            NotBoundException,
-            ProblemComputeException {
-
-        URL[] urls = new URL[1];
-        urls[0] = new URL(codebase);
-
-        return transmitProblem(problem, generator, dispatcherHost, urls);
-    }
-
-    /**
-     * Berechnet ein <code>Problem</code> durch einen <code>Dispatcher</code>.
-     * Der URL, von dem vom Problem benötigte Klassen geladen werden, ist als
-     * String zu übergeben. Er wird zu java.rmi.server.codebase hinzugefügt,
-     * falls darin noch nicht vorhanden.
-     *
-     * @param problem         Zu berechnendes Problem.
-     * @param dispatcherHost  Adresse des ComputeSystems. Wenn kein Port
-     *                        angegeben ist, wird der Standard-Port verwendet.
-     * @param codebase        URLs zu den vom Problem benötigten Klassen.
-     *
-     * @return  Lösung des Problems.
-     *
-     * @throws MalformedURLException    URL der Registry ist falsch.
-     * @throws NotBoundException        Der Server war auf der Registry nicht
-     *                                  eingetragen.
-     * @throws RemoteException          Kommunikationsproblem über RMI.
-     * @throws ProblemComputeException  Fehler bei der Berechnung auf dem
-     *                                  Compute-System ist aufgetreten.
-     */
-    public Serializable transmitProblem(
-        SerializableProblem problem,
-        String dispatcherHost,
-        String codebase)
-        throws
-            MalformedURLException,
-            RemoteException,
-            NotBoundException,
-            ProblemComputeException {
-
-        URL[] urls = new URL[1];
-        urls[0] = new URL(codebase);
-
-        return transmitProblem(problem, null, dispatcherHost, urls);
-    }
-    
-    /**
-     * Gibt die abschließende Statistik des letzten Berechneten Problems.
-     *
-     * @return  die Statistik des letzten berechneten Problems, oder
-     *          <code>null</code>, noch kein Problem berechnet wurde.
-     */
-    public ProblemStatistics getFinalProblemStat() {
-        return finalProbStat;
-    }
-
     /**
      * Fügt die übergebenen URLs zur Codebase der JVM hinzu, falls diese
      * darin noch nicht enthalten sind.
@@ -425,7 +216,7 @@ public class ProblemComputation {
         String systemCodebase;
         boolean systemCodebaseChanged = false;
 
-        synchronized (localProblemNumerator) {
+        synchronized(localProblemNumerator) {
             systemCodebase = System.getProperty("java.rmi.server.codebase");
             if (systemCodebase == null) {
                 systemCodebase = "";
@@ -447,4 +238,86 @@ public class ProblemComputation {
         }
     }
 
+    /**
+     * Berechnet ein <code>Problem</code> durch einen <code>Dispatcher</code>.
+     * <code>codebases</code> geben die URLs an, von denen vom Problem
+     * benötigte Klassen geladen werden können. Jede darin enthaltene URL wird
+     * zu java.rmi.server.codebase hinzugefügt, falls noch nicht vorhanden.
+     *
+     * @param problem         Zu berechnendes Problem.
+     * @param dispatcherHost  Adresse des ComputeSystems. Wenn kein Port
+     *                        angegeben ist, wird der Standard-Port verwendet.
+     * @param codebases       URLs zu den vom Problem benötigten Klassen.
+     *
+     * @return  Lösung des Problems.
+     *
+     * @throws MalformedURLException    URL der Registry ist falsch.
+     * @throws NotBoundException        Der Server war auf der Registry nicht
+     *                                  eingetragen.
+     * @throws RemoteException          Kommunikationsproblem über RMI.
+     * @throws ProblemComputeException  Fehler bei der Berechnung auf dem
+     *                                  Compute-System ist aufgetreten.
+     */
+    public Serializable transmitProblem(
+        SerializableProblem problem,
+        String dispatcherHost,
+        URL[] codebases)
+        throws
+            MalformedURLException,
+            RemoteException,
+            NotBoundException,
+            ProblemComputeException {
+
+        ProblemTransmitterImpl transmitter;
+        Serializable solution = null;
+
+        addToCodebase(codebases);
+        return transmitProblem(problem, dispatcherHost);
+    }
+
+    /**
+     * Berechnet ein <code>Problem</code> durch einen <code>Dispatcher</code>.
+     * Der URL, von dem vom Problem benötigte Klassen geladen werden, ist als
+     * String zu übergeben. Er wird zu java.rmi.server.codebase hinzugefügt,
+     * falls darin noch nicht vorhanden.
+     *
+     * @param problem         Zu berechnendes Problem.
+     * @param dispatcherHost  Adresse des ComputeSystems. Wenn kein Port
+     *                        angegeben ist, wird der Standard-Port verwendet.
+     * @param codebase        URLs zu den vom Problem benötigten Klassen.
+     *
+     * @return  Lösung des Problems.
+     *
+     * @throws MalformedURLException    URL der Registry ist falsch.
+     * @throws NotBoundException        Der Server war auf der Registry nicht
+     *                                  eingetragen.
+     * @throws RemoteException          Kommunikationsproblem über RMI.
+     * @throws ProblemComputeException  Fehler bei der Berechnung auf dem
+     *                                  Compute-System ist aufgetreten.
+     */
+    public Serializable transmitProblem(
+        SerializableProblem problem,
+        String dispatcherHost,
+        String codebase)
+        throws
+            MalformedURLException,
+            RemoteException,
+            NotBoundException,
+            ProblemComputeException {
+
+        URL[] urls = new URL[1];
+        urls[0] = new URL(codebase);
+
+        return transmitProblem(problem, dispatcherHost, urls);
+    }
+
+    /**
+     * Gibt die abschließende Statistik des letzten Berechneten Problems.
+     *
+     * @return  die Statistik des letzten berechneten Problems, oder
+     *          <code>null</code>, noch kein Problem berechnet wurde.
+     */
+    public ProblemStatistics getFinalProblemStat() {
+        return finalProbStat;
+    }
 }

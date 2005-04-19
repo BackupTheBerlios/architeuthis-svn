@@ -1,13 +1,10 @@
 /*
  * file:        Operative.java
- * created:     <???>
- * last change: 15.02.2005 by Michael Wohlfart
+ * last change: 26.05.2004 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
- *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
- *              Michael Wohlfart   michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -38,8 +35,6 @@ package de.unistuttgart.architeuthis.systeminterfaces;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 
@@ -67,19 +62,11 @@ public interface Operative
      * neues Teilproblem zuzuweisen.
      *
      * @param parProb  vom Operative zu berechnendes Teilproblem
-     * 
-     * @param remoteStore zentraler RemoteStore oder null, falls keiner
-     *                    verwendet wird
-     * 
-     * @param gernerator zum Erzeugen des dezentralen RemoteStores benötigter
-     *                   RemoteStoreGenerator oder null falls keiner verwendet wird
      *
      * @throws RemoteException  bei Kommunikationsproblemen über RMI
      * @throws ProblemComputeException  falls ein Berechnungsfehler auftritt
      */
-    public void fetchPartialProblem(PartialProblem parProb,
-            RemoteStore remStor,
-            RemoteStoreGenerator generator) throws
+    public void fetchPartialProblem(PartialProblem parProb) throws
         RemoteException, ProblemComputeException;
 
     /**

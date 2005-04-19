@@ -57,7 +57,6 @@ import de
     .dispatcher
     .problemmanaging
     .ProblemManagerImpl;
-import de.unistuttgart.architeuthis.dispatcher.problemmanaging.ProblemWrapper;
 import de
     .unistuttgart
     .architeuthis
@@ -71,8 +70,6 @@ import de
     .statistic
     .ProblemStatisticsCollector;
 import de.unistuttgart.architeuthis.dispatcher.problemmanaging.ParProbWrapper;
-import de.unistuttgart.architeuthis.remotestore.RemoteStore;
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.systeminterfaces.ComputeManager;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.systeminterfaces.Operative;
@@ -425,24 +422,7 @@ public final class ComputeManagerImpl
                     try {
                         log.fine("Versuche Teilproblem an "
                                  + operativeInfoObj + " zu senden");
-                        
-                       // der zentrale remoteStore und remoteStoreGenerator
-                       // sitzt im ProblemWrapper:                        
-                       ProblemWrapper probWrap = parProbWrap.getCreatingWrapper();
-                       
-                       log.fine("Problem Wrapper erhalten!");
-                       
-                       // hier muss vermutlich ein RMI-lookup her !!!
-                       RemoteStore centralRemoteStore = probWrap.getCentralRemoteStore();
-                       
-                       log.fine("RemoteStore erhalten!");
-                       
-                       RemoteStoreGenerator generator = probWrap.getRemoteStoreGenerator();
-                       
-                       log.fine("RemoteStoreGenerator erhalten!");
-                        
-                        operative.fetchPartialProblem(parProbWrap.getPartialProblem(),
-                        		centralRemoteStore, generator);
+                        operative.fetchPartialProblem(parProbWrap.getPartialProblem());
                         log.fine("Teilproblem erfolgreich an "
                                  + operativeInfoObj + " gesendet");
                         transmitted = true;

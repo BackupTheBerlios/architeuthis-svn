@@ -1,11 +1,10 @@
 /*
  * file:        ProblemManagerImpl.java
  * created:     29.06.2003
- * last change: 15.02.2005 by Michael Wohlfart
+ * last change: 08.10.2004 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@t-online.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
- *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -60,7 +59,6 @@ import de
     .dispatcher
     .statistic
     .SystemStatisticsCollector;
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.systeminterfaces.ProblemManager;
 import de.unistuttgart.architeuthis.systeminterfaces.ProblemTransmitter;
@@ -783,8 +781,7 @@ public class ProblemManagerImpl
         ProblemTransmitter transmitter,
         URL url,
         String className,
-        Object[] problemParameters,
-        RemoteStoreGenerator generator)
+        Object[] problemParameters)
         throws RemoteException, ClassNotFoundException, ProblemComputeException {
 
         if (terminated) {
@@ -822,7 +819,7 @@ public class ProblemManagerImpl
                 systemStatistic.notifyProblemReceived();
 
                 ProblemWrapper probWrapper =
-                    new ProblemWrapper(this, problem, generator, systemStatistic);
+                    new ProblemWrapper(this, problem, systemStatistic);
                 log.info(probWrapper.toString() + " erzeugt");
                 probWrapTransmitter.put(probWrapper, transmitter);
 
@@ -863,9 +860,7 @@ public class ProblemManagerImpl
      *                     Lösung empfangen soll
      * @param problem      serialisierbares Problem, das verteilt berechnet
      *                     werden soll.
-     * @param generator    Der verwendete RemoteStoreGenerator oder null, falls
-     *                     kein RemoteStoreGenerator verwendet wird.
-     *                     
+     *
      * @throws RemoteException  bei RMI-Verbindungsproblemen.
      * @throws ProblemComputeException  bei Berechnungsfehler.
      *
@@ -874,8 +869,7 @@ public class ProblemManagerImpl
      */
     public synchronized void receiveProblem(
         ProblemTransmitter transmitter,
-        SerializableProblem problem,
-        RemoteStoreGenerator generator)
+        SerializableProblem problem)
         throws RemoteException, ProblemComputeException {
 
         if (terminated) {
@@ -896,7 +890,7 @@ public class ProblemManagerImpl
             systemStatistic.notifyProblemReceived();
 
             ProblemWrapper probWrapper =
-                new ProblemWrapper(this, problem, generator, systemStatistic);
+                new ProblemWrapper(this, problem, systemStatistic);
             log.info(probWrapper.toString() + " erzeugt");
             probWrapTransmitter.put(probWrapper, transmitter);
 

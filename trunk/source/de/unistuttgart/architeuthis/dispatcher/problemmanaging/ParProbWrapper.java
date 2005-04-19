@@ -108,7 +108,7 @@ public class ParProbWrapper {
      * @return  Den <CODE>ProblemWrapper</CODE>, der dieses Objekt erzeugt
      *          hat.
      */
-    public ProblemWrapper getCreatingWrapper() {
+    ProblemWrapper getCreatingWrapper() {
         return creatingWrapper;
     }
 

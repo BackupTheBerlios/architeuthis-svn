@@ -1,13 +1,12 @@
 /*
  * file:        ProblemManager.java
  * created:     29.06.2003
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 26.05.2004 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
- *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -39,7 +38,6 @@ import java.net.URL;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.remotestore.RemoteStoreGenerator;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 import de.unistuttgart.architeuthis.userinterfaces.exec.ProblemStatistics;
@@ -62,12 +60,12 @@ public interface ProblemManager extends Remote {
     /**
      * Port, unter der der ProblemManager hört.
      */
-    String PORT_NO = ComputeManager.PORT_NO;  // public finals static sind hier unnötige Modifier
+    public static final String PORT_NO = ComputeManager.PORT_NO;
 
     /**
      * Binding des ProblemManager an der RMI-Registry.
      */
-    String PROBLEMMANAGER_ID_STRING = "ProblemManager";
+    public static final String PROBLEMMANAGER_ID_STRING = "ProblemManager";
 
     /**
      * Teilt dem Compute-System die Position der Quelldateien für ein neues
@@ -95,15 +93,12 @@ public interface ProblemManager extends Remote {
      * @see  PartialProblem
      */
     public void loadProblem(ProblemTransmitter transmitter, URL url,
-                            String className, Object[] problemParameters,
-                            RemoteStoreGenerator generator)
+                            String className, Object[] problemParameters)
         throws RemoteException, ClassNotFoundException, ProblemComputeException;
 
     /**
-     * Schickt dem Problem-Manager ein neues serialisierbares Problem und
-     * ein RemoteStoreGenerator.<br>
-     * Der RemoteStoreGenerator erzeugt evtl. benötigten verteilten
-     * Speicher.<br>
+     * Schickt dem Problem-Manager ein neues serialisierbares Problem.
+     * Nötiger Quellcode wird durch RMI von einem HTTP-Server geladen.<p>
      * Zur Berechnung werden vom Problem erzeugte {@link PartialProblem}
      * an Operatives verteilt und nach erfolgreicher Berechnung deren
      * Lösung dem Problem zum Zusammenfügen übergeben.<br>
@@ -111,7 +106,6 @@ public interface ProblemManager extends Remote {
      * @param transmitter  Problem-übermittler, der das Problem sendet und die
      *                     Lösung empfangen soll
      * @param problem      serialisierbares Problem, das verteilt berechnet werden soll.
-     * @param generator    RemoteStoreGenerator zum erzeugen des verteilten Speichers
      *
      * @throws RemoteException  bei RMI-Verbindungsproblemen.
      * @throws ProblemComputeException  bei Berechnungsfehler.
@@ -120,8 +114,7 @@ public interface ProblemManager extends Remote {
      * @see  PartialProblem
      */
     public void receiveProblem(ProblemTransmitter transmitter,
-                               SerializableProblem problem,
-                               RemoteStoreGenerator generator)
+                               SerializableProblem problem)
         throws RemoteException, ProblemComputeException;
 
     /**

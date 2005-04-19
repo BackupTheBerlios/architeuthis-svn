@@ -1,12 +1,11 @@
 /*
  * file:        PartialProblem.java
  * created:     <???>
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 26.05.2004 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
- *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -32,17 +31,12 @@
  * entwickelt.
  */
 
-// letzte Änderung:
-//
-// die compute() Methode wurde auf die beiden interfaces
-// CommunicationPartialProblem und NonCommPartialProblem
-// aufgeteil
-//
-//
+
 package de.unistuttgart.architeuthis.userinterfaces.develop;
 
 import java.io.Serializable;
 
+import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 
 /**
  * Muss vom der Teilproblem-Klasse implementiert werden.
@@ -51,4 +45,12 @@ import java.io.Serializable;
  */
 public interface PartialProblem extends Serializable {
 
+    /**
+     * Startet die Berechnung des Teilproblems.
+     *
+     * @return  berechnete Teillösung
+     *
+     * @throws ProblemComputeException  bei beliebigen Berechnungsproblemen
+     */
+    public PartialSolution compute() throws ProblemComputeException;
 }
