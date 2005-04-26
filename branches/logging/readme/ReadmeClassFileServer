@@ -1,0 +1,85 @@
+Datei          : ReadmeClassFileServer
+Letzte Änderung: 15.02.2005 durch Dietmar Lippold
+
+
+This file is part of Architeuthis.
+
+Architeuthis is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+Architeuthis is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Architeuthis; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+Funktion vom ClassFileServer
+----------------------------
+
+Der ClassFileServer ist ein einfacher WWW-Server, der dazu dient, aus dem
+Dateisystem class-Dateien von Klassen des Benutzers für den Dispatcher und
+die Operatives zum Abruf zur Verfügung zu stellen. Dies ist besonders dann
+praktisch, wenn man die zur Verfügung gestellten Dateien nur wenige Male
+benutzt oder häufiger ändert. Als Alternative können die Dateien auch über
+einen normalen WWW-Server zur Verfügung gestellt werden.
+
+
+Benutzung vom ClassFileServer
+-----------------------------
+
+Die Dateien zum Starten des ClassFileServer liegen im Verzeichnis runScripts.
+
+Vor dem Starten des ClassFileServer muß man die environment-Variable
+JAVA_HOME auf das Verzeichnis vom JRE oder JDK setzen. In der tcsh unter
+Linux/Unix kann der Befehl z.B. folgendermaßen aussehen:
+
+  setenv JAVA_HOME /usr/java/jdk
+
+Weiterhin muß man der environment-Variablen CLASS_FILE_PATH das
+Verzeichnis zuweisen, in dem das Verzeichnis des äußersten Packages der
+class-Dateien liegt. Prinzipiell ist es auch möglich, dort eine jar-Datei
+abzulegen. Die Klassen dieser Datei werden dann aber auf jeden Fall vom
+Dispatcher und Operative im Cache gehalten (weitere Hinweise zur Verwendung
+einer jar-Datei finden sich in der Datei ReadmeTestenvironment). In der
+tcsh kann der Befehl z.B. folgendermaßen aussehen:
+
+  setenv CLASS_FILE_PATH /home/user/testclasses
+
+ACHTUNG: Der ClassFileServer stellt sämtliche Dateien in diesem
+Verzeichnis und in dessen Unterverzeichnissen öffentlich zur Verfügung
+(nicht nur class-Dateien). Man sollte daher für die class-Dateien ein
+eigenes Verzeichnis anlegen.
+
+Alternativ zum Setzen von JAVA_HOME kann man auch die Variable JAVA in der
+Datei setup.sh bzw. setup.bat setzen. Dort kann man auch die Variable
+CLASS_FILE_PATH setzen. Außerdem kann bzw. muß man in dieser Datei noch
+folgende Einträge ändern:
+
+ * DEPLOY_DIR        : Das Verzeichnis mit der jar-Datei vom ClassFileServer.
+                       Vorgegeben ist dieser relativ zum Verzeichnis
+                       runScripts. Man braucht diese Variable also nicht zu
+                       ändern, wenn man den ClassFileServer aus diesem
+                       Verzeichnis startet.
+
+ * CLASS_SERVER_PORT : Der Port, auf dem der ClassFileServer seine
+                       Dienste bereit stellen soll. Dieser ist bei der
+                       Benutzung des ProblemTransmitter anzugeben, z.B.
+                       in den run-Scripten der Testprobleme in der
+                       environment-Variablen CLASSURL. Per default ist dies
+                       der Port 1855, den man in der Regel nicht zu ändern
+                       braucht.
+
+Zum Starten des ClassFileServer ruft man dann einfach das Start-Script
+auf.
+Unter Linux/Unix: ./runClassFileServer.sh
+Unter Windows   : runClassFileServer.bat
+
+Daraufhin wird eine Meldung zu Benutzung ausgegeben, die man ignorieren
+kann.
+

@@ -1,0 +1,98 @@
+            Weitere geplante Arbeiten und Ideen für Architeuthis
+
+
+Stand: 19.04.2005
+
+
+Änderungen größerer Wichtigkeit
+-------------------------------
+
+ * Die Klassen PutProcedure und PutAllProcedure sowie AddProcedure und
+   AddAllProcedure zu jeweils einer Klasse zusammenfassen, so daß auch bei
+   asynchroner Übertragung die Aufrufe beim RelayStore in der gleichen
+   Reihenfolge eingehen wie beim RemoteStore.
+
+ * Eine Möglichkeit vorsehen, daß ein asynchron laufender Thread zur
+   Übertragung von Daten zum RelayStore eine Fehlermeldung an den Operative
+   übergeben kann (z.B. als Rückgabewert beim Abmeldes des zentralen
+   RemoteStore).
+
+ * Benutzerhandbuch aktualisieren.
+
+ * Die lokale Berechnung von Teilproblemen durch die Methoden
+   ProblemComputation.computeProblem parallelisieren, d.h. jedes
+   Teilproblem in einem eigenen Thread ausführen.
+
+ * Seltene ClassCastException im Dispatcher (wahrscheinlich nur bei
+   Verwendung von CacheFlushingRMIClSpi) beseitigen.
+
+ * Die Möglichkeit einbauen, daß dem Dispatcher zur Laufzeit über ein
+   Administrationsinterface ein Befehl geschickt werden kann, z.B. daß
+   er sich beenden soll (als Prototyp schon implementiert).
+
+ * Alle Meldungen in eigene Dateien ausgliedern und eine englischsprachige
+   Version anbieten (wurde schon partiell testweise realisiert).
+
+ * Entkopplung der Kommunikation von Dispatcher und Operatives, z.B. durch
+   Producer-Consumer-Queue. Dadurch könnte die Synchronisation im
+   Dispatcher wesentlich vereinfacht werden. Evtl. sollte der Dispatcher
+   (insb. der Computemanager) dann neu implementiert werden. Dabei wäre
+   das in Java 1.5 neu enthaltene Package java.util.concurrent, das für
+   Java 1.4 gesondert erhältlich ist, zu verwenden.
+
+ * Steigerung der Skalierbarkeit durch eine mehrstufige (zweistufige)
+   Hierarchie von Dispatchern.
+
+
+Änderungen geringerer Wichtigkeit
+---------------------------------
+
+ * Den Parameter dispatcherHost vom Konstruktor von ProblemTransmitterImpl
+   in die Parameter dispatcherName und DispatcherPort aufteilen. Einen
+   neuen Konstruktor ohne DispatcherPort (= default Port) erstellen.
+
+   Gleiches gilt für die Parameter dispatcherHost der Methode transmitProblem
+   von ProblemComputation.
+
+ * Im ComputeManager die Methode "returnPartialSolution" umbennenen in
+   "collectPartialSolution".
+
+ * Im Interface Problem dieMethode "collectResult" umbenennen in
+   "collectPartialSolution".
+
+ * In allen java-Dateien und in der Anleitung "ComputeSystems" und
+   "ComputeServer" durch "Dispatcher" ersetzen.
+
+ * Eine Möglichkeit einbauen, daß ein Operative einen Dispatcher im lokalen
+   Netz selbst findet, ohne daß dessen Rechnername anzugeben ist (wurde
+   schon testweise realisiert).
+
+ * Das Logging einheitlich über die Klasse Logger realisieren, anstatt
+   teilweise über die Methode Miscellaneous.printDebugMessage. log-level
+   einheitlich definieren und implementieren.
+
+ * Prüfen, warum eine jar-Datei in der angegebenen Codebase im Cache
+   gehalten wird, d.h. die Klasse CacheFlushingRMIClSpi wirkungslos ist.
+
+ * Prüfen, warum die jar-Datei User.jar so viele Klassen enthält bzw.
+   ob sie diese enthalten muß.
+
+ * Überlegen, ob das Package testenvironment aufgeteilt werden sollte in
+   eines, das nur die Testprobleme enthält und eines, das diese benutzt.
+   Die benutzenden Klassen liegen derzeit in den subpackages prime und
+   myprime.
+
+
+Weitere Ideen
+-------------
+
+ * Bei den beiden Methoden ProblemComputation.computeProblem zur lokalen
+   Berechnung eines Problems den Typ SerializableProblem ändern in Problem,
+   so daß auch nicht serialisierbare Probleme lokal berechnet werden können.
+
+ * Der Dispatcher sollte auch hinter einer Firewall (auf festen Ports)
+   laufen.
+
+ * Kann man die Speichermenge, die ein spezieller Thread (für das
+   jeweilige Problem) auf dem Dispatcher in Anspruch nehmen kann, begrenzen?
+

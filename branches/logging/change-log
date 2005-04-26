@@ -1,0 +1,367 @@
+                       Change Log für Architeuthis
+
+
+Achtung
+-------
+
+Es wird empfohlen, für Architeuthis als JDK Version 1.4.2_07 vom J2SE von
+Sun oder das JDK von IBM ab Version 1.4.1 zu benutzen. Bis J2SE 1.4.2_06
+von Sun trat bei der Mehrfachverteilung von Teilproblemen (wenn mehr
+Operatives als Teilprobleme vorhanden sind) insbesondere bei kurzen
+Bearbeitungszeiten von Teilproblemen (deutlich unter einer Sekunde) beim
+Operative gelegentlich ein Fehler in der JVM auf, der zu deren Absturz
+führte.
+
+
+Stand 19.04.2005
+----------------
+
+ * Ein deadlock-Problem beseitigt, das auftreten konnte, wenn die
+   Berechnungsdauer eines Teilproblems extrem kurz war.
+
+ * Das Konzept des RemoteStore realisiert. Die Teilprobleme können dadurch
+   auf einen gemeinsamen Speicher zugreifen. Dieser kann vom Benutzer selbst
+   implementiert werden. Konkret wurde das Package remotestore sowie die
+   Unterpackages hashmap und hashset als einfache Implementierungen und
+   alle damit verbundenen Änderungen (z.B. zur Fehlerbehandlung)
+   aufgenommen.
+
+ * Eine Testanwendung im Package testenvironment.hashstore, die die neuen
+   RemoteStores testet, und ein zugehöriges runScript runRemoteHash
+   aufgenommen.
+
+
+Release 1.4
+-----------
+
+ * Angabe vom Package in der Klasse
+   de.unistuttgart.architeuthis.user.RuntimeComparison korrigiert.
+
+ * Package misc.commandline hinzugefügt und für das Parsen der
+   Komandozeilenparameter benutzt.
+
+ * runScripts für Windows hinzugefügt und die Scripte für Unix überarbeitet.
+   Alle Scripte verwenden jetzt eine andere Verzeichnisstruktur, die mit
+   der aus dem Repository übereinstimmt, so daß sie auch aus dem
+   Arbeitsverzeichnis heraus gestartet werden können.
+
+ * Datei build.xml überarbeitet, um die veränderte Verzeichnisstruktur zu
+   berücksichtigen. Außerdem wird jetzt von den Distributionsdateien
+   userenvironment und testenvironment jeweils eine Version für Unix/Linux
+   (mit sh-Scripten) und eine Version für Windows (mit bat-Scripten)
+   erzeugt.
+
+ * In der build.xml bei der Erzeugung der jar-Dateien einen workaround
+   aufgenommen und die Abschnitte zur Erzeugung der class-Dateien ergänzt,
+   so daß alle Änderungen von java-Dateien jetzt zur Erzeugung neuer jar-
+   bzw. class-Dateien führen.
+
+ * Synchronisationsproblem in der Klasse ProblemManagerImpl beseitigt.
+   Dies hatte dazu geführt, daß der Server beim Abbruch eines Prblems
+   hängen bleiben konnte (ein deadlock entstehen konnte).
+
+
+Release 1.3.2
+-------------
+
+ * Von einem Problem oder Teilproblem erzeugten Error im Dispatcher und im
+   Operative abgefangen.
+
+ * Die Klasse ParProbWrapper vom Package dispatcher in das Unterpackage
+   problemmanaging verschoben.
+
+
+Release 1.3.1
+-------------
+
+ * Die Dateien der Unterverzeichnisse vom Verzeichnis manual in die
+   Distributionsdatei architeuthis_src.tar.gz aufgenommen. Die Dateien
+   waren versehentlich im Release 1.3 nicht enthalten.
+
+ * Klasse NonCachingRMIClSpi ersetzt durch Klasse CacheFlushingRMIClSpi,
+   da die Verwendung der ersten zu Fehlern führte, wenn ein Teilproblem
+   ein Attribut vom Typ einer eigenen Klasse enthielt. Die Klasse
+   CacheFlushingRMIClSpi in das Package misc verschoben.
+
+ * Der Konstruktor der Klasse ComputeManagerImpl fängt die Exceptions
+   jetzt nicht mehr ab sondern leitet sie weiter.
+
+
+Release 1.3
+-----------
+
+ * Klasse RuntimeComparison verschoben aus Package testenvironment nach
+   Package user.
+
+ * Eigene Verzeichnisse für die Readme-, die policy- und die run-Script-
+   Dateien angelegt
+
+ * Die Readme-Dateien fast komplett neu erstellt.
+
+ * Den build-Prozeß durch ant realisiert. Dazu das Makefile und die
+   shell-Scripte durch build.xml ersetzt.
+
+ * Einige noch vorhandene Skel-Dateien aus den erzeugten jar-Dateien
+   entfernt.
+
+ * Das Distributionspaket user.tar.gz umbenannt in userenvironment.tar.gz.
+
+ * Eine Datei "todo" mit Aufgaben und Ideen für Ergänzungen und Änderungen
+   zu Architeuthis erstellt.
+
+ * Das Anlegen einer logging-Datei vom Dispatcher im Homeverzeichnis
+   abgestellt.
+
+
+Release 1.2
+-----------
+
+ * Die Methode getSolution der Klasse ContainerPartialSolution umbenannt in
+   getPartialSolution.
+
+ * Als Standard-Dispatcher-Port 1854 eingestellt. Außerdem eine Variable
+   DISPATCHER_PORT in der Datei setup.sh aufgenommen, mit der sich der
+   Port für die run-Scripte ändern läßt.
+
+ * Den Dispatcher um eine neue Komandozeilen-Option "-t" ergänzt, mit der
+   angegeben werden kann, ob in bestimmten Situationen für die Kommunikation
+   mit einem Operative ein neuer Thread erzeugt werden soll. 
+
+ * In der Klasse RuntimeComparison ist die Angabe eines Dateinamens jetzt
+   optional. Wenn keiner angegeben wird, werden die Lösungen über die
+   Standard-Ausgabe ausgegeben.
+
+ * Klasse ProblemTransmitterApp komplett überarbeitet. Dabei wurde die
+   Funktionalität der Klasse SerializableProblemTransmitterApp mittels der
+   Komandozeilenoption -s integriert und die Klasse
+   SerializableProblemTransmitterApp gelöscht.
+
+ * Die Statistiken komplett überarbeitet, d.h. in Bezug auf die verwalteten
+   Daten, die Aktualisierung der Daten (Methoden der Statistik-Klassen) und
+   die Aufrufe der Aktualisierungs-Methoden.
+
+ * Die dem Benutzer angezeigten Statistiken den neuen Statistiken angepaßt
+   und in der Darstellung überarbeitet.
+
+ * Die Klassen ProblemStatisticsContainer und SystemStatisticsContainer (die
+   die Daten der Statistiken enthalten) um eine Methdoe toString ergänzt.
+
+ * Ein Programm, das die Klasse ProblemTransmitterImpl benutzt, wird jetzt
+   beendet, ohne die Methode exit aufrufen zu müssen.
+
+ * Die GUI-Statistik-Fenster können jetzt geschlossen werden, ohne die
+   Berechnung des Problems abzubrechen. Das Problem wird durch Ctrl-C
+   abgebrochen.
+
+ * Beim Abbrechen eines Problems wird nun auch der Thread vom ProblemWrapper
+   beendet.
+
+ * Die Klasse ProblemComputation um die Möglichkeit erweitert, die Statistik
+   des letzten berechneten Problems abzufragen.
+
+ * In der Klasse ProblemComputation eine Methode ergänzt, mit der man bei
+   der lokalen Berechnung eines Problems die Anzahl der zu erzeugenden
+   Teilprobleme angeben kann.
+
+ * Es wird jetzt allen ProblemTransmittern auch eine Nachricht geschickt,
+   wenn sich wieder ein Operative anmeldet, nachdem zuvor keiner angemeldet
+   war (Exception-Code NEW_OPERATIVES_REGISTERED).
+
+ * Die Interfaces aus dem Package userinterfaces in das neu angelegte Package
+   userinterfaces.develop verschoben.
+
+ * Folgende Interfaces aus dem Package systeminterfaces in das neu angelegte
+   Package userinterfaces.exec verschoben:
+    + AbstractStatistics
+    + ProblemStatistics
+    + SystemStatistics
+
+ * Folgende Interfaces aus dem Package systeminterfaces in das Package
+   userinterfaces verschoben:
+    + ProblemComputeException
+
+ * Name der Klasse PartialProblemQueue geändert in InfoParProbWrapperQueue
+
+ * Name der Klasse PartialSolutionPartialProblem geändert in
+   PartialSolutionParProbWrapper
+
+ * Name der Klasse InfoPartialProblem geändert in InfoParProbWrapper und
+   Methode getId entfernt.
+
+ * Klasse Testenvironment umbenannt in RuntimeComparison
+
+ * Neue Klasse ParProbWrapper aufgenommen und die Instanzen von PatialProblem
+   im dispatcher zu Instanzen von ParProbWrapper gemacht.
+
+ * Klasse TextStatisticsReader umbenannt in SystemTextStatisticsReader
+
+ * Operative in zwei Klassen aufgeteilt und um einen Aufruf ergänzt, so daß
+   er sich tatsächlich beendet.
+
+ * Script runStat.sh umbenannt in runGuiSysStat.sh und runConsoleStat.sh
+   umbenannt in runConsoleSysStat.sh
+
+ * Zahlreiche Methoden entsprechend den geänderten Klassennamen umbenannt.
+
+ * In den policy-Datei die Umlaute ersetzt, so daß jetzt alle Programme auch
+   mit dem JDK von IBM benutzt werden können.
+
+ * In der Methode getAllParProbWrapperInComputation von ProblemWrapper einen
+   Fehler mit der Synchronisation korrigiert.
+
+ * Fehler beseitigt: Wenn ein Operative abgemeldet wurde, wurde das von
+   diesem berechnete Teilproblem nicht als abgebrochen vermerkt.
+
+ * Fehler durch falsch geschachtelte Synchronisation in Klasse
+   ComputeManagerImpl korrigiert.
+
+ * Fehler in der Klasse BlockingBuffer entfernt: Ebenso wie der Wert null
+   nach dem Aufruf von removeNullElements werden auch andere Objekte, mit
+   denen zuvor die Methode remove aufgerufen wurde, beim nächsten Aufruf von
+   enqueue nicht aufgenommen.
+
+ * Fehler beim Shutdown vom Dispatcher beseitigt.
+
+ * Scheduling der Probleme weitgehend überarbeitet (dabei Fehler beseitigt).
+
+ * Fehler in der Methode transmitProblem der Klasse ProblemComputation
+   (bei der Ergänzung der Codebase) korrigiert.
+
+ * Synchronisation in der Methode getNewParProbWrapper der Klasse
+   ProblemWrapper ergänzt.
+
+ * Synchronisation in der Methode distributePartialProblem(InfoOperative)
+   der Klasse ComputeManagerImpl korrigiert.
+
+ * Synchronisation in Klasse ProblemTransmitterImpl korrigiert.
+
+ * An mehreren Stellen eine RuntimeException abgefangen, die durch ein
+   konkretes Problem oder Teilproblem ausgelöst werden kann.
+
+ * Bei Aufruf von shutdown vom ProblemManagerImpl werden die angemeldeten
+   Operatives beendet, woraufhin diese jetzt aber keine Methode vom
+   ProblemManagerImpl (zur Abmeldung) mehr aufrufen. Bei Aufruf von shutdown
+   vom OperativeImpl meldet dieser sich beim ProblemManagerImpl ab, worauf
+   dieser jetzt aber keine Methode vom OperativeImpl (zum Stoppen der
+   Berechnung) mehr aufruft. In beiden Fällen konnte es bisher zu Problemen
+   mit der Synchronisation kommen.
+
+ * Fehler in Klasse CacheFlushingRMIClSpi beseitigt (Klasse war bisher
+   wirkungslos). Außerdem die Klasse erweitert und deren Verwendung so
+   verändert, daß jetzt auch mehrere Probleme mit der gleichen Codebase
+   auf dem Dispatcher verarbeitet werden können.
+
+ * Die Klasse CacheFlushingRMIClSpi im run-Script vom Dispatcher dem
+   Property java.rmi.server.RMIClassLoaderSpi zugewiesen und diesem Property
+   im run-Script vom Operative die Klasse NonCachingRMIClSpi zugewiesen (als
+   Standard-Einstellung sinnvoll).
+
+ * Die iD für ein ProblemWrapper Objekt wird jetzt in dieser Klasse erzeugt
+   und nicht mehr in ProblemManagerImpl.
+
+ * Verhindert, daß sich ein neuer Operative während eines Shutdown anmelden
+   kann.
+
+ * Die Klasse ProblemTransmitterImpl besitzt jetzt einen Konstruktor, dem
+   der Name des Dispatchers zu übergeben ist. Er wird nicht mehr der Methode
+   transmitProblem übergeben.
+
+ * Die Methoden transmitProblem der Klasse ProblemTransmitterImpl werfen
+   jetzt eine Exception, wenn die Berechnung der Problems abgebrochen wurde.
+
+ * shutdownHook in der Klasse ProblemTransmitterImpl ergänzt und aus den
+   Klassen ProblemTransmitterApp und SerializableProblemTransmitterApp
+   entfernt.
+
+ * Alle Verbindungen zwischen User und Dispatcher verwenden auf User-Seite
+   jetzt die Klasse ProblemTransmitterImpl.
+
+ * Die Klasse ProblemWrapper hat jetzt keinen Zugriff mehr auf den
+   ProblemTransmitter. Alle Verbindungen zwischen User und Dispatcher
+   verwenden auf Dispatcher-Seite jetzt die Klasse ProblemManagerImpl.
+
+ * Alle Aufrufe von exit entfernt bis auf solche, die in der Methode main
+   oder in einer nur von main aufgerufenen Methoden enthalten sind.
+
+ * "rmi:" aus den Strings der bindings für die RMI-Registry entfernt.
+
+ * Zahlreiche Änderungen im Fine-Design, z.B. Umbenennung und Änderung der
+   Reihenfolge von Methoden.
+
+ * Zahlreich kleinere Änderungen in der Implementierung, z.B. Überarbeitung
+   der Kommentare.
+
+
+Release 1.1
+-----------
+
+ * Die Klassen in Package prime ersetzt durch die Klassen in Package
+   serializableprime.
+
+ * Im ProblemManagerImpl ein Attribut für die System-Statistik ergänzt.
+
+ * In run() von ProblemWrapper bei der Erzeugung des nächsten Teilproblems
+   die Anzahl der vorhandenen Operatives übergeben. Den Parameter für diese
+   Anzahl in verschiedenen Methoden entfernt.
+
+ * In Methode ProblemManagerImpl.removeProblem den Aufruf
+   problemWrappers.remove(probWrapper) an den Anfang gezogen und
+   synchronisiert.
+
+ * Methode ProblemManagerImpl.collectPartialProblem() überarbeitet.
+
+ * Klassen und Interfaces "ComputeSystemStatistics*" umbenannt in
+   "SystemStatistics*".
+
+ * Die Reaktivierung passiver Clients wird nur noch in PartialProblemCollector
+   veranlaßt. An den bisherigen Stellen wird nur noch removeNullElements
+   aufgerufen.
+
+ * Klasse BoundedBuffer erweitert und in BlockingBuffer umbenannt. Man
+   kann jetzt auch einen Buffer unbegrenzter Größe erzeugen.
+
+ * Methode ProblemStatisticsCollector.estimatedComputationTime()
+   überarbeitet.
+
+ * Die Verwendung einer Instanz von PartialProblemPartialSolutionBuffer
+   in ProblemWrapper durch die Verwendung von zwei unabhängigen Instanzen
+   von BlockingBuffer ersetzt. Klasse
+   PartialProblemPartialSolutionBuffer gelöscht.
+
+ * Das Attribut active in InfoOperative mit true initialisiert (Fehler
+   hatte zu Exception geführt).
+
+ * Methode ProblemManagerImpl.sendDispatcherShutdown entfernt.
+
+ * Die Methode SystemStatisticsCollector.getSystemStatistics() in
+   getSnapshot() umbenannt und liefert jetzt einen Schnappschuß (Kopie) vom
+   enthaltenen SystemStatisticsContainer-Objekt, da auf dieses nebenläufig
+   zugegriffen wird. Das gleiche gilt für die bisherige Methode
+   ProblemStatisticsCollector.getStatistics().
+
+ * Anzahl der freien Operatives in der System-Statistik korrigiert.
+
+ * Die Ermittlung der maximal zulässigen Anzahl ausstehender Teilprobleme
+   erfolgt jetzt in  der Klasse ProblemWrapper und paßt sich der Veränderung
+   der Anzahl angemeldeter Operatives an.
+
+ * Die Synchronisation in der Methode ComputeManagerImpl.removeDeadOperative
+   wesentlich überarbeitet.
+
+ * Synchronisation in der Klasse PartialProblemQueue überarbeitet.
+
+ * Synchronisation in der Klasse ComputeManagerImpl korrigiert und
+   überarbeitet.
+
+ * Statistik zur Anzahl in Berechnung befindlicher Teilprobleme korrigiert.
+
+ * In der Klasse ComputeManagerImpl den Hauptteil der Funktionalität aus den
+   beiden Methoden unregisterOperative und removeDeadOperative in eine neue
+   Methode removeOperative ausgegliedert.
+
+
+Release 1.0
+-----------
+
+Erste veröffentlichte Version, die bei einfachen Tests schon funktionierte.
+
