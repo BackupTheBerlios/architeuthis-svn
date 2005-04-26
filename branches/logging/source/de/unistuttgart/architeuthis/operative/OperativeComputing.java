@@ -35,7 +35,9 @@
 
 package de.unistuttgart.architeuthis.operative;
 
-import de.unistuttgart.architeuthis.misc.Miscellaneous;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem;
@@ -50,6 +52,11 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
  * @author Jürgen Heit, Ralf Kible, Dietmar Lippold, Michael Wohlfart
  */
 public class OperativeComputing extends Thread {
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger LOGGER = Logger
+			.getLogger(OperativeComputing.class.getName());
 
     /**
      * Das Objekt, das als Operative die Kommunikation mit dem Dispatcher
@@ -64,11 +71,6 @@ public class OperativeComputing extends Thread {
     private volatile PartialProblem partialProblem = null;
 
     /**
-     * Dieses Flag schaltet zusätzliche Debug-Meldungen ein.
-     */
-    private boolean debugMode = true;
-
-    /**
      * Der verwendete RemoteStore. Das ist entweder ein zentraler RemoteStore
      * oder ein dezentraler RemoteStore oder <CODE>null</CODE>, falls kein
      * RemoteStoreverwendet wird
@@ -80,14 +82,12 @@ public class OperativeComputing extends Thread {
      * der Ableitung von <code>UnicastRemoteObject</code> überschrieben
      * werden.
      *
-     * @param debug          Flag für debug-Meldungen.
      * @param operativeImpl  Die OperativeImpl Implementierung, die diesen
      *                       OperativeComputing verwendet um Berechnungen
      *                       durchzuführen.
      */
-    OperativeComputing(OperativeImpl operativeImpl, boolean debug) {
+    OperativeComputing(OperativeImpl operativeImpl) {
         this.operativeImpl = operativeImpl;
-        debugMode = debug;
         start();
     }
 
@@ -112,12 +112,12 @@ public class OperativeComputing extends Thread {
          *       Allerdings würde das die instanceof Tests wohl nur in die
          *       OperativeImpl Klasse verschieben... (MW)
          */
+		LOGGER.entering(OperativeComputing.class.getName(), "fetchPartialProblem",
+				new Object[] { parProb, store});
 
-        Miscellaneous.printDebugMessage(debugMode,
-                                        "Debug: OperativeComputing hat Aufgabe"
-                                        + " vom ComputeManager empfangen.");
-        Miscellaneous.printDebugMessage(debugMode,
-                                        "Debug: der RemoteStore ist " + store);
+
+		LOGGER.log(Level.FINE,"OperativeComputing hat Aufgabe vom ComputeManager empfangen.");
+
         if (partialProblem == null) {
             partialProblem = parProb;
             this.store = store;
@@ -166,18 +166,14 @@ public class OperativeComputing extends Thread {
 
             ps = null;
             try {
-                Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Starte Berechnung");
-
+				LOGGER.log(Level.FINE,"Starte Berechnung");
                 if (partialProblem instanceof NonCommPartialProblem) {
                     ps = ((NonCommPartialProblem)partialProblem).compute();
                 } else if (partialProblem instanceof CommunicationPartialProblem) {
                     ps = ((CommunicationPartialProblem)partialProblem).compute(store);
                 } else {
                     // Fehler über den OperativeImpl an den Dispatcher weitergeben:
-                    System.err.println("Error: PartialProblem implementiert"
-                                       + " kein passendes Interface");
+					LOGGER.log(Level.SEVERE,"PartialProblem implementiert kein passendes Interface");
                     operativeImpl.reportException(
                         ExceptionCodes.PARTIALPROBLEM_ERROR,
                         "PartialProblem implementiert kein passendes Interface");
@@ -187,25 +183,23 @@ public class OperativeComputing extends Thread {
                 }
 
                 if (partialProblem != null) {
-                    Miscellaneous.printDebugMessage(
-                        debugMode,
-                        "Debug: Berechnung beendet");
+					LOGGER.log(Level.FINE,"Berechnung beendet");
                     partialProblem = null;
                     // Lösung zurückgeben
                     operativeImpl.returnPartialSolution(ps);
                 }
             } catch (ProblemComputeException e) {
                 partialProblem = null;
-                Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: ProblemComputeException ist aufgetreten : " + e);
+				if (LOGGER.isLoggable(Level.WARNING)) {
+					LOGGER.log(Level.WARNING,"ProblemComputeException ist aufgetreten: " + e);
+				}
                 operativeImpl.reportException(
                     ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
             } catch (RuntimeException e) {
                 partialProblem = null;
-                Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: RuntimeException ist aufgetreten : " + e);
+				if (LOGGER.isLoggable(Level.WARNING)) {
+					LOGGER.log(Level.WARNING,"RuntimeException ist aufgetrete: " + e);
+				}
                 operativeImpl.reportException(
                     ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
             } catch (ThreadDeath e) {
@@ -213,9 +207,9 @@ public class OperativeComputing extends Thread {
                 throw e;
             } catch (Throwable e) {
                 partialProblem = null;
-                Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Error ist aufgetreten : " + e);
+				if (LOGGER.isLoggable(Level.WARNING)) {
+					LOGGER.log(Level.WARNING,"Error ist aufgetreten: " + e);
+				}
                 operativeImpl.reportException(
                     ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
             }
