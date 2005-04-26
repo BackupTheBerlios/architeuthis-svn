@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * 
+ *
  * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
  * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
  * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
@@ -43,20 +43,6 @@ import java.net.URL;
  *
  */
 public class Miscellaneous {
-
-    /**
-     * Druckt Meldungen, wenn das erste Argument true ist. Speziell dazu
-     * gedacht, um Debug-Meldungen zu drucken, in der Art:
-     * printDebugMessage(debugFlag, "Fehlermeldung");
-     *
-     * @param message  Meldung, die ausgegeben wird.
-     * @param flag  <code>true</code>, wenn die Meldung ausgegeben werden soll.
-     */
-    public static void printDebugMessage(boolean flag, String message) {
-        if (flag) {
-            System.out.println(message);
-        }
-    }
 
     /**
      * Fragt einen String vom Benutzer ab, und zwar so oft, bis dieser

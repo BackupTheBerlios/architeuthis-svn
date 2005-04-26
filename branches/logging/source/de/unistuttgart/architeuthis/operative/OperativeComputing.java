@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeComputing.java
  * created:     26.04.2004
- * last change: 19.04.2005 by Dietmar Lippold
+ * last change: 26.04.2005 by Michael Wohlfart
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de

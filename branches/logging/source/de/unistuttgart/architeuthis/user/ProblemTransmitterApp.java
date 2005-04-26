@@ -1,7 +1,7 @@
 /*
  * file:        ProblemTransmitterApp.java
  * created:     08.08.2003
- * last change: 18.01.2005 by Michael Wohlfart
+ * last change: 26.04.2005 by Michael Wohlfart
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -35,6 +35,9 @@
 
 package de.unistuttgart.architeuthis.user;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -62,6 +65,11 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
  * @author Achim Linke, Dietmar Lippold
  */
 public class ProblemTransmitterApp {
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger LOGGER = Logger
+			.getLogger(ProblemTransmitterApp.class.getName());
 
     /**
      * Transmitter, mit dem das Problem an den ProblemManager gesendet wird.
@@ -247,7 +255,7 @@ public class ProblemTransmitterApp {
         problemManagerOption.setOptional(false);
         problemManagerOption.setName("problemManager");
         parser.addOption(problemManagerOption);
-        
+
         try {
             parser.parseAll(args);
 
@@ -262,22 +270,13 @@ public class ProblemTransmitterApp {
             problemManagerHost = parser.getParameter(problemManagerOption);
 
             // Status ausgeben
-            Miscellaneous.printDebugMessage(debugMode,
-                                            "\n\nStelle nun Verbindung her:\n"
-                                            + "URL: "
-                                            + packageURL
-                                            + "\n"
-                                            + "Klassenname: "
-                                            + classname
-                                            + "\n"
-                                            + "Computesystem: "
-                                            + problemManagerHost
-                                            + "\n"
-                                            + "Loesung: "
-                                            + filename
-                                            + "\n\n"
-                                            + "Debug-Modus ist AN\n\n");
-
+			if (LOGGER.isLoggable(Level.CONFIG)) {
+				LOGGER.log(Level.CONFIG, "Stelle nun Verbindung her:");
+				LOGGER.log(Level.CONFIG, "URL: " + packageURL);
+				LOGGER.log(Level.CONFIG, "Klassenname: " + classname);
+				LOGGER.log(Level.CONFIG, "Computesystem: " + problemManagerHost);
+				LOGGER.log(Level.CONFIG, "Loesung: " + filename);
+			}
             if (serializable) {
                 // Die folgende Zeile muß gleich am Anfang stehen
                 System.setProperty("java.rmi.server.codebase", packageURL.toString());
@@ -337,8 +336,8 @@ public class ProblemTransmitterApp {
                 System.exit(1);
             }
 
-            Miscellaneous.printDebugMessage(debugMode,
-                                            "Schreibe Lösung in Datei");
+			LOGGER.log(Level.CONFIG, "Schreibe Lösung in Datei");
+
             Miscellaneous.writeSerializableToFile(solution, filename);
             System.out.println("\nLösung erhalten und geschrieben!");
             System.out.println("Berechnung beeendet!\n");
