@@ -118,8 +118,8 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
      * {@link java.util.logging.Logger} eingestellt auf
      * de.unistuttgart.architeuthis.dispatcher
      */
-    private Logger log =
-        Logger.getLogger("de.unistuttgart.architeuthis.dispatcher");
+    private static final Logger LOGGER =
+        Logger.getLogger(ProblemManagerImpl.class.getName());
 
     /**
      * Gibt an, ob der Dienst dieses Objekts beendet wurde.
@@ -226,7 +226,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
         parProbWrapperBuffer.removeNullElements();
         new Thread() {
             public void run() {
-                log.info("Start vom Thread reactivatePassiveOperatives()");
+                LOGGER.info("Start vom Thread reactivatePassiveOperatives()");
                 cmpManager.reactivatePassiveOperatives();
             }
         }
@@ -288,7 +288,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
         }
 
         if (removedTransmitter != null) {
-            log.info("Breche für " + probWrapper.toString()
+            LOGGER.info("Breche für " + probWrapper.toString()
                      + " alle Teilprobleme ab");
 
             // Alle noch in Berechnung befindlichen Teilprobleme abbrechen.
@@ -368,12 +368,12 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
                              String message) {
 
         try {
-            log.info("Sende Nachricht \""
+            LOGGER.info("Sende Nachricht \""
                      + String.valueOf(message)
                      + "\" an Problem-Übermittler");
             transmitter.fetchMessage(messageID, message);
         } catch (RemoteException e) {
-            log.severe("<E> Nachricht konnte nicht an den Problem-Uebermittler"
+            LOGGER.severe("<E> Nachricht konnte nicht an den Problem-Uebermittler"
                        + " geschickt werden");
         }
     }
@@ -428,7 +428,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
 
         switch (exceptionCode) {
         case ExceptionCodes.PARTIALPROBLEM_CREATE_EXCEPTION :
-            log.severe("Exception PARTIALPROBLEM_CREATE_EXCEPTION zu "
+            LOGGER.severe("Exception PARTIALPROBLEM_CREATE_EXCEPTION zu "
                     + parProbWrapper + " : " + exceptionMessage);
             if (probWrap != null) {
                 transmitter = removeProblem(probWrap);
@@ -441,7 +441,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             }
             break;
         case ExceptionCodes.PARTIALSOLUTION_COLLECT_EXCEPTION :
-            log.severe("Exception PARTIALSOLUTION_COLLECT_EXCEPTION zu "
+            LOGGER.severe("Exception PARTIALSOLUTION_COLLECT_EXCEPTION zu "
                     + parProbWrapper + " : " + exceptionMessage);
             if (probWrap != null) {
                 transmitter = removeProblem(probWrap);
@@ -454,7 +454,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             }
             break;
         case ExceptionCodes.SOLUTION_CREATE_EXCEPTION :
-            log.severe("Exception SOLUTION_CREATE_EXCEPTION zu "
+            LOGGER.severe("Exception SOLUTION_CREATE_EXCEPTION zu "
                     + problemWrapper + " : " + exceptionMessage);
             if (probWrap != null) {
                 transmitter = removeProblem(probWrap);
@@ -467,7 +467,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             }
             break;
         case ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION :
-            log.severe("Exception PARTIALPROBLEM_SEND_EXCEPTION zu "
+            LOGGER.severe("Exception PARTIALPROBLEM_SEND_EXCEPTION zu "
                     + parProbWrapper + " : " + exceptionMessage);
             if (probWrap != null) {
                 transmitter = removeProblem(probWrap);
@@ -480,7 +480,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             }
             break;
         case ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION :
-            log.severe("Exception PARTIALSOLUTION_SEND_EXCEPTION zu "
+            LOGGER.severe("Exception PARTIALSOLUTION_SEND_EXCEPTION zu "
                     + parProbWrapper + " : " + exceptionMessage);
             if (probWrap != null) {
                 transmitter = removeProblem(probWrap);
@@ -493,7 +493,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             }
             break;
         case ExceptionCodes.SOLUTION_SEND_EXCEPTION :
-            log.severe("Exception SOLUTION_SEND_EXCEPTION zu "
+            LOGGER.severe("Exception SOLUTION_SEND_EXCEPTION zu "
                     + problemWrapper + " : " + exceptionMessage);
             if (probWrap != null) {
                 transmitter = removeProblem(probWrap);
@@ -506,7 +506,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             }
             break;
         case ExceptionCodes.PARTIALPROBLEM_COMPUTE_EXCEPTION :
-            log.severe("Exception PARTIALPROBLEM_COMPUTE_EXCEPTION zu "
+            LOGGER.severe("Exception PARTIALPROBLEM_COMPUTE_EXCEPTION zu "
                     + parProbWrapper + " : " + exceptionMessage);
             if (probWrap != null) {
                 transmitter = removeProblem(probWrap);
@@ -519,7 +519,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             }
             break;
         case ExceptionCodes.REMOTE_STORE_GEN_EXCEPTION :
-            log.severe("Exception REMOTE_STORE_GEN_EXCEPTION zu "
+            LOGGER.severe("Exception REMOTE_STORE_GEN_EXCEPTION zu "
                     + parProbWrapper + " : " + exceptionMessage);
             if (probWrap != null) {
                 transmitter = removeProblem(probWrap);
@@ -532,7 +532,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             }
             break;
         case ExceptionCodes.REMOTE_STORE_EXCEPTION :
-            log.severe("Exception REMOTE_STORE_EXCEPTION zu "
+            LOGGER.severe("Exception REMOTE_STORE_EXCEPTION zu "
                     + parProbWrapper + " : " + exceptionMessage);
             if (probWrap != null) {
                 transmitter = removeProblem(probWrap);
@@ -545,7 +545,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             }
             break;
         case ExceptionCodes.PARTIALPROBLEM_ERROR :
-            log.severe("Exception PARTIALPROBLEM_ERROR zu "
+            LOGGER.severe("Exception PARTIALPROBLEM_ERROR zu "
                     + parProbWrapper + " : " + exceptionMessage);
             if (probWrap != null) {
                 transmitter = removeProblem(probWrap);
@@ -558,7 +558,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             }
             break;
         case ExceptionCodes.PROBLEM_INCORRECT_ERROR :
-            log.severe("Exception PROBLEM_INCORRECT_ERROR zu "
+            LOGGER.severe("Exception PROBLEM_INCORRECT_ERROR zu "
                     + problemWrapper + " : " + exceptionMessage);
             if (probWrap != null) {
                 transmitter = removeProblem(probWrap);
@@ -571,7 +571,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             }
             break;
         case ExceptionCodes.USER_ABORT_PROBLEM :
-            log.severe("Exception USER_ABORT_PROBLEM zu "
+            LOGGER.severe("Exception USER_ABORT_PROBLEM zu "
                     + problemWrapper + " : " + exceptionMessage);
             if (probWrap != null) {
                 transmitter = removeProblem(probWrap);
@@ -604,7 +604,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
             "Neuer Operative hat sich angemeldet.");
             break;
         default :
-            log.warning(
+            LOGGER.warning(
                     "Unbekannte Fehlermeldung: "
                     + exceptionCode
                     + " "
@@ -639,15 +639,15 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
                             solution,
                             problemWrapper.getStatistics());
                     sent = true;
-                    log.info("Lösung erfolgreich an Benutzer gesendet.");
+                    LOGGER.info("Lösung erfolgreich an Benutzer gesendet.");
                 } catch (RemoteException e) {
                     exceptionMessage = e.toString();
-                    log.severe(
+                    LOGGER.severe(
                             "<E> Problem-Übermittler nicht ereichbar für"
                             + " Lösungsrückgabe.");
                 } catch (RuntimeException e) {
                     exceptionMessage = e.toString();
-                    log.fine("Senden der Lösung fehlgeschlagen");
+                    LOGGER.fine("Senden der Lösung fehlgeschlagen");
                     tries = SEND_SOLUTION_MAX_TRY;
                 }
 
@@ -668,7 +668,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
                     null,
                     ExceptionCodes.SOLUTION_SEND_EXCEPTION,
                     exceptionMessage);
-            log.warning("Lösung konnte nicht zurückgeliefert werden.");
+            LOGGER.warning("Lösung konnte nicht zurückgeliefert werden.");
         }
     }
 
@@ -812,7 +812,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
 
                 ProblemWrapper probWrapper =
                     new ProblemWrapper(this, problem, generator, systemStatistic);
-                log.info(probWrapper.toString() + " erzeugt");
+                LOGGER.info(probWrapper.toString() + " erzeugt");
                 probWrapTransmitter.put(probWrapper, transmitter);
 
                 // Null-Objekte aus Teilproblem-Puffer entfernen, da das neue
@@ -821,16 +821,16 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
                 // Hinzufügen von probWrapper zu probWrapTransmitter erfolgte.
                 parProbWrapperBuffer.removeNullElements();
             } catch (ClassNotFoundException e) {
-                log.warning("<E> Zugriff auf Problem-Klasse nicht möglich");
+                LOGGER.warning("<E> Zugriff auf Problem-Klasse nicht möglich");
                 throw e;
             } catch (Exception e) {
-                log.severe("<E> unerwartete Ausnahme");
+                LOGGER.severe("<E> unerwartete Ausnahme");
                 e.printStackTrace();
                 throw new ProblemComputeException("Exception: "
                                                   + e.toString());
             } catch (Error e) {
                 // Fängt insbesondere einen NoClassDefFoundError ab.
-                log.severe("<E> unerwarteter Error");
+                LOGGER.severe("<E> unerwarteter Error");
                 e.printStackTrace();
                 throw new ProblemComputeException("Error: " + e.toString());
             }
@@ -888,7 +888,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
 
             ProblemWrapper probWrapper =
                 new ProblemWrapper(this, problem, generator, systemStatistic);
-            log.info(probWrapper.toString() + " erzeugt");
+            LOGGER.info(probWrapper.toString() + " erzeugt");
             probWrapTransmitter.put(probWrapper, transmitter);
 
             // Null-Objekte aus Teilproblem-Puffer entfernen, da das neue
