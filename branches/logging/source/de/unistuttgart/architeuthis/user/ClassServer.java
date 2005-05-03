@@ -122,7 +122,7 @@ public abstract class ClassServer implements Runnable {
 
         // accept a connection
         try {
-            // this statement is blocking
+            // this statement is blocking until someone connects to this server
             socket = server.accept();
         } catch (IOException e) {
             if (LOGGER.isLoggable(Level.SEVERE)) {

@@ -550,8 +550,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             binding.append("/");
             binding.append(ComputeManager.COMPUTEMANAGER_ID_STRING);
 
-            if (LOGGER.isLoggable(Level.INFO)) {
-                LOGGER.log(Level.INFO, "Parameter für Operative: "
+            if (LOGGER.isLoggable(Level.CONFIG)) {
+                LOGGER.log(Level.CONFIG, "Parameter für Operative: "
                         + "Debuglevel: " + logger.getLevel()
                         + "ComputeManager: " + binding);
             }
