@@ -169,7 +169,7 @@ public final class ComputeManagerImpl
      * {@link java.util.logging.Logger} eingestellt auf
      * de.unistuttgart.architeuthis.dispatcher
      */
-    private Logger LOGGER = Logger.getLogger(ComputeManagerImpl.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(ComputeManagerImpl.class.getName());
 
     /**
      * Maximale Anzahl von Versuchen, einen Operative zu erreichen, bis dieser
@@ -260,8 +260,7 @@ public final class ComputeManagerImpl
             new OperativeMonitoringUnit(
                 this,
                 remoteOperativeMaxTries,
-                operativeMonitoringInterval,
-                LOGGER);
+                operativeMonitoringInterval);
 
         // Hier wird ein shutdownHook gesetzt. Dieser wird aufgerufen, wenn vom
         // System ein term-Signal kommt (also beim Beenden oder bei Strg+c).

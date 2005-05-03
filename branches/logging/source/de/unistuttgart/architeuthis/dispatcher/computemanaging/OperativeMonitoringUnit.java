@@ -83,7 +83,9 @@ class OperativeMonitoringUnit extends Thread {
      * {@link java.util.logging.Logger} eingestellt auf
      * de.unistuttgart.architeuthis.dispatcher
      */
-    private Logger log;
+    private static final Logger LOGGER
+        = Logger.getLogger(OperativeMonitoringUnit.class.getName());
+
 
     /**
      * Initialisert den Operative-Erreichbarkeitstest.
@@ -95,20 +97,16 @@ class OperativeMonitoringUnit extends Thread {
      * @param monitoringMillis  Minimale Zeitdauer in Millisekunden nach der der
      *                          {@link Operative}-Erreichbarkeitstest erneut
      *                          durchgeführt wird.
-     * @param logger  Java-Logger der für Debugging verwendet werden soll.
-     *                Referenz darf nicht null sein.
      */
     OperativeMonitoringUnit(
         ComputeManagerImpl compMan,
         long reachMaxTries,
-        long monitoringMillis,
-        Logger logger) {
+        long monitoringMillis) {
 
         threadTerminated = false;
         operativeReachableMaxTries = reachMaxTries;
         minOperativeMonitoringMillis = monitoringMillis;
         computeManager = compMan;
-        log = logger;
     }
 
     /**
@@ -125,7 +123,7 @@ class OperativeMonitoringUnit extends Thread {
     void startMonitoring(Operative operative) {
         synchronized (operativesTries) {
             operativesTries.put(operative, new Long(0));
-            log.info("Operative zur Überwachung hinzugefügt.");
+            LOGGER.info("Operative zur Überwachung hinzugefügt.");
         }
     }
 
@@ -147,7 +145,7 @@ class OperativeMonitoringUnit extends Thread {
     void stopMonitoring(Operative operative) {
         synchronized (operativesTries) {
             operativesTries.remove(operative);
-            log.info("Operative aus Überwachung entfernt.");
+            LOGGER.info("Operative aus Überwachung entfernt.");
         }
     }
 
@@ -159,16 +157,16 @@ class OperativeMonitoringUnit extends Thread {
      * @see java.lang.Thread#destroy()
      */
     public void terminate() {
-        log.info("Operative Überwachungsprozess wird gestoppt.");
+        LOGGER.info("Operative Überwachungsprozess wird gestoppt.");
         threadTerminated = true;
         synchronized (this) {
             this.notifyAll();
         }
         try {
             this.join();
-            log.info("Operative-Überwachung gestoppt.");
+            LOGGER.info("Operative-Überwachung gestoppt.");
         } catch (InterruptedException e2) {
-            log.info("Benutzerabbruch.");
+            LOGGER.info("Benutzerabbruch.");
         }
     }
 
@@ -179,9 +177,9 @@ class OperativeMonitoringUnit extends Thread {
      * @see java.lang.Runnable#run()
      */
     public void run() {
-        log.info("Operative Überwachungsprozess gestartet.");
+        LOGGER.info("Operative Überwachungsprozess gestartet.");
         while (!threadTerminated) {
-            log.finest("Überprüfe Operatives auf Erreichbarkeit");
+            LOGGER.finest("Überprüfe Operatives auf Erreichbarkeit");
             Enumeration operatives = (Enumeration) operativesTries.keys();
             long startTime = System.currentTimeMillis();
             while (operatives.hasMoreElements()) {
@@ -217,7 +215,7 @@ class OperativeMonitoringUnit extends Thread {
                                     operativesTries.put(operative, new Long(0));
                                 } else {
                                     operativesTries.put(operative, new Long(oldErrNo));
-                                    log.info(
+                                    LOGGER.info(
                                         "Verbindungsfehler zu Operative. "
                                             + "Erhöhe seinen "
                                             + "Verbindungsfehlerzähler");
@@ -228,7 +226,7 @@ class OperativeMonitoringUnit extends Thread {
                         // war, so überprüft der ComputeManager ob der
                         // Operative aus der Verwaltung entfernt werden muss.
                         if (inList && (oldErrNo > operativeReachableMaxTries)) {
-                            log.info(
+                            LOGGER.info(
                                 "Verbindungsfehler zu Operative. "
                                     + "Schlage vor ihn zu entfernen.");
                             computeManager.verifyOperativeReachability(operative);
@@ -242,7 +240,7 @@ class OperativeMonitoringUnit extends Thread {
                     try {
                         this.wait(minOperativeMonitoringMillis - durationMillis);
                     } catch (InterruptedException e) {
-                        log.warning(
+                        LOGGER.warning(
                             "Operative-Überwachung konnte nicht warten.");
                     }
                 }
