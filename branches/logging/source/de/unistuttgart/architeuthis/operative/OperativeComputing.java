@@ -52,11 +52,11 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
  * @author Jürgen Heit, Ralf Kible, Dietmar Lippold, Michael Wohlfart
  */
 public class OperativeComputing extends Thread {
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger LOGGER = Logger
-			.getLogger(OperativeComputing.class.getName());
+    /**
+     * Logger for this class
+     */
+    private static final Logger LOGGER = Logger
+            .getLogger(OperativeComputing.class.getName());
 
     /**
      * Das Objekt, das als Operative die Kommunikation mit dem Dispatcher
@@ -112,19 +112,19 @@ public class OperativeComputing extends Thread {
          *       Allerdings würde das die instanceof Tests wohl nur in die
          *       OperativeImpl Klasse verschieben... (MW)
          */
-		LOGGER.entering(OperativeComputing.class.getName(), "fetchPartialProblem",
-				new Object[] { parProb, store});
+        LOGGER.entering(OperativeComputing.class.getName(), "fetchPartialProblem",
+                new Object[] {parProb, store});
 
 
-		LOGGER.log(Level.FINE,"OperativeComputing hat Aufgabe vom ComputeManager empfangen.");
+        LOGGER.log(Level.FINE, "OperativeComputing hat Aufgabe vom ComputeManager empfangen.");
 
         if (partialProblem == null) {
             partialProblem = parProb;
             this.store = store;
             notifyAll();
         } else {
-            throw new ProblemComputeException("OperativeComputing bereits"
-                                              + " beschäftigt");
+            LOGGER.log(Level.WARNING, "OperativeComputing bereits beschäftigt");
+            throw new ProblemComputeException("OperativeComputing bereits beschäftigt");
         }
     }
 
@@ -156,24 +156,32 @@ public class OperativeComputing extends Thread {
                 if (partialProblem == null) {
                     // Auf Teilproblem warten
                     try {
+                        LOGGER.log(Level.FINEST,
+                                "OperativeComputing Thread wartet auf Teilproblem");
                         wait();
+                        LOGGER.log(Level.FINEST,
+                                "OperativeComputing Thread hat Teilproblem erhalten");
                     } catch (InterruptedException e) {
-                        // Wenn ein Teilproblem zu bearbeiten ist, die
-                        // Berechnung beginnen.
+                        LOGGER.log(Level.WARNING,
+                               "Exception beim Warten auf Teilproblem");
+                        // hier ist wirklich eine Exception passiert,
+                        // beim normalen notify() oder notifyAll() wird keine
+                        // Exception ausgelöst, sondern lediglich das wait()
+                        // verlassen
                     }
                 }
             }
 
             ps = null;
             try {
-				LOGGER.log(Level.FINE,"Starte Berechnung");
+                LOGGER.log(Level.FINE, "Starte Berechnung");
                 if (partialProblem instanceof NonCommPartialProblem) {
                     ps = ((NonCommPartialProblem)partialProblem).compute();
                 } else if (partialProblem instanceof CommunicationPartialProblem) {
                     ps = ((CommunicationPartialProblem)partialProblem).compute(store);
                 } else {
                     // Fehler über den OperativeImpl an den Dispatcher weitergeben:
-					LOGGER.log(Level.SEVERE,"PartialProblem implementiert kein passendes Interface");
+                    LOGGER.log(Level.SEVERE, "PartialProblem implementiert kein passendes Interface");
                     operativeImpl.reportException(
                         ExceptionCodes.PARTIALPROBLEM_ERROR,
                         "PartialProblem implementiert kein passendes Interface");
@@ -183,23 +191,23 @@ public class OperativeComputing extends Thread {
                 }
 
                 if (partialProblem != null) {
-					LOGGER.log(Level.FINE,"Berechnung beendet");
+                    LOGGER.log(Level.FINE, "Berechnung beendet");
                     partialProblem = null;
                     // Lösung zurückgeben
                     operativeImpl.returnPartialSolution(ps);
                 }
             } catch (ProblemComputeException e) {
                 partialProblem = null;
-				if (LOGGER.isLoggable(Level.WARNING)) {
-					LOGGER.log(Level.WARNING,"ProblemComputeException ist aufgetreten: " + e);
-				}
+                if (LOGGER.isLoggable(Level.WARNING)) {
+                    LOGGER.log(Level.WARNING, "ProblemComputeException ist aufgetreten: " + e);
+                }
                 operativeImpl.reportException(
                     ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
             } catch (RuntimeException e) {
                 partialProblem = null;
-				if (LOGGER.isLoggable(Level.WARNING)) {
-					LOGGER.log(Level.WARNING,"RuntimeException ist aufgetrete: " + e);
-				}
+                if (LOGGER.isLoggable(Level.WARNING)) {
+                    LOGGER.log(Level.WARNING, "RuntimeException ist aufgetrete: " + e);
+                }
                 operativeImpl.reportException(
                     ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
             } catch (ThreadDeath e) {
@@ -207,9 +215,9 @@ public class OperativeComputing extends Thread {
                 throw e;
             } catch (Throwable e) {
                 partialProblem = null;
-				if (LOGGER.isLoggable(Level.WARNING)) {
-					LOGGER.log(Level.WARNING,"Error ist aufgetreten: " + e);
-				}
+                if (LOGGER.isLoggable(Level.WARNING)) {
+                    LOGGER.log(Level.WARNING, "Error ist aufgetreten: " + e);
+                }
                 operativeImpl.reportException(
                     ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
             }
