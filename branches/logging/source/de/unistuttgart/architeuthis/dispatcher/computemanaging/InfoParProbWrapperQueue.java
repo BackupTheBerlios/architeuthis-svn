@@ -1,12 +1,13 @@
 /*
  * file:        InfoParProbWrapperQueue.java
  * created:     12.7.2003
- * last change: 08.10.2004 by Dietmar Lippold
+ * last change: 05.05.2004 by Michael Wohlfart
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -34,6 +35,9 @@
 
 package de.unistuttgart.architeuthis.dispatcher.computemanaging;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,6 +51,11 @@ import de.unistuttgart.architeuthis.dispatcher.problemmanaging.ParProbWrapper;
  * @author Andreas Heydlauff, Jürgen Heit, Dietmar Lippold
  */
 class InfoParProbWrapperQueue {
+    /**
+     * Logger für diese Klasse
+     */
+    private static final Logger LOGGER
+        = Logger.getLogger(InfoParProbWrapperQueue.class.getName());
 
     /**
      * Alle Teilproblem-Info-Objekte, die erzeugt wurden und nicht fertig
@@ -207,10 +216,11 @@ class InfoParProbWrapperQueue {
             partProbInfo = partProbInfoAborted(partProbWrap);
         } else {
             if (partProbInfoAborted(partProbWrap) != null) {
-                System.out.println(
-                    "<E> Teilproblem ist sowohl in der Liste der Teilprobleme"
-                        + " in Berechnung als auch in der der abgebrochenen"
-                        + " Teilprobleme.");
+                if (LOGGER.isLoggable(Level.WARNING)) {
+                    LOGGER.log(Level.WARNING,
+                        "Teilproblem ist sowohl in der Liste der Teilprobleme"
+                        + " in Berechnung als auch in der der abgebrochenen Teilprobleme.");
+                }
             }
         }
         removePartProbInfo(partProbInfo);
