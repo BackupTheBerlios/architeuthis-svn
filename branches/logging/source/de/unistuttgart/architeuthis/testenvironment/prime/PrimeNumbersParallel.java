@@ -115,7 +115,7 @@ public class PrimeNumbersParallel {
         Object[] primParameters = new Object[2];
         ArrayList solution = null;
 
-        pti = new ProblemTransmitterImpl(DISPATCHER, false);
+        pti = new ProblemTransmitterImpl(DISPATCHER);
         primParameters[0] = new Long(minWert);
         primParameters[1] = new Long(maxWert);
         solution = (ArrayList) pti.transmitProblem(new URL(CLASS_URL),
@@ -161,7 +161,7 @@ public class PrimeNumbersParallel {
         Object[] primParameters = new Object[2];
         ArrayList solution = null;
 
-        pti = new ProblemTransmitterImpl(DISPATCHER, false);
+        pti = new ProblemTransmitterImpl(DISPATCHER);
         primParameters[0] = new Long(minNummer);
         primParameters[1] = new Long(maxNummer);
         solution = (ArrayList) pti.transmitProblem(new URL(CLASS_URL),
