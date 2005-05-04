@@ -75,7 +75,7 @@ public class SystemTextStatisticsReader {
         }
 
         try {
-            problemTransmitter = new ProblemTransmitterImpl(compSys, false);
+            problemTransmitter = new ProblemTransmitterImpl(compSys);
             sysStat = problemTransmitter.getSystemStatistic();
             System.out.println("\n\n" + "Statistik des ComputeSystems auf "
                                + args[0] + "\n\n"

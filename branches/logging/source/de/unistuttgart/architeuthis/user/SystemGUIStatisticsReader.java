@@ -34,6 +34,9 @@
 
 package de.unistuttgart.architeuthis.user;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import java.awt.Color;
 import java.awt.AWTEvent;
 import java.awt.Dimension;
@@ -64,6 +67,11 @@ import de.unistuttgart.architeuthis.systeminterfaces.UserProblemTransmitter;
  *
  */
 public class SystemGUIStatisticsReader extends JFrame {
+    /**
+     * Logger for this class
+     */
+    private static final Logger LOGGER = Logger
+            .getLogger(SystemGUIStatisticsReader.class.getName());
 
 
     /**
@@ -71,6 +79,10 @@ public class SystemGUIStatisticsReader extends JFrame {
      * Daten.
      */
     private class Updater extends Thread {
+        /**
+         * Logger for this class
+         */
+        private final Logger LOGGER = Logger.getLogger(Updater.class.getName());
 
         /**
          * Ein ProblemTransmitter mit Verbindung zu dem Compute-Server, dessen
@@ -250,7 +262,7 @@ public class SystemGUIStatisticsReader extends JFrame {
                RemoteException,
                NotBoundException {
 
-        this(new ProblemTransmitterImpl(dispatcher, false), dispatcher);
+        this(new ProblemTransmitterImpl(dispatcher), dispatcher);
     }
 
     /**
@@ -583,7 +595,7 @@ public class SystemGUIStatisticsReader extends JFrame {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warning("exception: " + e);
         }
 
         if (args.length == 1) {
@@ -592,15 +604,11 @@ public class SystemGUIStatisticsReader extends JFrame {
             try {
                 new SystemGUIStatisticsReader(compSys);
             } catch (Exception e) {
-                System.err.println("Fehler!");
-                e.printStackTrace();
+                LOGGER.warning("Fehler! -  : exception: " + e);
             }
         } else {
-            System.err.println(
-                "Fehler: Als Kommandozeilenargument muss die Adresse des\n"
-                    + "Computesystems eingegeben werden. Beispiel:\n"
-                    + "java SystemGUIStatisticsReader meinSystem.de:"
-                    + ProblemManager.PORT_NO);
+            System.err.println("Fehler: Als Kommandozeilenargument muss die Adresse desnComputesystems eingegeben werden. Beispiel:njava SystemGUIStatisticsReader meinSystem.de:"
+                            + ProblemManager.PORT_NO + "exception: " + null);
         }
     }
 }
