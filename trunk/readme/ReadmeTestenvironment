@@ -1,5 +1,5 @@
 Datei          : ReadmeTestenvironment
-Letzte Änderung: 15.02.2005 durch Dietmar Lippold
+Letzte Änderung: 09.05.2005 durch Dietmar Lippold
 
 
 This file is part of Architeuthis.
@@ -111,6 +111,12 @@ In dieser Datei kann bzw. muß man außerdem noch folgende Einträge ändern:
                      Verzeichnis runScripts. Man braucht diese Variable
                      also nicht zu ändern, wenn man die Testprobleme aus
                      diesem Verzeichnis startet.
+
+Wichtig für DOS/Windows-Benutzer: Die Angabe zu CLASS_SERVER_HOST in
+                                  setup.bat muß geändert werden. Der Variablen
+                                  kann für einen Test auf dem eigenen Rechner
+                                  der Wert localhost oder 127.0.0.1 zugewiesen
+                                  werden.
 
 Anschließend muß man die in Problems.jar enthaltenen class-Dateien in das
 vom ClassFileServer oder WWW-Server benuzte Verzeichnis (auf das sich
