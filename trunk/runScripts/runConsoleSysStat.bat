@@ -7,7 +7,7 @@ REM Benötigte Umgebungsvariablen (CONFIG_DIR, JAVA, DEPLOY_DIR,
 REM DISPATCHER_HOST, DISPATCHER_PORT) werden gesetzt
 call setup.bat
 
-POLICY_CONF=statisticreader.pol
+set POLICY_CONF=statisticreader.pol
 
 REM die Parameter für die JVM
 set JVMPAR= 
