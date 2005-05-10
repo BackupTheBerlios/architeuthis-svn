@@ -8,7 +8,11 @@
 # JAVA_HOME=/usr/java
 
 # Der Pfad zur JVM.
-JAVA="$JAVA_HOME/bin/java"
+if [ -n "$JAVA_HOME" ]; then
+  JAVA="$JAVA_HOME/bin/java"
+else
+  JAVA="java"
+fi
 
 # Das Verzeichnis mit den policy-, properties- und config-Dateien.
 CONFIG_DIR="../config"

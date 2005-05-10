@@ -11,6 +11,7 @@ REM JAVA_HOME=/usr/java
 
 REM Der Pfad zur JVM (default java aus dem %PATH%)
 set JAVA=java
+if not "%JAVA_HOME%"=="" set JAVA=%JAVA_HOME%/bin/java
 
 REM Das Verzeichnis mit den policy-, properties- und config-Dateien.
 set CONFIG_DIR=..\config
