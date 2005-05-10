@@ -35,6 +35,7 @@
 
 package de.unistuttgart.architeuthis.operative;
 
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -374,7 +375,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
     }
 
     /**
-     * Übrmittelt dem Dispatcher eine Fehlermeldung und meldet den distRemoteStore ab.
+     * Übermittelt dem Dispatcher eine Fehlermeldung und meldet den distRemoteStore ab.
      * Wenn dies nicht möglich ist, wird der Operative beendet.
      *
      * @param exceptionCode     Integerwert, der die Ausnahme charakterisisert.
@@ -524,16 +525,26 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             if (parser.isEnabled(debug1) || parser.isEnabled(debug2)) {
                 // logger für diese Package
                 logger.setLevel(Level.FINEST);
-                // ich habe noch keine Möglichkeit gefunden eine Referenz auf den
-                // Default Handler zu bekommen, daher:
 
-                // neuer Handler für diesen Logger
-                Handler handler = new java.util.logging.ConsoleHandler();
-                handler.setLevel(Level.FINEST);
-                logger.addHandler(handler);
+                // der DefaultHandler hängt am root-Logger
+                Handler[] handlers = Logger.getLogger("").getHandlers();
 
-                // Problem: Teilweise werden die Meldungen jetzt zweimal ausgegeben,
-                // einmal vom neuen Handler und einmal vom Default Handler :-(
+                // einen ConsoleHandler finden:
+                ConsoleHandler consoleHandler = null;
+                for (int i=0; i < handlers.length; i++) {
+                    if (handlers[i] instanceof ConsoleHandler) {
+                        consoleHandler = (ConsoleHandler) handlers[i];
+                    }
+                }
+
+                // kein ConsoleHandler am root-Logger ?!
+                //  wir hängen selbst einen an:
+                if (consoleHandler == null) {
+                    consoleHandler = new java.util.logging.ConsoleHandler();
+                    Logger.getLogger("").addHandler(consoleHandler);
+                }
+
+                consoleHandler.setLevel(Level.FINEST);
             }
 
             binding.append(parser.getFreeParameter());
