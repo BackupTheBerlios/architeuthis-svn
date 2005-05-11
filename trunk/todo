@@ -1,7 +1,7 @@
             Weitere geplante Arbeiten und Ideen für Architeuthis
 
 
-Stand: 19.04.2005
+Stand: 11.05.2005
 
 
 Änderungen größerer Wichtigkeit
@@ -74,8 +74,8 @@ Stand: 19.04.2005
  * Prüfen, warum eine jar-Datei in der angegebenen Codebase im Cache
    gehalten wird, d.h. die Klasse CacheFlushingRMIClSpi wirkungslos ist.
 
- * Prüfen, warum die jar-Datei User.jar so viele Klassen enthält bzw.
-   ob sie diese enthalten muß.
+ * Prüfen, warum die jar-Dateien User.jar und Problems.jar so viele Klassen
+   enthalten bzw. ob sie diese enthalten müssen.
 
  * Überlegen, ob das Package testenvironment aufgeteilt werden sollte in
    eines, das nur die Testprobleme enthält und eines, das diese benutzt.
