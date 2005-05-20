@@ -35,6 +35,7 @@
 
 package de.unistuttgart.architeuthis.user;
 
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -243,14 +244,30 @@ public class ProblemTransmitterApp {
             serializable = parser.isEnabled(serializableSwitch);
 
             if (parser.isEnabled(debugSwitch)) {
-                // log level für alle Logger diese packages:
+                // log-Level für alle Logger dieses Packages setzen:
                 Logger logger = Logger.getLogger("de.unistuttgart.architeuthis.user");
                 logger.setLevel(Level.FINEST);
 
-                // neuer Handler für diesen Logger
-                Handler handler = new java.util.logging.ConsoleHandler();
-                handler.setLevel(Level.FINEST);
-                logger.addHandler(handler);
+                // der DefaultHandler hängt (normalerweise) am root-Logger
+                Handler[] handlers = Logger.getLogger("").getHandlers();
+
+                // einen ConsoleHandler finden:
+                ConsoleHandler consoleHandler = null;
+                for (int i=0; i < handlers.length; i++) {
+                    if (handlers[i] instanceof ConsoleHandler) {
+                        consoleHandler = (ConsoleHandler) handlers[i];
+                    }
+                }
+
+                // kein ConsoleHandler am root-Logger ?!
+                //  wir hängen selbst einen an:
+                if (consoleHandler == null) {
+                    consoleHandler = new java.util.logging.ConsoleHandler();
+                    Logger.getLogger("").addHandler(consoleHandler);
+                }
+
+                consoleHandler.setLevel(Level.FINEST);
+
             }
 
             graphicalMode = !parser.isEnabled(noGraphicalModeSwitch);
