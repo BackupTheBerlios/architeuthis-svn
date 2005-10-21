@@ -288,7 +288,10 @@ public class ParameterParser {
             if (optionNameMap.containsKey(name)) {
                 Option option = (Option) optionNameMap.get(name);
                 String value = (String)in.get(name);
-                if (option.canTakeParameter()
+                // there may be no value assigned to this option
+                if (value.length() == 0) {
+                	option.setEnabled(true);
+                } else if (option.canTakeParameter()
                         && option.canMatchParameter(value)) {
                     option.addParameter(value);
                 } else {
@@ -438,9 +441,14 @@ public class ParameterParser {
             }
         }
 
-        // check for free parameter number
+        // check for free parameter minimum number
         if (freeParameters.size() < minParameters) {
             throw new ParameterParserException("Missing parameters ");
+        }
+
+        // check for free parameter maximum number
+        if (freeParameters.size() > maxParameters) {
+            throw new ParameterParserException("Too many parameters ");
         }
 
         // delegate checks to the Options:

@@ -164,6 +164,7 @@ public class Option {
      */
     public Option(String key) {
         this.key = key;
+        this.name = key;
     }
 
     /**
