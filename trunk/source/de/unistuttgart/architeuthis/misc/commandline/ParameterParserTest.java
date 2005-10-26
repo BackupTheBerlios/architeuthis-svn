@@ -907,4 +907,92 @@ public class ParameterParserTest extends TestCase {
 
 	}
 
+
+	/*
+param
+optionfile=datei
+	 */
+
+
+	public void testPropertiesReading3() {
+		String filename = "param-config";
+
+
+		// create a input stream to simulate a properties file
+		String fileContent = "param " + NEWLINE
+		+ "optionfile=datei" + NEWLINE;
+
+		String[] args = { "-config", filename, "zzz" };
+
+
+        ParameterParser parser = new ParameterParser();
+        Option          helpSwitch, paramSwitch, paramOption, configOption;
+        String          optionWert, freierParameter;
+        boolean         paramVorhanden;
+
+        helpSwitch = new Option("help");
+        parser.addOption(helpSwitch);
+
+        paramSwitch = new Option("param");
+        parser.addOption(paramSwitch);
+
+        paramOption = new Option("option");
+        paramOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+        paramOption.setName("optionfile");
+        parser.addOption(paramOption);
+
+        configOption = new Option("config");
+        configOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+        configOption.setName("configfile");
+        parser.addOption(configOption);
+
+        parser.setComandline(args);
+
+
+        try {
+        	parser.parseOption(helpSwitch);
+        	assertFalse(parser.isEnabled(helpSwitch));
+        } catch (ParameterParserException e1) {
+			fail();
+        }
+
+        try {
+			parser.parseOption(configOption);
+	        assertTrue(parser.isEnabled(configOption));
+	        assertEquals(parser.getParameter(configOption), filename);
+		} catch (ParameterParserException e1) {
+			fail();
+		}
+
+
+		try {
+			// convert fileContent to input stream
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(fileContent.getBytes("UTF-8"));
+			Properties props = new Properties();
+			props.load(inputStream);
+			HashMap propsHashMap = new HashMap(props);
+
+
+			try {
+				parser.parseProperties(propsHashMap);
+				assertTrue(parser.isEnabled(paramSwitch));
+
+				assertTrue(parser.isEnabled(paramOption));
+				assertEquals(parser.getParameter(paramOption), "datei");
+
+			} catch (ParameterParserException e) {
+				fail();
+			}
+
+
+
+		} catch (UnsupportedEncodingException e) {
+			fail();
+		} catch (IOException e) {
+			fail();
+		}
+
+
+	}
+
 }

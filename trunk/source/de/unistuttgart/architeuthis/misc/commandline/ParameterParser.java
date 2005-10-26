@@ -293,6 +293,7 @@ public class ParameterParser {
                 	option.setEnabled(true);
                 } else if (option.canTakeParameter()
                         && option.canMatchParameter(value)) {
+                    option.setEnabled(true);
                     option.addParameter(value);
                 } else {
                     throw new ParameterParserException("Unable to assign value "
