@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 19.04.2005 by Dietmar Lippold
+ * last change: 03.05.2005 by Michael Wohlfart
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -35,6 +35,11 @@
 
 package de.unistuttgart.architeuthis.operative;
 
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RMISecurityManager;
@@ -42,7 +47,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi;
-import de.unistuttgart.architeuthis.misc.Miscellaneous;
+//import de.unistuttgart.architeuthis.misc.Miscellaneous;
 import de.unistuttgart.architeuthis.misc.commandline.Option;
 import de.unistuttgart.architeuthis.misc.commandline.ParameterParser;
 import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
@@ -69,10 +74,16 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
     /**
+     * Logger für diese Klasse
+     */
+    private static final Logger LOGGER
+        = Logger.getLogger(OperativeImpl.class.getName());
+
+    /**
      * Generierte SerialVersionUID. Diese muss geändert werden, sobald
      * strukurelle Änderungen an dieser Klasse durchgeführt worden sind.
      */
-    private static final long serialVersionUID = 5113486114169274887L;
+    private static final long serialVersionUID = 3977296607899299896L;
 
     /**
      * Ist die Anzahl der Versuche, Verbindung mit dem ComputeManager
@@ -98,11 +109,6 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * ist.
      */
     private ComputeManager computeManager = null;
-
-    /**
-     * Dieses Flag schaltet zusätzliche Debug-Meldungen ein.
-     */
-    private boolean debugMode = true;
 
     /**
      * Der dezentrale Speichers oder <CODE>null</CODE>, falls keiner verwendet
@@ -136,8 +142,6 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * aufgerufen werden muss.
      *
      * @param computeManager  Der ComputeManagers in der RMI-Registry.
-     * @param debug           Schaltet zusätzliche debug-Meldungen ein, falls
-     *                        <code>true</code>.
      *
      * @throws MalformedURLException  Die Angabe vom <code>compManager</code>
      *                                war kein zulässiger Name.
@@ -145,7 +149,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * @throws NotBoundException      Der Dispatcher war auf der Registry nicht
      *                                eingetragen.
      */
-    private OperativeImpl(ComputeManager computeManager, boolean debug)
+    private OperativeImpl(ComputeManager computeManager)
         throws MalformedURLException,
                RemoteException,
                NotBoundException {
@@ -155,8 +159,6 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new RMISecurityManager());
         }
-
-        debugMode = debug;
     }
 
     /**
@@ -177,7 +179,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             }
         });
 
-        backgroundComputation = new OperativeComputing(this, this.debugMode);
+        backgroundComputation = new OperativeComputing(this);
     }
 
     /**
@@ -204,9 +206,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         } catch (RemoteException e) {
             throw e;
         } catch (Throwable e) {
-            Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: Fehler bei der Abmeldung oder Beendigung eines RemoteStore");
+            LOGGER.log(Level.WARNING, "Fehler bei der Abmeldung oder Beendigung eines RemoteStore");
             throw new RemoteStoreException(e.getMessage(), e.getCause());
         } finally {
             centralRemoteStore = null;
@@ -229,9 +229,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
     public synchronized void doExit() throws RemoteException {
         if (backgroundComputation != null) {
             // OperativeComputing-Thread beenden
-            Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: Berechnung wird gestoppt");
+            LOGGER.log(Level.FINE, "Berechnung wird gestoppt");
+
             backgroundComputation.stop();
             backgroundComputation = null;
 
@@ -239,9 +238,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             try {
                 unregisterRemoteStore();
             } catch (RemoteStoreException e) {
-                Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: RemoteStoreException wird nicht mehr gemeldet");
+                LOGGER.log(Level.WARNING, "RemoteStoreException wird nicht mehr gemeldet");
             }
 
             // Vom RMI-Server abmelden
@@ -249,7 +246,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         }
         computeManager = null;
 
-        Miscellaneous.printDebugMessage(debugMode, "Debug: Beendet!");
+        LOGGER.log(Level.FINE, "Operative Beendet!");
     }
 
     /**
@@ -262,14 +259,13 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         // Vom Dispatcher abmelden
         try {
             if (computeManager != null) {
-                Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Versuche, Verbindung zu trennen.");
+                LOGGER.log(Level.FINE, "Versuche, Verbindung zu trennen.");
                 computeManager.unregisterOperative(this);
                 computeManager = null;
             }
         } catch (RemoteException e1) {
             //Vermutlich nicht angemeldet gewesen
+            LOGGER.log(Level.WARNING, "Fehler beim Abmelden vom Dispatcher.");
         }
 
         // Die Hintergrundberechnung beenden und vom RMI-Server abmelden
@@ -277,6 +273,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             doExit();
         } catch (RemoteException e2) {
             // RemoteException kann nicht auftreten.
+            LOGGER.log(Level.WARNING, "RemoteException beim Abmelden vom Dispatcher.");
         }
     }
 
@@ -328,22 +325,21 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                                     RemoteStoreGenerator generator)
         throws RemoteException,
                ProblemComputeException,
-               RemoteStoreGenException,
-               RemoteStoreException {
+               RemoteStoreGenException, // Unterklasse von ProblemComputeException
+               RemoteStoreException { // Unterklasse von ProblemComputeException
 
         if ((generator == null) && (centralStore != null)) {
             throw new IllegalArgumentException("generator ist gleich null,"
                                                + " centralStore aber ungleich null");
         }
 
-        Miscellaneous.printDebugMessage(debugMode,
-                                        "\nDebug: OperativeImpl hat Aufgabe"
-                                        + " vom ComputeManager empfangen.");
-        Miscellaneous.printDebugMessage(debugMode,
-                                        "\nDebug: centralStore: "
-                                        + centralStore
-                                        + ", generator: "
-                                        + generator);
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.FINE,
+                    "OperativeImpl hat Aufgabe vom ComputeManager empfangen. "
+                    + "centralStore: " + centralStore
+                    + ", generator: " + generator);
+        }
+
 
         // Zentralen RemoteStore merken, um den distRemoteStore dort später
         // abzumelden
@@ -355,9 +351,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             try {
                 distRemoteStore = generator.generateDistRemoteStore();
             } catch (Throwable e) {
-                Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Fehler bei der Erzeugung vom RemoteStore");
+                LOGGER.log(Level.SEVERE, "Fehler bei der Erzeugung vom RemoteStore");
                 throw new RemoteStoreGenException(e.getMessage(), e.getCause());
             }
 
@@ -369,10 +363,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                     distRemoteStore.registerRemoteStore(centralRemoteStore);
                     centralRemoteStore.registerRemoteStore(distRemoteStore);
                 } catch (Throwable e) {
-                    Miscellaneous.printDebugMessage(
-                        debugMode,
-                        "Debug: Fehler bei der Anmeldung oder Abmeldung eines"
-                        + " RemoteStore");
+                    LOGGER.log(Level.SEVERE, "Fehler bei der Anmeldung oder Abmeldung eines RemoteStore");
                     throw new RemoteStoreException(e.getMessage(), e.getCause());
                 }
             } else if (distRemoteStore == null) {
@@ -384,7 +375,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
     }
 
     /**
-     * Übrmittelt dem Dispatcher eine Fehlermeldung und meldet den distRemoteStore ab.
+     * Übermittelt dem Dispatcher eine Fehlermeldung und meldet den distRemoteStore ab.
      * Wenn dies nicht möglich ist, wird der Operative beendet.
      *
      * @param exceptionCode     Integerwert, der die Ausnahme charakterisisert.
@@ -406,13 +397,9 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         try {
             unregisterRemoteStore();
         } catch (RemoteStoreException e) {
-            Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: RemoteStoreException wird nicht mehr gemeldet");
+            LOGGER.log(Level.WARNING, "RemoteStoreException wird nicht mehr gemeldet");
         } catch (RemoteException e) {
-            Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: RemoteException wird nicht mehr gemeldet");
+            LOGGER.log(Level.WARNING, "RemoteException wird nicht mehr gemeldet");
         }
     }
 
@@ -436,37 +423,32 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         // RemoteStore abmelden
         try {
             unregisterRemoteStore();
-            Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: RemoteStore abgemeldet");
+            LOGGER.log(Level.FINE, "RemoteStore abgemeldet");
         } catch (Exception e) {
             exceptionCode = ExceptionCodes.REMOTE_STORE_EXCEPTION;
             exceptionMessage = e.getMessage();
-            Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: Abmeldung von RemoteStore fehlgeschlagen");
+            LOGGER.log(Level.WARNING, "Abmeldung von RemoteStore fehlgeschlagen");
             versuche = 0;
         }
 
         // Mehrmals versuchen, die Teillösung zu senden
         while ((versuche > 0) && (!transmitted)) {
-            Miscellaneous.printDebugMessage(debugMode,
-                                            "Debug: Versuche, RemoteStore"
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.log(Level.FINE, "Versuche, RemoteStore"
                                             + " abzumelden und Teilergebnis"
-                                            + " zurückzugeben");
+                                            + " zurückzugeben, "
+                                            + "Versuche: (" + versuche
+                                            + "/" + CONNECT_RETRIES + ")");
+            }
             try {
                 computeManager.returnPartialSolution(parSol, this);
-                Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Teilergebnis zurückgegeben");
+                LOGGER.log(Level.FINE, "Teilergebnis zurückgegeben");
                 transmitted = true;
             } catch (RemoteException e) {
                 exceptionCode = ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION;
                 exceptionMessage = e.getMessage();
                 try {
-                    Miscellaneous.printDebugMessage(
-                        debugMode,
-                        "Debug: Versuch fehlgeschlagen");
+                    LOGGER.log(Level.WARNING, "Teilergebnis konnte nicht zurückgegeben werden");
                     Thread.sleep(SEND_TIMEOUT);
                 } catch (InterruptedException e1) {
                     // uninteressant
@@ -489,16 +471,14 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * @throws RemoteException  Bei RMI-Verbindungsproblemen.
      */
     public synchronized void stopComputation() throws RemoteException {
-        Miscellaneous.printDebugMessage(
-            debugMode,
-            "Debug: Berechnung wird gestoppt");
+        LOGGER.log(Level.FINE, "Berechnung wird gestoppt");
         if (backgroundComputation.isComputing()) {
             backgroundComputation.stop();
             backgroundComputation = null;
 //            Der nachfolgende Aufruf des GC führt beim Sun JDK 1.4 bis
 //            Version 1.4.2_04-b05 häufiger zum Absturz.
 //            System.gc();
-            backgroundComputation = new OperativeComputing(this, debugMode);
+            backgroundComputation = new OperativeComputing(this);
         }
     }
 
@@ -513,6 +493,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      */
     public static void main(String[] args) {
         ParameterParser parser = new ParameterParser();
+
+
 
         // debug option
         Option debug1 = new Option("d");
@@ -538,8 +520,33 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         try {
             parser.parseAll(args);
 
+			// ein logger für das gesamte Package
+            Logger logger = Logger.getLogger("de.unistuttgart.architeuthis.operative");
             // ist debuging aktiviert?
-            debug = (parser.isEnabled(debug1) || parser.isEnabled(debug2));
+            if (parser.isEnabled(debug1) || parser.isEnabled(debug2)) {
+                // alles ausgeben
+                logger.setLevel(Level.FINEST);
+
+                // der DefaultHandler hängt am root-Logger
+                Handler[] handlers = Logger.getLogger("").getHandlers();
+
+                // einen ConsoleHandler finden:
+                ConsoleHandler consoleHandler = null;
+                for (int i=0; i < handlers.length; i++) {
+                    if (handlers[i] instanceof ConsoleHandler) {
+                        consoleHandler = (ConsoleHandler) handlers[i];
+                    }
+                }
+
+                // kein ConsoleHandler am root-Logger ?!
+                //  wir hängen selbst einen an:
+                if (consoleHandler == null) {
+                    consoleHandler = new java.util.logging.ConsoleHandler();
+                    Logger.getLogger("").addHandler(consoleHandler);
+                }
+
+                consoleHandler.setLevel(Level.FINEST);
+            }
 
             binding.append(parser.getFreeParameter());
 
@@ -555,23 +562,27 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             binding.append("/");
             binding.append(ComputeManager.COMPUTEMANAGER_ID_STRING);
 
+            if (LOGGER.isLoggable(Level.CONFIG)) {
+                LOGGER.log(Level.CONFIG, "Parameter für Operative: "
+                        + "Debuglevel: " + logger.getLevel()
+                        + "ComputeManager: " + binding);
+            }
+
             ComputeManager computeManager =
                 (ComputeManager) java.rmi.Naming.lookup(binding.toString());
 
             // Aufruf des privaten Konstruktors mit ComputeManager.
-            OperativeImpl operative = new OperativeImpl(computeManager, debug);
+            OperativeImpl operative = new OperativeImpl(computeManager);
 
             // erst wenn das funktioniert hat, computing starten
             operative.startComputation();
 
             // Wenn das funktioniert hat, dann anmelden
-            Miscellaneous.printDebugMessage(
-                debug,
-                "Debug: Melde Operative an!");
+            LOGGER.log(Level.CONFIG, "Melde Operative an!");
 
             computeManager.registerOperative(operative);
 
-            Miscellaneous.printDebugMessage(debug, "Debug: Gestartet!");
+            LOGGER.log(Level.CONFIG, "Operative gestartet!");
 
         } catch (ParameterParserException ex) {
             // usage ausgeben:
@@ -579,21 +590,14 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             // Stacktrace (nicht unbedingt notwendig)
             ex.printStackTrace();
         } catch (java.rmi.StubNotFoundException e) {
-            System.out.println(
-                "\n\n Fehler! Die Stubs wurden vermutlich "
-                + "nicht generiert!\n");
+            LOGGER.severe("Fehler! Die Stubs wurden vermutlich nicht generiert!");
             System.exit(1);
         } catch (Exception e) {
-            System.out.println(
-                "Fehler! Verbindung mit ComputeManager konnte "
-                    + "nicht hergestellt werden:\n"
+            LOGGER.severe("Fehler! Verbindung mit ComputeManager konnte"
+                    + " nicht hergestellt werden:"
                     + e.getMessage()
-                    + "\n"
-                    + "Eventuell ist die Adresse falsch eingegeben worden:\n"
+                    + " Eventuell ist die Adresse falsch eingegeben worden: "
                     + args[0]);
-            if (debug) {
-                e.printStackTrace();
-            }
             System.exit(1);
         }
     }

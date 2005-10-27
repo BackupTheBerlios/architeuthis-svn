@@ -95,6 +95,9 @@ public class ParameterParser {
      */
     private String[] argv = null;
 
+
+    private HashMap properties = new HashMap();
+
     /**
      * minimum number of parameters
      */
@@ -175,7 +178,7 @@ public class ParameterParser {
      * @return the parsed option
      */
     public synchronized Option parseOption(Option option)
-        throws ParameterParserException {
+    throws ParameterParserException {
 
         // are there any arguments
         if (argv == null) {
@@ -201,7 +204,7 @@ public class ParameterParser {
         }
 
         if (i >= argv.length) {
-        	// found no match, set the option to disabled
+            // found no match, set the option to disabled
             option.setEnabled(false);
         } else {
             option.setEnabled(true);
@@ -243,6 +246,11 @@ public class ParameterParser {
     }
 
 
+
+    public void setProperties(HashMap hashMap) {
+        this.properties = hashMap;
+    }
+
     /**
      * Method to set an array of strings and assign the parameters to the
      * option Opjects.
@@ -252,8 +260,15 @@ public class ParameterParser {
      * the parameters
      */
     public synchronized void parseAll(String[] argv)
-        throws ParameterParserException {
+    throws ParameterParserException {
         setComandline(argv);
+        parseAll();
+    }
+
+    public synchronized void parseAll(String[] argv, HashMap hashMap)
+    throws ParameterParserException {
+        setComandline(argv);
+        setProperties(hashMap);
         parseAll();
     }
 
@@ -264,8 +279,8 @@ public class ParameterParser {
      * @throws ParameterParserException indicating syntax errors of
      * I/O Problems
      */
-    public synchronized void parseProperties(HashMap in)
-        throws ParameterParserException {
+    protected synchronized void parseProperties(HashMap in)
+    throws ParameterParserException {
 
 
         Iterator input = in.keySet().iterator();
@@ -290,18 +305,18 @@ public class ParameterParser {
                 String value = (String)in.get(name);
                 // there may be no value assigned to this option
                 if (value.length() == 0) {
-                	option.setEnabled(true);
+                    option.setEnabled(true);
                 } else if (option.canTakeParameter()
                         && option.canMatchParameter(value)) {
                     option.setEnabled(true);
                     option.addParameter(value);
                 } else {
                     throw new ParameterParserException("Unable to assign value "
-                                                       + value + " to " + name);
+                            + value + " to " + name);
                 }
             } else {
                 throw new ParameterParserException("Unknown Properties name: "
-                                                   + name);
+                        + name);
             }
         }
 
@@ -334,6 +349,11 @@ public class ParameterParser {
             Option option = (Option) iterator.next();
             option.reset();
         }
+
+
+        // parse parameters
+        parseProperties(this.properties);
+
         // reset the free parameter list
         freeParameters = new ArrayList();
 
@@ -372,6 +392,7 @@ public class ParameterParser {
                 // check for a match
                 if (option.isMatch(argv[i])) {
                     // found a matching option
+                    option.reset();
                     option.setEnabled(true);
                     // remove the option from the underlaying collection
                     // (the ArrayList)
@@ -438,7 +459,7 @@ public class ParameterParser {
             if (stringsUnknown.size() > 0) {
                 // return the first unknown string
                 throw new ParameterParserException("Unknown String: "
-                                               + stringsUnknown.toArray()[0]);
+                        + stringsUnknown.toArray()[0]);
             }
         }
 
@@ -449,7 +470,7 @@ public class ParameterParser {
 
         // check for free parameter maximum number
         if (freeParameters.size() > maxParameters) {
-            throw new ParameterParserException("Too many parameters ");
+            throw new ParameterParserException("Too many parameters: " + freeParameters);
         }
 
         // delegate checks to the Options:
@@ -555,11 +576,11 @@ public class ParameterParser {
      *  be added as free parameter
      */
     /* package-private */ void addParameter(String parameter)
-        throws ParameterParserException {
+    throws ParameterParserException {
         // check if we can take a parameter
         if (!canTakeFreeParameter()) {
             throw new ParameterParserException("can't take free parameter: "
-                                       + parameter);
+                    + parameter);
         }
         freeParameters.add(parameter);
     }
