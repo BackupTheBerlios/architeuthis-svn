@@ -1,7 +1,7 @@
 /*
  * file:        DispatcherImpl.java
  * created:     18.12.20003
- * last change: 22.02.2005 by Dietmar Lippold
+ * last change: 04.03.2006 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -163,13 +163,15 @@ public final class DispatcherImpl {
                     // properties laden ...
                     Properties props = new Properties();
                     props.load(new FileInputStream(configname));
-                    // ... und im Kommandozeilenparser setzen.
-                    HashMap propsHashMap = new HashMap(props);
-                    parser.parseProperties(propsHashMap);
-                }
 
-                // properties mit den Kommandozeilenparametern überschreiben
-                parser.parseAll(args);
+                    // ... und im Kommandozeilenparser zusammen mit den
+                    // Kommandozeilen-Parametern parsen.
+                    HashMap propsHashMap = new HashMap(props);
+                    parser.parseAll(args, propsHashMap);
+                } else {
+                    // Kommandozeilenparametern ohne properties-Datei parsen.
+                    parser.parseAll(args);
+                }
 
                 additionalThreads = parser.isEnabled(threadSwitch);
 
