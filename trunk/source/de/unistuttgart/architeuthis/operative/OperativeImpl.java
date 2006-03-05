@@ -493,9 +493,6 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
     public static void main(String[] args) {
         ParameterParser parser = new ParameterParser();
 
-
-
-        // debug option
         Option debug1 = new Option("d");
         debug1.setPrefix("-");
         debug1.setOptional(true);
