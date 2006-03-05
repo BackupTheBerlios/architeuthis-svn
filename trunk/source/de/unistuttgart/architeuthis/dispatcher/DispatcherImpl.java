@@ -1,7 +1,7 @@
 /*
  * file:        DispatcherImpl.java
  * created:     18.12.20003
- * last change: 04.03.2006 by Dietmar Lippold
+ * last change: 05.03.2006 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -46,11 +46,12 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Properties;
 
+import de.unistuttgart.commandline.Option;
+import de.unistuttgart.commandline.ParameterParser;
+import de.unistuttgart.commandline.ParameterParserException;
+
 import de.unistuttgart.architeuthis.dispatcher.computemanaging.ComputeManagerImpl;
 import de.unistuttgart.architeuthis.systeminterfaces.ComputeManager;
-import de.unistuttgart.architeuthis.misc.commandline.Option;
-import de.unistuttgart.architeuthis.misc.commandline.ParameterParser;
-import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
 
 /**
  * Der Dispatcher startet den ComputeMananger und ProblemManager.

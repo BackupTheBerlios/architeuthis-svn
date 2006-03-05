@@ -1,7 +1,7 @@
 /*
  * file:        ParameterParser.java
  * created:     21.10.2004
- * last change: 22.02.2005 by Michael Wohlfart
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -36,7 +36,7 @@
  *
  *
  */
-package de.unistuttgart.architeuthis.misc.commandline;
+package de.unistuttgart.commandline;
 
 import java.util.ArrayList;
 import java.util.HashMap;

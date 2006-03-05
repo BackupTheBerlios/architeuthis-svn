@@ -1,7 +1,7 @@
 /*
  * file:        ParameterParserTest.java
  * created:     21.10.2004
- * last change: 07.12.2004 by Michael Wohlfart
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -28,7 +28,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.misc.commandline;
+package de.unistuttgart.commandline;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

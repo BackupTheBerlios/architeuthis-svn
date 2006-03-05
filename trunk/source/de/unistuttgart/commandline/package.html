@@ -1,5 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<html><head></head>
+<html>
+<head>
+Package commandline
+</head>
 
 <body bgcolor="white">
 <p>
@@ -102,8 +105,9 @@ Option deadtries = parser.createOptionForName("Anzahl")
         
 Option additionalThreads = parser.createOptionForKey("t");
 
-		parser.parseAll(argv);
-</pre>        
+parser.parseAll(argv);
+</pre>
+
 <ul>
 <li>The method call <code>parser.getParameter(configFile)</code> returns
 the string after "-c" as string.</li>
@@ -124,7 +128,6 @@ by calling the <code>parser.parseProperties(inputStream)</code> method
 of the <code>ParameterParser</code> object. Note that the key-value pairs
 in the properties file must use the names of the options as keys.
 <br/>
-
 
 
 <h2>Related Documentation</h2>
