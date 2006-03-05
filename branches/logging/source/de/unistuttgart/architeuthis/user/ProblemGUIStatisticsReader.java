@@ -1,7 +1,7 @@
 /*
  * file:        ProblemGUIStatisticsReader.java
  * created:     13.08.2003
- * last change: 04.05.2005 by Michael Wohlfart
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -37,7 +37,6 @@ package de.unistuttgart.architeuthis.user;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import java.awt.Color;
 import java.awt.AWTEvent;
 import java.awt.Dimension;
@@ -64,6 +63,7 @@ import de.unistuttgart.architeuthis.systeminterfaces.UserProblemTransmitter;
  * @author Ralf Kible, Dietmar Lippold
  */
 public class ProblemGUIStatisticsReader extends JFrame {
+
     /**
      * Logger für diese KLasse
      */
@@ -75,6 +75,7 @@ public class ProblemGUIStatisticsReader extends JFrame {
      * Daten.
      */
     private class Updater extends Thread {
+
         /**
          * Logger for this class
          */
@@ -246,8 +247,8 @@ public class ProblemGUIStatisticsReader extends JFrame {
             setVisible(true);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE,
-					"Fehler bei der Initialisierung vom Frame der Problem-Statistik! -  : exception: "
-                            + e);
+                       "Fehler bei der Initialisierung vom Frame der"
+                       + " Problem-Statistik! - exception: " + e);
         }
 
         readerThread = new Updater(transmitter);

@@ -1,7 +1,7 @@
 /*
  * file:        ProblemWrapper.java
  * created:     29.06.2003
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -275,8 +275,8 @@ class ProblemWrapper extends Thread {
                 parProbWrapSolPair = new PartialSolutionParProbWrapper(parProbWrap, parSol);
                 parProbSolBuffer.enqueue(parProbWrapSolPair);
             } else {
-                LOGGER.severe("<E> Teillösung erhalten zu einem Teilproblem,"
-                           + " das nicht in Berechnung war.");
+                LOGGER.severe("Teillösung erhalten zu einem Teilproblem,"
+                              + " das nicht in Berechnung war.");
 
             }
         }

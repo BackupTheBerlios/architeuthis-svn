@@ -1,7 +1,7 @@
  /*
  * file:        ProblemTransmitterImpl.java
  * created:     08.07.2003
- * last change: 04.05.2005 by Michael Wohlfart
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -35,8 +35,8 @@
 
 package de.unistuttgart.architeuthis.user;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -45,7 +45,6 @@ import java.rmi.RemoteException;
 import java.rmi.AccessException;
 import java.rmi.RMISecurityManager;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.logging.Level;
 
 import de.unistuttgart.architeuthis.misc.Miscellaneous;
 import de.unistuttgart.architeuthis.systeminterfaces.ExceptionCodes;
@@ -59,11 +58,11 @@ import de.unistuttgart.architeuthis.userinterfaces.exec.SystemStatistics;
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 
 /**
- * Benutzerschnittstelle zur Benutzung des Compute-Systems.
- * Mit diesem Programm werden Probleme (oder besser: die Position der
- * Problemklassen auf einem Webserver) zum ComputeManager übertragen. Eine
- * Instanz dieser Klasse kann zu jedem Zeitpunkt beim Compute-System maximal
- * ein Problem in Berechnung haben.
+ * Benutzerschnittstelle zur Benutzung des Compute-Systems. Mit diesem
+ * Programm werden Probleme (oder besser: die Position der Problemklassen auf
+ * einem Webserver) zum ComputeManager übertragen. Eine Instanz dieser Klasse
+ * kann zu jedem Zeitpunkt beim Compute-System maximal ein Problem in
+ * Berechnung haben.
  *
  * @author Ralf Kible, Andreas Heydlauff, Dietmar Lippold
  */

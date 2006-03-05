@@ -1,7 +1,7 @@
 /*
  * file:        ComputeManagerImpl.java
  * created:     <Erstellungsdatum>
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 05.03.2006 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -169,7 +169,7 @@ public final class ComputeManagerImpl
      * {@link java.util.logging.Logger} eingestellt auf
      * de.unistuttgart.architeuthis.dispatcher
      */
-    private final static Logger LOGGER = Logger.getLogger(ComputeManagerImpl.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ComputeManagerImpl.class.getName());
 
     /**
      * Maximale Anzahl von Versuchen, einen Operative zu erreichen, bis dieser
@@ -237,7 +237,7 @@ public final class ComputeManagerImpl
         ipAddress = InetAddress.getLocalHost();
         LocateRegistry.createRegistry(port);
 
-		LOGGER.config("Dispatcher auf: " + ipAddress);
+        LOGGER.config("Dispatcher auf: " + ipAddress);
         bindingOperativeMan = "//"
                               + ipAddress.getHostName()
                               + ":"

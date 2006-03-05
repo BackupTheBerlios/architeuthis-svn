@@ -1,7 +1,7 @@
 /*
  * file:        RuntimeComparison.java
  * created:     <???>
- * last change: 04.05.2005 by Michael Wohlfart
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -39,7 +39,6 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -66,6 +65,7 @@ import de.unistuttgart.architeuthis.systeminterfaces.ProblemManager;
  * @author Achim Linke, Jürgen Heit, Dietmar Lippold
  */
 public class RuntimeComparison {
+
     /**
      * Logger für diese Klasse
      */

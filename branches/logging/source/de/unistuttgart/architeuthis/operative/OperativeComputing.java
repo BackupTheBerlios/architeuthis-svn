@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeComputing.java
  * created:     26.04.2004
- * last change: 26.04.2005 by Michael Wohlfart
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -52,6 +52,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
  * @author Jürgen Heit, Ralf Kible, Dietmar Lippold, Michael Wohlfart
  */
 public class OperativeComputing extends Thread {
+
     /**
      * Logger for this class
      */
@@ -162,12 +163,12 @@ public class OperativeComputing extends Thread {
                         LOGGER.log(Level.FINEST,
                                 "OperativeComputing Thread hat Teilproblem erhalten");
                     } catch (InterruptedException e) {
-                        LOGGER.log(Level.WARNING,
-                               "Exception beim Warten auf Teilproblem");
-                        // hier ist wirklich eine Exception passiert,
-                        // beim normalen notify() oder notifyAll() wird keine
+                        // Hier ist wirklich eine Exception passiert. Beim
+                        // normalen notify() oder notifyAll() wird keine
                         // Exception ausgelöst, sondern lediglich das wait()
-                        // verlassen
+                        // verlasst.
+                        LOGGER.log(Level.WARNING,
+                                   "Exception beim Warten auf Teilproblem");
                     }
                 }
             }

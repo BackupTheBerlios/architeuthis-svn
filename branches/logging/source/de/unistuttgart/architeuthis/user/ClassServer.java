@@ -1,8 +1,3 @@
-package de.unistuttgart.architeuthis.user;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /*
  * @(#)ClassServer.java    1.4 01/05/22
  *
@@ -43,18 +38,23 @@ import java.util.logging.Logger;
  * maintenance of any nuclear facility.
  */
 
-
 /**
- *
- * changes to the original Source from Sun:
+ * Changes to the original Source from Sun:
  *
  * 20.08.2004 Michael Wohlfart, general cleanup:
- * - changed Source formatting to be compatible with the java styleguide
- * - added some comments
- * - added logger
- * - added URLdecoder in the getPath() method
+ *  - changed Source formatting to be compatible with the java styleguide
+ *  - added some comments
+ *  - added logger
+ *  - added URLdecoder in the getPath() method
  *
+ * Last change: 05. Mar 2006 by Dietmar Lippold
  */
+
+
+package de.unistuttgart.architeuthis.user;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -64,15 +64,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URLDecoder;
 
-/*
- * ClassServer.java -- a simple file server that can serve
- * Http get request in both clear and secure channel
- */
-
 /**
+ * ClassServer.java -- a simple file server that can serve
+ * Http get request in both clear and secure channel.<p>
+ *
  * Based on ClassServer.java in tutorial/rmi
  */
 public abstract class ClassServer implements Runnable {
+
     /**
      * Logger for this class
      */
@@ -83,7 +82,6 @@ public abstract class ClassServer implements Runnable {
      * the socket this server will listen on
      */
     private ServerSocket server = null;
-
 
     /**
      * Constructs a ClassServer based on <CODE>ss</CODE> and
@@ -134,7 +132,6 @@ public abstract class ClassServer implements Runnable {
 
         // create a new thread to accept the next connection
         newListener();
-
 
         try {
             DataOutputStream out =
@@ -221,7 +218,6 @@ public abstract class ClassServer implements Runnable {
         // start of the first line in the request header
         String get = "GET /";
 
-
         // extract class from GET line
         if (line.startsWith(get)) {
             line = line.substring(get.length(), line.length() - 1).trim();
@@ -249,3 +245,4 @@ public abstract class ClassServer implements Runnable {
         }
     }
 }
+

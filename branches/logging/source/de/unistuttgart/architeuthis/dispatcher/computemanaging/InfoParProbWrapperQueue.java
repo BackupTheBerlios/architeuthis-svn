@@ -1,7 +1,7 @@
 /*
  * file:        InfoParProbWrapperQueue.java
  * created:     12.7.2003
- * last change: 05.05.2004 by Michael Wohlfart
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -37,7 +37,6 @@ package de.unistuttgart.architeuthis.dispatcher.computemanaging;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,8 +50,9 @@ import de.unistuttgart.architeuthis.dispatcher.problemmanaging.ParProbWrapper;
  * @author Andreas Heydlauff, Jürgen Heit, Dietmar Lippold
  */
 class InfoParProbWrapperQueue {
+
     /**
-     * Logger für diese Klasse
+     * Logger für diese Klasse.
      */
     private static final Logger LOGGER
         = Logger.getLogger(InfoParProbWrapperQueue.class.getName());

@@ -1,7 +1,7 @@
 /*
  * file:        SystemGUIStatisticsReader.java
  * created:     08.08.2003
- * last change: 16.06.2004 by Dietmar Lippold
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -36,7 +36,6 @@ package de.unistuttgart.architeuthis.user;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import java.awt.Color;
 import java.awt.AWTEvent;
 import java.awt.Dimension;
@@ -67,18 +66,19 @@ import de.unistuttgart.architeuthis.systeminterfaces.UserProblemTransmitter;
  *
  */
 public class SystemGUIStatisticsReader extends JFrame {
+
     /**
      * Logger for this class
      */
     private static final Logger LOGGER = Logger
             .getLogger(SystemGUIStatisticsReader.class.getName());
 
-
     /**
      * Der Thread aktualisiert in regelmäßigen Abständen die angezeigten
      * Daten.
      */
     private class Updater extends Thread {
+
         /**
          * Logger for this class
          */
@@ -604,11 +604,14 @@ public class SystemGUIStatisticsReader extends JFrame {
             try {
                 new SystemGUIStatisticsReader(compSys);
             } catch (Exception e) {
-                LOGGER.warning("Fehler! -  : exception: " + e);
+                LOGGER.warning("Fehler! - exception: " + e);
             }
         } else {
-            System.err.println("Fehler: Als Kommandozeilenargument muss die Adresse desnComputesystems eingegeben werden. Beispiel:njava SystemGUIStatisticsReader meinSystem.de:"
-                            + ProblemManager.PORT_NO + "exception: " + null);
+            System.err.println("Fehler: Als Kommandozeilenargument muss die"
+                               + " Adresse\n des Computesystems eingegeben"
+                               + " werden.");
+            System.err.println("Beispiel: java SystemGUIStatisticsReader meinSystem.de:"
+                               + ProblemManager.PORT_NO);
         }
     }
 }

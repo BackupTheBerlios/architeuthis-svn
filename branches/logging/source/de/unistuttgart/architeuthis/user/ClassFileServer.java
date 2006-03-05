@@ -1,8 +1,3 @@
-package de.unistuttgart.architeuthis.user;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /*
  * @(#)ClassFileServer.java    1.5 01/05/10
  *
@@ -44,20 +39,23 @@ import java.util.logging.Logger;
  *
  */
 
-
-
 /**
- *
- * changes to the original Source from Sun:
+ * Changes to the original Source from Sun:
  *
  * 20.08.2004 Michael Wohlfart, general cleanup:
- * - changed Source formatting to be compatible with the java styleguide
- * - added some comments
- * - added logger
- * - extra method of usage
+ *  - changed Source formatting to be compatible with the java styleguide
+ *  - added some comments
+ *  - added logger
+ *  - extra method of usage
  *
- *
+ * Last change: 05. Mar 2006 by Dietmar Lippold
  */
+
+
+package de.unistuttgart.architeuthis.user;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -74,7 +72,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 
 /**
  * ClassFileServer.java -- a simple file server that can server
- * Http get request in both clear and secure channel
+ * Http get request in both clear and secure channel.<p>
  *
  * The ClassFileServer implements a ClassServer that
  * reads files from the file system. See the
@@ -82,6 +80,7 @@ import javax.net.ssl.SSLServerSocketFactory;
  * server.
  */
 public class ClassFileServer extends ClassServer {
+
     /**
      * Logger for this class
      */
@@ -97,7 +96,6 @@ public class ClassFileServer extends ClassServer {
      * the root directory where the files are located
      */
     private String docroot;
-
 
     /**
      * Constructs a ClassFileServer.
@@ -178,7 +176,22 @@ public class ClassFileServer extends ClassServer {
             LOGGER.finest("end");
         }
         return bytecodes;
+    }
 
+    /**
+     * print Usage to stdout
+     */
+    private static void printUsage() { // static because it's called in main()
+
+        System.out.println(
+            "USAGE: java ClassFileServer port docroot [TLS [true]]");
+        System.out.println("");
+        System.out.println(
+                "If the third argument is TLS, it will start as\n"
+                + "a TLS/SSL file server, otherwise, it will be\n"
+                +  "an ordinary file server. \n"
+                +  "If the fourth argument is true,it will require\n"
+                + "client authentication as well.");
     }
 
     /**
@@ -247,25 +260,6 @@ public class ClassFileServer extends ClassServer {
         }
     }
 
-
-    /**
-     *
-     * print Usage to stdout
-     *
-     */
-    private static void printUsage() { // static because it's called in main()
-        System.out.println(
-            "USAGE: java ClassFileServer port docroot [TLS [true]]");
-        System.out.println("");
-        System.out.println(
-                "If the third argument is TLS, it will start as\n"
-                + "a TLS/SSL file server, otherwise, it will be\n"
-                +  "an ordinary file server. \n"
-                +  "If the fourth argument is true,it will require\n"
-                + "client authentication as well.");
-    }
-
-
     /**
      * create a Socket Factory to produce Sockets of the defined type
      *
@@ -275,6 +269,7 @@ public class ClassFileServer extends ClassServer {
      * @return a SocketFactory
      */
     private static ServerSocketFactory getServerSocketFactory(String type) {
+
         if (type.equals("TLS")) {
             SSLServerSocketFactory ssf = null;
             try {
@@ -304,3 +299,4 @@ public class ClassFileServer extends ClassServer {
         return null;
     }
 }
+

@@ -1,7 +1,7 @@
 /*
  * file:        ProblemComputation.java
  * created:     19.02.2004
- * last change: 04.05.2005 by Michael Wohlfart
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit, juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
@@ -35,7 +35,6 @@ package de.unistuttgart.architeuthis.user;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -55,14 +54,15 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 
 /**
- * Die Klasse ProblemComputation berechnet ein Problem.
- * Dazu kapselt Sie den ProblemTransmitter zum Übertragen des Problems auf ein
- * ComputeSystem und bietet die Möglichkeit zur lokalen Berechnung (Simulation
- * eines solchen ComputeSystems).
+ * Die Klasse ProblemComputation berechnet ein Problem. Dazu kapselt Sie den
+ * ProblemTransmitter zum Übertragen des Problems auf ein ComputeSystem und
+ * bietet die Möglichkeit zur lokalen Berechnung (Simulation eines solchen
+ * ComputeSystems).
  *
  * @author Andreas Heydlauff, Dietmar Lippold
  */
 public class ProblemComputation {
+
     /**
      * Logger for this class
      */
