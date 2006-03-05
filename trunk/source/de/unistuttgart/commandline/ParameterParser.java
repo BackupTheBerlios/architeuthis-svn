@@ -27,43 +27,34 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/*
- * Class to parse a sequence of Commandline Options.
- * Ideas from the JavaWorld Article "Processing command line
- * arguments in Java: Case closed" by Matthias Laux.
- *
- *
- *
- *
- */
+
 package de.unistuttgart.commandline;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Iterator;
 
 /**
  * This class implements a simple command line parser.
  * <p/>
  * Basicly this class implements a container for a set of
- * {@link Option Option}
- * objects and some methods to assign command line arguments to
- * these options.<br/>
- * The methods
- * {@link #addOption addOption},
+ * {@link Option Option} objects and some methods to assign command line
+ * arguments to these options.<br/>
+ * The methods {@link #addOption addOption},
  * {@link #createOptionForKey createOptionForKey} and
  * {@link #createOptionForName createOptionForName} can be
  * used to compose the set of options.<br/>
- * The methods
- * {@link #parseAll parseAll} and
- * {@link #parseOption parseOption} can be used to assign and return
- * the parameters for these options.
+ * The methods {@link #parseAll parseAll} and {@link #parseOption parseOption}
+ * can be used to assign and return the parameters for these options.<p>
+ *
+ * Ideas come from the JavaWorld Article <cite>Processing command line
+ * arguments in Java: Case closed</cite> by Matthias Laux.
  *
  * @author Michael Wohlfart
- *
  */
 public class ParameterParser {
+
     /**
      * The default name for the free parameters.
      */
@@ -79,48 +70,45 @@ public class ParameterParser {
      */
     public static final int END = 2;
 
+    /**
+     * A list for the options.
+     */
+    private LinkedList optionList = new LinkedList();
 
     /**
-     * A set for the option keys.
+     * Properties which are key-value-pairs of parameters.
      */
-    //private HashMap optionKeyMap = new HashMap();
-    private HashSet optionSet = new HashSet();
-
-    /**
-     * Array to store the command line between the call of the
-     * {@link #setComandline(String[]) setComandline}
-     * and
-     * {@link #parseOption(Option) parseOption}
-     * method call
-     */
-    private String[] argv = null;
-
-
     private HashMap properties = new HashMap();
 
     /**
-     * minimum number of parameters
+     * Array to store the command line between the call of the
+     * {@link #setComandline(String[]) setComandline} and
+     * {@link #parseOption(Option) parseOption} method call.
+     */
+    private String[] argv = null;
+
+    /**
+     * Minimum number of parameters.
      */
     private int minParameters = 0;
 
     /**
-     * maximim number of parameters
+     * Maximim number of parameters.
      */
     private int maxParameters = 0;
 
-
     /**
-     * storage for free parameters
+     * Storage for free parameters.
      */
     private ArrayList freeParameters = new ArrayList();
 
     /**
-     * the position of the free parameters
+     * The position of the free parameters.
      */
     private int freeParameterPosition = START;
 
     /**
-     * the name for the free parameters in this commandline
+     * The name for the free parameters in this commandline.
      */
     private String parameterName = DEFAULT_PARAMETER_NAME;
 
@@ -131,9 +119,7 @@ public class ParameterParser {
      * @param option Option object to be added to this parser
      */
     public synchronized void addOption(Option option) {
-        optionSet.add(option);
-
-        //optionKeyMap.put(option.getKey(), option);
+        optionList.add(option);
     }
 
     /**
@@ -143,21 +129,22 @@ public class ParameterParser {
      *
      */
     public synchronized void removeOption(Option option) {
-        optionSet.remove(option);
+        optionList.remove(option);
     }
 
-
     /**
-     * return true if any option matches with a given string form the
-     * commandline
+     * Return <code>true</code> if and only if any option matches with a given
+     * string form the commandline.
      *
-     * @param string the string to be checked
-     * @return true if any option matches the string
+     * @param string  the string to be checked.
+     *
+     * @return  <code>true</code> if and only if any option matches the
+     *          string.
      */
     private boolean anyMatch(String string) {
         boolean foundMatch = false;
 
-        Iterator iterator = optionSet .iterator();
+        Iterator iterator = optionList.iterator();
         while (iterator.hasNext() && !foundMatch) {
             Option option = (Option) iterator.next();
             // keep looping as long as we don't have a match
@@ -166,19 +153,20 @@ public class ParameterParser {
         return foundMatch;
     }
 
-
     /**
      * A method to find and parse a single option ind the command line.</br>
      * This method can be used to pick a single option without parsing all
      * strings of a command line.
      *
-     * @param option the option to be parsed
-     * @throws ParameterParserException if there are any problems with the
-     * parameters
-     * @return the parsed option
+     * @param option  the option to be parsed.
+     *
+     * @return  the parsed option.
+     *
+     * @throws ParameterParserException  if there are any problems with the
+     *                                   parameters.
      */
     public synchronized Option parseOption(Option option)
-    throws ParameterParserException {
+        throws ParameterParserException {
 
         // are there any arguments
         if (argv == null) {
@@ -189,13 +177,13 @@ public class ParameterParser {
         }
 
         // is the requested option in our list
-        if (!optionSet.contains(option)) {
+        if (!optionList.contains(option)) {
             throw new ParameterParserException(
                     "the option " + option
-                    + "isn't in the list of option,"
-                    + "use addOption(Option option) to add the option to the list");
+                    + " isn't in the list of option,"
+                    + " use addOption(Option option) to add the option"
+                    + " to the list");
         }
-
 
         // find the index for the matching string in the commandline
         int i = 0;
@@ -245,64 +233,77 @@ public class ParameterParser {
         this.argv = argv;
     }
 
-
-
-    public void setProperties(HashMap hashMap) {
-        this.properties = hashMap;
+    /**
+     * Sets the parameters.
+     *
+     * @param props  HashMap contaning the parameters.
+     */
+    public void setProperties(HashMap props) {
+        this.properties = props;
     }
 
     /**
      * Method to set an array of strings and assign the parameters to the
      * option Opjects.
      *
-     * @param argv array of strings
-     * @throws ParameterParserException if there are any problems with
-     * the parameters
+     * @param argv  array of parameters as strings.
+     *
+     * @throws ParameterParserException  if there are any problems with
+     *                                   the parameters.
      */
     public synchronized void parseAll(String[] argv)
-    throws ParameterParserException {
-        setComandline(argv);
-        parseAll();
-    }
+        throws ParameterParserException {
 
-    public synchronized void parseAll(String[] argv, HashMap hashMap)
-    throws ParameterParserException {
         setComandline(argv);
-        setProperties(hashMap);
         parseAll();
     }
 
     /**
-     * read options from a properties input stream
+     * Method to set an array of strings and assign the parameters to the
+     * option Opjects.
      *
-     * @param in input contaning the parameters
-     * @throws ParameterParserException indicating syntax errors of
-     * I/O Problems
+     * @param argv   array of parameters as strings.
+     * @param props  HashMap of parameters as key-value-pairs.
+     *
+     * @throws ParameterParserException  if there are any problems with
+     *                                   the parameters.
      */
-    protected synchronized void parseProperties(HashMap in)
-    throws ParameterParserException {
+    public synchronized void parseAll(String[] argv, HashMap props)
+        throws ParameterParserException {
 
+        setComandline(argv);
+        setProperties(props);
+        parseAll();
+    }
 
-        Iterator input = in.keySet().iterator();
+    /**
+     * Read options from a properties HashMap.
+     *
+     * @param props  HashMap contaning the parameters.
+     *
+     * @throws ParameterParserException  Wrong name or number of parameters.
+     */
+    protected synchronized void parseProperties(HashMap props)
+        throws ParameterParserException {
 
-        // create a name map on the fly:
-        Iterator iterator = optionSet.iterator();
+        // create a name map on the fly
+        Iterator iterator = optionList.iterator();
         HashMap optionNameMap = new HashMap();
         while (iterator.hasNext()) {
             Option option = (Option) iterator.next();
             optionNameMap.put(option.getName(), option);
         }
 
-
-        while (input.hasNext()) {
-            String name = (String) input.next();
+        Iterator propIter = props.keySet().iterator();
+        while (propIter.hasNext()) {
+            String name = (String) propIter.next();
 
             //System.out.println("size name list: " + optionNameMap.size());
             //System.out.println("size key list: " + optionNameMap.size());
 
             if (optionNameMap.containsKey(name)) {
                 Option option = (Option) optionNameMap.get(name);
-                String value = (String)in.get(name);
+                String value = (String) props.get(name);
                 // there may be no value assigned to this option
                 if (value.length() == 0) {
                     option.setEnabled(true);
@@ -319,18 +320,13 @@ public class ParameterParser {
                         + name);
             }
         }
-
-
-
     }
-
 
     /**
      * Method to parse a commandline.
-     * @throws ParameterParserException
      *
-     * @throws ParameterParserException if there are any problems with
-     * the parameters
+     * @throws ParameterParserException  if there are any problems with
+     *                                   the parameters.
      */
     public synchronized void parseAll() throws ParameterParserException {
 
@@ -341,7 +337,7 @@ public class ParameterParser {
 
         // this list is reduced if we found a match, at the end of this method
         // this HashMap will contain only unused options
-        HashSet optionsLeft = (HashSet) optionSet.clone();
+        LinkedList optionsLeft = (LinkedList) optionList.clone();
 
         // reset all Option objects:
         iterator = optionsLeft.iterator();
@@ -349,7 +345,6 @@ public class ParameterParser {
             Option option = (Option) iterator.next();
             option.reset();
         }
-
 
         // parse parameters
         parseProperties(this.properties);
@@ -443,7 +438,6 @@ public class ParameterParser {
             i++;
         } // end while
 
-
         // read free parameters only if they are last:
         if (freeParameterPosition == END) {
             while (i < argv.length) {
@@ -474,7 +468,7 @@ public class ParameterParser {
         }
 
         // delegate checks to the Options:
-        iterator = optionSet.iterator();
+        iterator = optionList.iterator();
         while (iterator.hasNext()) {
             Option option = (Option) iterator.next();
             option.checkValid();
@@ -482,13 +476,13 @@ public class ParameterParser {
     }
 
     /**
+     * Set the number of parameters allowed for this commandline.
      *
-     * set the number of parameters allowed for this commandline
-     *
-     * @param parameterCheck tghe number of free parameters allowed for this
-     *        commandline
+     * @param parameterCheck  the number of free parameters allowed for the
+     *                        commandline.
      */
     public void setFreeParameterNumberCheck(int parameterCheck) {
+
         switch (parameterCheck) {
         case Option.ZERO_OR_MORE_PARAMETERS_CHECK:
             minParameters = 0;
@@ -512,71 +506,74 @@ public class ParameterParser {
     }
 
     /**
-     * set the position for the free parameters
+     * Set the position for the free parameters
      *
-     * @param parameterPosition START or END
+     * @param parameterPosition  <code>START</code> or <code>END</code>.
      */
     public void setFreeParameterPosition(int parameterPosition) {
         this.freeParameterPosition = parameterPosition;
     }
 
     /**
-     * set the name for the free parameters
+     * Set the name for the free parameters.
      *
-     * @param parameterName the name
+     * @param parameterName  the name to set to.
      */
     public void setFreeParameterName(String parameterName) {
         this.parameterName = parameterName;
     }
 
     /**
-     * aks for the parameter list of an option
+     * Aks for the parameter list of an option.
      *
-     * @param option the option to query for parameters
-     * @return a Vector of paraemter Strings
+     * @param option  the option to query for parameters.
+     *
+     * @return  a Vector of parameter as Strings.
      */
     public ArrayList getParameterList(Option option) {
         return option.getParameterList();
     }
 
-
     /**
      * Creates a new Option object and add the option to this parser.
      *
-     * @param key the key of the new option
-     * @return the new option
+     * @param key  the key of the new option.
+     *
+     * @return  the new option
      */
     public Option createOptionForKey(String key) {
+
         Option option = new Option();
         option.setKey(key);
         addOption(option);
         return option;
     }
 
-
     /**
      * Creates a new Option object and add the option to this parser.
      *
-     * @param name the name of the new option
-     * @return the new option
+     * @param name  the name of the new option.
+     *
+     * @return  the new option.
      */
     public Option createOptionForName(String name) {
+
         Option option = new Option();
         option.setName(name);
         addOption(option);
         return option;
     }
 
-
     /**
      * Method to add a free parameter to this command line.
      *
-     * @param parameter a free parameter to add
-     * @throws ParameterParserException thrown if this parameter can
-     *  be added as free parameter
+     * @param parameter  a free parameter to add.
+     *
+     * @throws ParameterParserException  thrown if this parameter can be added
+     *                                   as free parameter.
      */
-    /* package-private */ void addParameter(String parameter)
-    throws ParameterParserException {
+    void addParameter(String parameter) throws ParameterParserException {
+
         // check if we can take a parameter
         if (!canTakeFreeParameter()) {
             throw new ParameterParserException("can't take free parameter: "
@@ -586,16 +583,17 @@ public class ParameterParser {
     }
 
     /**
-     * check if this ParameterParser can take a free parameter
+     * Check if this ParameterParser can take a free parameter.
      *
-     * @return true if this ParameterParser can take a free parameter
+     * @return  <code>true</code> if and only if this ParameterParser can take
+     *          a free parameter.
      */
-    /* package-private */ boolean canTakeFreeParameter() {
+    boolean canTakeFreeParameter() {
         return (freeParameters.size() < maxParameters);
     }
 
     /**
-     * returns the first parameter of an option
+     * Returns the first parameter of an option
      *
      * @param option option to query for parameters
      * @return the first parameter
@@ -605,39 +603,40 @@ public class ParameterParser {
     }
 
     /**
-     * returns the first parameter of an option as int primitive
+     * Returns the first parameter of an option as int primitive
      *
-     * @param option option to query for parameters
-     * @return the first parameter as int
+     * @param option  option to query for parameters.
+     *
+     * @return  the value of the first parameter as <code>int</code>.
      */
     public int getParameterAsInt(Option option) {
         return Integer.parseInt(option.getParameter());
     }
 
     /**
-     * returns the first parameter of an option as long primitive
+     * Returns the first parameter of an option as long primitive
      *
-     * @param option option to query for parameters
-     * @return the first parameter as int
+     * @param option  option to query for parameters.
+     *
+     * @return  the value of the first parameter <code>long</code>.
      */
     public long getParameterAsLong(Option option) {
         return Long.parseLong(option.getParameter());
     }
 
     /**
-     * accessor to the free parameter list
+     * Accessor to the free parameter list.
      *
-     * @return vector of free parameters
+     * @return  vector of free parameters.
      */
     public ArrayList getFreeParameterList() {
         return freeParameters;
     }
 
-
     /**
-     * return a single parameter
+     * Return a single parameter.
      *
-     * @return the first parameter of the free prarameter list
+     * @return  the first parameter of the free prarameter list
      */
     public String getFreeParameter() {
         assert (freeParameters != null);
@@ -646,25 +645,25 @@ public class ParameterParser {
     }
 
     /**
-     * return the state of a parameter
+     * Return the state of a parameter.
      *
-     * @param option the option to check
+     * @param option  the option to check.
      *
-     * @return true if the option is enabled
+     * @return  <code>true</code> if and only if the option is enabled.
      */
     public boolean isEnabled(Option option) {
         return option.isEnabled();
     }
 
     /**
-     * returns a String for debugging
+     * Returns a String for debugging
      *
      * @return Syntax String for this parser
      */
     public String toString() {
 
         StringBuffer optionString = new StringBuffer();
-        Iterator iterator = optionSet.iterator();
+        Iterator iterator = optionList.iterator();
         while (iterator.hasNext()) {
             Option option = (Option) iterator.next();
             optionString.append(option.toString());
@@ -708,8 +707,6 @@ public class ParameterParser {
             }
         }
 
-
-
         // merging depends on the position of the free parameters
         StringBuffer result = null;
         switch (freeParameterPosition) {
@@ -729,6 +726,5 @@ public class ParameterParser {
 
         return result.toString();
     }
-
-
 }
+
