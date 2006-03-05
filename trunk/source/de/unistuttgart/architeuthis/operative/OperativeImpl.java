@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 03.05.2005 by Michael Wohlfart
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -39,7 +39,6 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RMISecurityManager;
@@ -47,7 +46,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi;
-//import de.unistuttgart.architeuthis.misc.Miscellaneous;
 import de.unistuttgart.architeuthis.misc.commandline.Option;
 import de.unistuttgart.architeuthis.misc.commandline.ParameterParser;
 import de.unistuttgart.architeuthis.misc.commandline.ParameterParserException;
@@ -487,7 +485,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * und das Verzeichnis der RMI-Registry angegeben werden, an der der
      * <code>ComputeManager</code> angemeldet ist. Als weiteres
      * Kommandozeilenargument kann der Debug-Modus mittels
-     * <code>--debug</code> angeschaltet werden.
+     * <code>--debug</code> oder <code>-d</code> angeschaltet werden.
      *
      * @param args  Die obligatorischen Kommandozeilenargumente.
      */
@@ -515,12 +513,10 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         parser.addOption(debug2);
 
         StringBuffer binding = new StringBuffer();
-        boolean debug = false;
 
         try {
             parser.parseAll(args);
 
-			// ein logger für das gesamte Package
             Logger logger = Logger.getLogger("de.unistuttgart.architeuthis.operative");
             // ist debuging aktiviert?
             if (parser.isEnabled(debug1) || parser.isEnabled(debug2)) {

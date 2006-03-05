@@ -1,12 +1,13 @@
 /*
  * file:        ProblemGUIStatisticsReader.java
  * created:     13.08.2003
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -34,6 +35,8 @@
 
 package de.unistuttgart.architeuthis.user;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.awt.Color;
 import java.awt.AWTEvent;
 import java.awt.Dimension;
@@ -62,10 +65,21 @@ import de.unistuttgart.architeuthis.systeminterfaces.UserProblemTransmitter;
 public class ProblemGUIStatisticsReader extends JFrame {
 
     /**
+     * Logger für diese KLasse
+     */
+    private static final Logger LOGGER = Logger
+            .getLogger(ProblemGUIStatisticsReader.class.getName());
+
+    /**
      * Der Thread aktualisiert in regelmäßigen Abständen die angezeigten
      * Daten.
      */
     private class Updater extends Thread {
+
+        /**
+         * Logger for this class
+         */
+        private final Logger LOGGER = Logger.getLogger(Updater.class.getName());
 
         /**
          * Der ProblemTransmitter, der das Problem, dessen Statistik angezeigt
@@ -232,9 +246,9 @@ public class ProblemGUIStatisticsReader extends JFrame {
             statusLabel.setText("Gestartet!");
             setVisible(true);
         } catch (Exception e) {
-            System.err.println("Fehler bei der Initialisierung vom Frame der"
-                               + " Problem-Statistik!");
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE,
+                       "Fehler bei der Initialisierung vom Frame der"
+                       + " Problem-Statistik! - exception: " + e);
         }
 
         readerThread = new Updater(transmitter);

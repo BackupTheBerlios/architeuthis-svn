@@ -1,7 +1,7 @@
-/*
+ /*
  * file:        ProblemTransmitterImpl.java
  * created:     08.07.2003
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -35,6 +35,8 @@
 
 package de.unistuttgart.architeuthis.user;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -56,16 +58,22 @@ import de.unistuttgart.architeuthis.userinterfaces.exec.SystemStatistics;
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 
 /**
- * Benutzerschnittstelle zur Benutzung des Compute-Systems.
- * Mit diesem Programm werden Probleme (oder besser: die Position der
- * Problemklassen auf einem Webserver) zum ComputeManager übertragen. Eine
- * Instanz dieser Klasse kann zu jedem Zeitpunkt beim Compute-System maximal
- * ein Problem in Berechnung haben.
+ * Benutzerschnittstelle zur Benutzung des Compute-Systems. Mit diesem
+ * Programm werden Probleme (oder besser: die Position der Problemklassen auf
+ * einem Webserver) zum ComputeManager übertragen. Eine Instanz dieser Klasse
+ * kann zu jedem Zeitpunkt beim Compute-System maximal ein Problem in
+ * Berechnung haben.
  *
  * @author Ralf Kible, Andreas Heydlauff, Dietmar Lippold
  */
 public class ProblemTransmitterImpl extends UnicastRemoteObject
     implements ProblemTransmitter, UserProblemTransmitter {
+
+    /**
+     * Logger für diese Klasse
+     */
+    private static final Logger LOGGER = Logger
+            .getLogger(ProblemTransmitterImpl.class.getName());
 
     /**
      * Generierte <code>serialVersionUID</code>.
@@ -101,11 +109,6 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
     private volatile boolean processing = false;
 
     /**
-     * Gibt an, ob zusätzliche Debug-Meldungen ausgegeben werden sollen.
-     */
-    private boolean debugMode = false;
-
-    /**
      * Standard-Konstruktor, der wegen der Ableitung von
      * <code>UnicastRemoteObject</code> überschrieben werden muss.
      *
@@ -122,7 +125,6 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
      * @param dispatcherHost  Name des Rechners des Dispatcher (auf dem auch
      *                        die Registry läuft). Wenn kein Port angegeben
      *                        ist, wird der Standard-Port verwendet.
-     * @param debugMode       gibt an, ob debug-Ausgaben erfolgen sollen.
      *
      * @throws MalformedURLException  Die Angabe vom <code>dispatcher</code>
      *                                war kein zulässiger Name.
@@ -133,14 +135,12 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
      * @throws NotBoundException      Der Dispatcher war auf der Registry nicht
      *                                eingetragen.
      */
-    public ProblemTransmitterImpl(String dispatcherHost, boolean debugMode)
+    public ProblemTransmitterImpl(String dispatcherHost)
         throws
             MalformedURLException,
             AccessException,  // ist Unterklasse von RemoteException
             RemoteException,
             NotBoundException {
-
-        this.debugMode = debugMode;
 
         // Hier wird ein shutdownHook gesetzt. Dieser wird aufgerufen, wenn das
         // Objekt entfernt wird, z.B. weil das verwendende Programm beendet
@@ -185,9 +185,7 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
      */
     public void abortProblem() throws RemoteException {
         if ((problemManager != null) && processing) {
-            Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: Breche Problem ab");
+            LOGGER.log(Level.CONFIG, "Breche Problemberechnung ab");
             problemManager.abortProblemByUser(this);
         }
     }
@@ -250,9 +248,7 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
         exportObject(this);
 
         try {
-            Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Versuche, Problem zu ProblemManager zu schicken");
+            LOGGER.log(Level.FINE, "Versuche, Problem zu ProblemManager zu schicken");
             if  (problemParameters == null) {
                 problemManager.loadProblem(this, packageUrl,
                         classname, new Object[0], null);
@@ -261,13 +257,12 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
                         classname, problemParameters, null);
             }
 
-            Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Warte auf Lösung....");
+            LOGGER.log(Level.FINE, "Warte auf Lösung....");
             while ((solution == null) && (errorMessage == null)) {
                 try {
                     wait();
                 } catch (InterruptedException e) {
+                    LOGGER.log(Level.WARNING, "Exception beim Warten auf Lösung");
                 }
             }
         } finally {
@@ -279,9 +274,7 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
         }
 
         if (solution != null) {
-            Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Lösung empfangen, wird zurückgegeben");
+            LOGGER.log(Level.FINE, "Lösung empfangen, wird zurückgegeben");
         }
 
         if (errorMessage != null) {
@@ -321,6 +314,7 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
             try {
                 wait();
             } catch (InterruptedException e) {
+                LOGGER.log(Level.WARNING, "Exception beim Warten auf Lösung");
             }
         }
 
@@ -334,18 +328,15 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
         exportObject(this);
 
         try {
-            Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Versuche, Problem zu ProblemManager zu schicken");
+            LOGGER.log(Level.FINE, "Versuche, Problem zu ProblemManager zu schicken");
             problemManager.receiveProblem(this, problem, generator);
 
-            Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Warte auf Lösung....");
+            LOGGER.log(Level.FINE, "Warte auf Lösung....");
             while ((solution == null) && (errorMessage == null)) {
                 try {
                     wait();
                 } catch (InterruptedException e) {
+                    LOGGER.log(Level.WARNING, "Exception beim Warten auf Lösung");
                 }
             }
         } finally {
@@ -357,9 +348,7 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
         }
 
         if (solution != null) {
-            Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Debug: Lösung empfangen, wird zurückgegeben");
+            LOGGER.log(Level.FINE, "Lösung empfangen, wird zurückgegeben");
         }
 
         if (errorMessage != null) {
@@ -522,22 +511,14 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
             notifyAll();
             break;
         case ExceptionCodes.NO_OPERATIVES_REGISTERED :
-            Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Keine Operatives mehr angemeldet!");
+            LOGGER.log(Level.WARNING, "Keine Operatives mehr angemeldet!");
             break;
         case ExceptionCodes.NEW_OPERATIVES_REGISTERED :
-            Miscellaneous.printDebugMessage(
-                    debugMode,
-                    "Neuer Operative hat sich angemeldet!");
+            LOGGER.log(Level.CONFIG, "Neuer Operative hat sich angemeldet!");
             break;
         default :
-            System.err.println("Unbekannte Nachricht vom Dispatcher bekommen");
-            if (message != null) {
-                System.err.println(": " + message);
-            } else {
-                System.err.println(".");
-            }
+            LOGGER.log(Level.SEVERE, "Unbekannte Nachricht vom Dispatcher bekommen :"
+					+  message );
             break;
         }
     }
@@ -559,9 +540,7 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
         solution = sol;
         finalStat = stat;
         notifyAll();
-        Miscellaneous.printDebugMessage(
-                debugMode,
-                "Debug: Loesung wurde vom Dispatcher uebermittelt!");
+        LOGGER.log(Level.FINE, "Loesung wurde vom Dispatcher uebermittelt!");
     }
 
     /**

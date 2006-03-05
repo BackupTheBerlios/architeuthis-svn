@@ -1,7 +1,7 @@
 /*
  * file:        ProblemTransmitterApp.java
  * created:     08.08.2003
- * last change: 18.01.2005 by Michael Wohlfart
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -35,6 +35,10 @@
 
 package de.unistuttgart.architeuthis.user;
 
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -64,6 +68,12 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 public class ProblemTransmitterApp {
 
     /**
+     * Logger für diese Klasse
+     */
+    private static final Logger LOGGER =
+        Logger.getLogger(ProblemTransmitterApp.class.getName());
+
+    /**
      * Transmitter, mit dem das Problem an den ProblemManager gesendet wird.
      */
     private static ProblemTransmitterImpl transmitter = null;
@@ -77,11 +87,6 @@ public class ProblemTransmitterApp {
      * Zentrale Class-Datei, die gestartet werden soll.
      */
     private static String classname = null;
-
-    /**
-     * Debug-Modus gibt zusätzliche Informationen aus.
-     */
-    private static boolean debugMode = false;
 
     /**
      * Liefert die Lösung zum zu berechnenden Problem. Dazu wird bei einem
@@ -99,30 +104,21 @@ public class ProblemTransmitterApp {
 
         if (serializableProb) {
             try {
-                problemClass =
-                    ClassLoader.getSystemClassLoader().loadClass(classname);
+                problemClass = ClassLoader.getSystemClassLoader().loadClass(classname);
                 problem = (SerializableProblem) problemClass.newInstance();
             } catch (ClassNotFoundException e) {
-                System.out.println(
-                        "Die zentrale Problemklasse wurde nicht gefunden:"
-                        + classname);
-                if (debugMode) {
-                    e.printStackTrace();
-                }
-            } catch (InstantiationException e) {
-                System.out.println(
-                        "Von der angegebenen Problemklasse konnte keine Instanz"
-                        + " erzeugt werden!");
-                if (debugMode) {
-                    e.printStackTrace();
-                }
+                LOGGER.log(Level.SEVERE,
+                    "Die zentrale Problemklasse wurde nicht gefunden:" + classname);
+                LOGGER.throwing(ProblemTransmitterApp.classname, "computedSolution", e);
+             } catch (InstantiationException e) {
+                LOGGER.log(Level.SEVERE,
+                    "Von der angegebenen Problemklasse konnte keine Instanz erzeugt werden!");
+                LOGGER.throwing(ProblemTransmitterApp.classname, "computedSolution", e);
             } catch (IllegalAccessException e) {
-                System.out.println(
-                    "Der Zugriff auf die Klasse war nicht möglich.\n");
-                if (debugMode) {
-                    e.printStackTrace();
-                }
-            }
+                LOGGER.log(Level.SEVERE,
+                        "Der Zugriff auf die Klasse war nicht möglich." + classname);
+                LOGGER.throwing(ProblemTransmitterApp.classname, "computedSolution", e);
+           }
         }
 
         try {
@@ -132,23 +128,17 @@ public class ProblemTransmitterApp {
                 return transmitter.transmitProblem(packageURL, classname, null);
             }
         } catch (ClassNotFoundException e) {
-            System.out.println(
-                    "Die zentrale Problemklasse wurde nicht gefunden:" + classname);
-            if (debugMode) {
-                e.printStackTrace();
-            }
+            LOGGER.log(Level.SEVERE,
+                "Die zentrale Problemklasse wurde nicht gefunden:" + classname);
+            LOGGER.throwing(ProblemTransmitterApp.classname, "computedSolution", e);
         } catch (ProblemComputeException e) {
-            System.out.println(
+            LOGGER.log(Level.SEVERE,
                     "Fehler bei Berechnung des Problems: " + e.getMessage());
-            if (debugMode) {
-                e.printStackTrace();
-            }
+            LOGGER.throwing(ProblemTransmitterApp.classname, "computedSolution", e);
         } catch (RemoteException e) {
-            System.out.println(
+            LOGGER.log(Level.SEVERE,
                     "Fehler bei der Verbindung mit dem Dispatcher.");
-            if (debugMode) {
-                e.printStackTrace();
-            }
+            LOGGER.throwing(ProblemTransmitterApp.classname, "computedSolution", e);
         }
         return null;
     }
@@ -247,12 +237,39 @@ public class ProblemTransmitterApp {
         problemManagerOption.setOptional(false);
         problemManagerOption.setName("problemManager");
         parser.addOption(problemManagerOption);
-        
+
         try {
             parser.parseAll(args);
 
             serializable = parser.isEnabled(serializableSwitch);
-            debugMode = parser.isEnabled(debugSwitch);
+
+            if (parser.isEnabled(debugSwitch)) {
+                // log-Level für alle Logger dieses Packages setzen:
+                Logger logger = Logger.getLogger("de.unistuttgart.architeuthis.user");
+                logger.setLevel(Level.FINEST);
+
+                // der DefaultHandler hängt (normalerweise) am root-Logger
+                Handler[] handlers = Logger.getLogger("").getHandlers();
+
+                // einen ConsoleHandler finden:
+                ConsoleHandler consoleHandler = null;
+                for (int i=0; i < handlers.length; i++) {
+                    if (handlers[i] instanceof ConsoleHandler) {
+                        consoleHandler = (ConsoleHandler) handlers[i];
+                    }
+                }
+
+                // kein ConsoleHandler am root-Logger ?!
+                //  wir hängen selbst einen an:
+                if (consoleHandler == null) {
+                    consoleHandler = new java.util.logging.ConsoleHandler();
+                    Logger.getLogger("").addHandler(consoleHandler);
+                }
+
+                consoleHandler.setLevel(Level.FINEST);
+
+            }
+
             graphicalMode = !parser.isEnabled(noGraphicalModeSwitch);
             onlyProblemGraphical = parser.isEnabled(problemGraphicalSwitch);
 
@@ -262,22 +279,13 @@ public class ProblemTransmitterApp {
             problemManagerHost = parser.getParameter(problemManagerOption);
 
             // Status ausgeben
-            Miscellaneous.printDebugMessage(debugMode,
-                                            "\n\nStelle nun Verbindung her:\n"
-                                            + "URL: "
-                                            + packageURL
-                                            + "\n"
-                                            + "Klassenname: "
-                                            + classname
-                                            + "\n"
-                                            + "Computesystem: "
-                                            + problemManagerHost
-                                            + "\n"
-                                            + "Loesung: "
-                                            + filename
-                                            + "\n\n"
-                                            + "Debug-Modus ist AN\n\n");
-
+            if (LOGGER.isLoggable(Level.CONFIG)) {
+                LOGGER.log(Level.CONFIG, "Stelle nun Verbindung her:");
+                LOGGER.log(Level.CONFIG, "URL: " + packageURL);
+                LOGGER.log(Level.CONFIG, "Klassenname: " + classname);
+                LOGGER.log(Level.CONFIG, "Computesystem: " + problemManagerHost);
+                LOGGER.log(Level.CONFIG, "Loesung: " + filename);
+            }
             if (serializable) {
                 // Die folgende Zeile muß gleich am Anfang stehen
                 System.setProperty("java.rmi.server.codebase", packageURL.toString());
@@ -285,8 +293,7 @@ public class ProblemTransmitterApp {
 
             try {
                 // Erzeugung des Problem-Transmitters
-                transmitter = new ProblemTransmitterImpl(problemManagerHost,
-                                                         debugMode);
+                transmitter = new ProblemTransmitterImpl(problemManagerHost);
 
                 // Die graphischen Statistik-Ausgaben starten
                 if (graphicalMode) {
@@ -299,49 +306,42 @@ public class ProblemTransmitterApp {
                     }
                 }
             } catch (MalformedURLException e) {
-                System.out.println("Eingegebene URL fehlerhaft!");
-                if (debugMode) {
-                    e.printStackTrace();
-                }
+                LOGGER.log(Level.SEVERE,
+                    "Eingegebene URL fehlerhaft!");
+                LOGGER.throwing(ProblemTransmitterApp.classname, "main", e);
                 System.exit(1);
             } catch (AccessException e) {
-                System.out.println(
-                        "Der Zugriff auf den Problem-Manager war nicht erlaubt.\n"
+                LOGGER.log(Level.SEVERE,
+                        "Der Zugriff auf den Problem-Manager war nicht erlaubt, "
                         + "Vermutlich falsche policy-Datei angegeben.");
-                if (debugMode) {
-                    e.printStackTrace();
-                }
+                LOGGER.throwing(ProblemTransmitterApp.classname, "main", e);
                 System.exit(1);
             } catch (RemoteException e) {
-                System.out.println(
-                "Fehler bei der Verbindung mit dem Dispatcher.");
-                if (debugMode) {
-                    e.printStackTrace();
-                }
+                LOGGER.log(Level.SEVERE,
+                        "Fehler bei der Verbindung mit dem Dispatcher.");
+                LOGGER.throwing(ProblemTransmitterApp.classname, "main", e);
                 System.exit(1);
             } catch (NotBoundException e) {
-                System.out.println(
-                "Dieser angegebene problemManagerHost existiert nicht.");
-                if (debugMode) {
-                    e.printStackTrace();
-                }
+                LOGGER.log(Level.SEVERE,
+                        "Dieser angegebene problemManagerHost existiert nicht.");
+                LOGGER.throwing(ProblemTransmitterApp.classname, "main", e);
                 System.exit(1);
             }
 
-            if (!graphicalMode) {
-                System.out.println("Beginne mit Übertragung des Problems");
-            }
+            LOGGER.log(Level.INFO, "Beginne mit Übertragung des Problems");
+
             solution = computedSolution(serializable);
             if (solution == null) {
-                System.err.println("Fehler! Die zurückgegebene Lösung ist null");
+                LOGGER.log(Level.SEVERE,
+                        "Fehler! Die zurückgegebene Lösung ist null");
                 System.exit(1);
             }
 
-            Miscellaneous.printDebugMessage(debugMode,
-                                            "Schreibe Lösung in Datei");
+            LOGGER.log(Level.FINE, "Schreibe Lösung in Datei");
+
             Miscellaneous.writeSerializableToFile(solution, filename);
-            System.out.println("\nLösung erhalten und geschrieben!");
-            System.out.println("Berechnung beeendet!\n");
+            LOGGER.log(Level.INFO, "Lösung erhalten und geschrieben!");
+            LOGGER.log(Level.INFO, "Berechnung beeendet!");
 
             // Die letzte Problem-Statistik ausgeben
             finalStat = transmitter.getFinalProblemStat();
@@ -356,13 +356,13 @@ public class ProblemTransmitterApp {
             }
 
         } catch (MalformedURLException ex) {
-            System.out.println("Fehler bei: -u");
+            System.err.println("Fehler bei: -u");
             usage(1);
         } catch (IOException ex) {
-            System.out.println("Fehler bei: " + ex.getMessage());
+            System.err.println("Fehler bei: " + ex.getMessage());
             usage(1);
         } catch (ParameterParserException ex) {
-            System.out.println("Fehler in der Kommandozeile: " + ex.getMessage());
+            System.err.println("Fehler in der Kommandozeile: " + ex.getMessage());
             usage(1);
         }
     }

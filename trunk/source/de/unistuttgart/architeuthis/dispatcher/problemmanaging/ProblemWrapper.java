@@ -1,7 +1,7 @@
 /*
  * file:        ProblemWrapper.java
  * created:     29.06.2003
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -136,8 +136,8 @@ class ProblemWrapper extends Thread {
      * {@link java.util.logging.Logger} eingestellt auf
      * de.unistuttgart.architeuthis.dispatcher
      */
-    private Logger log =
-        Logger.getLogger("de.unistuttgart.architeuthis.dispatcher");
+    private static final Logger LOGGER =
+        Logger.getLogger(ProblemWrapper.class.getName());
 
     /**
      * Referenz auf den ProblemManager
@@ -172,7 +172,7 @@ class ProblemWrapper extends Thread {
             }
             remoteStoreGenerator = generator;
         } catch (Throwable e) {
-            log.info("Fehler bei der Erzeugung vom zentralen RemoteStore");
+            LOGGER.info("Fehler bei der Erzeugung vom zentralen RemoteStore");
             throw new RemoteStoreGenException(e.getMessage(), e.getCause());
         }
 
@@ -275,8 +275,8 @@ class ProblemWrapper extends Thread {
                 parProbWrapSolPair = new PartialSolutionParProbWrapper(parProbWrap, parSol);
                 parProbSolBuffer.enqueue(parProbWrapSolPair);
             } else {
-                log.severe("<E> Teillösung erhalten zu einem Teilproblem,"
-                           + " das nicht in Berechnung war.");
+                LOGGER.severe("Teillösung erhalten zu einem Teilproblem,"
+                              + " das nicht in Berechnung war.");
 
             }
         }
@@ -510,7 +510,7 @@ class ProblemWrapper extends Thread {
                             parPropWrapper.getPartialProblem());
 
                     } catch (Throwable e) {
-                        log.info("Fehler bei der Verarbeitung einer Teillösung");
+                        LOGGER.info("Fehler bei der Verarbeitung einer Teillösung");
                         problemManager.reportException(
                             this,
                             parPropWrapper,
@@ -565,7 +565,7 @@ class ProblemWrapper extends Thread {
             try {
                 centralRemoteStore.terminate();
             } catch (Throwable e) {
-                log.info("Fehler beim Beenden vom zentralen RemoteStore");
+                LOGGER.info("Fehler beim Beenden vom zentralen RemoteStore");
                 problemManager.reportException(
                     this,
                     parPropWrapper,

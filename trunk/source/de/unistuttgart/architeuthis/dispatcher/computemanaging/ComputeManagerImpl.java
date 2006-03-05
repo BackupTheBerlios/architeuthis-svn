@@ -1,7 +1,7 @@
 /*
  * file:        ComputeManagerImpl.java
  * created:     <Erstellungsdatum>
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 05.03.2006 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -169,8 +169,7 @@ public final class ComputeManagerImpl
      * {@link java.util.logging.Logger} eingestellt auf
      * de.unistuttgart.architeuthis.dispatcher
      */
-    private Logger log =
-        Logger.getLogger("de.unistuttgart.architeuthis.dispatcher");
+    private static final Logger LOGGER = Logger.getLogger(ComputeManagerImpl.class.getName());
 
     /**
      * Maximale Anzahl von Versuchen, einen Operative zu erreichen, bis dieser
@@ -238,7 +237,7 @@ public final class ComputeManagerImpl
         ipAddress = InetAddress.getLocalHost();
         LocateRegistry.createRegistry(port);
 
-        log.config("Dispatcher auf: " + ipAddress);
+        LOGGER.config("Dispatcher auf: " + ipAddress);
         bindingOperativeMan = "//"
                               + ipAddress.getHostName()
                               + ":"
@@ -261,8 +260,7 @@ public final class ComputeManagerImpl
             new OperativeMonitoringUnit(
                 this,
                 remoteOperativeMaxTries,
-                operativeMonitoringInterval,
-                log);
+                operativeMonitoringInterval);
 
         // Hier wird ein shutdownHook gesetzt. Dieser wird aufgerufen, wenn vom
         // System ein term-Signal kommt (also beim Beenden oder bei Strg+c).
@@ -273,7 +271,7 @@ public final class ComputeManagerImpl
             }
         });
 
-        log.info("Dispatcher gestartet.");
+        LOGGER.info("Dispatcher gestartet.");
     }
 
     /**
@@ -355,9 +353,9 @@ public final class ComputeManagerImpl
                 // aus OperativeMonitoringUnit austragen
                 operativeMonitoring.stopMonitoring(operativeInfoObj.getOperative());
 
-                // Statistik aktualisieren und log-Ausgabe
+                // Statistik aktualisieren und LOGGER-Ausgabe
                 systemStatistics.notifyOperativesUnregistration();
-                log.info(operativeInfoObj.toString() + " wurde abgemeldet");
+                LOGGER.info(operativeInfoObj.toString() + " wurde abgemeldet");
             }
         }
     }
@@ -373,7 +371,7 @@ public final class ComputeManagerImpl
         boolean contained;
 
         synchronized (operativeInfoObj) {
-            log.info(
+            LOGGER.info(
                 operativeInfoObj.toString()
                     + " "
                     + ((RemoteObject) operativeInfoObj.getOperative())
@@ -393,17 +391,17 @@ public final class ComputeManagerImpl
      */
     private void stopComputationOnOperative(InfoOperative operativeInfo) {
         if (operativeInfo.getInfoParProbWrapper() != null) {
-            log.info("Stoppe Berechnung auf " + operativeInfo.toString());
+            LOGGER.info("Stoppe Berechnung auf " + operativeInfo.toString());
             synchronized (operativeInfo) {
                 try {
 // Für GC-Fehler auf Operative nachfolgende Zeile auskommentieren
-                    log.fine("Versuche Berechnung auf "
+                    LOGGER.fine("Versuche Berechnung auf "
                              + operativeInfo + " abzubrechen");
                     operativeInfo.getOperative().stopComputation();
-                    log.fine("Berechnung auf " + operativeInfo
+                    LOGGER.fine("Berechnung auf " + operativeInfo
                              + " erfolgreich abgebrochen");
                 } catch (RemoteException e1) {
-                    log.warning(
+                    LOGGER.warning(
                         "Konnte Berechnung auf "
                             + operativeInfo.toString()
                             + " nicht abbrechen");
@@ -448,22 +446,22 @@ public final class ComputeManagerImpl
                     while (!transmitted && (tries < remoteOperativeMaxTries)) {
                         tries++;
                         try {
-                            log.fine("Versuche Teilproblem an "
+                            LOGGER.fine("Versuche Teilproblem an "
                                      + operativeInfoObj + " zu senden");
 
                             centralRemoteStore = parProbWrap.getCentralRemoteStore();
-                            log.fine("RemoteStore erhalten!");
+                            LOGGER.fine("RemoteStore erhalten!");
 
                             generator = parProbWrap.getRemoteStoreGenerator();
-                            log.fine("RemoteStoreGenerator erhalten!");
+                            LOGGER.fine("RemoteStoreGenerator erhalten!");
 
                             operative.fetchPartialProblem(parProbWrap.getPartialProblem(),
                                     centralRemoteStore, generator);
-                            log.fine("Teilproblem erfolgreich an "
+                            LOGGER.fine("Teilproblem erfolgreich an "
                                      + operativeInfoObj + " gesendet");
                             transmitted = true;
                         } catch (RemoteException e) {
-                            log.fine("Senden des Teilproblems an "
+                            LOGGER.fine("Senden des Teilproblems an "
                                      + operativeInfoObj + " fehlgeschlagen");
                             exceptionCode = ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION;
                             exceptionMessage = e.toString();
@@ -474,21 +472,21 @@ public final class ComputeManagerImpl
                             }
                             continue;
                         } catch (RemoteStoreGenException e) {
-                            log.info("Erzeugung von RemoteStore fehlgeschlagen");
+                            LOGGER.info("Erzeugung von RemoteStore fehlgeschlagen");
                             exceptionCode = ExceptionCodes.REMOTE_STORE_GEN_EXCEPTION;
                             exceptionMessage = e.toString();
                         } catch (RemoteStoreException e) {
-                            log.info("Anmeldung von RemoteStore fehlgeschlagen");
+                            LOGGER.info("Anmeldung von RemoteStore fehlgeschlagen");
                             exceptionCode = ExceptionCodes.REMOTE_STORE_EXCEPTION;
                             exceptionMessage = e.toString();
                         } catch (ProblemComputeException e) {
-                            log.severe("<E> "
+                            LOGGER.severe("<E> "
                                        + operativeInfoObj.toString()
                                        + " ist bereits beschäftigt.");
                             exceptionCode = ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION;
                             exceptionMessage = e.toString();
                         } catch (RuntimeException e) {
-                            log.fine("Senden des Teilproblems an "
+                            LOGGER.fine("Senden des Teilproblems an "
                                      + operativeInfoObj + " fehlgeschlagen");
                             exceptionCode = ExceptionCodes.PARTIALPROBLEM_SEND_EXCEPTION;
                             exceptionMessage = e.toString();
@@ -503,19 +501,19 @@ public final class ComputeManagerImpl
                         InfoParProbWrapper pp =
                             operativeInfoObj.getInfoParProbWrapper();
                         if (pp != null) {
-                            log.severe(
+                            LOGGER.severe(
                                 "<E> "
                                     + operativeInfoObj.toString()
                                     + " "
                                     + partProbInfoObj.toString()
                                     + " ist ein anderes");
-                            log.severe("nämlich " + pp.toString());
+                            LOGGER.severe("nämlich " + pp.toString());
                         }
                         operativeInfoObj.setInfoParProbWrapper(partProbInfoObj);
 
                         if (partProbInfoObj.getOperativeInfos()
                                            .contains(operativeInfoObj)) {
-                            log.severe(
+                            LOGGER.severe(
                                 "<E> "
                                     + partProbInfoObj.toString()
                                     + " "
@@ -570,7 +568,7 @@ public final class ComputeManagerImpl
             // Überprüfen, ob der Operative in der Zwischenzeit nicht entfernt
             // wurde
             if (infosActiveStateOperatives.contains(operativeInfoObj)) {
-                log.info("distributePartialProblem für "
+                LOGGER.info("distributePartialProblem für "
                          + operativeInfoObj.toString());
                 do {
                     succeeded = false;
@@ -594,7 +592,7 @@ public final class ComputeManagerImpl
                                     parProbWrap = partProbInfo.getParProbWrapper();
                                     parProbWrap.getProblemStatisticCollector()
                                                .startTimeMeasurement(parProbWrap);
-                                    log.info(
+                                    LOGGER.info(
                                         "abgebrochenes "
                                             + partProbInfo.toString()
                                             + " an "
@@ -634,7 +632,7 @@ public final class ComputeManagerImpl
                                     if (succeeded) {
                                         parProbWrap.getProblemStatisticCollector()
                                                    .startTimeMeasurement(parProbWrap);
-                                        log.info(
+                                        LOGGER.info(
                                             "neues "
                                                 + partProbInfo.toString()
                                                 + " an "
@@ -670,7 +668,7 @@ public final class ComputeManagerImpl
                                             parProbWrap = partProbInfo.getParProbWrapper();
                                             parProbWrap.getProblemStatisticCollector()
                                                        .incComputingOperatives();
-                                            log.info(
+                                            LOGGER.info(
                                                 "altes "
                                                     + partProbInfo.toString()
                                                     + " an "
@@ -696,7 +694,7 @@ public final class ComputeManagerImpl
                                         infosPassiveStateOperatives.add(
                                             operativeInfoObj);
                                         operativeInfoObj.setActive(false);
-                                        log.info(
+                                        LOGGER.info(
                                             operativeInfoObj.toString()
                                                 + " ist jetzt passiv");
                                     }
@@ -858,7 +856,7 @@ public final class ComputeManagerImpl
         if (operativeFound) {
             return operativeInfoObj;
         } else {
-            log.fine("Operative-Info-Objekt nicht gefunden.");
+            LOGGER.fine("Operative-Info-Objekt nicht gefunden.");
             return null;
         }
     }
@@ -879,7 +877,7 @@ public final class ComputeManagerImpl
             } catch (RemoteException e) {
                 removeOperativeFromParProb(operativeInfoObj);
                 removeDeadOperative(operativeInfoObj);
-                log.warning(operativeInfoObj + " ist nicht erreichbar"
+                LOGGER.warning(operativeInfoObj + " ist nicht erreichbar"
                                              + " und wurde entfernt.");
             }
         }
@@ -904,7 +902,7 @@ public final class ComputeManagerImpl
                 reachable = operative.isReachable();
             } catch (RemoteException re) {
                 reachable = false;
-                log.warning("Operative ist bei Anmeldung nicht erreichbar");
+                LOGGER.warning("Operative ist bei Anmeldung nicht erreichbar");
             }
 
             if (reachable) {
@@ -927,9 +925,9 @@ public final class ComputeManagerImpl
                 infosActiveStateOperatives.add(operativeInfoObj);
                 sendingParProbLocker.put(operativeInfoObj, new Object());
 
-                // Statistik aktualisieren und log-Ausgabe
+                // Statistik aktualisieren und LOGGER-Ausgabe
                 systemStatistics.notifyOperativesRegistration();
-                log.fine(operativeInfoObj.toString()
+                LOGGER.fine(operativeInfoObj.toString()
                          + " erfolgreich angemeldet.");
 
                 if (!operativeMonitoring.isAlive()) {
@@ -983,12 +981,12 @@ public final class ComputeManagerImpl
         // Zugehöriges Operative-Info-Object ermitteln
         InfoOperative operativeInfoObj = findOperativeInfo(operative);
         if (operativeInfoObj == null) {
-            log.severe(
+            LOGGER.severe(
                 "<E> Unbekannter Operative hat versucht sich abzumelden.");
             throw new RemoteException(
                 "Unbekannter Operative hat versucht sich abzumelden.");
         }
-        log.fine(operativeInfoObj.toString() + " meldet sich ab.");
+        LOGGER.fine(operativeInfoObj.toString() + " meldet sich ab.");
         unregisterOperative(operativeInfoObj);
     }
 
@@ -1004,11 +1002,11 @@ public final class ComputeManagerImpl
         terminated = true;
 
         // Operative-Überwachung beenden
-        log.info("Stoppe die Ueberwachung der Operatives...");
+        LOGGER.info("Stoppe die Ueberwachung der Operatives...");
         operativeMonitoring.terminate();
 
         // Berechnungen auf allen Operatives beenden
-        log.info("Melde die angemeldeten Operatives ab ...");
+        LOGGER.info("Melde die angemeldeten Operatives ab ...");
         List operativeList = new LinkedList();
         synchronized (infosActiveStateOperatives) {
             synchronized (infosPassiveStateOperatives) {
@@ -1023,9 +1021,9 @@ public final class ComputeManagerImpl
             opInfo = (InfoOperative) opInfoIt.next();
             try {
                 opInfo.getOperative().doExit();
-                log.info(opInfo.toString() + " wurde beendet.");
+                LOGGER.info(opInfo.toString() + " wurde beendet.");
             } catch (RemoteException e1) {
-                log.warning(opInfo.toString() + " konnte nicht beendet werden.");
+                LOGGER.warning(opInfo.toString() + " konnte nicht beendet werden.");
             }
 
             // Den Operative in jedem Fall aus der Verwaltung entfernen
@@ -1044,11 +1042,11 @@ public final class ComputeManagerImpl
             Naming.unbind(bindingOperativeMan);
             Naming.unbind(bindingProbMan);
         } catch (Exception e) {
-            log.warning(
+            LOGGER.warning(
                 "Austragen der Dienste aus der "
                     + "RMI-Registry fehlgeschlagen.");
         }
-        log.info("Dispatcher beendet.");
+        LOGGER.info("Dispatcher beendet.");
     }
 
     /**
@@ -1073,7 +1071,7 @@ public final class ComputeManagerImpl
 
         if (partProbInfo != null) {
             synchronized (partProbInfo) {
-                log.info(
+                LOGGER.info(
                     "breche Berechnungen für "
                         + partProbInfo.toString()
                         + " ab");
@@ -1112,7 +1110,7 @@ public final class ComputeManagerImpl
             }
 
         } else {
-            log.severe("<E> Abzubrechendes Teilproblem ist \"null-Objekt\"");
+            LOGGER.severe("<E> Abzubrechendes Teilproblem ist \"null-Objekt\"");
         }
     }
 
@@ -1171,7 +1169,7 @@ public final class ComputeManagerImpl
             }
 
             if (partProbInfoObj != null) {
-                log.info(
+                LOGGER.info(
                     operativeInfoObj.toString()
                         + " liefert Teillösung zu "
                         + partProbInfoObj.toString());
@@ -1247,7 +1245,7 @@ public final class ComputeManagerImpl
             }
 
             if (partProbInfoObj != null) {
-                log.severe(
+                LOGGER.severe(
                     operativeInfoObj.toString()
                         + " meldet Fehler bei "
                         + partProbInfoObj.toString());

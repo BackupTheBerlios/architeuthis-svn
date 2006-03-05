@@ -1,10 +1,11 @@
 /*
  * file:        ProblemComputation.java
  * created:     19.02.2004
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit, juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
+ *              Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *
  *
  * This file is part of Architeuthis.
@@ -32,6 +33,8 @@
 
 package de.unistuttgart.architeuthis.user;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -51,14 +54,20 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 
 /**
- * Die Klasse ProblemComputation berechnet ein Problem.
- * Dazu kapselt Sie den ProblemTransmitter zum Übertragen des Problems auf ein
- * ComputeSystem und bietet die Möglichkeit zur lokalen Berechnung (Simulation
- * eines solchen ComputeSystems).
+ * Die Klasse ProblemComputation berechnet ein Problem. Dazu kapselt Sie den
+ * ProblemTransmitter zum Übertragen des Problems auf ein ComputeSystem und
+ * bietet die Möglichkeit zur lokalen Berechnung (Simulation eines solchen
+ * ComputeSystems).
  *
  * @author Andreas Heydlauff, Dietmar Lippold
  */
 public class ProblemComputation {
+
+    /**
+     * Logger for this class
+     */
+    private static final Logger LOGGER
+        = Logger.getLogger(ProblemComputation.class.getName());
 
     /**
      * Die Anzahl der Probleme, die bisher zur lokalen Berechnung übergeben
@@ -72,25 +81,10 @@ public class ProblemComputation {
     private volatile ProblemStatistics finalProbStat = null;
 
     /**
-     * Gibt an, ob zusätzliche Informationen ausgegeben werden sollen.
-     */
-    private boolean debugMode;
-
-    /**
-     * Ereugt eine neue Instanz.
-     *
-     * @param debug  gibt an, ob debug-Ausgaben erfolgen sollen.
-     */
-    public ProblemComputation(boolean debug) {
-        debugMode = debug;
-    }
-
-    /**
      * Ereugt eine neue Instanz. Bei dieser werden keine zusätzlichen
      * debug-Meldungen ausgegeben.
      */
     public ProblemComputation() {
-        this(false);
     }
 
     /**
@@ -173,8 +167,8 @@ public class ProblemComputation {
                 } catch (RemoteException e) {
                     // Exception kann nicht auftreten, da auf die RemoteStores
                     // nicht über RMI zugegriffen wird.
-                    System.err.println("Unmöglicher Fehler aufgetreten in"
-                                       + " Methode computeProblem");
+                    LOGGER.warning("Unmöglicher Fehler aufgetreten in Methode computeProblem -  : exception: "
+                                    + e);
                 }
             } else if (distRemoteStore == null) {
                 distRemoteStore = centralRemoteStore;
@@ -200,8 +194,9 @@ public class ProblemComputation {
                     } catch (RemoteException e) {
                         // Exception kann nicht auftreten, da auf die
                         // RemoteStores nicht über RMI zugegriffen wird.
-                        System.err.println("Unmöglicher Fehler aufgetreten in"
-                                           + " Methode computeProblem");
+                        LOGGER.log(Level.WARNING,
+                                "Unmöglicher Fehler aufgetreten in Methode computeProblem: "
+                                + e);
                     }
                 } else {
                     // Zuerst gegenseitige Abmeldung der RemoteStores.
@@ -345,7 +340,7 @@ public class ProblemComputation {
         ProblemTransmitterImpl transmitter;
         Serializable solution = null;
 
-        transmitter = new ProblemTransmitterImpl(dispatcherHost, debugMode);
+        transmitter = new ProblemTransmitterImpl(dispatcherHost);
         solution = transmitter.transmitProblem(problem, generator);
         finalProbStat = transmitter.getFinalProblemStat();
 
@@ -383,7 +378,7 @@ public class ProblemComputation {
         ProblemTransmitterImpl transmitter;
         Serializable solution = null;
 
-        transmitter = new ProblemTransmitterImpl(dispatcherHost, debugMode);
+        transmitter = new ProblemTransmitterImpl(dispatcherHost);
         solution = transmitter.transmitProblem(problem);
         finalProbStat = transmitter.getFinalProblemStat();
 

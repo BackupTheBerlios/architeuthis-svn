@@ -1,7 +1,7 @@
 /*
  * file:        RuntimeComparison.java
  * created:     <???>
- * last change: 10.02.2005 by Dietmar Lippold
+ * last change: 05.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -35,6 +35,10 @@
 
 package de.unistuttgart.architeuthis.user;
 
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -61,6 +65,12 @@ import de.unistuttgart.architeuthis.systeminterfaces.ProblemManager;
  * @author Achim Linke, Jürgen Heit, Dietmar Lippold
  */
 public class RuntimeComparison {
+
+    /**
+     * Logger für diese Klasse
+     */
+    private static final Logger LOGGER = Logger
+            .getLogger(RuntimeComparison.class.getName());
 
     /**
      * Umrechnungsteiler von Millisekunden in Sekunden.
@@ -106,11 +116,6 @@ public class RuntimeComparison {
     private static String adressCompSys;
 
     /**
-     * Gibt an, ob zusätzliche Informationen ausgegeben werden sollen.
-     */
-    private static boolean debugMode;
-
-    /**
      * Die Statistik zum Problem nach dessen Berechnung.
      */
     private static ProblemStatistics finalProblemStat;
@@ -148,7 +153,7 @@ public class RuntimeComparison {
             throw new ClassNotFoundException(mURLEx.getMessage());
         }
 
-        problemComputation = new ProblemComputation(debugMode);
+        problemComputation = new ProblemComputation();
         solution = problemComputation.computeProblem(problem);
         finalProblemStat = problemComputation.getFinalProblemStat();
         return solution;
@@ -197,7 +202,7 @@ public class RuntimeComparison {
             throw new ClassNotFoundException(mUrlEx.getMessage());
         }
 
-        problemComputation = new ProblemComputation(debugMode);
+        problemComputation = new ProblemComputation();
         urls[0] = url;
         solution =  problemComputation.transmitProblem(problem, adressCompSys,
                                                        urls);
@@ -338,7 +343,31 @@ public class RuntimeComparison {
                 filenameRemote = filename + REMOTE_SUPPLEMENT;
             }
 
-            debugMode = parser.isEnabled(debugSwitch);
+            if (parser.isEnabled(debugSwitch)) {
+                // log-Level für alle Logger dieses packages:
+                Logger logger = Logger.getLogger("de.unistuttgart.architeuthis.user");
+                logger.setLevel(Level.FINEST);
+
+                // der DefaultHandler hängt (normalerweise) am root-Logger
+                Handler[] handlers = Logger.getLogger("").getHandlers();
+
+                // einen ConsoleHandler finden:
+                ConsoleHandler consoleHandler = null;
+                for (int i=0; i < handlers.length; i++) {
+                    if (handlers[i] instanceof ConsoleHandler) {
+                        consoleHandler = (ConsoleHandler) handlers[i];
+                    }
+                }
+
+                // kein ConsoleHandler am root-Logger ?!
+                //  wir hängen selbst einen an:
+                if (consoleHandler == null) {
+                    consoleHandler = new java.util.logging.ConsoleHandler();
+                    Logger.getLogger("").addHandler(consoleHandler);
+                }
+
+                consoleHandler.setLevel(Level.FINEST);
+            }
 
             System.out.println("Berechnung lokal:");
             timeLocal = System.currentTimeMillis();
@@ -358,17 +387,20 @@ public class RuntimeComparison {
                         + " Sekunden");
                 System.out.println("\nStatistik:\n" + finalProblemStat);
             } catch (ClassNotFoundException e) {
-                System.out.println("Klasse wurde nicht gefunden");
+                LOGGER.log(Level.SEVERE,
+                        "Klasse wurde nicht gefunden");
                 exception = e;
             } catch (InstantiationException e) {
-                System.out.println("Objekt kann nicht instanziert werden");
+                LOGGER.log(Level.SEVERE,
+                        "Objekt kann nicht instanziert werden");
                 exception = e;
             } catch (IllegalAccessException e) {
-                System.out.println("Kein Zugriff auf computelocal erlaubt");
+                LOGGER.log(Level.SEVERE,
+                        "Kein Zugriff auf computelocal erlaubt");
                 exception = e;
             } catch (ProblemComputeException e) {
-                System.out.println(
-                    "Fehler bei der Berechnung / unerlaubte Rechnung");
+                LOGGER.log(Level.SEVERE,
+                        "Fehler bei der Berechnung / unerlaubte Rechnung");
                 exception = e;
             }
 
@@ -392,34 +424,38 @@ public class RuntimeComparison {
                             + " Sekunden");
                     System.out.println("\nStatistik:\n" + finalProblemStat);
                 } catch (ClassNotFoundException e) {
-                    System.out.println("Klasse wurde nicht gefunden");
+                    LOGGER.log(Level.SEVERE,
+                            "Klasse wurde nicht gefunden");
                     exception = e;
                 } catch (InstantiationException e) {
-                    System.out.println("Objekt kann nicht instanziert werden");
+                    LOGGER.log(Level.SEVERE,
+                            "Objekt kann nicht instanziert werden");
                     exception = e;
                 } catch (IllegalAccessException e) {
-                    System.out.println("Kein Zugriff auf computelocal erlaubt");
+                    LOGGER.log(Level.SEVERE,
+                            "Kein Zugriff auf computelocal erlaubt");
                     exception = e;
                 } catch (MalformedURLException e) {
-                    System.out.println("URL-Addresse fehlerhaft");
+                    LOGGER.log(Level.SEVERE,
+                            "URL-Addresse fehlerhaft");
                     exception = e;
                 } catch (RemoteException e) {
-                    System.out.println("Fehler beim Verbindungsaufbau mit RMI");
+                    LOGGER.log(Level.SEVERE,
+                            "Fehler beim Verbindungsaufbau mit RMI");
                     exception = e;
                 } catch (NotBoundException e) {
-                    System.out.println("Fehler beim lookup in der Registry (RMI)");
+                    LOGGER.log(Level.SEVERE,
+                            "Fehler beim lookup in der Registry (RMI)");
                     exception = e;
                 } catch (ProblemComputeException e) {
-                    System.out.println(
-                        "Fehler bei der Berechnung / unerlaubte Rechnung");
+                    LOGGER.log(Level.SEVERE,
+                            "Fehler bei der Berechnung / unerlaubte Rechnung");
                     exception = e;
                 }
             }
 
             if (exception != null) {
-                if (debugMode) {
-                    exception.printStackTrace();
-                }
+                LOGGER.throwing(RuntimeComparison.class.getName(), "main", exception);
             }
         } catch (ParameterParserException e1) {
             // TODO Auto-generated catch block
