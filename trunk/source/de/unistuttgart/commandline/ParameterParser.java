@@ -1,7 +1,7 @@
 /*
  * file:        ParameterParser.java
  * created:     21.10.2004
- * last change: 05.03.2006 by Dietmar Lippold
+ * last change: 06.03.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -481,7 +481,7 @@ public class ParameterParser {
      * @param parameterCheck  the number of free parameters allowed for the
      *                        commandline.
      */
-    public void setFreeParameterNumberCheck(int parameterCheck) {
+    public synchronized void setFreeParameterNumberCheck(int parameterCheck) {
 
         switch (parameterCheck) {
         case Option.ZERO_OR_MORE_PARAMETERS_CHECK:
@@ -638,7 +638,8 @@ public class ParameterParser {
      *
      * @return  the first parameter of the free prarameter list
      */
-    public String getFreeParameter() {
+    public synchronized String getFreeParameter() {
+
         assert (freeParameters != null);
         assert (freeParameters.size() > 0);
         return (String) freeParameters.get(0);
@@ -660,7 +661,7 @@ public class ParameterParser {
      *
      * @return Syntax String for this parser
      */
-    public String toString() {
+    public synchronized String toString() {
 
         StringBuffer optionString = new StringBuffer();
         Iterator iterator = optionList.iterator();
