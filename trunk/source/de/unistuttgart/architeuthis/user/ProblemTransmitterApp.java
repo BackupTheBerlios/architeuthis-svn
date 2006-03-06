@@ -1,7 +1,7 @@
 /*
  * file:        ProblemTransmitterApp.java
  * created:     08.08.2003
- * last change: 05.03.2006 by Dietmar Lippold
+ * last change: 06.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -218,25 +218,25 @@ public class ProblemTransmitterApp {
         Option urlOption = new Option("u");
         urlOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
         urlOption.setOptional(false);
-        urlOption.setName("packageURL");
+        urlOption.setDescription("packageURL");
         parser.addOption(urlOption);
 
         Option classnameOption = new Option("c");
         classnameOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
         classnameOption.setOptional(false);
-        classnameOption.setName("classname");
+        classnameOption.setDescription("classname");
         parser.addOption(classnameOption);
 
         Option filenameOption = new Option("f");
         filenameOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
         filenameOption.setOptional(false);
-        filenameOption.setName("filename");
+        filenameOption.setDescription("filename");
         parser.addOption(filenameOption);
 
         Option problemManagerOption = new Option("r");
         problemManagerOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
         problemManagerOption.setOptional(false);
-        problemManagerOption.setName("problemManager");
+        problemManagerOption.setDescription("problemManager");
         parser.addOption(problemManagerOption);
 
         try {

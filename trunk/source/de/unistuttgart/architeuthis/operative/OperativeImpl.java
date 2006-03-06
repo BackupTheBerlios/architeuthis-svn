@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 05.03.2006 by Dietmar Lippold
+ * last change: 06.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -504,7 +504,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         debug2.setParameterNumberCheck(Option.ZERO_PARAMETERS_CHECK);
 
         parser.setFreeParameterPosition(ParameterParser.START);
-        parser.setFreeParameterName("registry:port");
+        parser.setFreeParameterDescription("registry:port");
         parser.setFreeParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
         parser.addOption(debug1);

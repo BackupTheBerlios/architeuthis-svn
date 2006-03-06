@@ -1,7 +1,7 @@
 /*
  * file:        ParameterParserTest.java
  * created:     21.10.2004
- * last change: 05.03.2006 by Dietmar Lippold
+ * last change: 06.03.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -510,21 +510,21 @@ public class ParameterParserTest extends TestCase {
         ParameterParser parser = new ParameterParser();
 
         Option configFile = parser.createOptionForKey("c")
-        .setName("config-Datei")
-        .setOptional(false)
-        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+                                  .setDescription("config-Datei")
+                                  .setOptional(false)
+                                  .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
         Option port = parser.createOptionForKey("port")
-        .setName("Port-Nummer")
-        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+                            .setDescription("Port-Nummer")
+                            .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
         Option deadtime = parser.createOptionForKey("deadtime")
-        .setName("Zeit")
-        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+                                .setDescription("Zeit")
+                                .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
         Option deadtries = parser.createOptionForKey("deadtries")
-        .setName("Anzahl")
-        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+                                 .setDescription("Anzahl")
+                                 .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
         Option additionalThreads = parser.createOptionForKey("t");
 
@@ -553,9 +553,8 @@ public class ParameterParserTest extends TestCase {
         String portnumber = "50";
         String somename = "noname";
 
-        String testFile =
-            "port=" + portnumber + NEWLINE
-            + "name=" + somename + NEWLINE;
+        String testFile = "port=" + portnumber + NEWLINE
+                          + "name=" + somename + NEWLINE;
 
 
         // this whole section is just for turning a simple string into an
@@ -575,13 +574,11 @@ public class ParameterParserTest extends TestCase {
 
         ParameterParser parser = new ParameterParser();
 
-        Option thePort = parser.createOptionForKey("p")
-        .setName("port")
-        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+        Option thePort = parser.createOptionForKey("port")
+                               .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
-        Option theName = parser.createOptionForKey("n")
-        .setName("name")
-        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+        Option theName = parser.createOptionForKey("name")
+                               .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
         // turning a properties file into a HashMap
         Properties props = new Properties();
@@ -657,21 +654,21 @@ public class ParameterParserTest extends TestCase {
         ParameterParser parser = new ParameterParser();
 
         Option configFile = parser.createOptionForKey("c")
-        .setName("config-Datei")
-        .setOptional(false)
-        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+                                  .setDescription("config-Datei")
+                                  .setOptional(false)
+                                  .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
         Option port = parser.createOptionForKey("port")
-        .setName("Port-Nummer")
-        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+                            .setDescription("Port-Nummer")
+                            .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
         Option deadtime = parser.createOptionForKey("deadtime")
-        .setName("Zeit")
-        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+                                .setDescription("Zeit")
+                                .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
         Option deadtries = parser.createOptionForKey("deadtries")
-        .setName("Anzahl")
-        .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
+                                 .setDescription("Anzahl")
+                                 .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
         Option additionalThreads = parser.createOptionForKey("t");
 
@@ -863,7 +860,7 @@ public class ParameterParserTest extends TestCase {
 
         configOption = new Option("config");
         configOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
-        configOption.setName("configfile");
+        configOption.setDescription("configfile");
         parser.addOption(configOption);
 
         parser.setFreeParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
@@ -917,13 +914,11 @@ optionfile=datei
     public void testPropertiesReading3() {
         String filename = "param-config";
 
-
         // create a input stream to simulate a properties file
         String fileContent = "param " + NEWLINE
-        + "optionfile=datei" + NEWLINE;
+                             + "option=datei" + NEWLINE;
 
         String[] args = { "-config", filename, "zzz" };
-
 
         ParameterParser parser = new ParameterParser();
         Option          helpSwitch, paramSwitch, paramOption, configOption;
@@ -938,12 +933,12 @@ optionfile=datei
 
         paramOption = new Option("option");
         paramOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
-        paramOption.setName("optionfile");
+        paramOption.setDescription("optionfile");
         parser.addOption(paramOption);
 
         configOption = new Option("config");
         configOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
-        configOption.setName("configfile");
+        configOption.setDescription("configfile");
         parser.addOption(configOption);
 
         parser.setFreeParameterPosition(ParameterParser.END);

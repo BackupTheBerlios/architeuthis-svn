@@ -42,9 +42,9 @@ import java.util.Iterator;
  * {@link Option Option} objects and some methods to assign command line
  * arguments to these options.<br/>
  * The methods {@link #addOption addOption},
- * {@link #createOptionForKey createOptionForKey} and
- * {@link #createOptionForName createOptionForName} can be
- * used to compose the set of options.<br/>
+ * {@link #createOptionForKey(String) createOptionForKey(String)} and
+ * {@link #createOptionForKey(String, String) createOptionForKey(String, String)}
+ * can be used to compose the set of options.<br/>
  * The methods {@link #parseAll parseAll} and {@link #parseOption parseOption}
  * can be used to assign and return the parameters for these options.<p>
  *
@@ -56,9 +56,9 @@ import java.util.Iterator;
 public class ParameterParser {
 
     /**
-     * The default name for the free parameters.
+     * The default description for the free parameters.
      */
-    private static final String DEFAULT_PARAMETER_NAME = "parameter";
+    private static final String DEFAULT_PARAMETER_DESCRIPTION = "parameter";
 
     /**
      * The free parameters are at the beginning.
@@ -108,17 +108,19 @@ public class ParameterParser {
     private int freeParameterPosition = START;
 
     /**
-     * The name for the free parameters in this commandline.
+     * The description for the free parameters in the commandline.
      */
-    private String parameterName = DEFAULT_PARAMETER_NAME;
+    private String freeParameterDescription = DEFAULT_PARAMETER_DESCRIPTION;
 
     /**
-     * Method to add an option to the ParameterParser. Any previous added
-     * option with the same key or the same name are removed.
+     * Method to add an option to this instance. Any previous added option
+     * with the same key is removed.
      *
-     * @param option Option object to be added to this parser
+     * @param option Option object to be added to this parser.
      */
     public synchronized void addOption(Option option) {
+
+        optionList.remove(option);
         optionList.add(option);
     }
 
@@ -222,6 +224,214 @@ public class ParameterParser {
     }
 
     /**
+     * Read options from a properties HashMap.
+     *
+     * @param props  HashMap contaning the parameters.
+     *
+     * @throws ParameterParserException  Wrong name or number of parameters.
+     */
+    protected synchronized void parseProperties(HashMap props)
+        throws ParameterParserException {
+
+        HashMap optionKeyMap = new HashMap();
+
+        // create a key map from keys to options
+        Iterator optIter = optionList.iterator();
+        while (optIter.hasNext()) {
+            Option option = (Option) optIter.next();
+            optionKeyMap.put(option.getKey(), option);
+        }
+
+        Iterator propIter = props.keySet().iterator();
+        while (propIter.hasNext()) {
+            String name = (String) propIter.next();
+
+            if (optionKeyMap.containsKey(name)) {
+                Option option = (Option) optionKeyMap.get(name);
+                String value = (String) props.get(name);
+
+                // there may be no value assigned to this option
+                if (value.length() == 0) {
+                    option.setEnabled(true);
+                } else {
+                    option.setEnabled(true);
+                    String[] paramValues = value.split("\\s+");
+                    for (int pNo = 0; pNo < paramValues.length; pNo++) {
+                        if (option.canTakeParameter()
+                                && option.canMatchParameter(paramValues[pNo])) {
+                            option.addParameter(paramValues[pNo]);
+                        } else {
+                            throw new ParameterParserException("Unable to assign"
+                                                               + " value "
+                                                               + paramValues[pNo]
+                                                               + " to " + option);
+                        }
+                    }
+                }
+            } else {
+                throw new ParameterParserException("Unknown properties name: "
+                                                   + name);
+            }
+        }
+    }
+
+    /**
+     * Method to parse a commandline.
+     *
+     * @throws ParameterParserException  if there are any problems with
+     *                                   the parameters.
+     */
+    public synchronized void parseAll() throws ParameterParserException {
+
+        assert (argv != null);
+
+        // scratch iterator for options
+        Iterator iterator;
+
+        // this list is reduced if we found a match, at the end of this
+        // method. It will contain only unused options.
+        LinkedList optionsLeft = (LinkedList) optionList.clone();
+
+        // reset all Option objects
+        iterator = optionsLeft.iterator();
+        while (iterator.hasNext()) {
+            Option option = (Option) iterator.next();
+            option.reset();
+        }
+
+        // parse parameters
+        parseProperties(this.properties);
+
+        // reset the free parameter list
+        freeParameters = new ArrayList();
+
+        // store for strings we can's assign to any option
+        ArrayList stringsUnknown = new ArrayList();
+
+        // index to check each commandline string
+        int argNo = 0;
+
+        // read free parameters if they are first:
+        if (freeParameterPosition == START) {
+            while ((argNo < argv.length) && !anyMatch(argv[argNo])) {
+                freeParameters.add(argv[argNo]);
+                argNo++;
+            }
+        }
+
+        // the valid option from the last loop run
+        //   (may need some more parameters)
+        Option lastOptionFound = null;
+
+        // option found in the current loop run
+        Option currentOptionFound = null;
+
+        // we leave this loop after we finished parsing all strings
+        //  from the input
+        // (we use breaks in this loop, this is considered a
+        //  bad coding-style :-/ )
+        while (argNo < argv.length) {
+
+            // iterator for all remaining Option objects
+            iterator = optionsLeft.iterator();
+            // run as long as we haven't found a match and still have
+            // candidates to try:
+            while ((iterator.hasNext()) && (currentOptionFound == null)) {
+                Option option = (Option) iterator.next();
+                // check for a match
+                if (option.isMatch(argv[argNo])) {
+                    // found a matching option
+                    option.reset();
+                    option.setEnabled(true);
+                    // remove the option from the underlaying collection
+                    // (the ArrayList)
+                    iterator.remove();
+                    currentOptionFound = option;
+                }
+            }
+
+            // some cleanup if we didn't find an option for the current
+            // string:
+            if (currentOptionFound == null) {
+                // we have an unparsable string, this may be a parameter
+                // for the last option:
+                // do we have a last Option at all:
+                if (lastOptionFound == null) {
+                    // leave the while loop
+                    break;
+                } else {
+                    if (lastOptionFound.canTakeParameter()
+                            && lastOptionFound.canMatchParameter(argv[argNo])) {
+                        try {
+                            // add the string to the last option
+                            lastOptionFound.addParameter(argv[argNo]);
+
+                            // we are still working on the last option, we
+                            // need to remember this for the next loop
+                            currentOptionFound = lastOptionFound;
+                        } catch (ParameterParserException ex) {
+                            // leave the while loop
+                            // (something went really wrong here)
+                            break;
+                        }
+                    } else {
+                        // no idea where to put the argv[i] string, leave
+                        // the while loop..
+                        break;
+                    }
+                }
+            }
+
+            // if we don't find a matching option we check for parameters
+            // for the last option, so we have to remember the last option
+            // for the next loop run
+            lastOptionFound = currentOptionFound;
+            // looking for a new option match in the next loop run:
+            currentOptionFound = null;
+
+            // move to the next string
+            argNo++;
+        } // end while
+
+        // read free parameters only if they are last:
+        if (freeParameterPosition == END) {
+            while (argNo < argv.length) {
+                freeParameters.add(argv[argNo]);
+                argNo++;
+            }
+        } else {
+            // add remaining strings to the unknown vector:
+            while (argNo < argv.length) {
+                stringsUnknown.add(argv[argNo]);
+                argNo++;
+            }
+            if (stringsUnknown.size() > 0) {
+                // return the first unknown string
+                throw new ParameterParserException("Unknown String: "
+                                                   + stringsUnknown.toArray()[0]);
+            }
+        }
+
+        // check for free parameter minimum number
+        if (freeParameters.size() < minParameters) {
+            throw new ParameterParserException("Missing parameters ");
+        }
+
+        // check for free parameter maximum number
+        if (freeParameters.size() > maxParameters) {
+            throw new ParameterParserException("Too many parameters: "
+                                               + freeParameters);
+        }
+
+        // delegate checks to the Options:
+        iterator = optionList.iterator();
+        while (iterator.hasNext()) {
+            Option option = (Option) iterator.next();
+            option.checkValid();
+        }
+    }
+
+    /**
      * Set an array of stings (usually the command line).<br/>
      * This method should be used before calling the
      * {@link #parseOption(Option) parseOption}
@@ -277,205 +487,6 @@ public class ParameterParser {
     }
 
     /**
-     * Read options from a properties HashMap.
-     *
-     * @param props  HashMap contaning the parameters.
-     *
-     * @throws ParameterParserException  Wrong name or number of parameters.
-     */
-    protected synchronized void parseProperties(HashMap props)
-        throws ParameterParserException {
-
-        // create a name map on the fly
-        Iterator iterator = optionList.iterator();
-        HashMap optionNameMap = new HashMap();
-        while (iterator.hasNext()) {
-            Option option = (Option) iterator.next();
-            optionNameMap.put(option.getName(), option);
-        }
-
-        Iterator propIter = props.keySet().iterator();
-        while (propIter.hasNext()) {
-            String name = (String) propIter.next();
-
-            //System.out.println("size name list: " + optionNameMap.size());
-            //System.out.println("size key list: " + optionNameMap.size());
-
-            if (optionNameMap.containsKey(name)) {
-                Option option = (Option) optionNameMap.get(name);
-                String value = (String) props.get(name);
-                // there may be no value assigned to this option
-                if (value.length() == 0) {
-                    option.setEnabled(true);
-                } else if (option.canTakeParameter()
-                        && option.canMatchParameter(value)) {
-                    option.setEnabled(true);
-                    option.addParameter(value);
-                } else {
-                    throw new ParameterParserException("Unable to assign value "
-                            + value + " to " + name);
-                }
-            } else {
-                throw new ParameterParserException("Unknown Properties name: "
-                        + name);
-            }
-        }
-    }
-
-    /**
-     * Method to parse a commandline.
-     *
-     * @throws ParameterParserException  if there are any problems with
-     *                                   the parameters.
-     */
-    public synchronized void parseAll() throws ParameterParserException {
-
-        assert (argv != null);
-
-        // scratch iterator for options
-        Iterator iterator;
-
-        // this list is reduced if we found a match, at the end of this method
-        // this HashMap will contain only unused options
-        LinkedList optionsLeft = (LinkedList) optionList.clone();
-
-        // reset all Option objects:
-        iterator = optionsLeft.iterator();
-        while (iterator.hasNext()) {
-            Option option = (Option) iterator.next();
-            option.reset();
-        }
-
-        // parse parameters
-        parseProperties(this.properties);
-
-        // reset the free parameter list
-        freeParameters = new ArrayList();
-
-        // store for strings we can's assign to any option
-        ArrayList stringsUnknown = new ArrayList();
-
-        // index to check each commandline string
-        int i = 0;
-
-        // read free parameters if they are first:
-        if (freeParameterPosition == START) {
-            while ((i < argv.length) && !anyMatch(argv[i])) {
-                freeParameters.add(argv[i]);
-                i++;
-            }
-        }
-
-        // the valid option from the last loop run
-        //   (may need some more parameters)
-        Option lastOptionFound = null;
-        // option found in the current loop run
-        Option currentOptionFound = null;
-
-        // we leave this loop after we finished parsing all strings
-        //  from the input
-        // (we use breaks in this loop, this is considered a
-        //  bad coding-style :-/ )
-        while (i < argv.length) {
-
-            // iterator for all remaining Option objects
-            iterator = optionsLeft.iterator();
-            // run as long as we haven't found a match and still have
-            // candidates to try:
-            while ((iterator.hasNext()) && (currentOptionFound == null)) {
-                Option option = (Option) iterator.next();
-                // check for a match
-                if (option.isMatch(argv[i])) {
-                    // found a matching option
-                    option.reset();
-                    option.setEnabled(true);
-                    // remove the option from the underlaying collection
-                    // (the ArrayList)
-                    iterator.remove();
-                    currentOptionFound = option;
-                }
-            }
-
-            // some cleanup if we didn't find an option for the current
-            // string:
-            if (currentOptionFound == null) {
-                // we have an unparsable string, this may be a parameter
-                // for the last option:
-                // do we have a last Option at all:
-                if (lastOptionFound == null) {
-                    // leave the while loop
-                    break;
-                } else {
-                    if (lastOptionFound.canTakeParameter()
-                            && lastOptionFound.canMatchParameter(argv[i])) {
-                        try {
-                            // add the string to the last option
-                            lastOptionFound.addParameter(argv[i]);
-                            // we are still working on the last option, we
-                            // need to remember this for the next loop
-                            currentOptionFound = lastOptionFound;
-                        } catch (ParameterParserException ex) {
-                            // leave the while loop
-                            // (something went really wrong here)
-                            break;
-                        }
-                    } else {
-                        // no idea where to put the argv[i] string, leave
-                        // the while loop..
-                        break;
-                    }
-                }
-            }
-
-            // if we don't find a matching option we check for parameters
-            // for the last option, so we have to remember the last option
-            // for the next loop run
-            lastOptionFound = currentOptionFound;
-            // looking for a new option match in the next loop run:
-            currentOptionFound = null;
-
-            // move to the next string
-            i++;
-        } // end while
-
-        // read free parameters only if they are last:
-        if (freeParameterPosition == END) {
-            while (i < argv.length) {
-                freeParameters.add(argv[i]);
-                i++;
-            }
-        } else {
-            // add remaining strings to the unknown vector:
-            while (i < argv.length) {
-                stringsUnknown.add(argv[i]);
-                i++;
-            }
-            if (stringsUnknown.size() > 0) {
-                // return the first unknown string
-                throw new ParameterParserException("Unknown String: "
-                        + stringsUnknown.toArray()[0]);
-            }
-        }
-
-        // check for free parameter minimum number
-        if (freeParameters.size() < minParameters) {
-            throw new ParameterParserException("Missing parameters ");
-        }
-
-        // check for free parameter maximum number
-        if (freeParameters.size() > maxParameters) {
-            throw new ParameterParserException("Too many parameters: " + freeParameters);
-        }
-
-        // delegate checks to the Options:
-        iterator = optionList.iterator();
-        while (iterator.hasNext()) {
-            Option option = (Option) iterator.next();
-            option.checkValid();
-        }
-    }
-
-    /**
      * Set the number of parameters allowed for this commandline.
      *
      * @param parameterCheck  the number of free parameters allowed for the
@@ -515,12 +526,12 @@ public class ParameterParser {
     }
 
     /**
-     * Set the name for the free parameters.
+     * Set the description for the free parameters.
      *
-     * @param parameterName  the name to set to.
+     * @param description  the description to set to.
      */
-    public void setFreeParameterName(String parameterName) {
-        this.parameterName = parameterName;
+    public void setFreeParameterDescription(String description) {
+        this.freeParameterDescription = description;
     }
 
     /**
@@ -543,8 +554,7 @@ public class ParameterParser {
      */
     public Option createOptionForKey(String key) {
 
-        Option option = new Option();
-        option.setKey(key);
+        Option option = new Option(key);
         addOption(option);
         return option;
     }
@@ -552,14 +562,14 @@ public class ParameterParser {
     /**
      * Creates a new Option object and add the option to this parser.
      *
-     * @param name  the name of the new option.
+     * @param key          the key of the new option.
+     * @param description  the description of the new option.
      *
      * @return  the new option.
      */
-    public Option createOptionForName(String name) {
+    public Option createOptionForKey(String key, String description) {
 
-        Option option = new Option();
-        option.setName(name);
+        Option option = new Option(key, description);
         addOption(option);
         return option;
     }
@@ -577,7 +587,7 @@ public class ParameterParser {
         // check if we can take a parameter
         if (!canTakeFreeParameter()) {
             throw new ParameterParserException("can't take free parameter: "
-                    + parameter);
+                                               + parameter);
         }
         freeParameters.add(parameter);
     }
@@ -657,13 +667,14 @@ public class ParameterParser {
     }
 
     /**
-     * Returns a String for debugging
+     * Returns a description of this parser.
      *
-     * @return Syntax String for this parser
+     * @return  Syntax String for this parser.
      */
     public synchronized String toString() {
+        StringBuffer optionString    = new StringBuffer();
+        StringBuffer freeParamString = new StringBuffer();
 
-        StringBuffer optionString = new StringBuffer();
         Iterator iterator = optionList.iterator();
         while (iterator.hasNext()) {
             Option option = (Option) iterator.next();
@@ -671,25 +682,24 @@ public class ParameterParser {
             optionString.append(" ");
         }
 
-        StringBuffer freeParamString = new StringBuffer();
-        // append the freeParameter names:
-        // all non-optional (minimal) stuff:
+        // append the freeParameter description
+        // all non-optional (minimal) stuff
         for (int i = 1; i <= minParameters; i++) {
             freeParamString.append(" <");
-            freeParamString.append(parameterName);
+            freeParamString.append(freeParameterDescription);
             if (maxParameters > 1) {
-                freeParamString.append(i);
+                freeParamString.append("." + i);
             }
             freeParamString.append(">");
         }
 
-        // the optional (maximal) parameters:
+        // the optional (maximal) parameters
         if (Option.MAX_OPT_SHOWN_PARAMETERS < (maxParameters - minParameters)) {
             // we don't show all, just some dots
             freeParamString.append(" [");
             freeParamString.append(" <");
-            freeParamString.append(parameterName);
-            freeParamString.append(minParameters + 1);
+            freeParamString.append(freeParameterDescription);
+            freeParamString.append("." + (minParameters + 1));
             freeParamString.append("> ... ");
             freeParamString.append("]");
         } else {
@@ -698,9 +708,9 @@ public class ParameterParser {
                 freeParamString.append(" [");
                 for (int i = minParameters + 1; i <= maxParameters; i++) {
                     freeParamString.append(" <");
-                    freeParamString.append(parameterName);
+                    freeParamString.append(freeParameterDescription);
                     if ((maxParameters - minParameters) > 1) {
-                        freeParamString.append(i);
+                        freeParamString.append("." + i);
                     }
                     freeParamString.append(">");
                 }
