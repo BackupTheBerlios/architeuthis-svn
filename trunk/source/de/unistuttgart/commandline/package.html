@@ -55,9 +55,9 @@ if there was an option "--debug" in the command line.
 The method call <code>parser.isEnabled(debug1)</code> returns <code>true</code> 
 if there was an option "-d" in the command line.
 <br/>
-The method call <code>parser.getParameter()</code> returns the parameter of the
-command line.
-<br/>The method call <code>parser.gtoString()</code> returns the syntax of the
+The method call <code>parser.getParameterList()</code> returns the parameter
+list of the command line.
+<br/>The method call <code>parser.toString()</code> returns the syntax of the
 command line which is <code>"&lt;parameter&gt; [--debug] [-d]"</code> for this 
 example.<br/>
 <br/>
@@ -87,20 +87,19 @@ can be parsed with the following code:
 ParameterParser parser = new ParameterParser();
 
 Option configFile = parser.createOptionForKey("c")
-        .setName("config-Datei")
+        .setDescription("config-Datei")
         .setOptional(false)
         .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
 Option port = parser.createOptionForKey("port")
-        .setName("Port-Nummer")
+        .setDescription("Port-Nummer")
         .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
 Option deadtime = parser.createOptionForKey("deadtime")
-        .setName("Zeit")
+        .setDescription("Zeit")
         .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
 
-Option deadtries = parser.createOptionForName("Anzahl")
-        .setKey("deadtries")
+Option deadtries = parser.createOptionForKey("deadtries", "Anzahl")
         .setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
         
 Option additionalThreads = parser.createOptionForKey("t");
@@ -124,9 +123,10 @@ true if an option "-t" is present in the string array argv</li>
 
 <b>Code Example 4:</b><br/>
 A properties file with default values for the command line can be used
-by calling the <code>parser.parseProperties(inputStream)</code> method
+by calling the <code>parser.setProperties(HashMap)</code> method
 of the <code>ParameterParser</code> object. Note that the key-value pairs
-in the properties file must use the names of the options as keys.
+in the properties file are equal to thoses in the command line (the
+properties keys are used for the keys of the options).
 <br/>
 
 
