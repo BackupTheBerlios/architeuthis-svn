@@ -603,10 +603,11 @@ public class ParameterParser {
     }
 
     /**
-     * Returns the first parameter of an option
+     * Returns the first parameter of the given option
      *
-     * @param option option to query for parameters
-     * @return the first parameter
+     * @param option  option to query for the first parameter.
+     *
+     * @return  the first parameter of the option.
      */
     public String getParameter(Option option) {
         return option.getParameter();
