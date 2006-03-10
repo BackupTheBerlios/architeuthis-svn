@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 06.03.2006 by Dietmar Lippold
+ * last change: 10.03.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -492,6 +492,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      */
     public static void main(String[] args) {
         ParameterParser parser = new ParameterParser();
+        StringBuffer    binding = new StringBuffer();
+        boolean         debugging = false;
 
         Option debug1 = new Option("d");
         debug1.setPrefix("-");
@@ -510,15 +512,15 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         parser.addOption(debug1);
         parser.addOption(debug2);
 
-        StringBuffer binding = new StringBuffer();
-
         try {
             parser.parseAll(args);
 
-            Logger logger = Logger.getLogger("de.unistuttgart.architeuthis.operative");
             // ist debuging aktiviert?
             if (parser.isEnabled(debug1) || parser.isEnabled(debug2)) {
-                // alles ausgeben
+                debugging = true;
+
+                // log-Level für alle Logger dieses Packages setzen
+                Logger logger = Logger.getLogger("de.unistuttgart.architeuthis.operative");
                 logger.setLevel(Level.FINEST);
 
                 // der DefaultHandler hängt am root-Logger
@@ -558,8 +560,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
             if (LOGGER.isLoggable(Level.CONFIG)) {
                 LOGGER.log(Level.CONFIG, "Parameter für Operative: "
-                        + "Debuglevel: " + logger.getLevel()
-                        + "ComputeManager: " + binding);
+                        + "debugging: " + debugging
+                        + ", ComputeManager: " + binding);
             }
 
             ComputeManager computeManager =
