@@ -32,5 +32,5 @@ ARGS="$ARGS $DIST_COMM"
 # die Main-Klasse
 MAIN="de.unistuttgart.architeuthis.testenvironment.hashstore.HashStoreMain"
 
-exec $JAVA -cp $DEPLOY_DIR/User.jar:$CLASS_FILE_PATH/Problems.jar $JVMPAR $MAIN $ARGS
+exec $JAVA -cp $DEPLOY_DIR/User.jar:$CLASS_FILE_PATH $JVMPAR $MAIN $ARGS
 

@@ -32,4 +32,4 @@ set ARGS=%ARGS% %DIST_COMM%
 REM die Main-Klasse
 set MAIN=de.unistuttgart.architeuthis.testenvironment.hashstore.HashStoreMain
 
-%JAVA% -cp %DEPLOY_DIR%/User.jar;%CLASS_FILE_PATH%/Problems.jar %JVMPAR% %MAIN% %ARGS%
+%JAVA% -cp %DEPLOY_DIR%/User.jar;%CLASS_FILE_PATH% %JVMPAR% %MAIN% %ARGS%
