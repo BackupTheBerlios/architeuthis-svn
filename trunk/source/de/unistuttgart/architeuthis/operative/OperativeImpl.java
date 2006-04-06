@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 10.03.2006 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -440,7 +440,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                                             + "/" + CONNECT_RETRIES + ")");
             }
             try {
-                computeManager.returnPartialSolution(parSol, this);
+                computeManager.collectPartialSolution(parSol, this);
                 LOGGER.log(Level.FINE, "Teilergebnis zurückgegeben");
                 transmitted = true;
             } catch (RemoteException e) {

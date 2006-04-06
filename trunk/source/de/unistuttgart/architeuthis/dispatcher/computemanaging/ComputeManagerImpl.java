@@ -1,7 +1,7 @@
 /*
  * file:        ComputeManagerImpl.java
  * created:     <Erstellungsdatum>
- * last change: 05.03.2006 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -1140,14 +1140,15 @@ public final class ComputeManagerImpl
      * Diese Remote-Methode wird von einem Operative aufgerufen um dem
      * ComputeManager eine berechnete Teillösung zu übermitteln.
      *
-     * @param  parSol     Teillösungsobjekt
-     * @param  operative  Referenz auf den Operative der die Berechnung
-     *                    durchgeführt hat
+     * @param  parSol     Teillösungsobjekt.
+     * @param  operative  Referenz auf den Operative, der die Berechnung
+     *                    durchgeführt hat.
+     *
      * @throws RemoteException  RMI RemoteException wird bei Netzproblemen
      *                          geworfen.
      */
-    public void returnPartialSolution(PartialSolution parSol,
-                                      Operative operative)
+    public void collectPartialSolution(PartialSolution parSol,
+                                       Operative operative)
         throws RemoteException {
 
         InfoOperative operativeInfoObj = findOperativeInfo(operative);

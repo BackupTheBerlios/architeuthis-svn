@@ -1,7 +1,7 @@
             Weitere geplante Arbeiten und Ideen für Architeuthis
 
 
-Stand: 11.05.2005
+Stand: 06.04.2006
 
 
 Änderungen größerer Wichtigkeit
@@ -53,9 +53,6 @@ Stand: 11.05.2005
 
    Gleiches gilt für die Parameter dispatcherHost der Methode transmitProblem
    von ProblemComputation.
-
- * Im ComputeManager die Methode "returnPartialSolution" umbennenen in
-   "collectPartialSolution".
 
  * Im Interface Problem dieMethode "collectResult" umbenennen in
    "collectPartialSolution".

@@ -1,6 +1,6 @@
 /*
  * file:        ComputeManager.java
- * last change: 26.05.2004,  von by Dietmar Lippold
+ * last change: 06.04.2006,  von by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -40,7 +40,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 /**
  * RMI Remote-Interface, das vom Compute-Manager implementiert wird.
  *
- * @author Jürgen Heit
+ * @author Jürgen Heit, Dietmar Lippold
  */
 public interface ComputeManager extends Remote {
 
@@ -58,7 +58,7 @@ public interface ComputeManager extends Remote {
     /**
      * Registrierung eines Operative am ComputeManager.
      *
-     * @param  operative Referenz auf Operative
+     * @param  operative Referenz auf Operative.
      *
      * @throws RemoteException  bei RMI-Verbindungsproblemen.
      */
@@ -67,7 +67,7 @@ public interface ComputeManager extends Remote {
     /**
      * Meldet einen Operative vom ComputeManager ab.
      *
-     * @param  operative Referenz auf Operative
+     * @param  operative Referenz auf Operative.
      *
      * @throws RemoteException  bei RMI-Verbindungsproblemen.
      */
@@ -78,29 +78,27 @@ public interface ComputeManager extends Remote {
      * Diese Remote-Methode wird von einem Operative aufgerufen um dem
      * ComputeManager eine berechnete Teillösung zu übermitteln.
      *
-     * @param  parSol     Teillösungsobjekt
-     * @param  operative  Referenz auf den Operative der die Berechnung
-     *                    durchgeführt hat
+     * @param  parSol     Teillösungsobjekt.
+     * @param  operative  Referenz auf den Operative, der die Berechnung
+     *                    durchgeführt hat.
      *
      * @throws RemoteException  bei RMI-Verbindungsproblemen.
      */
-    public abstract void returnPartialSolution(
-        PartialSolution parSol,
-        Operative operative)
+    public abstract void collectPartialSolution(PartialSolution parSol,
+                                                Operative operative)
         throws RemoteException;
-    
+
     /**
      * Ausnahmen werden über diese Methode an den Compute-Manager gemeldet.
-     * 
+     *
      * @param operative         Referenz auf den Operative, auf dem der Fehler
      *                          auftrat.
      * @param exceptionCode     Integerwert, der die Ausnahme charakterisisert.
      * @param exceptionMessage  Fehlermeldung um die Ausnahme näher zu beschreiben.
      * @throws RemoteException  bei RMI-Verbindungsproblemen.
      */
-    public void reportException(
-        Operative operative,
-        int exceptionCode,
-        String exceptionMessage)
+    public void reportException(Operative operative, int exceptionCode,
+                                String exceptionMessage)
         throws RemoteException;
 }
+
