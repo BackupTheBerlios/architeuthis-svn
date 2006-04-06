@@ -1,7 +1,7 @@
 /*
  * file:        ExceptionCodes.java
  * created:     18.01.2004
- * last change: 15.04.2005 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -34,22 +34,22 @@ package de.unistuttgart.architeuthis.systeminterfaces;
 /**
  * Diese Klasse enthält Nachrichten-Code Konstanten für Fehlermeldungen, die im
  * Compute-System generiert werden.
- * 
+ *
  * @author Andreas Heydlauff, Dietmar Lippold
  */
 public class ExceptionCodes {
-    
+
     /**
      * Signalisiert, dass bei der Erstellung eines Teilproblems eine Ausnahme
      * auftrat. Der Grund für diese Ausnahme liegt wahrscheinlich an der Klasse,
      * die {@link Problem#getPartialProblem(long)} implementiert.
      */
     public static final int PARTIALPROBLEM_CREATE_EXCEPTION = 0;
-    
+
     /**
      * Signalisiert, dass beim Verarbeiten einer Teillösung eine Ausnahme
      * auftrat. Der Grund für diese Ausnahme liegt wahrscheinlich an der Klasse,
-     * die {@link Problem#collectResult(PartialSolution, PartialProblem)}
+     * die {@link Problem#collectPartialSolution(PartialSolution, PartialProblem)}
      * implementiert.
      */
     public static final int PARTIALSOLUTION_COLLECT_EXCEPTION = 1;
@@ -62,20 +62,20 @@ public class ExceptionCodes {
     public static final int SOLUTION_CREATE_EXCEPTION = 2;
 
     /**
-     * Signalisiert, dass das Senden eines Teilproblems nicht erfolgen konnte. 
+     * Signalisiert, dass das Senden eines Teilproblems nicht erfolgen konnte.
      */
     public static final int PARTIALPROBLEM_SEND_EXCEPTION = 3;
-    
+
     /**
      * Signalisiert, dass das Senden einer Teillösung nicht erfolgen konnte.
      */
     public static final int PARTIALSOLUTION_SEND_EXCEPTION = 4;
-    
+
     /**
      * Signalisiert, dass das Senden der Gesamtlösung nicht erfolgen konnte.
      */
     public static final int SOLUTION_SEND_EXCEPTION = 5;
-     
+
     /**
      * Signalisiert, dass das Teilproblem bei der Berechnung eine
      * {@link ProblemComputeException} geworfen hat. Der Grund für diese
@@ -103,7 +103,7 @@ public class ExceptionCodes {
      * implementiert.
      */
     public static final int PARTIALPROBLEM_ERROR = 9;
-     
+
     /**
      * Signalisiert, dass das Problem einerseites keine Teilprobleme mehr
      * bereitstellt und andererseits keine Gesamtlösung liefert.
@@ -130,6 +130,6 @@ public class ExceptionCodes {
     /**
      * Signalisiert, dass der Benutzter sein Problem abgebrochen hat.
      */
-    public static final int USER_ABORT_PROBLEM = 14;   
-    
+    public static final int USER_ABORT_PROBLEM = 14;
 }
+

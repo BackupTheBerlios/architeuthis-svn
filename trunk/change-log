@@ -33,6 +33,9 @@ Stand 06.04.2006
  * In Klasse ComputeManager die Methode "returnPartialSolution" umbenannt in
    "collectPartialSolution".
 
+ * Im Interface Problem die Methode "collectResult" umbenannt in
+   "collectPartialSolution".
+
 
 Release 1.4
 -----------

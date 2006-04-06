@@ -1,7 +1,7 @@
 /*
  * file:        CachingTestProblem.java
  * created:     <???>
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -114,13 +114,16 @@ public class CachingTestProblem implements Problem {
     }
 
     /**
-     * Methode, die vom ProblemManager aufgerufen wird, um dem Problem eine neu
-     * eingetroffene Lösung zu übermitteln.
+     * Methode, die vom ProblemManager aufgerufen wird, um dem Problem eine
+     * neu eingetroffene Lösung zu übermitteln.
      *
      * @param parSol   Vom ProblemManager übermittelte Teillösung.
-     * @param parProb  Referenz auf das Teilproblem, das gelöst wurde
+     * @param parProb  Referenz auf das Teilproblem, zu dem die Teillösung
+     *                 ermittelt wurde.
      */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb) {
+    public void collectPartialSolution(PartialSolution parSol,
+                                       PartialProblem parProb) {
+
         // Zuerst Lösung casten und in die Warteschlange einfügen.
         CachingTestPartialSolution p = (CachingTestPartialSolution) parSol;
         solutions.put(parProb, p.getSolution());
@@ -206,7 +209,9 @@ public class CachingTestProblem implements Problem {
             }
 
         }
-        // Dieser Teil wird immer ausgeführt, er liefert ein Teilproblem zurück
+
+        // Dieser Teil wird immer ausgeführt, er liefert ein Teilproblem
+        // zurück.
         try {
             PartialProblem p = (PartialProblem) partialProblems.getFirst();
             partialProblems.removeFirst();
@@ -236,3 +241,4 @@ public class CachingTestProblem implements Problem {
         return null;
     }
 }
+

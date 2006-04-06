@@ -1,6 +1,6 @@
 /*
  * file:        AbstractOrderedProblem.java
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -45,7 +45,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
  *  in der gleichen Reihenfolge übergibt, in der die zugehörigen Teilprobleme
  * von {@link createPartialProblem} geliefert wurden.
  *
- * @author Achim Linke, Ralf Kible
+ * @author Achim Linke, Ralf Kible, Dietmar Lippold
  */
 public abstract class AbstractOrderedProblem implements SerializableProblem {
 
@@ -70,15 +70,20 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
      *
      * @param number  Vom ComputeManager vorgeschlagene Anzahl zu generierender
      *                Teilprobleme.
+     *
      * @return  Von der implementierenden Unterklasse erzeugtes Teilproblem.
      */
     public PartialProblem getPartialProblem(long number) {
+
         PartialProblem prob = createPartialProblem(number);
+
         if (prob == null) {
             return null;
         }
+
         // der Schlange hinten anfügen
         dispensedPartialProblems.addLast(prob);
+
         return prob;
     }
 
@@ -89,7 +94,8 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
      * @param parSol   Vom ComputeManager übermittelte Teillösung.
      * @param parProb  Referenz auf das Teilproblem, das bearbeitet wurde.
      */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb) {
+    public void collectPartialSolution(PartialSolution parSol,
+                                       PartialProblem parProb) {
 
         //Die Teillösung in die Hashmap einfügen.
         partialSolutions.put(parProb, parSol);

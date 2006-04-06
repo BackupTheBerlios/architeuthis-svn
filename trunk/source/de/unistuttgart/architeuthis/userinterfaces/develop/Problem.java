@@ -1,7 +1,7 @@
 /*
  * file:        Problem.java
  * created:     <???>
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -41,7 +41,7 @@ import java.io.Serializable;
  * Die einzelnen Methoden müssen nicht synchronisiert werden, die
  * Synchronisation wird vollständig auf dem ComputeManager vorgenommen.
  *
- * @author Jürgen Heit
+ * @author Jürgen Heit, Dietmar Lippold
  */
 public interface Problem {
 
@@ -63,10 +63,12 @@ public interface Problem {
      * Diese Methode wird vom ComputeManager aufgerufen um dem eigentlichen
      * Problem-Objekt eine Teillösung zu übermitteln.
      *
-     * @param parSol   Teillösung zur übergabe an das Problem-Objekt
-     * @param parProb  Referenz auf das Teilproblem, das gelöst wurde
+     * @param parSol   Teillösung zur Übergabe an das Problem-Objekt.
+     * @param parProb  Referenz auf das Teilproblem, zu dem die Teillösung
+     *                 ermittelt wurde.
      */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb);
+    public void collectPartialSolution(PartialSolution parSol,
+                                       PartialProblem parProb);
 
     /**
      * Gibt die Gesamtlösung zurück.<p>
@@ -82,3 +84,4 @@ public interface Problem {
      */
     public Serializable getSolution();
 }
+

@@ -1,7 +1,7 @@
 /*
  * file:        RandomProblemImpl.java
  * created:
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -86,9 +86,12 @@ public class RandomProblemImpl implements Problem {
      * eingetroffene Lösung zu übermitteln.
      *
      * @param parSol   Vom ProblemManager übermittelte Teillösung.
-     * @param parProb  Referenz auf das Teilproblem, das gelöst wurde
+     * @param parProb  Referenz auf das Teilproblem, zu dem die Teillösung
+     *                 ermittelt wurde.
      */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb) {
+    public void collectPartialSolution(PartialSolution parSol,
+                                       PartialProblem parProb) {
+
         // Zuerst Lösung casten und in die Warteschlange einfügen.
         RandomPartialSolutionImpl p = (RandomPartialSolutionImpl) parSol;
         solutions.put(parProb, p.getNumber());
@@ -102,13 +105,14 @@ public class RandomProblemImpl implements Problem {
             }
         }
 
-        System.out.println(
-            "loesung von problem nr " + p.getNumber() + " bekommen");
+        System.out.println("Loesung von problem nr "
+                           + p.getNumber() + " bekommen");
 
         // Durch die Liste laufen, solange die Lösungen in der richtigen
         // Reihenfolge vorliegen
         while ((!dispensedProblems.isEmpty())
-            && (solutions.containsKey(dispensedProblems.getFirst()))) {
+               && (solutions.containsKey(dispensedProblems.getFirst()))) {
+
             // Das Problem, das gerade in dieser Reihenfolge bearbeitet werden
             // soll, wird aus der solutions-HashMap entnommen
             Long problemProcessed =
@@ -160,7 +164,9 @@ public class RandomProblemImpl implements Problem {
             }
             System.out.println("Probleme generiert");
         }
-        // Dieser Teil wird immer ausgeführt, er liefert ein Teilproblem zurück
+
+        // Dieser Teil wird immer ausgeführt, er liefert ein Teilproblem
+        // zurück.
         try {
             if (!partialProblems.isEmpty()) {
                 if (ausgegebeneParProbs <= helpNumber) {
@@ -195,5 +201,5 @@ public class RandomProblemImpl implements Problem {
         }
         return null;
     }
-
 }
+

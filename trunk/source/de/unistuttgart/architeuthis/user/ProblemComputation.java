@@ -1,7 +1,7 @@
 /*
  * file:        ProblemComputation.java
  * created:     19.02.2004
- * last change: 05.03.2006 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit, juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
@@ -208,7 +208,7 @@ public class ProblemComputation {
 
                 // Teillösung dem Problem zurückgeben, damit es die
                 // Gesamtlösung zusammensetzen kann.
-                problem.collectResult(partialSolution, partialProblem);
+                problem.collectPartialSolution(partialSolution, partialProblem);
                 probStatCollector.notifyProcessedPartialProblem();
 
                 // Nach der Gesamtlösung fragen

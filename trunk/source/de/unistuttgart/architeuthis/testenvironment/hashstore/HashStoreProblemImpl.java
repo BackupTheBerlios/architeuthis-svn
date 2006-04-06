@@ -1,7 +1,7 @@
 /*
  * file:        HashStoreProblemImpl.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 19.04.2005 von Dietmar Lippold
+ * last change: 06.04.2006 von Dietmar Lippold
  * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -164,7 +164,9 @@ public class HashStoreProblemImpl implements SerializableProblem {
      *                 wird.
      * @param parSol   Die gelieferte Teillösung.
      */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb) {
+    public void collectPartialSolution(PartialSolution parSol,
+                                       PartialProblem parProb) {
+
         if (parProb instanceof HashStorePut) {
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("put received");

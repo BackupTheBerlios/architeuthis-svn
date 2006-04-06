@@ -1,7 +1,7 @@
 /*
  * file:        ProblemStatisticsContainer.java
  * created:     17.08.2003
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -98,7 +98,7 @@ public class ProblemStatisticsContainer
 
     /**
      * Anzahl der fertig bearbeiteten Teilprobleme, d.h. Anzahl der Aufrufe
-     * von <code>Problem.collectResult(PartialSolution, PartialProblem)</code>.
+     * von <code>Problem.collectPartialSolution(PartialSolution, PartialProblem)</code>.
      */
     long processedPartialProblems = 0;
 
@@ -159,7 +159,7 @@ public class ProblemStatisticsContainer
     /**
      * Liefert die Anzahl der in Bearbeitung befindlichen Teilprobleme, d.h.
      * die Anzahl der erzeugten Teilprobleme, zu denen noch nicht die Methode
-     * <code>Problem.collectResult(PartialSolution, PartialProblem)</code>
+     * <code>Problem.collectPartialSolution(PartialSolution, PartialProblem)</code>
      * aufgerufen wurde.
      *
      * @return  Anzahl der in Bearbeitung befindlichen Teilprobleme.
@@ -197,7 +197,7 @@ public class ProblemStatisticsContainer
 
     /**
      * Liefert die Anzahl der fertig bearbeiteten Teilprobleme, d.h. Anzahl der
-     * Aufrufe von <code>Problem.collectResult(PartialSolution, PartialProblem)</code>.
+     * Aufrufe von <code>Problem.collectPartialSolution(PartialSolution, PartialProblem)</code>.
      *
      * @return  Anzahl der fertig bearbeiteten Teilprobleme.
      *
@@ -377,3 +377,4 @@ public class ProblemStatisticsContainer
         return text;
     }
 }
+

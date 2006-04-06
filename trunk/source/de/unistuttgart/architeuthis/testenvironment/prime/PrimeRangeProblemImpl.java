@@ -1,7 +1,7 @@
 /*
  * file:        PrimeRangeProblemImpl.java
  * created:     <???>
- * last change: 09.06.2004 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -123,7 +123,7 @@ public class PrimeRangeProblemImpl implements SerializableProblem {
      * @param suggestedPartProbs  Vom ProblemManager erbetene Anzahl
      *                            bereitzuhaltender Teilprobleme
      *
-     * @return Neues Teilproblem zur Berechnung.
+     * @return  Neues Teilproblem zur Berechnung.
      */
     public PartialProblem getPartialProblem(long suggestedPartProbs) {
         // Erster Aufruf? Falls ja, dann Teilprobleme generieren.
@@ -167,9 +167,12 @@ public class PrimeRangeProblemImpl implements SerializableProblem {
      * eingetroffene Lösung zu übermitteln.
      *
      * @param parSol   Vom ProblemManager übermittelte Teillösung.
-     * @param parProb  Referenz auf das Teilproblem, das gelöst wurde
+     * @param parProb  Referenz auf das Teilproblem, zu dem die Teillösung
+     *                 ermittelt wurde.
      */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb) {
+    public void collectPartialSolution(PartialSolution parSol,
+                                       PartialProblem parProb) {
+
         // Zuerst Lösung casten und in die Warteschlange einfügen.
         PrimePartialSolutionImpl p = (PrimePartialSolutionImpl) parSol;
         solutions.put(parProb, p.getSolution());
@@ -177,7 +180,8 @@ public class PrimeRangeProblemImpl implements SerializableProblem {
         // Durch die Liste laufen, solange die Lösungen in der richtigen
         // Reihenfolge vorliegen
         while ((!dispensedProblems.isEmpty())
-            && (solutions.containsKey(dispensedProblems.getFirst()))) {
+               && (solutions.containsKey(dispensedProblems.getFirst()))) {
+
             // Das Problem, das gerade in dieser Reihenfolge bearbeitet werden
             // soll, wird aus der solutions-HashMap entnommen
             ArrayList partialSolutionList = (ArrayList)
@@ -206,3 +210,4 @@ public class PrimeRangeProblemImpl implements SerializableProblem {
         return null;
     }
 }
+

@@ -1,6 +1,6 @@
 /*
  * file:        FailProblemImpl.java
- * last change: 26.05.2004 von Dietmar Lippold
+ * last change: 06.04.2006 von Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -41,15 +41,21 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 
 /**
- * Ein fehlerhaftes Problem. Es liefert bei der Abfrage ob eine Loesung
- * schon existiert immer null.
+ * Ein fehlerhaftes Problem. Es liefert bei der Abfrage, ob eine Loesung schon
+ * existiert, immer <code>null</code>.
  *
  * @author Achim Linke
  */
 public class FailProblemImpl implements Problem {
 
+    /**
+     * Die Anzahl der erzeugten Teilprobleme.
+     */
     private long solutionNumber = 0;
 
+    /**
+     * Liste der ausgegebenen Teilprobleme.
+     */
     private LinkedList partialProblems = new LinkedList();
 
     /**
@@ -65,29 +71,35 @@ public class FailProblemImpl implements Problem {
     private boolean firstCall = true;
 
     /**
-     * Schlange der ausgegebenen Teilprobleme
+     * Schlange der ausgegebenen Teilprobleme.
      */
     private LinkedList dispensedProblems = new LinkedList();
 
+    /**
+     * Gibt an, ob schon zu allen Teilproblemen Teillösungen übergeben wurden.
+     */
     private boolean ready = false;
 
     /**
-     * Methode, die vom ProblemManager aufgerufen wird, um dem Problem eine neu
-     * eingetroffene Lösung zu übermitteln.
+     * Methode, die vom ProblemManager aufgerufen wird, um dem Problem eine
+     * neu eingetroffene Lösung zu übermitteln.
      *
      * @param parSol   Vom ProblemManager übermittelte Teillösung.
-     * @param parProb  Referenz auf das Teilproblem, das gelöst wurde
+     * @param parProb  Referenz auf das Teilproblem, zu dem die Teillösung
+     *                 ermittelt wurde.
      */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb) {
+    public void collectPartialSolution(PartialSolution parSol,
+                                       PartialProblem parProb) {
+
         // Zuerst Lösung casten und in die Warteschlange einfügen.
         FailPartialSolutionImpl p = (FailPartialSolutionImpl) parSol;
         solutions.put(parProb, p.getNumber());
 
-        System.out.println(
-            "loesung von problem nr " + p.getNumber() + " bekommen");
+        System.out.println("Loesung von problem nr "
+                           + p.getNumber() + " bekommen");
 
         // Durch die Liste laufen, solange die Lösungen in der richtigen
-        // Reihenfolge vorliegen
+        // Reihenfolge vorliegen.
         while ((!dispensedProblems.isEmpty())
             && (solutions.containsKey(dispensedProblems.getFirst()))) {
             // Das Problem, das gerade in dieser Reihenfolge bearbeitet werden
@@ -103,25 +115,25 @@ public class FailProblemImpl implements Problem {
     }
 
     /**
-     * Liefert auf Anfrage vom ProblemManager ein Teilproblem zurück.
-     * Beim ersten Aufruf werden außerdem die Teilprobleme generiert.
+     * Liefert auf Anfrage vom ProblemManager ein Teilproblem zurück. Beim
+     * ersten Aufruf werden außerdem die Teilprobleme generiert.
      *
      * @param suggestedPartProbs  Vom ProblemManager erbetene Anzahl
-     *                            bereitzuhaltender Teilprobleme
+     *                            bereitzuhaltender Teilprobleme.
      */
     public PartialProblem getPartialProblem(long suggestedPartProbs) {
+
         // Erster Aufruf? Falls ja, dann Teilprobleme generieren.
         if (firstCall) {
             firstCall = false;
             long max = 6 * suggestedPartProbs ;
-            System.out.println("generiere maximal" + max + " Probleme");
+            System.out.println("Generiere maximal" + max + " Probleme");
             solutionNumber = (long) Math.round(max * Math.random());
             if (solutionNumber == 0) {
                 solutionNumber = 1;
             }
-            System.out.println(
-                "Suche Loesung von Teilproblem Nr." + solutionNumber);
-            for (long i = 1; i <= max; i++) {
+
+            for (long i = 1; i <= solutionNumber; i++) {
                 System.out.println("Problem " + i + " generiert!");
                 partialProblems.addLast(new FailPartialProblemImpl(i));
             }
@@ -132,7 +144,7 @@ public class FailProblemImpl implements Problem {
             if (!partialProblems.isEmpty()) {
                 FailPartialProblemImpl p =
                     (FailPartialProblemImpl) partialProblems.getFirst();
-                System.out.println(" Gebe Problem raus");
+                System.out.println("Gebe Problem raus.");
                 partialProblems.removeFirst();
                 dispensedProblems.addLast(p);
                 return p;
@@ -152,3 +164,4 @@ public class FailProblemImpl implements Problem {
         return null;
     }
 }
+

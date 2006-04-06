@@ -1,7 +1,7 @@
 /*
  * file:        PrimeRangeProblemImpl.java
  * created:
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -116,13 +116,16 @@ public class PrimeRangeProblemImpl implements Problem {
     }
 
     /**
-     * Methode, die vom ProblemManager aufgerufen wird, um dem Problem eine neu
-     * eingetroffene Lösung zu übermitteln.
+     * Methode, die vom ProblemManager aufgerufen wird, um dem Problem eine
+     * neu eingetroffene Lösung zu übermitteln.
      *
      * @param parSol   Vom ProblemManager übermittelte Teillösung.
-     * @param parProb  Referenz auf das Teilproblem, das gelöst wurde
+     * @param parProb  Referenz auf das Teilproblem, zu dem die Teillösung
+     *                 ermittelt wurde.
      */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb) {
+    public void collectPartialSolution(PartialSolution parSol,
+                                       PartialProblem parProb) {
+
         // Zuerst Lösung casten und in die Warteschlange einfügen.
         PrimePartialSolutionImpl p = (PrimePartialSolutionImpl) parSol;
         solutions.put(parProb, p.getSolution());
@@ -155,6 +158,7 @@ public class PrimeRangeProblemImpl implements Problem {
      * @return Neues Teilproblem zur Berechnung.
      */
     public PartialProblem getPartialProblem(long suggestedPartProbs) {
+
         // Erster Aufruf? Falls ja, dann Teilprobleme generieren.
         if (firstCall) {
             // Festlegen der Bereiche für die Teilprobleme
@@ -181,6 +185,7 @@ public class PrimeRangeProblemImpl implements Problem {
             // Nun noch die Anzahl der gesamt generierten Teilprobleme sichern
             probsGenerated = partialProblems.size();
         }
+
         // Dieser Teil wird immer ausgeführt, er liefert ein Teilproblem zurück
         try {
             PartialProblem p = (PartialProblem) partialProblems.getFirst();
@@ -205,5 +210,5 @@ public class PrimeRangeProblemImpl implements Problem {
         }
         return null;
     }
-
 }
+

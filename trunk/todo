@@ -54,9 +54,6 @@ Stand: 06.04.2006
    Gleiches gilt für die Parameter dispatcherHost der Methode transmitProblem
    von ProblemComputation.
 
- * Im Interface Problem dieMethode "collectResult" umbenennen in
-   "collectPartialSolution".
-
  * In allen java-Dateien und in der Anleitung "ComputeSystems" und
    "ComputeServer" durch "Dispatcher" ersetzen.
 

@@ -1,7 +1,7 @@
 /*
  * file:        ProblemWrapper.java
  * created:     29.06.2003
- * last change: 05.03.2006 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -505,7 +505,7 @@ class ProblemWrapper extends Thread {
                     parPropWrapper = parProbWrapSolPair.getParProbWrapper();
                     problemStatistic.notifyProcessedPartialProblem();
                     try {
-                        problem.collectResult(
+                        problem.collectPartialSolution(
                             parProbWrapSolPair.getPartialSolution(),
                             parPropWrapper.getPartialProblem());
 

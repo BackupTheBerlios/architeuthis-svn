@@ -1,7 +1,7 @@
 /*
  * file:        MonteCarloProblemImpl.java
  * created:     24.05.2003
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -44,7 +44,6 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
  * Gesamtlösung.
  *
  * @author Achim Linke
- *
  */
 public class MonteCarloProblemImpl implements Problem {
 
@@ -80,21 +79,23 @@ public class MonteCarloProblemImpl implements Problem {
      */
     private long countererhalten = 0;
 
-
     /**
      * Addiert die Teillösungen auf und zählt einen Zähler hoch für die
      * erhaltenen Teillösungen.
      *
-     * @param parSol Einzelne Teillösung die aufaddiert wird zu den
-     *               bisherigen Teillösungen.
-     * @param parProb  Referenz auf das Teilproblem, das gelöst wurde
-     * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#collectResult(de.unistuttgart.architeuthis.systeminterfaces.PartialSolution)
+     * @param parSol   Einzelne Teillösung die aufaddiert wird zu den
+     *                 bisherigen Teillösungen.
+     * @param parProb  Referenz auf das Teilproblem, zu dem die Teillösung
+     *                 ermittelt wurde.
+     *
+     * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#collectPartialSolution(de.unistuttgart.architeuthis.systeminterfaces.PartialSolution)
      */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb) {
+    public void collectPartialSolution(PartialSolution parSol,
+                                       PartialProblem parProb) {
+
         PartialSolutionImpl ps = (PartialSolutionImpl) parSol;
-        zwischenErgebnis =
-            new Double(
-                zwischenErgebnis.doubleValue() + ps.getPartialSolution());
+        zwischenErgebnis = new Double(zwischenErgebnis.doubleValue()
+                                      + ps.getPartialSolution());
         countererhalten += 1;
     }
 
@@ -102,12 +103,15 @@ public class MonteCarloProblemImpl implements Problem {
      * Gibt die Teilprobleme raus. Beim ersten Aufruf wird die Anzahl der
      * Teilprobleme festgelegt.
      *
-     * @param number Ist nur beim ersten Aufruf von Bedeutung. Dies
-     *               ist die gewünschte Anzahl der zu erzeugenden Teilprobleme.
-     * @return das zu berechnende Teilproblem
+     * @param number  Ist nur beim ersten Aufruf von Bedeutung. Dies ist die
+     *                gewünschte Anzahl der zu erzeugenden Teilprobleme.
+     *
+     * @return  das zu berechnende Teilproblem.
+     *
      * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#getPartialProblem(long)
      */
     public PartialProblem getPartialProblem(long number) {
+
         // Abfrage, ob die Methode das erstemal aufgerufen wurde
         if (erstesmal) {
             erstesmal = false;
@@ -133,7 +137,7 @@ public class MonteCarloProblemImpl implements Problem {
     }
 
     /**
-     * überprüft, ob alle Teilprobleme erhalten wurden und gibt gegebenfalls
+     * Überprüft, ob alle Teilprobleme erhalten wurden und gibt gegebenfalls
      * die Gesamtlösung zurück. Ist diese noch nicht vorhanden, wird
      * <code>null</code> zurückgegeben.
      *
@@ -150,6 +154,5 @@ public class MonteCarloProblemImpl implements Problem {
             return null;
         }
     }
-
 }
 

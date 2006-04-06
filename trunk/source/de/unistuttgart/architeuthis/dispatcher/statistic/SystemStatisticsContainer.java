@@ -1,7 +1,7 @@
 /*
  * file:        SystemStatisticsContainer.java
  * created:     17.08.2003
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -113,7 +113,7 @@ public class SystemStatisticsContainer implements SystemStatistics, Cloneable {
 
     /**
      * Anzahl der fertig bearbeiteten Teilprobleme, d.h. Anzahl der Aufrufe
-     * von <code>Problem.collectResult(PartialSolution, PartialProblem)</code>
+     * von <code>Problem.collectPartialSolution(PartialSolution, PartialProblem)</code>
      * von einem konkreten Problem.
      */
     long processedPartialProblems = 0;
@@ -249,8 +249,8 @@ public class SystemStatisticsContainer implements SystemStatistics, Cloneable {
     /**
      * Liefert die Anzahl der fertig bearbeiteten Teilprobleme, d.h. die Anzahl
      * der Aufrufe von
-     * <code>Problem.collectResult(PartialSolution, PartialProblem)</code> von
-     * einem konkreten Problem.
+     * <code>Problem.collectPartialSolution(PartialSolution, PartialProblem)</code>
+     * von einem konkreten Problem.
      *
      * @return  Anzahl der fertig bearbeiteten Teilprobleme.
      *
@@ -438,3 +438,4 @@ public class SystemStatisticsContainer implements SystemStatistics, Cloneable {
         return text;
     }
 }
+

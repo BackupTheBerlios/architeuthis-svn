@@ -1,7 +1,7 @@
 /*
  * file:        PrimeSequenceProblemImpl.java
  * created:
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -121,7 +121,9 @@ public class PrimeSequenceProblemImpl implements Problem {
      * @param parSol   Vom ProblemManager übermittelte Teillösung.
      * @param parProb  Referenz auf das Teilproblem, das gelöst wurde
      */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb) {
+    public void collectPartialSolution(PartialSolution parSol,
+                                       PartialProblem parProb) {
+
         // Zuerst Lösung casten und in die Warteschlange einfügen.
         PrimePartialSolutionImpl p = (PrimePartialSolutionImpl) parSol;
         solutions.put(parProb, p.getSolution());
@@ -129,7 +131,8 @@ public class PrimeSequenceProblemImpl implements Problem {
         // Durch die Liste laufen, solange die Lösungen in der richtigen
         // Reihenfolge vorliegen
         while ((!dispensedProblems.isEmpty())
-            && (solutions.containsKey(dispensedProblems.getFirst()))) {
+               && (solutions.containsKey(dispensedProblems.getFirst()))) {
+
             ArrayList partialSolutionList =
                 (ArrayList) solutions.get(dispensedProblems.getFirst());
 
@@ -166,11 +169,13 @@ public class PrimeSequenceProblemImpl implements Problem {
      * Liefert auf Anfrage vom ProblemManager ein Teilproblem zurück.
      * Beim ersten Aufruf werden außerdem die Teilprobleme generiert.
      *
-     * @param number  Vom ProblemManager erbetene Anzahl bereitzuhaltender Teilprobleme
+     * @param number  Vom ProblemManager erbetene Anzahl bereitzuhaltender
+     *                Teilprobleme.
      *
-     * @return Neues Teilproblem zur Berechnung.
+     * @return  Neues Teilproblem zur Berechnung.
      */
     public PartialProblem getPartialProblem(long number) {
+
         // Erster Aufruf? Falls ja, dann Teilprobleme generieren.
         if (firstCall) {
             // in max wird gespeichert, bis zu welcher konkreten Zahl
@@ -208,6 +213,7 @@ public class PrimeSequenceProblemImpl implements Problem {
             }
 
         }
+
         // Dieser Teil wird immer ausgeführt, er liefert ein Teilproblem zurück
         try {
             PartialProblem p = (PartialProblem) partialProblems.getFirst();
@@ -237,5 +243,5 @@ public class PrimeSequenceProblemImpl implements Problem {
         }
         return null;
     }
-
 }
+

@@ -1,7 +1,7 @@
 /*
  * file:        PrimeSequenceProblemImpl.java
  * created:     <???>
- * last change: 09.06.2004 by Dietmar Lippold
+ * last change: 06.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -92,7 +92,7 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
     private int currentlyFound = 0;
 
     /**
-     * Schlange der ausgegebenen Teilprobleme
+     * Schlange der ausgegebenen Teilprobleme.
      */
     private LinkedList dispensedProblems = new LinkedList();
 
@@ -188,9 +188,12 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
      * eingetroffene Lösung zu übermitteln.
      *
      * @param parSol   Vom ProblemManager übermittelte Teillösung.
-     * @param parProb  Referenz auf das Teilproblem, das gelöst wurde
+     * @param parProb  Referenz auf das Teilproblem, zu dem die Teillösung
+     *                 ermittelt wurde.
      */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb) {
+    public void collectPartialSolution(PartialSolution parSol,
+                                       PartialProblem parProb) {
+
         // Zuerst Lösung casten und in die Warteschlange einfügen.
         PrimePartialSolutionImpl p = (PrimePartialSolutionImpl) parSol;
         solutions.put(parProb, p.getSolution());
@@ -243,6 +246,7 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
      * @return Die Gesamtlösung.
      */
     public Serializable getSolution() {
+
         // Falls die Ergenisliste bereits so viele Elemente enthält, wie
         // gewünscht sind, dann wird dieser Bereich ausgeschitten und
         // zurückgegeben.
@@ -252,5 +256,5 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
         }
         return null;
     }
-
 }
+

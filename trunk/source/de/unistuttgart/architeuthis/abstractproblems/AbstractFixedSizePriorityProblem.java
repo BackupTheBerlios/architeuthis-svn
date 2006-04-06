@@ -1,6 +1,6 @@
 /*
  * file:        AbstractFixedSizePriorityProblem.java
- * last change: 26.05.2004 von Dietmar Lippold
+ * last change: 06.04.2006 von Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -53,7 +53,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
  * {@link de.unistuttgart.architeuthis.abstractproblems.AbstractFixedSizePriorityPartialProblem}
  * erben.
  *
- * @author Andreas Heydlauff
+ * @author Andreas Heydlauff, Dietmar Lippold
  */
 public abstract class AbstractFixedSizePriorityProblem implements SerializableProblem {
 
@@ -105,12 +105,14 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      * Teillösung zu übermitteln. Diese Teillösung wird gesammelt, bis alle
      * Teilprobleme berechnet wurden, um die dann Lösung zu erstellen.
      *
-     * @param parSol   Teillösung zur Übergabe an das Problem-Objekt
-     * @param parProb  Referenz auf das Teilproblem, das gelöst wurde
+     * @param parSol   Teillösung zur Übergabe an das Problem-Objekt.
+     * @param parProb  Referenz auf das Teilproblem, zu dem die Teillösung
+     *                 ermittelt wurde.
      *
-     * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#collectResult(PartialSolution)
+     * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#collectPartialSolution(PartialSolution)
      */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb) {
+    public void collectPartialSolution(PartialSolution parSol,
+                                       PartialProblem parProb) {
         partialSolutions.put(parProb, parSol);
     }
 
@@ -151,16 +153,17 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      *
      * @return  Array von Teilproblemen.
      */
-    protected abstract AbstractFixedSizePriorityPartialProblem[]
-    createPartialProblems(long problemsExpected);
+    protected abstract AbstractFixedSizePriorityPartialProblem[] createPartialProblems(long problemsExpected);
 
     /**
      * Erstellt eine Gesamtlösung aus allen Teillösungen.<p>
      * Diese Methode muss von einer konkreten Unterklasse implementiert werden.
      *
      * @param partialSolutions  alle eingegangenen Teillösungen.
-     * @return  Gesamtlösung
+     *
+     * @return  Die Gesamtlösung.
      */
     protected abstract Serializable createSolution(PartialSolution[] partialSolutions);
 
 }
+
