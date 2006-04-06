@@ -14,4 +14,8 @@ grant {
   
   // Erlaubt das dynamische Setzen der Codebase
   permission java.util.PropertyPermission "java.rmi.server.codebase", "read, write";
+
+  // Erlaubt das Veraendern des Logging-Level.
+  permission java.util.logging.LoggingPermission "control";
 };
+
