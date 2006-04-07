@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetGenerator.java
  * created:     08.02.2005
- * last change: 19.04.2005 by Dietmar Lippold
+ * last change: 07.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -36,6 +36,8 @@ import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
+import de.unistuttgart.architeuthis.remotestore.hashset.impl.RemoteHashSetImpl;
+import de.unistuttgart.architeuthis.remotestore.hashset.impl.RelayHashSetImpl;
 
 /**
  * Klasse, die RemoteStores mit der Funktionalität eines <CODE>HashSet</CODE>

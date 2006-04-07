@@ -1,7 +1,7 @@
 /*
  * file:        AddAllProcedure.java
  * created:     05.04.2005
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 07.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -28,13 +28,14 @@
  */
 
 
-package de.unistuttgart.architeuthis.remotestore.hashset;
+package de.unistuttgart.architeuthis.remotestore.hashset.impl;
 
 import java.util.Collection;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.remotestore.hashset.interf.RelayHashSet;
 
 /**
  * Implementiert eine Methode, die beim RelayStore für eine Collection die

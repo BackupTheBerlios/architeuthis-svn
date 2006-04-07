@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 18.04.2005 by Dietmar Lippold
+ * last change: 07.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -28,7 +28,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.remotestore.hashset;
+package de.unistuttgart.architeuthis.remotestore.hashset.impl;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -40,6 +40,9 @@ import java.rmi.server.UnicastRemoteObject;
 
 import de.unistuttgart.architeuthis.remotestore.Transmitter;
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.remotestore.hashset.UserRemoteHashSet;
+import de.unistuttgart.architeuthis.remotestore.hashset.interf.RelayHashSet;
+import de.unistuttgart.architeuthis.remotestore.hashset.interf.LocalRemoteHashSet;
 
 /**
  * Diese Klasse implementiert das RemoteStore Interface als HashSet. Derzeit
@@ -99,7 +102,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    protected RemoteHashSetImpl() throws RemoteException {
+    public RemoteHashSetImpl() throws RemoteException {
         synchronComm = false;
     }
 
@@ -113,7 +116,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    protected RemoteHashSetImpl(boolean synchronComm) throws RemoteException {
+    public RemoteHashSetImpl(boolean synchronComm) throws RemoteException {
         this.synchronComm = synchronComm;
     }
 

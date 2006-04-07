@@ -1,7 +1,7 @@
 /*
- * file:        RelayHashSet.java
- * created:     08.02.2005
- * last change: 18.04.2005 by Dietmar Lippold
+ * file:        LocalRemoteHashSet.java
+ * created:     10.02.2005
+ * last change: 07.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -28,52 +28,43 @@
  */
 
 
-package de.unistuttgart.architeuthis.remotestore.hashset;
+package de.unistuttgart.architeuthis.remotestore.hashset.interf;
 
-import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
- * Dieses Interface gibt die Methoden vor, die für einen RemoteStore mit
- * Relay-Funktion bei Verwaltung eines <CODE>HashSet</CODE> zu implementieren
- * sind.
+ * Dieses Interface gibt die Methoden vor, die für einen RemoteStore zu
+ * implementieren sind, der die Funktionalität eines <CODE>HashSet</CODE> hat.
+ * Er wird von einem Teilproblem verwendet.
  *
- * @author Michael Wohlfart, Dietmar Lippold
+ * ToDo: Methode addAllLocal ergänzen.
+ *
+ * @author Dietmar Lippold
  */
-public interface RelayHashSet extends RemoteStore {
+public interface LocalRemoteHashSet extends RemoteStore {
 
     /**
-     * Speichert das übergebene Objekt und gibt es an alle RemoteStores
-     * weiter.
+     * Speichert ein Objekt nur im lokalen HashSet, ohne es an das
+     * <CODE>RelayHashSet</CODE> weiterzugeben.
      *
      * @param object  Das zu speichernde Objekt.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void add(Serializable object) throws RemoteException;
+    public void addLocal(Object object) throws RemoteException;
 
     /**
-     * Speichert die Objekte der übergebenen <CODE>Collection</CODE>, die
-     * serialisierbar sein müssen, und gibt die <CODE>Collection</CODE> an
-     * alle RemoteStores weiter.
+     * Speichert die Objekte der übergebenen <CODE>Collection</CODE> nur im
+     * lokalen HashSet, ohne sie an das <CODE>RelayHashSet</CODE>
+     * weiterzugeben.
      *
      * @param collection  Die Collection der zu speichernden Objekte.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void addAll(Collection collection) throws RemoteException;
-
-    /**
-     * Liefert eine Kopie des gespeicherten <CODE>HashSet</CODE>.
-     *
-     * @return  Den Speicherinhalt.
-     *
-     * @throws RemoteException  Bei einem RMI Problem.
-     */
-    public HashSet getHashSet() throws RemoteException;
+    public void addAllLocal(Collection collection) throws RemoteException;
 }
 

@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSetImpl.java
  * created:     08.02.2005
- * last change: 19.04.2005 by Dietmar Lippold
+ * last change: 07.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -28,7 +28,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.remotestore.hashset;
+package de.unistuttgart.architeuthis.remotestore.hashset.impl;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -40,6 +40,8 @@ import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.AbstractRelayStore;
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.remotestore.hashset.interf.RelayHashSet;
+import de.unistuttgart.architeuthis.remotestore.hashset.interf.LocalRemoteHashSet;
 
 /**
  * Diese Klasse vermittelt zwischen Instanzen von Klassen, die
@@ -70,7 +72,7 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    protected RelayHashSetImpl() throws RemoteException {
+    public RelayHashSetImpl() throws RemoteException {
         super();
     }
 
