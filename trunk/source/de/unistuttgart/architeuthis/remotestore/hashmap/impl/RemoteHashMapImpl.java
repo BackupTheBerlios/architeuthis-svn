@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapImpl.java
  * created:     08.02.2005
- * last change: 19.04.2005 by Dietmar Lippold
+ * last change: 07.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -28,7 +28,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.remotestore.hashmap;
+package de.unistuttgart.architeuthis.remotestore.hashmap.impl;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -40,6 +40,9 @@ import java.rmi.server.UnicastRemoteObject;
 
 import de.unistuttgart.architeuthis.remotestore.Transmitter;
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.remotestore.hashmap.UserRemoteHashMap;
+import de.unistuttgart.architeuthis.remotestore.hashmap.interf.RelayHashMap;
+import de.unistuttgart.architeuthis.remotestore.hashmap.interf.LocalRemoteHashMap;
 
 /**
  * Diese Klasse implementiert das RemoteStore Interface als HashMap. Derzeit
@@ -97,7 +100,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    protected RemoteHashMapImpl() throws RemoteException {
+    public RemoteHashMapImpl() throws RemoteException {
         synchronComm = false;
     }
 
@@ -111,7 +114,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    protected RemoteHashMapImpl(boolean synchronComm) throws RemoteException {
+    public RemoteHashMapImpl(boolean synchronComm) throws RemoteException {
         this.synchronComm = synchronComm;
     }
 

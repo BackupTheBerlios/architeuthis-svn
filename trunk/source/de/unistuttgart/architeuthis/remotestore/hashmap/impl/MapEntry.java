@@ -1,7 +1,7 @@
 /*
  * file:        MapEntry.java
  * created:     05.04.2005
- * last change: 18.04.2005 by Dietmar Lippold
+ * last change: 07.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -28,7 +28,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.remotestore.hashmap;
+package de.unistuttgart.architeuthis.remotestore.hashmap.impl;
 
 import java.io.Serializable;
 

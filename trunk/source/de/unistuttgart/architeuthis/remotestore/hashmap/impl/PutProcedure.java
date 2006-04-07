@@ -1,7 +1,7 @@
 /*
- * file:        PutAllProcedure.java
- * created:     17.04.2005
- * last change: 17.04.2005 by Dietmar Lippold
+ * file:        PutProcedure.java
+ * created:     05.04.2005
+ * last change: 07.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -28,39 +28,40 @@
  */
 
 
-package de.unistuttgart.architeuthis.remotestore.hashmap;
+package de.unistuttgart.architeuthis.remotestore.hashmap.impl;
 
-import java.util.Map;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.remotestore.hashmap.interf.RelayHashMap;
 
 /**
- * Implementiert eine Methode, die beim RelayStore für eine Map die Methode
- * <CODE>putAll</CODE> aufruft.
+ * Implementiert eine Methode, die beim RelayStore für ein Objekt-Paar die
+ * Methode <CODE>put</CODE> aufruft.
  *
  * @author Dietmar Lippold
  */
-public class PutAllProcedure implements TransmitProcedure {
+public class PutProcedure implements TransmitProcedure {
 
     /**
-     * Übertragt die übergebenen Map, die an den <CODE>Transmitter</CODE>
-     * übergeben wurde, zur zentralen <CODE>RelayHashMap</CODE>, indem es
-     * dort die Methode <CODE>putAll</CODE> aufruft.
+     * Übertragt die beiden Objekte aus dem übergebenen Objekt-Paar, das an
+     * den <CODE>Transmitter</CODE> übergeben wurde, zur zentralen
+     * <CODE>RelayHashMap</CODE>, indem es dort die Methode <CODE>put</CODE>
+     * aufruft.
      *
-     * @param mapObject   Das zu übertragende Map.
+     * @param objectpair  Das zu übertragende Objekt-Paar.
      * @param relayStore  Der RelayStore, zu dem das Objekt übertragen werden
      *                    soll. Dabei handelt es sich um eine
      *                    <CODE>RelayHashMap</CODE>.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void transmit(Object mapObject, RemoteStore relayStore)
+    public void transmit(Object objectpair, RemoteStore relayStore)
         throws RemoteException {
 
-        Map map = (Map) mapObject;
-        ((RelayHashMap) relayStore).putAll(map);
+        MapEntry mapEntry = (MapEntry) objectpair;
+        ((RelayHashMap) relayStore).put(mapEntry.getKey(), mapEntry.getValue());
     }
 }
 
