@@ -48,8 +48,6 @@ import de.unistuttgart.architeuthis.remotestore.hashset.interf.LocalRemoteHashSe
  * Diese Klasse implementiert das RemoteStore Interface als HashSet. Derzeit
  * sind nur wenige Methode von <CODE>HashSet</CODE> implementiert.<P>
  *
- * ToDo: Für addAll kann ein eigener Transmitter vorgesehen werden.
- *
  * @author Michael Wohlfart, Dietmar Lippold
  */
 public class RemoteHashSetImpl extends UnicastRemoteObject
