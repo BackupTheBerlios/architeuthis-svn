@@ -210,19 +210,19 @@
     <rmic base="${build}"
           stubversion="1.2"    	
           debug="true"
-          classname="de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMapImpl"/>
+          classname="de.unistuttgart.architeuthis.remotestore.hashmap.impl.RemoteHashMapImpl"/>
     <rmic base="${build}"
           stubversion="1.2"
           debug="true"
-          classname="de.unistuttgart.architeuthis.remotestore.hashmap.RelayHashMapImpl"/>
+          classname="de.unistuttgart.architeuthis.remotestore.hashmap.impl.RelayHashMapImpl"/>
     <rmic base="${build}"
           stubversion="1.2"
           debug="true"
-          classname="de.unistuttgart.architeuthis.remotestore.hashset.RemoteHashSetImpl"/>
+          classname="de.unistuttgart.architeuthis.remotestore.hashset.impl.RemoteHashSetImpl"/>
     <rmic base="${build}"
           stubversion="1.2"
           debug="true"
-          classname="de.unistuttgart.architeuthis.remotestore.hashset.RelayHashSetImpl"/>
+          classname="de.unistuttgart.architeuthis.remotestore.hashset.impl.RelayHashSetImpl"/>
   </target>
 
   <target name="dispatcherJar" depends="compileDis, _remotestoreStubs"
