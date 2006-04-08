@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashMapImpl.java
  * created:     08.02.2005
- * last change: 07.04.2006 by Dietmar Lippold
+ * last change: 08.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -109,8 +109,8 @@ public class RelayHashMapImpl extends AbstractRelayStore implements RelayHashMap
     public synchronized void put(Serializable key, Serializable value)
         throws RemoteException {
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("called put, key: " + key + " for " + value);
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.finest("called put, key: " + key + " for " + value);
         }
 
         // Erstmal den Delegatee updaten.
@@ -135,8 +135,8 @@ public class RelayHashMapImpl extends AbstractRelayStore implements RelayHashMap
      */
     public synchronized void putAll(Map map) throws RemoteException {
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("called putAll, number of entries = " + map.size());
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.finest("called putAll, number of entries = " + map.size());
         }
 
         // Erstmal den Delegatee updaten.

@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapGenerator.java
  * created:     08.02.2005
- * last change: 07.04.2006 by Dietmar Lippold
+ * last change: 08.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -104,8 +104,8 @@ public class RemoteHashMapGenerator implements RemoteStoreGenerator {
      * @return  Den zentralen RemoteStore.
      */
     public RemoteStore generateCentralRemoteStore() {
-        if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("Erzeuge zentralen RemoteStore.");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("Erzeuge zentralen RemoteStore.");
         }
 
         try {
@@ -128,17 +128,17 @@ public class RemoteHashMapGenerator implements RemoteStoreGenerator {
      */
     public RemoteStore generateDistRemoteStore() {
         if (isCentralOnly) {
-            if (LOGGER.isLoggable(Level.INFO)) {
-                LOGGER.info("Dezentraler RemoteStore wird nicht verwendet.");
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("Dezentraler RemoteStore wird nicht verwendet.");
             }
             return null;
         } else {
             try {
-                if (LOGGER.isLoggable(Level.INFO)) {
+                if (LOGGER.isLoggable(Level.FINE)) {
                     if (synchronComm) {
-                        LOGGER.info("Erzeuge dezentralen synchronen RemoteStore.");
+                        LOGGER.fine("Erzeuge dezentralen synchronen RemoteStore.");
                     } else {
-                        LOGGER.info("Erzeuge dezentralen asynchronen RemoteStore.");
+                        LOGGER.fine("Erzeuge dezentralen asynchronen RemoteStore.");
                     }
                 }
                 return (new RemoteHashMapImpl(synchronComm));

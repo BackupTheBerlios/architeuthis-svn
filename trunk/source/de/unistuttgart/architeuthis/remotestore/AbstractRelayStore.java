@@ -123,8 +123,8 @@ public abstract class AbstractRelayStore extends UnicastRemoteObject
     public void terminate() throws RemoteException {
 
         boolean success = unexportObject(this, true);
-        if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("unexportObject Erfolg : " + success);
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("unexportObject Erfolg : " + success);
         }
     }
 

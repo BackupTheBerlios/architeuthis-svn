@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSetImpl.java
  * created:     08.02.2005
- * last change: 07.04.2006 by Dietmar Lippold
+ * last change: 08.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -107,8 +107,8 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
      */
     public synchronized void add(Serializable object) throws RemoteException {
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("called add for : " + object);
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.finest("called add for : " + object);
         }
 
         // Erstmal den Delegatee updaten.
@@ -133,8 +133,8 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
      */
     public synchronized void addAll(Collection collection) throws RemoteException {
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("called addAll, number of elements = "
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.finest("called addAll, number of elements = "
                         + collection.size());
         }
 

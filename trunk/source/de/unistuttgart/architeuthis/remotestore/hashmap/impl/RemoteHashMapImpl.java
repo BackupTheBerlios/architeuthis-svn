@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapImpl.java
  * created:     08.02.2005
- * last change: 07.04.2006 by Dietmar Lippold
+ * last change: 08.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -135,7 +135,6 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
                 putTransmitter = new Transmitter(relayHashMap, new PutProcedure());
                 putAllTransmitter = new Transmitter(relayHashMap,
                                                     new PutAllProcedure());
-
             }
         }
     }
@@ -172,8 +171,8 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
     public void terminate() throws RemoteException {
 
         boolean success = unexportObject(this, true);
-        if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("unexportObject Erfolg : " + success);
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("unexportObject Erfolg : " + success);
         }
     }
 
@@ -190,8 +189,8 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
     public synchronized void putLocal(Object key, Object value)
         throws RemoteException {
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("called put, key: " + key + " for " + value);
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.finest("called put, key: " + key + " for " + value);
         }
 
         // Den Delegatee updaten.
@@ -209,8 +208,8 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
     public synchronized void putAllLocal(Map map)
         throws RemoteException {
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("called putAll, number of entries = " + map.size());
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.finest("called putAll, number of entries = " + map.size());
         }
 
         // Den Delegatee updaten.
@@ -293,8 +292,8 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      */
     public synchronized Serializable get(Serializable key) throws RemoteException {
 
-        if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("called get, key: " + key);
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.finest("called get, key: " + key);
         }
 
         return ((Serializable) hashMap.get(key));
