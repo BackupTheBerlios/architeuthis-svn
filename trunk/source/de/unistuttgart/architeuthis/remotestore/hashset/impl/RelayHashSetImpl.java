@@ -148,17 +148,5 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
             peer.addAllLocal(collection);
         }
     }
-
-    /**
-     * Liefert eine Kopie des verwendeten <CODE>HashSet</CODE>.
-     *
-     * @return  Eine Kopie des <CODE>HashSet</CODE>.
-     *
-     * @throws RemoteException  Wenn bei der RMI Kommunikation ein
-     *                          Fehler auftritt.
-     */
-    public synchronized HashSet getHashSet() throws RemoteException {
-        return ((HashSet) hashSet.clone());
-    }
 }
 

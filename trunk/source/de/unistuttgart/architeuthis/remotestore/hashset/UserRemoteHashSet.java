@@ -1,7 +1,7 @@
 /*
  * file:        UserRemoteHashSet.java
  * created:     08.02.2005
- * last change: 18.04.2005 by Dietmar Lippold
+ * last change: 08.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -31,6 +31,7 @@
 package de.unistuttgart.architeuthis.remotestore.hashset;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Collection;
 import java.rmi.RemoteException;
 
@@ -75,5 +76,14 @@ public interface UserRemoteHashSet extends RemoteStore {
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public int size() throws RemoteException;
+
+    /**
+     * Liefert eine Kopie des gespeicherten <CODE>HashSet</CODE>.
+     *
+     * @return  Den Speicherinhalt.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public HashSet getHashSet() throws RemoteException;
 }
 

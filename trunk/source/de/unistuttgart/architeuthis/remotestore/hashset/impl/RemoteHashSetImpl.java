@@ -288,5 +288,17 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     public synchronized int size() throws RemoteException {
         return hashSet.size();
     }
+
+    /**
+     * Liefert eine Kopie des verwendeten <CODE>HashSet</CODE>.
+     *
+     * @return  Eine Kopie des <CODE>HashSet</CODE>.
+     *
+     * @throws RemoteException  Wenn bei der RMI Kommunikation ein Fehler
+     *                          aufgetreten ist.
+     */
+    public synchronized HashSet getHashSet() throws RemoteException {
+        return ((HashSet) hashSet.clone());
+    }
 }
 

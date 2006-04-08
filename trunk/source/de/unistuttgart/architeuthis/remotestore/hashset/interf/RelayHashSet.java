@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSet.java
  * created:     08.02.2005
- * last change: 07.04.2006 by Dietmar Lippold
+ * last change: 08.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -32,7 +32,6 @@ package de.unistuttgart.architeuthis.remotestore.hashset.interf;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
@@ -41,6 +40,8 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
  * Dieses Interface gibt die Methoden vor, die für einen RemoteStore mit
  * Relay-Funktion bei Verwaltung eines <CODE>HashSet</CODE> zu implementieren
  * sind.
+ *
+ * @see  java.util.HashSet
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
@@ -66,14 +67,5 @@ public interface RelayHashSet extends RemoteStore {
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public void addAll(Collection collection) throws RemoteException;
-
-    /**
-     * Liefert eine Kopie des gespeicherten <CODE>HashSet</CODE>.
-     *
-     * @return  Den Speicherinhalt.
-     *
-     * @throws RemoteException  Bei einem RMI Problem.
-     */
-    public HashSet getHashSet() throws RemoteException;
 }
 
