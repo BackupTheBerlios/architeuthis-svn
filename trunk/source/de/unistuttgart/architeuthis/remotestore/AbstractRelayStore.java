@@ -1,7 +1,7 @@
 /*
  * file:        AbstractRemoteStore.java
  * created:     08.02.2005
- * last change: 16.04.2005 by Dietmar Lippold
+ * last change: 08.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -53,15 +53,6 @@ public abstract class AbstractRelayStore extends UnicastRemoteObject
                                          implements RemoteStore {
 
     /**
-     * Konstruktor.
-     *
-     * @throws RemoteException  Bei einem RMI-Problem.
-     */
-    protected AbstractRelayStore() throws RemoteException {
-        super();
-    }
-
-    /**
      * Standard Logger Pattern.
      */
     private static final Logger LOGGER = Logger.getLogger(AbstractRelayStore.class.getName());
@@ -73,6 +64,15 @@ public abstract class AbstractRelayStore extends UnicastRemoteObject
      * und auf die einzelnen Elemente diesen <CODE>HashSet</CODE> zugreifen.
      */
     private HashSet registeredStores = new HashSet();
+
+    /**
+     * Konstruktor.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    protected AbstractRelayStore() throws RemoteException {
+        super();
+    }
 
     /**
      * Anmeldung eines RemoteStores.
@@ -130,9 +130,10 @@ public abstract class AbstractRelayStore extends UnicastRemoteObject
 
     /**
      * Liefert einen Iterator über alle Remote Stores, die aktuell
-     * registriert sind. Die Methode darf nur in einer abgeleiteten Klasse
-     * aufgerufen werden und die aufrufende Methode muß auf <CODE>this</CODE>
-     * synchronisiert sein.
+     * registriert sind. Da der Iterator aus Performance-Gründen über die
+     * Menge der Remote Stores selbst und nicht über eine Kopie läuft, darf
+     * die Methode nur in einer abgeleiteten Klasse aufgerufen werden und die
+     * aufrufende Methode muß auf <CODE>this</CODE> synchronisiert sein.
      *
      * @return  Ein Iterator über alle registieren RemoteStores.
      */
