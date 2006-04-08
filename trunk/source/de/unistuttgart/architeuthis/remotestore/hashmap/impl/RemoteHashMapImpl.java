@@ -309,5 +309,17 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
     public synchronized int size() throws RemoteException {
         return hashMap.size();
     }
+
+    /**
+     * Liefert eine Kopie des verwendeten <CODE>HashMap</CODE>.
+     *
+     * @return  Eine Kopie des <CODE>HashMap</CODE>.
+     *
+     * @throws RemoteException  Wenn bei der RMI Kommunikation ein
+     *                          Fehler auftritt.
+     */
+    public synchronized HashMap getHashMap() throws RemoteException {
+        return ((HashMap) hashMap.clone());
+    }
 }
 

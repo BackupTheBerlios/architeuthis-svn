@@ -1,7 +1,7 @@
 /*
  * file:        UserRemoteHashMap.java
  * created:     08.02.2005
- * last change: 18.04.2005 by Dietmar Lippold
+ * last change: 08.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -32,6 +32,7 @@ package de.unistuttgart.architeuthis.remotestore.hashmap;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.HashMap;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
@@ -89,5 +90,14 @@ public interface UserRemoteHashMap extends RemoteStore {
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public int size() throws RemoteException;
+
+    /**
+     * Liefert eine Kopie der gespeicherten <CODE>HashMap</CODE>.
+     *
+     * @return  Eine Kopie der gespeicherten <CODE>HashMap</CODE>.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public HashMap getHashMap() throws RemoteException;
 }
 

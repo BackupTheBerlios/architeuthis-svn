@@ -149,17 +149,5 @@ public class RelayHashMapImpl extends AbstractRelayStore implements RelayHashMap
             peer.putAllLocal(map);
         }
     }
-
-    /**
-     * Liefert eine Kopie des verwendeten <CODE>HashMap</CODE>.
-     *
-     * @return  Eine Kopie des <CODE>HashMap</CODE>.
-     *
-     * @throws RemoteException  Wenn bei der RMI Kommunikation ein
-     *                          Fehler auftritt.
-     */
-    public synchronized HashMap getHashMap() throws RemoteException {
-        return ((HashMap) hashMap.clone());
-    }
 }
 

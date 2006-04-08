@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashMap.java
  * created:     08.02.2005
- * last change: 07.04.2006 by Dietmar Lippold
+ * last change: 08.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -32,7 +32,6 @@ package de.unistuttgart.architeuthis.remotestore.hashmap.interf;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.HashMap;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
@@ -41,6 +40,8 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
  * Dieses Interface gibt die Methoden vor, die für einen RemoteStore mit
  * Relay-Funktion bei Verwaltung einer <CODE>HashMap</CODE> zu implementieren
  * sind.
+ *
+ * @see  java.util.HashMap
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
@@ -68,14 +69,5 @@ public interface RelayHashMap extends RemoteStore {
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public void putAll(Map map) throws RemoteException;
-
-    /**
-     * Liefert eine Kopie der gespeicherten <CODE>HashMap</CODE>.
-     *
-     * @return  Eine Kopie der gespeicherten <CODE>HashMap</CODE>.
-     *
-     * @throws RemoteException  Bei einem RMI Problem.
-     */
-    public HashMap getHashMap() throws RemoteException;
 }
 
