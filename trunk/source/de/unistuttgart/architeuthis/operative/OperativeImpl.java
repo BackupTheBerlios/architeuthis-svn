@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 06.04.2006 by Dietmar Lippold
+ * last change: 10.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -205,7 +205,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         } catch (RemoteException e) {
             throw e;
         } catch (Throwable e) {
-            LOGGER.log(Level.WARNING, "Fehler bei der Abmeldung oder Beendigung eines RemoteStore");
+            LOGGER.log(Level.WARNING,
+                       "Fehler bei der Abmeldung oder Beendigung eines RemoteStore");
             throw new RemoteStoreException(e.getMessage(), e.getCause());
         } finally {
             centralRemoteStore = null;
@@ -237,7 +238,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             try {
                 unregisterRemoteStore();
             } catch (RemoteStoreException e) {
-                LOGGER.log(Level.WARNING, "RemoteStoreException wird nicht mehr gemeldet");
+                LOGGER.log(Level.WARNING,
+                           "RemoteStoreException wird nicht mehr gemeldet");
             }
 
             // Vom RMI-Server abmelden
@@ -334,11 +336,10 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE,
-                    "OperativeImpl hat Aufgabe vom ComputeManager empfangen. "
-                    + "centralStore: " + centralStore
-                    + ", generator: " + generator);
+                       "OperativeImpl hat Aufgabe vom ComputeManager empfangen. "
+                       + "centralStore: " + centralStore
+                       + ", generator: " + generator);
         }
-
 
         // Zentralen RemoteStore merken, um den distRemoteStore dort später
         // abzumelden
@@ -362,7 +363,9 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                     distRemoteStore.registerRemoteStore(centralRemoteStore);
                     centralRemoteStore.registerRemoteStore(distRemoteStore);
                 } catch (Throwable e) {
-                    LOGGER.log(Level.SEVERE, "Fehler bei der Anmeldung oder Abmeldung eines RemoteStore");
+                    LOGGER.log(Level.SEVERE,
+                               "Fehler bei der Anmeldung oder Abmeldung"
+                               + " eines RemoteStore");
                     throw new RemoteStoreException(e.getMessage(), e.getCause());
                 }
             } else if (distRemoteStore == null) {
@@ -411,10 +414,10 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      *                soll.
      */
     synchronized void returnPartialSolution(PartialSolution parSol) {
-        long versuche = CONNECT_RETRIES;
+        String  exceptionMessage = null;
+        long    versuch;
+        int     exceptionCode = -1;
         boolean transmitted = false;
-        String exceptionMessage = null;
-        int exceptionCode = -1;
 
         // Den oder die ClassLoader löschen
         CacheFlushingRMIClSpi.flushClassLoaders();
@@ -423,21 +426,23 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         try {
             unregisterRemoteStore();
             LOGGER.log(Level.FINE, "RemoteStore abgemeldet");
+            versuch = 0;
         } catch (Exception e) {
             exceptionCode = ExceptionCodes.REMOTE_STORE_EXCEPTION;
             exceptionMessage = e.getMessage();
-            LOGGER.log(Level.WARNING, "Abmeldung von RemoteStore fehlgeschlagen");
-            versuche = 0;
+            LOGGER.log(Level.WARNING,
+                       "Abmeldung von RemoteStore fehlgeschlagen"
+                       + exceptionMessage);
+            versuch = CONNECT_RETRIES;
         }
 
         // Mehrmals versuchen, die Teillösung zu senden
-        while ((versuche > 0) && (!transmitted)) {
+        while ((versuch < CONNECT_RETRIES) && (!transmitted)) {
             if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.log(Level.FINE, "Versuche, RemoteStore"
-                                            + " abzumelden und Teilergebnis"
-                                            + " zurückzugeben, "
-                                            + "Versuche: (" + versuche
-                                            + "/" + CONNECT_RETRIES + ")");
+                LOGGER.log(Level.FINE,
+                           "Versuche, RemoteStore abzumelden und Teilergebnis"
+                           + " zurückzugeben, Versuch: "
+                           + "(" + versuch + "/" + CONNECT_RETRIES + ")");
             }
             try {
                 computeManager.collectPartialSolution(parSol, this);
@@ -447,13 +452,14 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                 exceptionCode = ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION;
                 exceptionMessage = e.getMessage();
                 try {
-                    LOGGER.log(Level.WARNING, "Teilergebnis konnte nicht zurückgegeben werden");
+                    LOGGER.log(Level.WARNING,
+                               "Teilergebnis konnte nicht zurückgegeben werden");
                     Thread.sleep(SEND_TIMEOUT);
                 } catch (InterruptedException e1) {
                     // uninteressant
                 }
             }
-            versuche--;
+            versuch++;
         }
 
         if (!transmitted) {
