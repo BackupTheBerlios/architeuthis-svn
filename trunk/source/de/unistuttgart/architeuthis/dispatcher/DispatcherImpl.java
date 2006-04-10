@@ -93,15 +93,21 @@ public final class DispatcherImpl {
      * Aktiviert das Logging zum Level FINEST.
      */
     private static void activateFinestLogging() {
+        Handler[]      handlers;
+        ConsoleHandler consoleHandler;
+        Logger         rootLogger, archiLogger;
 
-        Logger rootLogger = Logger.getLogger("");
-        rootLogger.setLevel(Level.FINEST);
+        rootLogger = Logger.getLogger("");
+        archiLogger = Logger.getLogger("de.unistuttgart.architeuthis");
+
+        // log-Level für alle Logger von Architeuthis setzen
+        archiLogger.setLevel(Level.FINEST);
 
         // der DefaultHandler hängt am root-Logger
-        Handler[] handlers = rootLogger.getHandlers();
+        handlers = rootLogger.getHandlers();
 
         // einen ConsoleHandler finden:
-        ConsoleHandler consoleHandler = null;
+        consoleHandler = null;
         for (int i = 0; i < handlers.length; i++) {
             if (handlers[i] instanceof ConsoleHandler) {
                 consoleHandler = (ConsoleHandler) handlers[i];
@@ -213,8 +219,10 @@ public final class DispatcherImpl {
                     parser.parseAll(args);
                 }
 
-                // für debugging finest Logging aktivieren.
-                activateFinestLogging();
+                if (parser.isEnabled(debugSwitch)) {
+                    // für debugging finest Logging aktivieren.
+                    activateFinestLogging();
+                }
 
                 additionalThreads = parser.isEnabled(threadSwitch);
 
