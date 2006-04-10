@@ -239,7 +239,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                 unregisterRemoteStore();
             } catch (RemoteStoreException e) {
                 LOGGER.log(Level.WARNING,
-                           "RemoteStoreException wird nicht mehr gemeldet");
+                           "RemoteStoreException beim Beenden aufgetreten."
+                           + " Wird nicht mehr gemeldet.");
             }
 
             // Vom RMI-Server abmelden
@@ -431,8 +432,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             exceptionCode = ExceptionCodes.REMOTE_STORE_EXCEPTION;
             exceptionMessage = e.getMessage();
             LOGGER.log(Level.WARNING,
-                       "Abmeldung von RemoteStore fehlgeschlagen"
-                       + exceptionMessage);
+                       "Abmeldung von RemoteStore fehlgeschlagen: " + e);
             versuch = CONNECT_RETRIES;
         }
 
