@@ -1,7 +1,7 @@
 /*
  * file:        ProblemWrapper.java
  * created:     29.06.2003
- * last change: 06.04.2006 by Dietmar Lippold
+ * last change: 10.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -171,6 +171,9 @@ class ProblemWrapper extends Thread {
                 centralRemoteStore = generator.generateCentralRemoteStore();
             }
             remoteStoreGenerator = generator;
+        } catch (ThreadDeath e) {
+            // Dieser Error darf nicht abgefangen werden.
+            throw e;
         } catch (Throwable e) {
             LOGGER.info("Fehler bei der Erzeugung vom zentralen RemoteStore");
             throw new RemoteStoreGenException(e.getMessage(), e.getCause());
@@ -508,7 +511,9 @@ class ProblemWrapper extends Thread {
                         problem.collectPartialSolution(
                             parProbWrapSolPair.getPartialSolution(),
                             parPropWrapper.getPartialProblem());
-
+                    } catch (ThreadDeath e) {
+                        // Dieser Error darf nicht abgefangen werden.
+                        throw e;
                     } catch (Throwable e) {
                         LOGGER.info("Fehler bei der Verarbeitung einer Teillösung");
                         problemManager.reportException(
@@ -564,6 +569,9 @@ class ProblemWrapper extends Thread {
         if (centralRemoteStore != null) {
             try {
                 centralRemoteStore.terminate();
+            } catch (ThreadDeath e) {
+                // Dieser Error darf nicht abgefangen werden.
+                throw e;
             } catch (Throwable e) {
                 LOGGER.info("Fehler beim Beenden vom zentralen RemoteStore");
                 problemManager.reportException(

@@ -204,6 +204,9 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             }
         } catch (RemoteException e) {
             throw e;
+        } catch (ThreadDeath e) {
+            // Dieser Error darf nicht abgefangen werden.
+            throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.WARNING,
                        "Fehler bei der Abmeldung oder Beendigung eines RemoteStore");
@@ -351,6 +354,9 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             // erzeugen.
             try {
                 distRemoteStore = generator.generateDistRemoteStore();
+            } catch (ThreadDeath e) {
+                // Dieser Error darf nicht abgefangen werden.
+                throw e;
             } catch (Throwable e) {
                 LOGGER.log(Level.SEVERE, "Fehler bei der Erzeugung vom RemoteStore");
                 throw new RemoteStoreGenException(e.getMessage(), e.getCause());
@@ -363,6 +369,9 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                 try {
                     distRemoteStore.registerRemoteStore(centralRemoteStore);
                     centralRemoteStore.registerRemoteStore(distRemoteStore);
+                } catch (ThreadDeath e) {
+                    // Dieser Error darf nicht abgefangen werden.
+                    throw e;
                 } catch (Throwable e) {
                     LOGGER.log(Level.SEVERE,
                                "Fehler bei der Anmeldung oder Abmeldung"
