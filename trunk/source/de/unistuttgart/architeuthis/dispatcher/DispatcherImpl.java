@@ -1,7 +1,7 @@
 /*
  * file:        DispatcherImpl.java
  * created:     18.12.20003
- * last change: 06.03.2006 by Dietmar Lippold
+ * last change: 10.04.2006 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -45,6 +45,10 @@ import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.Handler;
+import java.util.logging.ConsoleHandler;
 
 import de.unistuttgart.commandline.Option;
 import de.unistuttgart.commandline.ParameterParser;
@@ -86,6 +90,35 @@ public final class DispatcherImpl {
     private static final int DEFAULT_REMOTE_OPERATIVE_MAXTRY = 3;
 
     /**
+     * Aktiviert das Logging zum Level FINEST.
+     */
+    private static void activateFinestLogging() {
+
+        Logger rootLogger = Logger.getLogger("");
+        rootLogger.setLevel(Level.FINEST);
+
+        // der DefaultHandler hängt am root-Logger
+        Handler[] handlers = rootLogger.getHandlers();
+
+        // einen ConsoleHandler finden:
+        ConsoleHandler consoleHandler = null;
+        for (int i = 0; i < handlers.length; i++) {
+            if (handlers[i] instanceof ConsoleHandler) {
+                consoleHandler = (ConsoleHandler) handlers[i];
+            }
+        }
+
+        // Wenn kein ConsoleHandler am root-Logger vorhanden ist, einen
+        // anhängen.
+        if (consoleHandler == null) {
+            consoleHandler = new java.util.logging.ConsoleHandler();
+            Logger.getLogger("").addHandler(consoleHandler);
+        }
+
+        consoleHandler.setLevel(Level.FINEST);
+    }
+
+    /**
      * Übernimmt die Initialisierung des {@link ComputeManager}. Beim Starten
      * der {@link ComputeManagerImpl} werden die Kommandozeilenparameter
      * ausgelesen und die Konfigurationsdatei eingelesen. Die Angaben, die in
@@ -114,9 +147,15 @@ public final class DispatcherImpl {
         ParameterParser parser = new ParameterParser();
 
         Option helpSwitch = new Option("help");
+        helpSwitch.setParameterNumberCheck(Option.ZERO_PARAMETERS_CHECK);
         parser.addOption(helpSwitch);
 
+        Option debugSwitch = new Option("d");
+        debugSwitch.setParameterNumberCheck(Option.ZERO_PARAMETERS_CHECK);
+        parser.addOption(debugSwitch);
+
         Option threadSwitch = new Option("t");
+        threadSwitch.setParameterNumberCheck(Option.ZERO_PARAMETERS_CHECK);
         parser.addOption(threadSwitch);
 
         Option configOption = new Option("c");
@@ -173,6 +212,9 @@ public final class DispatcherImpl {
                     // Kommandozeilenparametern ohne properties-Datei parsen.
                     parser.parseAll(args);
                 }
+
+                // für debugging finest Logging aktivieren.
+                activateFinestLogging();
 
                 additionalThreads = parser.isEnabled(threadSwitch);
 
