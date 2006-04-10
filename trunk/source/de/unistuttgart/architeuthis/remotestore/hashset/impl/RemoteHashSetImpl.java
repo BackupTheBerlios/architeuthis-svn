@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 08.04.2006 by Dietmar Lippold
+ * last change: 10.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -70,6 +70,11 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     private HashSet hashSet = new HashSet();
 
     /**
+     * Dient zur Synchronisation des Zugriffs auf <CODE>relayHashSet</CODE>.
+     */
+    private Object relayStoreSyncObj = new Object();
+
+    /**
      * Das <CODE>RelayHashSet</CODE>, an das Veränderungen an diesem Objekt
      * weitergeleitet werden.
      */
@@ -126,15 +131,18 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public synchronized void registerRemoteStore(RemoteStore remoteStore)
+    public void registerRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
-        if (remoteStore != null) {
-            relayHashSet = (RelayHashSet) remoteStore;
-            if (!synchronComm) {
-                addTransmitter = new Transmitter(relayHashSet, new AddProcedure());
-                addAllTransmitter = new Transmitter(relayHashSet,
-                                                    new AddAllProcedure());
+        synchronized (relayStoreSyncObj) {
+            if (remoteStore != null) {
+                relayHashSet = (RelayHashSet) remoteStore;
+                if (!synchronComm) {
+                    addTransmitter = new Transmitter(relayHashSet,
+                                                     new AddProcedure());
+                    addAllTransmitter = new Transmitter(relayHashSet,
+                                                        new AddAllProcedure());
+                }
             }
         }
     }
@@ -148,16 +156,18 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public synchronized void unregisterRemoteStore(RemoteStore remoteStore)
+    public void unregisterRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
-        if ((remoteStore != null) && (remoteStore == relayHashSet)) {
-            relayHashSet = null;
-            if (!synchronComm) {
-                addTransmitter.terminate();
-                addTransmitter = null;
-                addAllTransmitter.terminate();
-                addAllTransmitter = null;
+        synchronized (relayStoreSyncObj) {
+            if ((remoteStore != null) && (remoteStore == relayHashSet)) {
+                relayHashSet = null;
+                if (!synchronComm) {
+                    addTransmitter.terminate();
+                    addTransmitter = null;
+                    addAllTransmitter.terminate();
+                    addAllTransmitter = null;
+                }
             }
         }
     }
@@ -232,16 +242,18 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
         // Erstmal lokal updaten.
         addLocal(object);
 
-        if (relayHashSet != null) {
-            if (synchronComm) {
-                // Das Objekt direkt an den RelayStore und damit an die
-                // anderen RemoteHashSets übergeben.
-                relayHashSet.add(object);
-            } else {
-                // Das Objekt an den Transmitter zur Weiterleitung an den
-                // RelayStore und damit an die anderen RemoteHashSets
-                // übergeben.
-                addTransmitter.enqueue(object);
+        synchronized (relayStoreSyncObj) {
+            if (relayHashSet != null) {
+                if (synchronComm) {
+                    // Das Objekt direkt an den RelayStore und damit an die
+                    // anderen RemoteHashSets übergeben.
+                    relayHashSet.add(object);
+                } else {
+                    // Das Objekt an den Transmitter zur Weiterleitung an den
+                    // RelayStore und damit an die anderen RemoteHashSets
+                    // übergeben.
+                    addTransmitter.enqueue(object);
+                }
             }
         }
     }
@@ -264,16 +276,18 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
         // Erstmal lokal updaten.
         addAllLocal(collection);
 
-        if (relayHashSet != null) {
-            if (synchronComm) {
-                // Die Collection direkt an den RelayStore und damit an die
-                // anderen RemoteHashSets übergeben.
-                relayHashSet.addAll(collection);
-            } else {
-                // Die Collection an den Transmitter zur Weiterleitung an den
-                // RelayStore und damit an die anderen RemoteHashSets
-                // übergeben.
-                addAllTransmitter.enqueue(collection);
+        synchronized (relayStoreSyncObj) {
+            if (relayHashSet != null) {
+                if (synchronComm) {
+                    // Die Collection direkt an den RelayStore und damit an die
+                    // anderen RemoteHashSets übergeben.
+                    relayHashSet.addAll(collection);
+                } else {
+                    // Die Collection an den Transmitter zur Weiterleitung an den
+                    // RelayStore und damit an die anderen RemoteHashSets
+                    // übergeben.
+                    addAllTransmitter.enqueue(collection);
+                }
             }
         }
     }

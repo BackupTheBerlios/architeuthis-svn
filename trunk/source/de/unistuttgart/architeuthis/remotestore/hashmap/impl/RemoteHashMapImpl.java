@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapImpl.java
  * created:     08.02.2005
- * last change: 08.04.2006 by Dietmar Lippold
+ * last change: 10.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -70,6 +70,11 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
     private HashMap hashMap = new HashMap();
 
     /**
+     * Dient zur Synchronisation des Zugriffs auf <CODE>relayHashMap</CODE>.
+     */
+    private Object relayStoreSyncObj = new Object();
+
+    /**
      * Das <CODE>RelayHashMap</CODE>, an das Veränderungen an diesem Objekt
      * weitergeleitet werden.
      */
@@ -126,15 +131,18 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public synchronized void registerRemoteStore(RemoteStore remoteStore)
+    public void registerRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
-        if (remoteStore != null) {
-            relayHashMap = (RelayHashMap) remoteStore;
-            if (!synchronComm) {
-                putTransmitter = new Transmitter(relayHashMap, new PutProcedure());
-                putAllTransmitter = new Transmitter(relayHashMap,
-                                                    new PutAllProcedure());
+        synchronized (relayStoreSyncObj) {
+            if (remoteStore != null) {
+                relayHashMap = (RelayHashMap) remoteStore;
+                if (!synchronComm) {
+                    putTransmitter = new Transmitter(relayHashMap,
+                                                     new PutProcedure());
+                    putAllTransmitter = new Transmitter(relayHashMap,
+                                                        new PutAllProcedure());
+                }
             }
         }
     }
@@ -148,16 +156,18 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public synchronized void unregisterRemoteStore(RemoteStore remoteStore)
+    public void unregisterRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
-        if ((remoteStore != null) && (remoteStore == relayHashMap)) {
-            relayHashMap = null;
-            if (!synchronComm) {
-                putTransmitter.terminate();
-                putTransmitter = null;
-                putAllTransmitter.terminate();
-                putAllTransmitter = null;
+        synchronized (relayStoreSyncObj) {
+            if ((remoteStore != null) && (remoteStore == relayHashMap)) {
+                relayHashMap = null;
+                if (!synchronComm) {
+                    putTransmitter.terminate();
+                    putTransmitter = null;
+                    putAllTransmitter.terminate();
+                    putAllTransmitter = null;
+                }
             }
         }
     }
@@ -235,16 +245,18 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
         // Erstmal lokal updaten.
         putLocal(key, value);
 
-        if (relayHashMap != null) {
-            if (synchronComm) {
-                // Das Objekt-Paar direkt an den RelayStore und damit an
-                // die anderen RemoteHashMaps übergeben.
-                relayHashMap.put(key, value);
-            } else {
-                // Das Objekt-Paar an den Transmitter zur Weiterleitung an
-                // den RelayStore und damit an die anderen RemoteHashMaps
-                // übergeben.
-                putTransmitter.enqueue(new MapEntry(key, value));
+        synchronized (relayStoreSyncObj) {
+            if (relayHashMap != null) {
+                if (synchronComm) {
+                    // Das Objekt-Paar direkt an den RelayStore und damit an
+                    // die anderen RemoteHashMaps übergeben.
+                    relayHashMap.put(key, value);
+                } else {
+                    // Das Objekt-Paar an den Transmitter zur Weiterleitung an
+                    // den RelayStore und damit an die anderen RemoteHashMaps
+                    // übergeben.
+                    putTransmitter.enqueue(new MapEntry(key, value));
+                }
             }
         }
     }
@@ -266,16 +278,18 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
         // Erstmal lokal updaten.
         putAllLocal(map);
 
-        if (relayHashMap != null) {
-            if (synchronComm) {
-                // Die Map direkt an den RelayStore und damit an die anderen
-                // RemoteHashMaps übergeben.
-                relayHashMap.putAll(map);
-            } else {
-                // Die Map an den Transmitter zur Weiterleitung an den
-                // RelayStore und damit an die anderen RemoteHashMaps
-                // übergeben.
-                putAllTransmitter.enqueue(map);
+        synchronized (relayStoreSyncObj) {
+            if (relayHashMap != null) {
+                if (synchronComm) {
+                    // Die Map direkt an den RelayStore und damit an die
+                    // anderen RemoteHashMaps übergeben.
+                    relayHashMap.putAll(map);
+                } else {
+                    // Die Map an den Transmitter zur Weiterleitung an den
+                    // RelayStore und damit an die anderen RemoteHashMaps
+                    // übergeben.
+                    putAllTransmitter.enqueue(map);
+                }
             }
         }
     }

@@ -1,7 +1,7 @@
 /*
  * file:        Transmitter.java
  * created:     05.04.2005
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 10.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -51,7 +51,12 @@ public class Transmitter extends Thread {
     private static final Logger LOGGER = Logger.getLogger(Transmitter.class.getName());
 
     /**
-     * Flag um diesen Thread zu beenden.
+     * Gibt an, ob der Thread dabei ist, sich zu beenden.
+     */
+    private volatile boolean terminating = false;
+
+    /**
+     * Gibt an, ob der Thread beendet ist.
      */
     private volatile boolean terminated = false;
 
@@ -101,10 +106,22 @@ public class Transmitter extends Thread {
      * der Beendigung des RemoteStore auf dem Operative aufgerufen.
      */
     public void terminate() {
-        terminated = true;
+        terminating = true;
 
         // Den evtl. wartenden Thread aktivieren.
         objectBuffer.enqueue(null);
+
+        // Prüfen, ob noch zu übertragende Objekte vorhanden sind.
+        synchronized (this) {
+            if (!terminated) {
+                // Warten, bis alle Objekte aus objectBuffer übertragen sind.
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    LOGGER.info("Warten auf Ende der Übertragung abgebrochen");
+                }
+            }
+        }
     }
 
     /**
@@ -113,9 +130,9 @@ public class Transmitter extends Thread {
      */
     public void run() {
         try {
-            while (!terminated) {
+            while (!terminating || !objectBuffer.isEmpty()) {
                 Object transmitObject = objectBuffer.dequeue();
-                if (!terminated) {
+                if (transmitObject != null) {
                     transmitProc.transmit(transmitObject, relayStore);
                 }
             }
@@ -125,6 +142,13 @@ public class Transmitter extends Thread {
                             + " fehlgeschalgen : \n"
                             + e.getMessage());
             }
+        }
+
+        synchronized (this) {
+            // Den möglicherweise wartenden Thread aus dem Aufruf von
+            // terminate aufwecken.
+            terminated = true;
+            notifyAll();
         }
     }
 }
