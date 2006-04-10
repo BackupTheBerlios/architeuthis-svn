@@ -239,7 +239,9 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      */
     public void add(Serializable object) throws RemoteException {
 
-        // Erstmal lokal updaten.
+        // Erstmal lokal updaten. Wenn ein Relay-Store vorhanden ist,
+        // insbesondere bei synchroner Kommunikation, ist das lokale Speichern
+        // eigentlich nicht notwendig.
         addLocal(object);
 
         synchronized (relayStoreSyncObj) {
@@ -273,7 +275,9 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      */
     public void addAll(Collection collection) throws RemoteException {
 
-        // Erstmal lokal updaten.
+        // Erstmal lokal updaten. Wenn ein Relay-Store vorhanden ist,
+        // insbesondere bei synchroner Kommunikation, ist das lokale Speichern
+        // eigentlich nicht notwendig.
         addAllLocal(collection);
 
         synchronized (relayStoreSyncObj) {
