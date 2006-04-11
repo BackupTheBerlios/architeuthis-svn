@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashMap.java
  * created:     08.02.2005
- * last change: 08.04.2006 by Dietmar Lippold
+ * last change: 11.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -49,25 +49,32 @@ public interface RelayHashMap extends RemoteStore {
 
     /**
      * Speichert zu einen key-Objekt ein value-Objekt. Das Objekt-Paar wird
-     * zur Speicherung an alle RemoteStores weitergegeben.
+     * zur Speicherung an alle RemoteStores, bis auf den, der das Objekt
+     * übergeben hat, weitergegeben.
      *
-     * @param key    Das key-Objekt, unter dem das value-Objekt gespeichert
-     *               wird.
-     * @param value  Das value-Objekt, das zum key-Objekt gespeichert wird.
+     * @param key          Das key-Objekt, unter dem das value-Objekt
+     *                     gespeichert wird.
+     * @param value        Das value-Objekt, das zum key-Objekt gespeichert
+     *                     wird.
+     * @param remoteStore  Der RemoteStore, von dem die übergebenen Objekte
+     *                     kommen.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void put(Serializable key, Serializable value) throws RemoteException;
+    public void put(Serializable key, Serializable value,
+                    LocalRemoteHashMap remoteStore) throws RemoteException;
 
     /**
      * Speichert die Einträge der übergebenen Map, die serialisierbar sein
-     * müssen. Die Map wird zur Speicherung an alle RemoteStores
-     * weitergegeben.
+     * müssen. Die Map wird zur Speicherung an alle RemoteStores, bis auf den,
+     * der das Objekt übergeben hat, weitergegeben.
      *
-     * @param map  Die Map, deren Einträge gespeichert werden.
+     * @param map          Die Map, deren Einträge gespeichert werden.
+     * @param remoteStore  Der RemoteStore, von dem die übergebene Map kommt.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void putAll(Map map) throws RemoteException;
+    public void putAll(Map map, LocalRemoteHashMap remoteStore)
+        throws RemoteException;
 }
 

@@ -1,7 +1,7 @@
 /*
  * file:        AddAllProcedure.java
  * created:     05.04.2005
- * last change: 07.04.2006 by Dietmar Lippold
+ * last change: 11.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -34,8 +34,8 @@ import java.util.Collection;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
-import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.hashset.interf.RelayHashSet;
+import de.unistuttgart.architeuthis.remotestore.hashset.interf.LocalRemoteHashSet;
 
 /**
  * Implementiert eine Methode, die beim RelayStore für eine Collection die
@@ -46,22 +46,42 @@ import de.unistuttgart.architeuthis.remotestore.hashset.interf.RelayHashSet;
 public class AddAllProcedure implements TransmitProcedure {
 
     /**
-     * Übertragt die an den <CODE>Transmitter</CODE> übergebene Collection zum
-     * angegebenen zentralen <CODE>RelayHashSet</CODE>, indem es dort die
-     * Methode <CODE>addAll</CODE> aufruft.
+     * Lokaler RemotStore, von dem die zu übertragenden Daten stammen.
+     */
+    private LocalRemoteHashSet localStore;
+
+    /**
+     * RelayStore, an den die Daten übertragen werden sollen.
+     */
+    private RelayHashSet relayStore;
+
+    /**
+     * Erzeugt eine Instanz.
+     *
+     * @param localStore  Der lokale RemotStore, von dem die zu übertragenden
+     *                    Objekte stammen.
+     * @param relayStore  Der RelayStore, an den die Objekte übertragen
+     *                    werden.
+     */
+    public AddAllProcedure(LocalRemoteHashSet localStore,
+                           RelayHashSet relayStore) {
+
+        this.localStore = localStore;
+        this.relayStore = relayStore;
+    }
+
+    /**
+     * Übertragt die übergebene Collection zum RelayStore, der dem Konstruktor
+     * übergeben wurde.
      *
      * @param collObject  Die zu übertragende Collection.
-     * @param relayStore  Der RelayStore, zu dem das Objekt übertragen werden
-     *                    soll. Dabei handelt es sich um ein
-     *                    <CODE>RelayHashSet</CODE>.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void transmit(Object collObject, RemoteStore relayStore)
-        throws RemoteException {
+    public void transmit(Object collObject) throws RemoteException {
 
         Collection collection = (Collection) collObject;
-        ((RelayHashSet) relayStore).addAll(collection);
+        relayStore.addAll(collection, localStore);
     }
 }
 

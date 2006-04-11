@@ -1,7 +1,7 @@
 /*
  * file:        PutAllProcedure.java
  * created:     17.04.2005
- * last change: 07.04.2006 by Dietmar Lippold
+ * last change: 11.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -34,8 +34,8 @@ import java.util.Map;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
-import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.hashmap.interf.RelayHashMap;
+import de.unistuttgart.architeuthis.remotestore.hashmap.interf.LocalRemoteHashMap;
 
 /**
  * Implementiert eine Methode, die beim RelayStore für eine Map die Methode
@@ -46,22 +46,42 @@ import de.unistuttgart.architeuthis.remotestore.hashmap.interf.RelayHashMap;
 public class PutAllProcedure implements TransmitProcedure {
 
     /**
-     * Übertragt die übergebenen Map, die an den <CODE>Transmitter</CODE>
-     * übergeben wurde, zur zentralen <CODE>RelayHashMap</CODE>, indem es
-     * dort die Methode <CODE>putAll</CODE> aufruft.
+     * Lokaler RemotStore, von dem die zu übertragenden Daten stammen.
+     */
+    private LocalRemoteHashMap localStore;
+
+    /**
+     * RelayStore, an den die Daten übertragen werden sollen.
+     */
+    private RelayHashMap relayStore;
+
+    /**
+     * Erzeugt eine Instanz.
      *
-     * @param mapObject   Das zu übertragende Map.
-     * @param relayStore  Der RelayStore, zu dem das Objekt übertragen werden
-     *                    soll. Dabei handelt es sich um eine
-     *                    <CODE>RelayHashMap</CODE>.
+     * @param localStore  Der lokale RemotStore, von dem die zu übertragenden
+     *                    Objekte stammen.
+     * @param relayStore  Der RelayStore, an den die Objekte übertragen
+     *                    werden.
+     */
+    public PutAllProcedure(LocalRemoteHashMap localStore,
+                           RelayHashMap relayStore) {
+
+        this.localStore = localStore;
+        this.relayStore = relayStore;
+    }
+
+    /**
+     * Übertragt die übergebenen Map zur zentralen <CODE>RelayHashMap</CODE>,
+     * die dem Konstruktor übergeben wurde.
+     *
+     * @param mapObject  Die zu übertragende Map.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void transmit(Object mapObject, RemoteStore relayStore)
-        throws RemoteException {
+    public void transmit(Object mapObject) throws RemoteException {
 
         Map map = (Map) mapObject;
-        ((RelayHashMap) relayStore).putAll(map);
+        relayStore.putAll(map, localStore);
     }
 }
 

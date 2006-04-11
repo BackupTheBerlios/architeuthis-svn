@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapImpl.java
  * created:     08.02.2005
- * last change: 10.04.2006 by Dietmar Lippold
+ * last change: 11.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -134,14 +134,17 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
     public void registerRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
+        PutProcedure    putProcedure;
+        PutAllProcedure putAllProcedure;
+
         synchronized (relayStoreSyncObj) {
             if (remoteStore != null) {
                 relayHashMap = (RelayHashMap) remoteStore;
                 if (!synchronComm) {
-                    putTransmitter = new Transmitter(relayHashMap,
-                                                     new PutProcedure());
-                    putAllTransmitter = new Transmitter(relayHashMap,
-                                                        new PutAllProcedure());
+                    putProcedure = new PutProcedure(this, relayHashMap);
+                    putTransmitter = new Transmitter(putProcedure);
+                    putAllProcedure = new PutAllProcedure(this, relayHashMap);
+                    putAllTransmitter = new Transmitter(putAllProcedure);
                 }
             }
         }
@@ -200,7 +203,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
         throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.finest("called put, key: " + key + " for " + value);
+            LOGGER.finest("called putLocal, key: " + key + " for " + value);
         }
 
         // Den Delegatee updaten.
@@ -219,7 +222,8 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
         throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.finest("called putAll, number of entries = " + map.size());
+            LOGGER.finest("called putAllLocal, number of entries = "
+                          + map.size());
         }
 
         // Den Delegatee updaten.
@@ -242,9 +246,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      */
     public void put(Serializable key, Serializable value) throws RemoteException {
 
-        // Erstmal lokal updaten. Wenn ein Relay-Store vorhanden ist,
-        // insbesondere bei synchroner Kommunikation, ist das lokale Speichern
-        // eigentlich nicht notwendig.
+        // Erstmal lokal updaten.
         putLocal(key, value);
 
         synchronized (relayStoreSyncObj) {
@@ -252,7 +254,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
                 if (synchronComm) {
                     // Das Objekt-Paar direkt an den RelayStore und damit an
                     // die anderen RemoteHashMaps übergeben.
-                    relayHashMap.put(key, value);
+                    relayHashMap.put(key, value, this);
                 } else {
                     // Das Objekt-Paar an den Transmitter zur Weiterleitung an
                     // den RelayStore und damit an die anderen RemoteHashMaps
@@ -277,9 +279,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      */
     public void putAll(Map map) throws RemoteException {
 
-        // Erstmal lokal updaten. Wenn ein Relay-Store vorhanden ist,
-        // insbesondere bei synchroner Kommunikation, ist das lokale Speichern
-        // eigentlich nicht notwendig.
+        // Erstmal lokal updaten.
         putAllLocal(map);
 
         synchronized (relayStoreSyncObj) {
@@ -287,7 +287,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
                 if (synchronComm) {
                     // Die Map direkt an den RelayStore und damit an die
                     // anderen RemoteHashMaps übergeben.
-                    relayHashMap.putAll(map);
+                    relayHashMap.putAll(map, this);
                 } else {
                     // Die Map an den Transmitter zur Weiterleitung an den
                     // RelayStore und damit an die anderen RemoteHashMaps

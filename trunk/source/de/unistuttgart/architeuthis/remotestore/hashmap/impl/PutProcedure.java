@@ -1,7 +1,7 @@
 /*
  * file:        PutProcedure.java
  * created:     05.04.2005
- * last change: 07.04.2006 by Dietmar Lippold
+ * last change: 11.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -33,8 +33,8 @@ package de.unistuttgart.architeuthis.remotestore.hashmap.impl;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
-import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.hashmap.interf.RelayHashMap;
+import de.unistuttgart.architeuthis.remotestore.hashmap.interf.LocalRemoteHashMap;
 
 /**
  * Implementiert eine Methode, die beim RelayStore für ein Objekt-Paar die
@@ -45,23 +45,43 @@ import de.unistuttgart.architeuthis.remotestore.hashmap.interf.RelayHashMap;
 public class PutProcedure implements TransmitProcedure {
 
     /**
-     * Übertragt die beiden Objekte aus dem übergebenen Objekt-Paar, das an
-     * den <CODE>Transmitter</CODE> übergeben wurde, zur zentralen
-     * <CODE>RelayHashMap</CODE>, indem es dort die Methode <CODE>put</CODE>
-     * aufruft.
+     * Lokaler RemotStore, von dem die zu übertragenden Daten stammen.
+     */
+    private LocalRemoteHashMap localStore;
+
+    /**
+     * RelayStore, an den die Daten übertragen werden sollen.
+     */
+    private RelayHashMap relayStore;
+
+    /**
+     * Erzeugt eine Instanz.
      *
-     * @param objectpair  Das zu übertragende Objekt-Paar.
-     * @param relayStore  Der RelayStore, zu dem das Objekt übertragen werden
-     *                    soll. Dabei handelt es sich um eine
-     *                    <CODE>RelayHashMap</CODE>.
+     * @param localStore  Der lokale RemotStore, von dem die zu übertragenden
+     *                    Objekte stammen.
+     * @param relayStore  Der RelayStore, an den die Objekte übertragen
+     *                    werden.
+     */
+    public PutProcedure(LocalRemoteHashMap localStore, RelayHashMap relayStore) {
+
+        this.localStore = localStore;
+        this.relayStore = relayStore;
+    }
+
+    /**
+     * Übertragt die beiden Objekte aus dem übergebenen Objekt-Paar zur
+     * zentralen <CODE>RelayHashMap</CODE>, der dem Konstruktor übergeben
+     * wurde.
+     *
+     * @param objectPair  Das zu übertragende Objekt-Paar.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void transmit(Object objectpair, RemoteStore relayStore)
+    public void transmit(Object objectPair)
         throws RemoteException {
 
-        MapEntry mapEntry = (MapEntry) objectpair;
-        ((RelayHashMap) relayStore).put(mapEntry.getKey(), mapEntry.getValue());
+        MapEntry mapEntry = (MapEntry) objectPair;
+        relayStore.put(mapEntry.getKey(), mapEntry.getValue(), localStore);
     }
 }
 

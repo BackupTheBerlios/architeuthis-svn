@@ -1,7 +1,7 @@
 /*
  * file:        TransmitProcedure.java
  * created:     05.04.2005
- * last change: 17.04.2005 by Dietmar Lippold
+ * last change: 11.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -32,8 +32,6 @@ package de.unistuttgart.architeuthis.remotestore;
 
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
-
 /**
  * Definiert eine Methode zur Übertragung eines Objekt zu einem zentralen
  * RelayStore.
@@ -43,15 +41,15 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 public interface TransmitProcedure {
 
     /**
-     * Übertragt das an den <CODE>Transmitter</CODE> übergebene Objekt zum
-     * angegebenen zentralen <CODE>RelayStore</CODE>.
+     * Übertragt das übergebene Objekt an einem RemoteStore, der im
+     * Konstruktor angegeben wurde.
      *
-     * @param object      Das zu übertragende Objekt.
-     * @param relayStore  Der RelayStore, zu dem das Objekt übertragen werden
-     *                    soll.
+     * @param object  Das zu übertragende Objekt.
      *
      * @throws RemoteException  Bei einem RMI Problem.
+     *
+     * @see de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore
      */
-    public void transmit(Object object, RemoteStore relayStore) throws RemoteException;
+    public void transmit(Object object) throws RemoteException;
 }
 

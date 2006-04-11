@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSetImpl.java
  * created:     08.02.2005
- * last change: 08.04.2006 by Dietmar Lippold
+ * last change: 11.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -98,14 +98,18 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
     }
 
     /**
-     * Speichert das übergebene Objekt und gibt es an alle RemoteHashSets
-     * zur Speicherung weiter.
+     * Speichert das übergebene Objekt und gibt es an alle RemoteStores, bis
+     * auf den, der das Objekt übergeben hat, zur Speicherung weiter.
      *
-     * @param object  Das neue Objekt.
+     * @param object       Das zu speichernde Objekt.
+     * @param remoteStore  Der RemoteStore, von dem das übergebene Objekt
+     *                     kommt.
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public synchronized void add(Serializable object) throws RemoteException {
+    public synchronized void add(Serializable object,
+                                 LocalRemoteHashSet remoteStore)
+        throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.finest("called add for : " + object);
@@ -118,20 +122,27 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
         Iterator iterator = getRemoteStoreIterator();
         while (iterator.hasNext()) {
             LocalRemoteHashSet peer = (LocalRemoteHashSet) iterator.next();
-            peer.addLocal(object);
+            if (!peer.equals(remoteStore)) {
+                peer.addLocal(object);
+            }
         }
     }
 
     /**
      * Speichert die Objekte der übergebenen <CODE>Collection</CODE>, die
      * serialisierbar sein müssen, und gibt die <CODE>Collection</CODE> an
-     * alle RemoteStores weiter.
+     * alle RemoteStores, bis auf den, der die <CODE>Collection</CODE>
+     * übergeben hat, weiter.
      *
-     * @param collection  Die Collection der zu speichernden Objekte.
+     * @param collection   Die Collection der zu speichernden Objekte.
+     * @param remoteStore  Der RemoteStore, von dem die übergebene Collection
+     *                     kommt.
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public synchronized void addAll(Collection collection) throws RemoteException {
+    public synchronized void addAll(Collection collection,
+                                    LocalRemoteHashSet remoteStore)
+        throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.finest("called addAll, number of elements = "
@@ -145,7 +156,9 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
         Iterator iterator = getRemoteStoreIterator();
         while (iterator.hasNext()) {
             LocalRemoteHashSet peer = (LocalRemoteHashSet) iterator.next();
-            peer.addAllLocal(collection);
+            if (!peer.equals(remoteStore)) {
+                peer.addAllLocal(collection);
+            }
         }
     }
 }

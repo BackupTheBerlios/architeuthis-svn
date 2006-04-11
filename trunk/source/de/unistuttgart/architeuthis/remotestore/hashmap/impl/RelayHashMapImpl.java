@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashMapImpl.java
  * created:     08.02.2005
- * last change: 08.04.2006 by Dietmar Lippold
+ * last change: 11.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -99,14 +99,20 @@ public class RelayHashMapImpl extends AbstractRelayStore implements RelayHashMap
 
     /**
      * Speichert zu einen key-Objekt ein value-Objekt. Das Objekt-Paar wird
-     * zur Speicherung an alle RemoteStores weitergegeben.
+     * zur Speicherung an alle RemoteStores, bis auf den, der das Objekt
+     * übergeben hat, weitergegeben.
      *
-     * @param key    Das key-Objekt.
-     * @param value  Das value-Objekt.
+     * @param key          Das key-Objekt, unter dem das value-Objekt
+     *                     gespeichert wird.
+     * @param value        Das value-Objekt, das zum key-Objekt gespeichert
+     *                     wird.
+     * @param remoteStore  Der RemoteStore, von dem die übergebenen Objekte
+     *                     kommen.
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public synchronized void put(Serializable key, Serializable value)
+    public synchronized void put(Serializable key, Serializable value,
+                                 LocalRemoteHashMap remoteStore)
         throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINEST)) {
@@ -120,20 +126,24 @@ public class RelayHashMapImpl extends AbstractRelayStore implements RelayHashMap
         Iterator iterator = getRemoteStoreIterator();
         while (iterator.hasNext()) {
             LocalRemoteHashMap peer = (LocalRemoteHashMap) iterator.next();
-            peer.putLocal(key, value);
+            if (!peer.equals(remoteStore)) {
+                peer.putLocal(key, value);
+            }
         }
     }
 
     /**
      * Speichert die Einträge der übergebenen Map, die serialisierbar sein
-     * müssen. Die Map wird zur Speicherung an alle RemoteStores
-     * weitergegeben.
+     * müssen. Die Map wird zur Speicherung an alle RemoteStores, bis auf den,
+     * der das Objekt übergeben hat, weitergegeben.
      *
-     * @param map  Die Map, deren Einträge gespeichert werden.
+     * @param map          Die Map, deren Einträge gespeichert werden.
+     * @param remoteStore  Der RemoteStore, von dem die übergebene Map kommt.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public synchronized void putAll(Map map) throws RemoteException {
+    public synchronized void putAll(Map map, LocalRemoteHashMap remoteStore)
+        throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.finest("called putAll, number of entries = " + map.size());
@@ -146,7 +156,9 @@ public class RelayHashMapImpl extends AbstractRelayStore implements RelayHashMap
         Iterator iterator = getRemoteStoreIterator();
         while (iterator.hasNext()) {
             LocalRemoteHashMap peer = (LocalRemoteHashMap) iterator.next();
-            peer.putAllLocal(map);
+            if (!peer.equals(remoteStore)) {
+                peer.putAllLocal(map);
+            }
         }
     }
 }

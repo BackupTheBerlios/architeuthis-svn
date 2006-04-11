@@ -1,7 +1,7 @@
 /*
  * file:        Transmitter.java
  * created:     05.04.2005
- * last change: 10.04.2006 by Dietmar Lippold
+ * last change: 11.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -35,11 +35,10 @@ import java.util.logging.Level;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.misc.util.BlockingBuffer;
-import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
- * Realisiert einen <CODE>Thread</CODE>, der für einen dezentralen RemoteStore
- * Objekte zu einem RelayStore überträgt.
+ * Realisiert einen <CODE>Thread</CODE>, der übergebene Objekte mittels einer
+ * vorher übergebenen Prozedur überträgt.
  *
  * @author Dietmar Lippold
  */
@@ -66,11 +65,6 @@ public class Transmitter extends Thread {
     private BlockingBuffer objectBuffer = new BlockingBuffer(0);
 
     /**
-     * RelayStore, an den die Daten übertragen werden sollen.
-     */
-    private RemoteStore relayStore;
-
-    /**
      * Eine Instanz mit der Prozedur zur Übertragung eines Objekts an den
      * RelayStore.
      */
@@ -79,20 +73,17 @@ public class Transmitter extends Thread {
     /**
      * Erzeugt eine Instanz und startet den Thread.
      *
-     * @param relayStore    Der RelayStore, an den die Objekte übertragen
-     *                      werden.
      * @param transmitProc  Die Prozedur, der die Objekte zum RelayStore
      *                      überträgt.
      */
-    public Transmitter(RemoteStore relayStore, TransmitProcedure transmitProc) {
-        this.relayStore = relayStore;
+    public Transmitter(TransmitProcedure transmitProc) {
         this.transmitProc = transmitProc;
         start();
     }
 
     /**
      * Speichert das übergebene Objekt in der Warteschlange zur Übertragung
-     * an den RemoteStore.
+     * durch die TransmitProcedure.
      *
      * @param object  Das zu speichernde und anschließend zu übertragende
      *                Objekt.
@@ -102,8 +93,8 @@ public class Transmitter extends Thread {
     }
 
     /**
-     * Signalisiert dem Thread, sich zu beenden. Diese Methode wird bei
-     * der Beendigung des RemoteStore auf dem Operative aufgerufen.
+     * Signalisiert dem Thread, sich zu beenden. Bevor der Thread endet,
+     * werden noch alle gespeicherten Objekte übertragen.
      */
     public void terminate() {
         terminating = true;
@@ -133,7 +124,7 @@ public class Transmitter extends Thread {
             while (!terminating || !objectBuffer.isEmpty()) {
                 Object transmitObject = objectBuffer.dequeue();
                 if (transmitObject != null) {
-                    transmitProc.transmit(transmitObject, relayStore);
+                    transmitProc.transmit(transmitObject);
                 }
             }
         } catch (RemoteException e) {

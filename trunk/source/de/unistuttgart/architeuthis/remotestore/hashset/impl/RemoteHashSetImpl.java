@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 10.04.2006 by Dietmar Lippold
+ * last change: 11.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -134,14 +134,17 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     public void registerRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
+        AddProcedure    addProcedure;
+        AddAllProcedure addAllProcedure;
+
         synchronized (relayStoreSyncObj) {
             if (remoteStore != null) {
                 relayHashSet = (RelayHashSet) remoteStore;
                 if (!synchronComm) {
-                    addTransmitter = new Transmitter(relayHashSet,
-                                                     new AddProcedure());
-                    addAllTransmitter = new Transmitter(relayHashSet,
-                                                        new AddAllProcedure());
+                    addProcedure = new AddProcedure(this, relayHashSet);
+                    addTransmitter = new Transmitter(addProcedure);
+                    addAllProcedure = new AddAllProcedure(this, relayHashSet);
+                    addAllTransmitter = new Transmitter(addAllProcedure);
                 }
             }
         }
@@ -197,7 +200,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     public synchronized void addLocal(Object object) throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.finest("called add for " + object);
+            LOGGER.finest("called addLocal for " + object);
         }
 
         // Den Delegatee updaten.
@@ -217,7 +220,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
         throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.finest("called addAll, number of elements = "
+            LOGGER.finest("called addAllLocal, number of elements = "
                           + collection.size());
         }
 
@@ -239,9 +242,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      */
     public void add(Serializable object) throws RemoteException {
 
-        // Erstmal lokal updaten. Wenn ein Relay-Store vorhanden ist,
-        // insbesondere bei synchroner Kommunikation, ist das lokale Speichern
-        // eigentlich nicht notwendig.
+        // Erstmal lokal updaten.
         addLocal(object);
 
         synchronized (relayStoreSyncObj) {
@@ -249,7 +250,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
                 if (synchronComm) {
                     // Das Objekt direkt an den RelayStore und damit an die
                     // anderen RemoteHashSets übergeben.
-                    relayHashSet.add(object);
+                    relayHashSet.add(object, this);
                 } else {
                     // Das Objekt an den Transmitter zur Weiterleitung an den
                     // RelayStore und damit an die anderen RemoteHashSets
@@ -275,9 +276,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      */
     public void addAll(Collection collection) throws RemoteException {
 
-        // Erstmal lokal updaten. Wenn ein Relay-Store vorhanden ist,
-        // insbesondere bei synchroner Kommunikation, ist das lokale Speichern
-        // eigentlich nicht notwendig.
+        // Erstmal lokal updaten.
         addAllLocal(collection);
 
         synchronized (relayStoreSyncObj) {
@@ -285,7 +284,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
                 if (synchronComm) {
                     // Die Collection direkt an den RelayStore und damit an die
                     // anderen RemoteHashSets übergeben.
-                    relayHashSet.addAll(collection);
+                    relayHashSet.addAll(collection, this);
                 } else {
                     // Die Collection an den Transmitter zur Weiterleitung an den
                     // RelayStore und damit an die anderen RemoteHashSets
