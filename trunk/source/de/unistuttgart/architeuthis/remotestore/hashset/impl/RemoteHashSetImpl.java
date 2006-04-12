@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 11.04.2006 by Dietmar Lippold
+ * last change: 12.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -229,6 +229,32 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     }
 
     /**
+     * Überträgt das übergebene Objekt zum RelayStore, falls dieser vorhanden
+     * ist.
+     *
+     * @param object  Das zu übertragende Objekt.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    protected void addRemote(Serializable object) throws RemoteException {
+
+        synchronized (relayStoreSyncObj) {
+            if (relayHashSet != null) {
+                if (synchronComm) {
+                    // Das Objekt direkt an den RelayStore und damit an die
+                    // anderen RemoteHashSets übergeben.
+                    relayHashSet.add(object, this);
+                } else {
+                    // Das Objekt an den Transmitter zur Weiterleitung an den
+                    // RelayStore und damit an die anderen RemoteHashSets
+                    // übergeben.
+                    addTransmitter.enqueue(object);
+                }
+            }
+        }
+    }
+
+    /**
      * Speichert ein Objekt im lokalen HashSet und sendet es an andere
      * RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE> angemeldet
      * wurde. Diese Methode wird vom Teilproblem aufgerufen. Für den
@@ -242,20 +268,31 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      */
     public void add(Serializable object) throws RemoteException {
 
-        // Erstmal lokal updaten.
         addLocal(object);
+        addRemote(object);
+    }
+
+    /**
+     * Überträgt die übergebene Collection zum RelayStore, falls dieser
+     * vorhanden ist.
+     *
+     * @param collection  Die zu übertragende Collection.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    protected void addAllRemote(Collection collection) throws RemoteException {
 
         synchronized (relayStoreSyncObj) {
             if (relayHashSet != null) {
                 if (synchronComm) {
-                    // Das Objekt direkt an den RelayStore und damit an die
-                    // anderen RemoteHashSets übergeben.
-                    relayHashSet.add(object, this);
+                    // Die Collection direkt an den RelayStore und damit an
+                    // die anderen RemoteHashSets übergeben.
+                    relayHashSet.addAll(collection, this);
                 } else {
-                    // Das Objekt an den Transmitter zur Weiterleitung an den
-                    // RelayStore und damit an die anderen RemoteHashSets
+                    // Die Collection an den Transmitter zur Weiterleitung an
+                    // den RelayStore und damit an die anderen RemoteHashSets
                     // übergeben.
-                    addTransmitter.enqueue(object);
+                    addAllTransmitter.enqueue(collection);
                 }
             }
         }
@@ -276,23 +313,8 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      */
     public void addAll(Collection collection) throws RemoteException {
 
-        // Erstmal lokal updaten.
         addAllLocal(collection);
-
-        synchronized (relayStoreSyncObj) {
-            if (relayHashSet != null) {
-                if (synchronComm) {
-                    // Die Collection direkt an den RelayStore und damit an die
-                    // anderen RemoteHashSets übergeben.
-                    relayHashSet.addAll(collection, this);
-                } else {
-                    // Die Collection an den Transmitter zur Weiterleitung an den
-                    // RelayStore und damit an die anderen RemoteHashSets
-                    // übergeben.
-                    addAllTransmitter.enqueue(collection);
-                }
-            }
-        }
+        addAllRemote(collection);
     }
 
     /**
