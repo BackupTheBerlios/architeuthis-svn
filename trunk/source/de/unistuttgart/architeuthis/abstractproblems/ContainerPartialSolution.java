@@ -1,6 +1,6 @@
 /*
  * file:        ContainerPartialSolution.java
- * last change: 14.06.2004 by Dietmar Lippold
+ * last change: 12.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -39,13 +39,18 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 
 /**
  * Container für ein Serializable-Objekt, das das Interface
- * <code>PartialSolution</code> implementiert.
- * Das konkrete Objekt wird über den Konstruktor gesetzt und kann über
- * <code>getPartialSolution()</code> ausgelesen werden.
+ * <code>PartialSolution</code> implementiert. Das konkrete Objekt wird über
+ * den Konstruktor gesetzt und kann über <code>getPartialSolution()</code>
+ * ausgelesen werden.
  *
  * @author Ralf Kible, Dietmar Lippold
  */
 public class ContainerPartialSolution implements PartialSolution {
+
+    /**
+     * Generierte <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 5615189329048827290L;
 
     /**
      * Das im Container gespeicherte Serializable-Objekt
@@ -70,3 +75,4 @@ public class ContainerPartialSolution implements PartialSolution {
         return partialSolution;
     }
 }
+

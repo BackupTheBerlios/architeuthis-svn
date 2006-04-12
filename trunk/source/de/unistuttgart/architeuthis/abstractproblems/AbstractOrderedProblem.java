@@ -1,6 +1,6 @@
 /*
  * file:        AbstractOrderedProblem.java
- * last change: 06.04.2006 by Dietmar Lippold
+ * last change: 12.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -42,12 +42,17 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 
 /**
  * Abstrakte Klasse, die die Teillösungen mittels {@link receivePartialSolution}
- *  in der gleichen Reihenfolge übergibt, in der die zugehörigen Teilprobleme
+ * in der gleichen Reihenfolge übergibt, in der die zugehörigen Teilprobleme
  * von {@link createPartialProblem} geliefert wurden.
  *
  * @author Achim Linke, Ralf Kible, Dietmar Lippold
  */
 public abstract class AbstractOrderedProblem implements SerializableProblem {
+
+    /**
+     * Generierte <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 645314578534296394L;
 
     /**
      * Gesamtlösung des Problems.
@@ -144,9 +149,10 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
      * Diese Methode muss von einer konkreten Unterklasse implementiert werden.
      *
      * @param parSol  Die nächste fertige Teillösung für das Problem.
+     *
      * @return  Gesamtlösung, falls diese bereits fertig ist, sonst
      *          <code>null</code>
      */
     protected abstract Serializable receivePartialSolution(PartialSolution parSol);
-
 }
+

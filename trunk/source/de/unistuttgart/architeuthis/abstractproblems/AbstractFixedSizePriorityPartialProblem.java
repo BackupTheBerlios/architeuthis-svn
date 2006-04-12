@@ -1,6 +1,6 @@
 /*
  * file:        AbstractFixedSizePriorityPartialProblem.java
- * last change: 26.05.2004 von Dietmar Lippold
+ * last change: 12.04.2006 von Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -47,7 +47,12 @@ public abstract class AbstractFixedSizePriorityPartialProblem
     implements PartialProblem, Comparable {
 
     /**
-     * Priorität des Teilproblems
+     * Generierte <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 6255594252588525298L;
+
+    /**
+     * Priorität des Teilproblems.
      */
     private int prio = 0;
 
@@ -66,16 +71,18 @@ public abstract class AbstractFixedSizePriorityPartialProblem
      * Vergleicht die Priorität.
      *
      * @param o  Erbe des <code>AbstractFixedSizePriorityPartialProlem</code>,
-     *           mit dem verglichen wird
+     *           mit dem verglichen wird.
+     *
      * @return  positiver Integer-Wert, falls die eigene Priorität kleiner,
-     *          0 falls gleich, negativ falls größer ist
+     *          0 falls gleich, negativ falls größer ist.
      *
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     public int compareTo(Object o) {
+
         AbstractFixedSizePriorityPartialProblem compProb =
             (AbstractFixedSizePriorityPartialProblem) o;
-        return compProb.prio - prio;
+        return (compProb.prio - prio);
     }
-
 }
+

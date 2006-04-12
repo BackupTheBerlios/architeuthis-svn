@@ -1,6 +1,6 @@
 /*
  * file:        AbstractFixedSizeProblem.java
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 12.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -50,6 +50,11 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
 
     /**
+     * Generierte <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 3509399230349106043L;
+
+    /**
      * Array, das alle Teilprobleme enthält.
      */
     private PartialProblem[] partialProblems = null;
@@ -75,7 +80,8 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
      * ausgegeben, solange noch welche vorhanden sind.
      *
      * @param number  gewünschte Gesamtanzahl der zu generierenden
-     *                Teilprobleme
+     *                Teilprobleme.
+     *
      * @return  genau ein Teilproblem. Dies ist unabhängig von der Gesamtanzahl
      *          der generierten Teilprobleme. <code>null</code> falls
      *          kein Teilproblem mehr ausgegeben werden soll
@@ -104,6 +110,7 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
      * zurückzuliefern.
      *
      * @param parSol  Die nächste fertige Teillösung für das Problem.
+     *
      * @return  Gesamtlösung, falls diese bereits fertig ist, sonst
      *          <code>null</code>
      */
@@ -128,7 +135,6 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
      */
     protected abstract PartialProblem[] createPartialProblems(long problemsExpected);
 
-
     /**
      * Erstellt eine Gesamtlösung aus allen Teillösungen.<p>
      * Diese Methode muss von einer konkreten Unterklasse implementiert werden.
@@ -137,5 +143,5 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
      * @return  Gesamtlösung
      */
     protected abstract Serializable createSolution(PartialSolution[] partialSolutions);
-
 }
+

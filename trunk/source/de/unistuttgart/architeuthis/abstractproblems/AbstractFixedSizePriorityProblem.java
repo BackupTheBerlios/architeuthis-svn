@@ -1,6 +1,6 @@
 /*
  * file:        AbstractFixedSizePriorityProblem.java
- * last change: 06.04.2006 von Dietmar Lippold
+ * last change: 12.04.2006 von Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -58,13 +58,18 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 public abstract class AbstractFixedSizePriorityProblem implements SerializableProblem {
 
     /**
+     * Generierte <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 7950521572006847810L;
+
+    /**
      *  Unsortiertes Array der vom Problem generierten Teilprobleme.
      */
     private PartialProblem[] givenPartialProblems;
 
     /**
-     * Nach Priorität sortierte Teilprobleme, die eins nach dem anderen
-     * bei Bedarf ausgegeben werden.
+     * Nach Priorität sortierte Teilprobleme, die eins nach dem anderen bei
+     * Bedarf ausgegeben werden.
      */
     private Iterator handoutPartialProblems = null;
 
@@ -79,7 +84,8 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      * ausgegeben, solange es noch vorhandene gibt.
      *
      * @param number  gewünschte Gesamtanzahl der zu generierenden
-     *                Teilprobleme
+     *                Teilprobleme.
+     *
      * @return  genau ein Teilproblem. Dies ist unabhängig von der Gesamtanzahl
      *          der generierten Teilprobleme. <code>null</code> falls
      *          schon alle Teilprobleme ausgegeben wurden.
@@ -122,9 +128,9 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      * <code>createSolution</code> aufgerufen. <code>createSolution</code> muss
      * aus den Teillösungen eine Gesamtlösung erstellen.
      *
-     * @return Gesamtlösung, die an den Problem-übermittler geschickt wird.
-     *         <code>null</code> falls die Gesamtlösung noch nicht
-     *         erstellt werden kann.
+     * @return  Gesamtlösung, die an den Problem-übermittler geschickt wird.
+     *          <code>null</code> falls die Gesamtlösung noch nicht
+     *          erstellt werden kann.
      *
      * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#getSolution()
      */
@@ -164,6 +170,5 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      * @return  Die Gesamtlösung.
      */
     protected abstract Serializable createSolution(PartialSolution[] partialSolutions);
-
 }
 
