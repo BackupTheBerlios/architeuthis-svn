@@ -1,7 +1,7 @@
 /*
  * file:        AddAllProcedure.java
  * created:     05.04.2005
- * last change: 11.04.2006 by Dietmar Lippold
+ * last change: 12.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -34,8 +34,8 @@ import java.util.Collection;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
+import de.unistuttgart.architeuthis.remotestore.hashset.interf.LocalHashSet;
 import de.unistuttgart.architeuthis.remotestore.hashset.interf.RelayHashSet;
-import de.unistuttgart.architeuthis.remotestore.hashset.interf.LocalRemoteHashSet;
 
 /**
  * Implementiert eine Methode, die beim RelayStore für eine Collection die
@@ -48,7 +48,7 @@ public class AddAllProcedure implements TransmitProcedure {
     /**
      * Lokaler RemotStore, von dem die zu übertragenden Daten stammen.
      */
-    private LocalRemoteHashSet localStore;
+    private LocalHashSet localStore;
 
     /**
      * RelayStore, an den die Daten übertragen werden sollen.
@@ -63,8 +63,7 @@ public class AddAllProcedure implements TransmitProcedure {
      * @param relayStore  Der RelayStore, an den die Objekte übertragen
      *                    werden.
      */
-    public AddAllProcedure(LocalRemoteHashSet localStore,
-                           RelayHashSet relayStore) {
+    public AddAllProcedure(LocalHashSet localStore, RelayHashSet relayStore) {
 
         this.localStore = localStore;
         this.relayStore = relayStore;

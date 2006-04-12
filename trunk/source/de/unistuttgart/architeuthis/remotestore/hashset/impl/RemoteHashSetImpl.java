@@ -41,8 +41,8 @@ import java.rmi.server.UnicastRemoteObject;
 import de.unistuttgart.architeuthis.remotestore.Transmitter;
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 import de.unistuttgart.architeuthis.remotestore.hashset.UserRemoteHashSet;
+import de.unistuttgart.architeuthis.remotestore.hashset.interf.LocalHashSet;
 import de.unistuttgart.architeuthis.remotestore.hashset.interf.RelayHashSet;
-import de.unistuttgart.architeuthis.remotestore.hashset.interf.LocalRemoteHashSet;
 
 /**
  * Diese Klasse implementiert das RemoteStore Interface als HashSet. Derzeit
@@ -51,7 +51,7 @@ import de.unistuttgart.architeuthis.remotestore.hashset.interf.LocalRemoteHashSe
  * @author Michael Wohlfart, Dietmar Lippold
  */
 public class RemoteHashSetImpl extends UnicastRemoteObject
-    implements UserRemoteHashSet, LocalRemoteHashSet {
+    implements UserRemoteHashSet, LocalHashSet {
 
     /**
      * Generierte <code>serialVersionUID</code>.

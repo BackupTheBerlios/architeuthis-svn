@@ -1,7 +1,7 @@
 /*
  * file:        PutProcedure.java
  * created:     05.04.2005
- * last change: 11.04.2006 by Dietmar Lippold
+ * last change: 12.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -33,8 +33,8 @@ package de.unistuttgart.architeuthis.remotestore.hashmap.impl;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
+import de.unistuttgart.architeuthis.remotestore.hashmap.interf.LocalHashMap;
 import de.unistuttgart.architeuthis.remotestore.hashmap.interf.RelayHashMap;
-import de.unistuttgart.architeuthis.remotestore.hashmap.interf.LocalRemoteHashMap;
 
 /**
  * Implementiert eine Methode, die beim RelayStore für ein Objekt-Paar die
@@ -47,7 +47,7 @@ public class PutProcedure implements TransmitProcedure {
     /**
      * Lokaler RemotStore, von dem die zu übertragenden Daten stammen.
      */
-    private LocalRemoteHashMap localStore;
+    private LocalHashMap localStore;
 
     /**
      * RelayStore, an den die Daten übertragen werden sollen.
@@ -62,7 +62,7 @@ public class PutProcedure implements TransmitProcedure {
      * @param relayStore  Der RelayStore, an den die Objekte übertragen
      *                    werden.
      */
-    public PutProcedure(LocalRemoteHashMap localStore, RelayHashMap relayStore) {
+    public PutProcedure(LocalHashMap localStore, RelayHashMap relayStore) {
 
         this.localStore = localStore;
         this.relayStore = relayStore;
@@ -77,8 +77,7 @@ public class PutProcedure implements TransmitProcedure {
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void transmit(Object objectPair)
-        throws RemoteException {
+    public void transmit(Object objectPair) throws RemoteException {
 
         MapEntry mapEntry = (MapEntry) objectPair;
         relayStore.put(mapEntry.getKey(), mapEntry.getValue(), localStore);

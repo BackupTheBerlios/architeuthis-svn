@@ -1,7 +1,7 @@
 /*
- * file:        LocalRemoteHashMap.java
- * created:     10.04.2005
- * last change: 07.04.2006 by Dietmar Lippold
+ * file:        LocalHashSet.java
+ * created:     10.02.2005
+ * last change: 12.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -28,43 +28,43 @@
  */
 
 
-package de.unistuttgart.architeuthis.remotestore.hashmap.interf;
+package de.unistuttgart.architeuthis.remotestore.hashset.interf;
 
-import java.util.Map;
+import java.util.Collection;
 import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 
 /**
  * Dieses Interface gibt die Methoden vor, die für einen RemoteStore zu
- * implementieren sind, der die Funktionalität einer <CODE>HashMap</CODE> hat
- * und Daten nur lokal speichert, ohne sie an andere Remote-Stores
- * weiterzugeben.
+ * implementieren sind, der die Funktionalität eines <CODE>HashSet</CODE> hat.
+ * Er wird von einem Teilproblem verwendet.
+ *
+ * ToDo: Methode addAllLocal ergänzen.
  *
  * @author Dietmar Lippold
  */
-public interface LocalRemoteHashMap extends RemoteStore {
+public interface LocalHashSet extends RemoteStore {
 
     /**
-     * Speichert zu einen key-Objekt ein value-Objekt nur lokal, ohne das
-     * Objekt-Paar an andere Remote-Stores weiterzugeben.
+     * Speichert ein Objekt nur im lokalen HashSet, ohne es an das
+     * <CODE>RelayHashSet</CODE> weiterzugeben.
      *
-     * @param key    Das key-Objekt, unter dem das value-Objekt gespeichert
-     *               wird.
-     * @param value  Das value-Objekt, das zum key-Objekt gespeichert wird.
+     * @param object  Das zu speichernde Objekt.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void putLocal(Object key, Object value) throws RemoteException;
+    public void addLocal(Object object) throws RemoteException;
 
     /**
-     * Speichert die Einträge der übergebenen Map lokal, ohne die Objekt-Paare
-     * an die RelayMap weiterzugeben.
+     * Speichert die Objekte der übergebenen <CODE>Collection</CODE> nur im
+     * lokalen HashSet, ohne sie an das <CODE>RelayHashSet</CODE>
+     * weiterzugeben.
      *
-     * @param map  Die Map, deren Einträge gespeichert werden.
+     * @param collection  Die Collection der zu speichernden Objekte.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void putAllLocal(Map map) throws RemoteException;
+    public void addAllLocal(Collection collection) throws RemoteException;
 }
 

@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashMap.java
  * created:     08.02.2005
- * last change: 11.04.2006 by Dietmar Lippold
+ * last change: 12.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -62,7 +62,7 @@ public interface RelayHashMap extends RemoteStore {
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public void put(Serializable key, Serializable value,
-                    LocalRemoteHashMap remoteStore) throws RemoteException;
+                    LocalHashMap remoteStore) throws RemoteException;
 
     /**
      * Speichert die Einträge der übergebenen Map, die serialisierbar sein
@@ -74,7 +74,7 @@ public interface RelayHashMap extends RemoteStore {
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
-    public void putAll(Map map, LocalRemoteHashMap remoteStore)
-        throws RemoteException;
+    public void putAll(Map map,
+                       LocalHashMap remoteStore) throws RemoteException;
 }
 

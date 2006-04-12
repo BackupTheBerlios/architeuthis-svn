@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSetImpl.java
  * created:     08.02.2005
- * last change: 11.04.2006 by Dietmar Lippold
+ * last change: 12.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -40,8 +40,8 @@ import java.rmi.RemoteException;
 
 import de.unistuttgart.architeuthis.remotestore.AbstractRelayStore;
 import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
+import de.unistuttgart.architeuthis.remotestore.hashset.interf.LocalHashSet;
 import de.unistuttgart.architeuthis.remotestore.hashset.interf.RelayHashSet;
-import de.unistuttgart.architeuthis.remotestore.hashset.interf.LocalRemoteHashSet;
 
 /**
  * Diese Klasse vermittelt zwischen Instanzen von Klassen, die
@@ -87,7 +87,7 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
     public synchronized void registerRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
-        LocalRemoteHashSet remoteHashSet = (LocalRemoteHashSet) remoteStore;
+        LocalHashSet remoteHashSet = (LocalHashSet) remoteStore;
 
         // Die aktuellen Elemente dem zu registrierenden RemoteStore
         // hinzufügen.
@@ -107,8 +107,7 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
-    public synchronized void add(Serializable object,
-                                 LocalRemoteHashSet remoteStore)
+    public synchronized void add(Serializable object, LocalHashSet remoteStore)
         throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINEST)) {
@@ -121,7 +120,7 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
         // Das Objekt an alle RemoteHashSets übertragen.
         Iterator iterator = getRemoteStoreIterator();
         while (iterator.hasNext()) {
-            LocalRemoteHashSet peer = (LocalRemoteHashSet) iterator.next();
+            LocalHashSet peer = (LocalHashSet) iterator.next();
             if (!peer.equals(remoteStore)) {
                 peer.addLocal(object);
             }
@@ -141,7 +140,7 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
      * @throws RemoteException  Bei einem RMI-Problem.
      */
     public synchronized void addAll(Collection collection,
-                                    LocalRemoteHashSet remoteStore)
+                                    LocalHashSet remoteStore)
         throws RemoteException {
 
         if (LOGGER.isLoggable(Level.FINEST)) {
@@ -155,7 +154,7 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
         // Das Objekt an alle RemoteHashSets übertragen.
         Iterator iterator = getRemoteStoreIterator();
         while (iterator.hasNext()) {
-            LocalRemoteHashSet peer = (LocalRemoteHashSet) iterator.next();
+            LocalHashSet peer = (LocalHashSet) iterator.next();
             if (!peer.equals(remoteStore)) {
                 peer.addAllLocal(collection);
             }

@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSet.java
  * created:     08.02.2005
- * last change: 11.04.2006 by Dietmar Lippold
+ * last change: 12.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -58,7 +58,7 @@ public interface RelayHashSet extends RemoteStore {
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public void add(Serializable object,
-                    LocalRemoteHashSet remoteStore) throws RemoteException;
+                    LocalHashSet remoteStore) throws RemoteException;
 
     /**
      * Speichert die Objekte der übergebenen <CODE>Collection</CODE>, die
@@ -73,6 +73,6 @@ public interface RelayHashSet extends RemoteStore {
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public void addAll(Collection collection,
-                       LocalRemoteHashSet remoteStore) throws RemoteException;
+                       LocalHashSet remoteStore) throws RemoteException;
 }
 
