@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 10.04.2006 by Dietmar Lippold
+ * last change: 14.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -436,17 +436,17 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         try {
             unregisterRemoteStore();
             LOGGER.log(Level.FINE, "RemoteStore abgemeldet");
-            versuch = 0;
+            versuch = 1;
         } catch (Exception e) {
             exceptionCode = ExceptionCodes.REMOTE_STORE_EXCEPTION;
             exceptionMessage = e.getMessage();
             LOGGER.log(Level.WARNING,
                        "Abmeldung von RemoteStore fehlgeschlagen: " + e);
-            versuch = CONNECT_RETRIES;
+            versuch = CONNECT_RETRIES + 1;
         }
 
         // Mehrmals versuchen, die Teillösung zu senden
-        while ((versuch < CONNECT_RETRIES) && (!transmitted)) {
+        while ((versuch <= CONNECT_RETRIES) && (!transmitted)) {
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.log(Level.FINE,
                            "Versuche, RemoteStore abzumelden und Teilergebnis"
