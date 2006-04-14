@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!-- build-file fuer Ant zum Projekt Architeuthis                     -->
-<!-- Letzte Aenderung: 11.05.2005 durch Dietmar Lippold               -->
+<!-- Letzte Aenderung: 14.04.2006 durch Dietmar Lippold               -->
 
 <!-- Hinweise zur Benutzung werden nach Aufruf von "ant" ohne weitere -->
 <!-- Parameter ausgegeben.                                            -->
@@ -223,6 +223,10 @@
           stubversion="1.2"
           debug="true"
           classname="de.unistuttgart.architeuthis.remotestore.hashset.impl.RelayHashSetImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashsetnew.RemoteHashSetNewImpl"/>
   </target>
 
   <target name="dispatcherJar" depends="compileDis, _remotestoreStubs"
