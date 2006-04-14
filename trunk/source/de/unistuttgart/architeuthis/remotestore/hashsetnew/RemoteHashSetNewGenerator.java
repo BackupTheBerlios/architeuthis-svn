@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetNewGenerator.java
  * created:     12.04.2006
- * last change: 12.04.2006 by Dietmar Lippold
+ * last change: 14.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -44,7 +44,13 @@ import de.unistuttgart.architeuthis.remotestore.hashset.impl.RelayHashSetImpl;
  * Objekte verwaltet wird. Über den Konstruktor kann angegeben werden, ob nur
  * ein zentraler oder zusätzlich mehrere dezentrale RemoteStores verwendet
  * werden sollen und ob im zweiten Fall die Methoden des zentralen synchron
- * oder asynchron aufgerufen werden sollen.
+ * oder asynchron aufgerufen werden sollen.<P>
+ *
+ * Wenn nur ein zentraler RemoteStore erzeugt wird und es somit keinen
+ * RealyStore gibt, gibt es auch keine Menge der vom RealyStore neu
+ * hinzugefügten Objekte bzw. ist diese Menge immer leer. Dies ist sinnvoll,
+ * da die Menge dafür gedacht ist, nur durch ein Teilproblem und nicht durch
+ * mehrere konkurrierend abgefragt zu werden.
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
