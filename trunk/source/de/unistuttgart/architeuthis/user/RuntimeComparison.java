@@ -1,7 +1,7 @@
 /*
  * file:        RuntimeComparison.java
  * created:     <???>
- * last change: 06.03.2006 by Dietmar Lippold
+ * last change: 15.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -224,16 +224,16 @@ public class RuntimeComparison {
         System.out.println(
                 "RuntimeComparison\n"
                 + "Benutzung:\n"
-                + "RuntimeComparison -u <package url> -r <computesystem> "
+                + "RuntimeComparison -u <packageURL> -r <ProblemManager> "
                 + "-c <klassenname> -f <dateiname> [-d]\n"
                 + "Die beoetigten Parameter sind:\n"
                 + "-u packageURL  Der URL des äußersten Pakets der Klassen"
                 + " des Problems\n"
                 + "-r ProblemManager  Der Name des Computesystems\n"
-                + "-c Class  Der Name der Problem-Klasse "
+                + "-c klassenname  Der Name der Problem-Klasse "
                 + "(mit Paketbezeichnungen)\n"
                 + "Optional:\n"
-                + "-f Filename  Der Anfang eines Dateinamen, unter dem die"
+                + "-f dateiname  Der Anfang eines Dateinamen, unter dem die"
                 + " Lösung gespeichert werden soll\n"
                 + "-d schaltet den Debug-Modus ein\n"
                 + "\nBeispiel:\n"
