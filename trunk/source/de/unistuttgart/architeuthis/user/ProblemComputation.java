@@ -1,7 +1,7 @@
 /*
  * file:        ProblemComputation.java
  * created:     19.02.2004
- * last change: 06.04.2006 by Dietmar Lippold
+ * last change: 15.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit, juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
@@ -467,7 +467,7 @@ public class ProblemComputation {
      *                        und der verteilten Speicher.
      * @param dispatcherHost  Adresse des ComputeSystems. Wenn kein Port
      *                        angegeben ist, wird der Standard-Port verwendet.
-     * @param codebase        URLs zu den vom Problem benötigten Klassen.
+     * @param codebase        URL zu den vom Problem benötigten Klassen.
      *
      * @return  Lösung des Problems.
      *
@@ -503,7 +503,7 @@ public class ProblemComputation {
      * @param problem         Zu berechnendes Problem.
      * @param dispatcherHost  Adresse des ComputeSystems. Wenn kein Port
      *                        angegeben ist, wird der Standard-Port verwendet.
-     * @param codebase        URLs zu den vom Problem benötigten Klassen.
+     * @param codebase        URL zu den vom Problem benötigten Klassen.
      *
      * @return  Lösung des Problems.
      *
