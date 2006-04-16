@@ -48,7 +48,7 @@
  *  - added logger
  *  - extra method of usage
  *
- * Last change: 05. Mar 2006 by Dietmar Lippold
+ * Last change: 16. Apr 2006 by Dietmar Lippold
  */
 
 
@@ -100,9 +100,8 @@ public class ClassFileServer extends ClassServer {
     /**
      * Constructs a ClassFileServer.
      *
-     * @param docroot the path where the server locates files
-     *
-     * @param ss the Socket where this Server will wait for connects
+     * @param ss       the Socket where this Server will wait for connects
+     * @param docroot  the path where the server locates files
      *
      * @exception IOException any kind of IO Problems
      */
@@ -112,9 +111,9 @@ public class ClassFileServer extends ClassServer {
         this.docroot = docroot;
         if (LOGGER.isLoggable(Level.INFO)) {
             LOGGER.info("ClassFileServer running on port "
-                    + ss.getLocalPort()
-                    + " for docroot "
-                    + docroot);
+                        + ss.getLocalPort()
+                        + " for root "
+                        + docroot);
         }
     }
 
@@ -122,12 +121,12 @@ public class ClassFileServer extends ClassServer {
      * Returns an array of bytes containing the bytes for
      * the file represented by the argument <b>path</b>.
      *
-     * @param path the path to the file within the docroot directory
+     * @param path  the path to the file within the docroot directory
      *
-     * @return the bytes for the file
+     * @return  the bytes for the file
      *
-     * @exception IOException if the file corresponding
-     * to <b>path</b> could not be loaded.
+     * @exception IOException  if the file corresponding to <b>path</b>
+     *                         could not be loaded.
      */
     public byte[] getBytes(String path) throws IOException {
         if (LOGGER.isLoggable(Level.FINER)) {
@@ -166,7 +165,6 @@ public class ClassFileServer extends ClassServer {
             throw new IOException("file length is zero: " + path);
         }
 
-
         DataInputStream in = new DataInputStream(new FileInputStream(f));
 
         byte[] bytecodes = new byte[length];
@@ -175,6 +173,7 @@ public class ClassFileServer extends ClassServer {
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.finest("end");
         }
+
         return bytecodes;
     }
 
@@ -237,7 +236,6 @@ public class ClassFileServer extends ClassServer {
             clientAuth = true;
         }
 
-
         try {
             ServerSocketFactory ssf =
                 ClassFileServer.getServerSocketFactory(type);
@@ -264,9 +262,10 @@ public class ClassFileServer extends ClassServer {
      * create a Socket Factory to produce Sockets of the defined type
      *
      *
-     * @param type TLS or PlainSocket String to trigger encryption for the
-     *             socket
-     * @return a SocketFactory
+     * @param type  TLS or PlainSocket String to trigger encryption for the
+     *              socket
+     *
+     * @return  a SocketFactory
      */
     private static ServerSocketFactory getServerSocketFactory(String type) {
 
@@ -296,6 +295,7 @@ public class ClassFileServer extends ClassServer {
             // just plain old Socket
             return ServerSocketFactory.getDefault();
         }
+
         return null;
     }
 }
