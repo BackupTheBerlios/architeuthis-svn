@@ -1,5 +1,5 @@
 /*
- * file:        PrimeTest.java
+ * file:        GeneratePrimes.java
  * created:
  * last change: 16.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
@@ -34,11 +34,11 @@
 package de.unistuttgart.architeuthis.testenvironment.fullprime;
 
 /**
- * Testet die Methoden der Klasse PrimeNumbersParallel.
+ * Testet die Methoden der Klasse <code>PrimeNumbersParallel</code>.
  *
  * @author  Ralf Kible
  */
-public class PrimeTest {
+public class GeneratePrimes {
 
     /**
      * Errechnet die Primzahlteilfolge für zwei als Kommandozeilenargumente
