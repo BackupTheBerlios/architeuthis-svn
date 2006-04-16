@@ -1,11 +1,16 @@
 /*
- * file:        PrimeTest.java
+ * file:        GeneratePrimes.java
  * created:     <???>
- * last change: 11.02.2004 by Jürgen Heit
+ * last change: 16.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -23,11 +28,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 package de.unistuttgart.architeuthis.testenvironment.prime;
@@ -37,7 +37,7 @@ package de.unistuttgart.architeuthis.testenvironment.prime;
  *
  * @author  Ralf Kible
  */
-public class PrimeTest {
+public class GeneratePrimes {
 
     /**
      * Errechnet die Primzahlteilfolge für zwei als Kommandozeilenargumente
@@ -65,10 +65,9 @@ public class PrimeTest {
             }
             System.out.println();
         } else {
-            System.out.println(
-                "Fehler! Es müssen zwei Zahlen als "
-                    + "Kommandozeilen-Parameter übergeben werden");
+            System.out.println("Fehler! Es müssen zwei Zahlen als "
+                               + "Kommandozeilen-Parameter übergeben werden");
         }
-
     }
 }
+
