@@ -1,11 +1,16 @@
 /*
  * file:        PrimeSequenceProblemImpl.java
  * created:
- * last change: 06.04.2006 by Dietmar Lippold
+ * last change: 16.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -23,15 +28,10 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment.myprime;
+package de.unistuttgart.architeuthis.testenvironment.fullprime;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -229,7 +229,7 @@ public class PrimeSequenceProblemImpl implements Problem {
      * Liefert die Gesamtlösung des Problems zurück, oder <code>null</code>,
      * falls diese noch nicht bekannt ist.
      *
-     * @return Die Gesamtlösung.
+     * @return  Die Gesamtlösung.
      */
     public Serializable getSolution() {
         // Falls die Ergenisliste bereits so viele Elemente enthält, wie

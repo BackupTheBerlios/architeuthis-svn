@@ -1,11 +1,16 @@
 /*
  * file:        PrimeNumbersParallel.java
  * created:
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 16.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -23,15 +28,10 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment.myprime;
+package de.unistuttgart.architeuthis.testenvironment.fullprime;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -44,8 +44,8 @@ import de.unistuttgart.architeuthis.systeminterfaces.UserProblemTransmitter;
 import de.unistuttgart.architeuthis.user.ProblemTransmitterImpl;
 
 /**
- * Beinhaltet Methoden zur verteilten Errechnung von PrimeNumbers.
- * Nach außen soll sich die Klasse genau so verhalten wie
+ * Beinhaltet Methoden zur verteilten Errechnung von PrimeNumbers. Nach außen
+ * soll sich die Klasse genau so verhalten wie
  * {@link de.unistuttgart.architeuthis.testenvironment.PrimeNumbers}.
  *
  * @author Ralf Kible
@@ -86,12 +86,13 @@ public class PrimeNumbersParallel {
      * ausgeführt. Die Klassen dieses Packages müssen unter CLASS_URL
      * bereitgestellt werden.
      *
-     * @param minWert  der untere Wert des Intervalls, aus dem die PrimeNumbers
-     *                 ausgegeben werden
-     * @param maxWert  der obere Wert des Intervalls, aus dem die PrimeNumbers
-     *                 ausgegeben werden
-     * @return         Eine Liste, deren Elemente vom Typ <CODE>Integer</CODE>
-     *                 die PrimeNumbers aus dem angegebenen Intervall sind.
+     * @param minWert  Der untere Wert des Intervalls, aus dem die PrimeNumbers
+     *                 ausgegeben werden.
+     * @param maxWert  Der obere Wert des Intervalls, aus dem die PrimeNumbers
+     *                 ausgegeben werden.
+     *
+     * @return  Eine Liste, deren Elemente vom Typ <CODE>Integer</CODE> die
+     *          PrimeNumbers aus dem angegebenen Intervall sind.
      *
      * @throws MalformedURLException    Falls der DISPATCHER ungültig ist.
      * @throws RemoteException          Falls Fehler bei der Verbindung mit dem
@@ -130,14 +131,15 @@ public class PrimeNumbersParallel {
      * Die übergebenen Intervallgrenzen gehören beide zum Intervall. Die
      * erste Primzahl, die Zwei, hat die Nummer Eins.
      *
-     * @param minNummer  der untere Wert des Nummern-Intervalls, zu dem die
+     * @param minNummer  Der untere Wert des Nummern-Intervalls, zu dem die
      *                   PrimeNumbers ausgegeben werden. Wenn der Wert kleiner
      *                   als Eins ist, wird er als Eins interpretiert.
-     * @param maxNummer  der obere Wert des Nummern-Intervalls, zu dem die
-     *                   PrimeNumbers ausgegeben werden
-     * @return           Eine Liste, deren Elemente vom Typ <CODE>Integer</CODE>
-     *                   die PrimeNumbers mit den Nummern aus dem angegebenen
-     *                   Intervall sind.
+     * @param maxNummer  Der obere Wert des Nummern-Intervalls, zu dem die
+     *                   PrimeNumbers ausgegeben werden.
+     *
+     * @return  Eine Liste, deren Elemente vom Typ <CODE>Integer</CODE> die
+     *          PrimeNumbers mit den Nummern aus dem angegebenen Intervall
+     *          sind.
      *
      * @throws MalformedURLException    Falls der DISPATCHER ungültig ist.
      * @throws RemoteException          Falls Fehler bei der Verbindung mit dem
@@ -170,3 +172,4 @@ public class PrimeNumbersParallel {
         return solution;
     }
 }
+

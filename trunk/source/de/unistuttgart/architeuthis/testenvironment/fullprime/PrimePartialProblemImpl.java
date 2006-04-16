@@ -1,11 +1,16 @@
 /*
  * file:        PrimePartialProblemImpl.java
  * created:
- * last change: 26.05.2004 von Dietmar Lippold
+ * last change: 16.04.2006 von Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -23,15 +28,10 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment.myprime;
+package de.unistuttgart.architeuthis.testenvironment.fullprime;
 
 import de.unistuttgart.architeuthis.testenvironment.MyPrimeNumbers;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
@@ -71,20 +71,21 @@ public class PrimePartialProblemImpl implements NonCommPartialProblem {
     }
 
     /**
-     * Berechnet alle PrimeNumbers von <code>min</code> bis <code>max</code> und
-     * liefert die Lösung in Form eines <code>PartialSolution</code> Objekts
-     * zurück. Die Nummer des <code>PartialProblems</code> wird in die Lösung
-     * übernommen. Intern wird ausschließlich die Methode
+     * Berechnet alle PrimeNumbers von <code>min</code> bis <code>max</code>
+     * und liefert die Lösung in Form eines <code>PartialSolution</code>
+     * Objekts zurück. Die Nummer des <code>PartialProblems</code> wird in die
+     * Lösung übernommen. Intern wird ausschließlich die Methode
      * <code>primzahlTeilbereich</code> der Klasse <code>PrimeNumbers</code>
      * benutzt.
      *
-     * @return die berechnete Teillösung.
+     * @return  Die berechnete Teillösung.
      *
-     * @throws ProblemComputeException Falls ein Fehler bei der Berechnung auftritt
+     * @throws ProblemComputeException  Falls ein Fehler bei der Berechnung
+     *                                  auftritt
      */
     public PartialSolution compute() throws ProblemComputeException {
         return new PrimePartialSolutionImpl(
             MyPrimeNumbers.primzahlTeilbereich(minWert, maxWert));
     }
-
 }
+

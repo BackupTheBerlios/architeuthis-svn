@@ -1,11 +1,16 @@
 /*
  * file:        PrimePartialSolutionImpl.java
  * created:
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 16.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -23,15 +28,10 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment.myprime;
+package de.unistuttgart.architeuthis.testenvironment.fullprime;
 
 import java.util.ArrayList;
 
@@ -58,7 +58,6 @@ public class PrimePartialSolutionImpl implements PartialSolution {
      * <code>RandomPartialProblemImpl</code> verwendet werden muss.
      *
      * @param list  Liste von PrimeNumbers.
-     * @param num   Identifikationsnummer.
      */
     PrimePartialSolutionImpl(ArrayList list) {
         solution = list;
@@ -70,9 +69,10 @@ public class PrimePartialSolutionImpl implements PartialSolution {
      * Der Zugriff ist package-local, da die Methode nur von
      * <code>PrimeSequenceProblemImpl</code> verwendet werden muss.
      *
-     * @return  Liste mit PrimeNumbers
+     * @return  Liste mit PrimeNumbers.
      */
     ArrayList getSolution() {
         return solution;
     }
 }
+
