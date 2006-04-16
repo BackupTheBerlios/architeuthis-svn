@@ -19,8 +19,11 @@ ARGS="$ARGS -r $DISPATCHER_HOST:$DISPATCHER_PORT"
 ARGS="$ARGS -c de.unistuttgart.architeuthis.testenvironment.fail.FailProblemImpl"
 ARGS="$ARGS -f $SOLUTIONFILE"
 
+# Auf der Kommandozeile können die Optionen -d und entweder -p oder -n
+# angegeben werden.
+
 # die Main-Klasse
 MAIN="de.unistuttgart.architeuthis.user.ProblemTransmitterApp"
 
-exec $JAVA -cp $DEPLOY_DIR/User.jar $JVMPAR $MAIN $ARGS
+exec $JAVA -cp $DEPLOY_DIR/User.jar $JVMPAR $MAIN $ARGS $@
 

@@ -16,14 +16,16 @@ set JVMPAR=%JVMPAR% -Djava.security.policy=%CONFIG_DIR%/transmitter.pol
 
 REM die Parameter für die Anwendung
 set ARGS=
+set ARGS=%ARGS% -s
 set ARGS=%ARGS% -u %CLASSURL%
 set ARGS=%ARGS% -r %DISPATCHER_HOST%:%DISPATCHER_PORT%
-set ARGS=%ARGS% -s
 set ARGS=%ARGS% -c de.unistuttgart.architeuthis.testenvironment.prime.PrimeSequenceProblemImpl
 set ARGS=%ARGS% -f %SOLUTIONFILE%
 
+REM Auf der Kommandozeile können die Optionen -d und entweder -p oder -n
+REM angegeben werden.
 
 REM die Main-Klasse
 set MAIN=de.unistuttgart.architeuthis.user.ProblemTransmitterApp
 
-%JAVA% -cp %DEPLOY_DIR%/User.jar;%CLASS_FILE_PATH% %JVMPAR% %MAIN% %ARGS%
+%JAVA% -cp %DEPLOY_DIR%/User.jar;%CLASS_FILE_PATH% %JVMPAR% %MAIN% %ARGS% %1 %2

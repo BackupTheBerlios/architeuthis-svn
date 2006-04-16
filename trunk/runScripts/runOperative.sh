@@ -18,13 +18,18 @@ JVMPAR="$JVMPAR -Djava.security.policy=$CONFIG_DIR/$POLICY_CONF"
 JVMPAR="$JVMPAR -Djava.rmi.server.RMIClassLoaderSpi=$CLASSLOADER_SPI"
 JVMPAR="$JVMPAR -Djava.util.logging.config.file=$CONFIG_DIR/$LOGGING_CONF"
 
+# Name und Port vom Dispatcher zusammenfassen
+DISPATCHER="$DISPATCHER_HOST:$DISPATCHER_PORT"
+
 # die Parameter für die Anwendung
 ARGS=" "
-ARGS="$ARGS -d"
+
+# Auf der Kommandozeile kann die Option -d zum Aktivieren des Debugging
+# angegeben werden.
 
 # die Main-Klasse ist
 #   de.unistuttgart.architeuthis.operative.OperativeImpl
 # und wird als Main-Class Attribut im jar-Manifest definiert
 
-exec $JAVA $JVMPAR -jar $DEPLOY_DIR/Operative.jar $DISPATCHER_HOST:$DISPATCHER_PORT $ARGS
+exec $JAVA $JVMPAR -jar $DEPLOY_DIR/Operative.jar $DISPATCHER $ARGS $@
 

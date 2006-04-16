@@ -15,14 +15,17 @@ JVMPAR="$JVMPAR -Djava.security.policy=$CONFIG_DIR/transmitter.pol"
 
 # die Parameter für die Anwendung
 ARGS=" "
+ARGS="$ARGS -s"
 ARGS="$ARGS -u $CLASSURL"
 ARGS="$ARGS -r $DISPATCHER_HOST:$DISPATCHER_PORT"
-ARGS="$ARGS -s"
 ARGS="$ARGS -c de.unistuttgart.architeuthis.testenvironment.prime.PrimeSequenceProblemImpl"
 ARGS="$ARGS -f $SOLUTIONFILE"
+
+# Auf der Kommandozeile können die Optionen -d und entweder -p oder -n
+# angegeben werden.
 
 # die Main-Klasse
 MAIN="de.unistuttgart.architeuthis.user.ProblemTransmitterApp"
 
-exec $JAVA -cp $DEPLOY_DIR/User.jar:$CLASS_FILE_PATH $JVMPAR $MAIN $ARGS
+exec $JAVA -cp $DEPLOY_DIR/User.jar:$CLASS_FILE_PATH $JVMPAR $MAIN $ARGS $@
 
