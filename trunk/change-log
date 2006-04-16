@@ -13,7 +13,7 @@ Operative gelegentlich ein Fehler in der JVM auf, der zu deren Absturz
 führte.
 
 
-Stand 06.04.2006
+Stand 16.04.2006
 ----------------
 
  * Ein deadlock-Problem beseitigt, das auftreten konnte, wenn die
@@ -35,6 +35,11 @@ Stand 06.04.2006
 
  * Im Interface Problem die Methode "collectResult" umbenannt in
    "collectPartialSolution".
+
+ * Dateien und Unterpackage im Package testenvironment umbenannt.
+
+ * Das Benutzerhandbuch überarbeitet und ergänzt und auf Version 2.0
+   angepaßt.
 
 
 Release 1.4
