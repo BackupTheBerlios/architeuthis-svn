@@ -1,6 +1,6 @@
 /*
  * file:        AbstractFixedSizePriorityPartialProblem.java
- * last change: 23.11.2003 von Andreas Heydlauff
+ * last change: 12.04.2006 von Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -22,16 +22,17 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * 
+ *
  * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
  * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
  * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
  * entwickelt.
  */
 
+
 package de.unistuttgart.architeuthis.abstractproblems;
 
-import de.unistuttgart.architeuthis.userinterfaces.PartialProblem;
+import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 
 /**
  * Abstrakte Klasse für ein Teilproblem, das von einer Unterklasse von
@@ -46,10 +47,15 @@ public abstract class AbstractFixedSizePriorityPartialProblem
     implements PartialProblem, Comparable {
 
     /**
-     * Priorität des Teilproblems
+     * Generierte <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 6255594252588525298L;
+
+    /**
+     * Priorität des Teilproblems.
      */
     private int prio = 0;
-    
+
     /**
      * Einzig erlaubter Konstruktor, der die Priorität eines Teilproblems
      * festlegt.
@@ -65,16 +71,18 @@ public abstract class AbstractFixedSizePriorityPartialProblem
      * Vergleicht die Priorität.
      *
      * @param o  Erbe des <code>AbstractFixedSizePriorityPartialProlem</code>,
-     *           mit dem verglichen wird
-     * @return  positiver Integer-Wert, falls die eigene Priorität kleiner, 
-     *          0 falls gleich, negativ falls größer ist
+     *           mit dem verglichen wird.
+     *
+     * @return  positiver Integer-Wert, falls die eigene Priorität kleiner,
+     *          0 falls gleich, negativ falls größer ist.
      *
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     public int compareTo(Object o) {
+
         AbstractFixedSizePriorityPartialProblem compProb =
             (AbstractFixedSizePriorityPartialProblem) o;
-        return compProb.prio - prio;
+        return (compProb.prio - prio);
     }
-
 }
+

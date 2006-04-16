@@ -1,6 +1,6 @@
 /*
  * file:        AbstractOrderedProblem.java
- * last change: 11.02.2004 by Jürgen Heit
+ * last change: 12.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -26,8 +26,9 @@
  * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
  * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
  * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt. 
+ * entwickelt.
  */
+
 
 package de.unistuttgart.architeuthis.abstractproblems;
 
@@ -35,18 +36,23 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import de.unistuttgart.architeuthis.userinterfaces.PartialProblem;
-import de.unistuttgart.architeuthis.userinterfaces.PartialSolution;
-import de.unistuttgart.architeuthis.userinterfaces.SerializableProblem;
+import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
+import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
+import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 
 /**
  * Abstrakte Klasse, die die Teillösungen mittels {@link receivePartialSolution}
- *  in der gleichen Reihenfolge übergibt, in der die zugehörigen Teilprobleme
+ * in der gleichen Reihenfolge übergibt, in der die zugehörigen Teilprobleme
  * von {@link createPartialProblem} geliefert wurden.
  *
- * @author Achim Linke, Ralf Kible
+ * @author Achim Linke, Ralf Kible, Dietmar Lippold
  */
 public abstract class AbstractOrderedProblem implements SerializableProblem {
+
+    /**
+     * Generierte <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 645314578534296394L;
 
     /**
      * Gesamtlösung des Problems.
@@ -69,15 +75,20 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
      *
      * @param number  Vom ComputeManager vorgeschlagene Anzahl zu generierender
      *                Teilprobleme.
+     *
      * @return  Von der implementierenden Unterklasse erzeugtes Teilproblem.
      */
     public PartialProblem getPartialProblem(long number) {
+
         PartialProblem prob = createPartialProblem(number);
+
         if (prob == null) {
             return null;
         }
+
         // der Schlange hinten anfügen
         dispensedPartialProblems.addLast(prob);
+
         return prob;
     }
 
@@ -88,11 +99,12 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
      * @param parSol   Vom ComputeManager übermittelte Teillösung.
      * @param parProb  Referenz auf das Teilproblem, das bearbeitet wurde.
      */
-    public void collectResult(PartialSolution parSol, PartialProblem parProb) {
-        
+    public void collectPartialSolution(PartialSolution parSol,
+                                       PartialProblem parProb) {
+
         //Die Teillösung in die Hashmap einfügen.
         partialSolutions.put(parProb, parSol);
-        
+
         //solange die gesuchte Teillösung vorhanden ist
         while ((!dispensedPartialProblems.isEmpty())
             && (partialSolutions.containsKey(dispensedPartialProblems.getFirst()))
@@ -105,7 +117,7 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
             //finalSolution bleibt null, wenn die Gesamtlösung noch nicht
             //vorhanden ist
             finalSolution = receivePartialSolution(userParSol);
-            
+
             //Die verschickte Teillösung kann nun aus der Hashmap und der Liste
             //entfernt werden
             partialSolutions.remove(dispensedPartialProblems.removeFirst());
@@ -137,9 +149,10 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
      * Diese Methode muss von einer konkreten Unterklasse implementiert werden.
      *
      * @param parSol  Die nächste fertige Teillösung für das Problem.
+     *
      * @return  Gesamtlösung, falls diese bereits fertig ist, sonst
      *          <code>null</code>
      */
     protected abstract Serializable receivePartialSolution(PartialSolution parSol);
-
 }
+

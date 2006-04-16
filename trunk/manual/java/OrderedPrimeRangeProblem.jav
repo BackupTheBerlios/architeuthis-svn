@@ -1,7 +1,7 @@
 /*
  * file:        OrderedPrimeRangeProblem.java
  * created:     <???>
- * last change: 11.02.2004 by Jürgen Heit
+ * last change: 14.06.2004 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -30,13 +30,14 @@
  * entwickelt.
  */
 
+
 package de.unistuttgart.architeuthis.testenvironment.prime.example;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import de.unistuttgart.architeuthis.userinterfaces.PartialProblem;
-import de.unistuttgart.architeuthis.userinterfaces.PartialSolution;
+import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
+import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.abstractproblems.AbstractOrderedProblem;
 import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
 
@@ -184,7 +185,7 @@ public class OrderedPrimeRangeProblem extends AbstractOrderedProblem {
      */
     protected Serializable receivePartialSolution(PartialSolution parSol) {
         finalSolution.addAll((ArrayList)
-            ((ContainerPartialSolution) parSol).getSolution());
+            ((ContainerPartialSolution) parSol).getPartialSolution());
         solutionsRemaining--;
         if ((solutionsRemaining == 0) && (lastEndValue == maxValue)) {
             return finalSolution;

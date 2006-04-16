@@ -23,9 +23,9 @@
      *                   Intervall sind.
      */
     public static ArrayList primzahlTeilfolge(int minNummer, int maxNummer) {
-        ArrayList  teilfolge = new ArrayList();
-        int        testZahl;    // Zahl, die als nächstes zu testen ist
-        int        testNummer;  // die Nummer der nächsten Primzahl
+        ArrayList teilfolge = new ArrayList();
+        int       testZahl;    // Zahl, die als nächstes zu testen ist
+        int       testNummer;  // die Nummer der nächsten Primzahl
 
         if (minNummer <= 1) {
             teilfolge.add(new Integer(2));
@@ -46,5 +46,4 @@
         }
         return teilfolge;
     }
-}
 

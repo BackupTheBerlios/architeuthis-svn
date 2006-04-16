@@ -1,0 +1,113 @@
+%% Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+%% Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+%% Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+%% entwickelt.
+
+
+\chapter{Gemeinsamer Speicher}
+
+\section{Vorwort}
+
+Dieses Kapitel beschreibt die Möglichkeit, für die Teilprobleme einen
+gemeinsamen Speicher zu nutzen und neue Arten von gemeinsamen Speicher zu
+entwickeln.
+
+
+\subsection{Hinweise für den Benutzer}
+
+Für die Benutzung eines gemeinsamen Speichers sind drei Interfaces von
+Bedeutung:
+
+\begin{itemize}
+\item  \texttt{de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator}
+       definiert die Klasse, die die Instanzen vom gemeinsamen Speicher
+       erzeugt.
+
+\item  \texttt{de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore}
+       kennzeichnet den gemeinsamen Speicher.
+
+\item  \texttt{de.unistuttgart.architeuthis.userinterfaces.develop.CommunicationPartialProblem}
+       definiert ein Teilproblem als eines, das den gemeinsamen Speicher
+       benutzen kann.
+\end{itemize}
+
+Damit die Teilprobleme einen gemeinsamen Speicher verwenden können, ist
+folgendes zu tun:
+
+\begin{itemize}
+\item  Die Teilprobleme müssen das Interface \texttt{CommunicationPartialProblem}
+       implementieren.
+
+\item  Es muß eine konkrete Klasse erstellt werden, die das Interface
+       \texttt{RemoteStore} implementiert.
+
+\item  Es muß eine konkrete Klasse erstellt werden, die das Interface
+       \texttt{RemoteStoreGenerator} implementiert. In der Regel wird diese
+       Klasse durch ein zusätzliches Interface beschrieben.
+\end{itemize}
+
+Im Package \texttt{de.unistuttgart.architeuthis.remotestore} sind schon
+Klassen, die die Interfaces \texttt{RemoteStore} und \texttt{RemoteStoreGenerator}
+implementieren, vorhanden und können benutzt werden. Die Entwicklung eigener
+Klassen wird im nächsten Abschnitt beschrieben.
+
+Für die Kommunikation der Teilprobleme mit dem gemeinsamen Speicher scheinen
+folgende drei Möglichkeiten sinnvoll:
+
+\begin{itemize}
+\item  Es ist für alle Teilprobleme nur ein zentraler Speicher vorhanden.
+       Das Lesen aus diesem Speicher und das Schreiben in diesen Speicher
+       erfolgt \emph{synchron}.
+
+\item  Es ist ein zentraler Speicher und zusätzlich auf jedem Operation ein
+       Speicher vorhanden. Das Lesen der Teilprobleme aus dem Speicher
+       erfolgt dabei \emph{asynchron}. Für das Schreiben gibt es beide
+       Möglicheiten.
+
+       \begin{itemize}
+       \item  Das Schreiben in den Speicher erfolgt \emph{synchron} (der
+              Aufruf einer Methode zum Schreiben durch ein Teilproblem ist
+              erst abgeschlossen, wenn die Methode auch bei allen anderen
+              Speichern aufgerufen wurde).
+
+       \item  Das Schreiben in den Speicher erfolgt \emph{asynchron} (der
+              Aufruf einer Methode zum Schreiben durch ein Teilproblem ist
+              sofort abgeschlossen und die Methode wird bei allen anderen
+              Speichern anschließend. d.h.\ nebenläufig zur weiteren
+              Berechnung des Teilproblems, aufgerufen).
+       \end{itemize}
+\end{itemize}
+
+Ein synchrones Lesen bzw.\ Schreiben bedeutet, daß zum Beginn des Lesens
+bzw.\ zum Abschluß des Schreibens der Zustand des Speichers für alle
+Teilprobleme identisch ist. Ein asynchrones Lesen bzw.\ Schreiben ist jedoch
+in der Regel effizienter.
+
+Es ist jedoch zu beachten, daß die Reihenfolge des Aufrufens von Methoden
+des Speichers durch die Teilprobleme aber in allen Fällen unbestimmt ist (so
+wie die Reihenfolge des Eintreffens von Teillösungen beim Problem unbestimmt
+ist).
+
+In jedem Fall sollte ein gemeinsamer Speicher aber folgende Bedingungen
+sicherstellen:
+
+\begin{itemize}
+\item  Wenn ein Teilproblem ein Objekt in den Speicher schreibt und
+       dieses Teilproblem anschließend aus dem Speicher ließt, sollte das
+       vorherige Schreiben schon erfolgt sein.
+
+\item  Mehrere Aufrufe zur Veränderung des Speichers durch ein Teilproblem
+       sollten in den Speicher für alle anderen Teilprobleme in der gleichen
+       Reihenfolge vorgenommen werden.
+\end{itemize}
+
+Die vorhandenen Implementierungen vom gemeinsamen Speicher erfüllen diese
+Bedingungen und bieten alle drei Arten der Kommunikation. Die zu verwendende
+Art der Kommunikation wird beim Aufruf des Konstruktors der Klasse, die das
+Interface \texttt{RemoteStoreGenerator} implementiert, angegeben.
+
+
+\subsection{Hinweise für den Entwickler}
+
+Text zu ergänzen.
+

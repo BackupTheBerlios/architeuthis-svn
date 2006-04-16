@@ -1,10 +1,10 @@
 /*
- * file:       AbstractFixedSizeProblem.java
- * last change: 11.02.2004 by Jürgen Heit
- * copyright 2003:  Jürgen Heit,       juergen.heit@gmx.de
- *                  Andreas Heydlauff, AndiHeydlauff@gmx.de
- *                  Achim Linke,       achim81@gmx.de
- *                  Ralf Kible,        ralf_kible@gmx.de
+ * file:        AbstractFixedSizeProblem.java
+ * last change: 12.04.2006 by Dietmar Lippold
+ * developers:  Jürgen Heit,       juergen.heit@gmx.de
+ *              Andreas Heydlauff, AndiHeydlauff@gmx.de
+ *              Achim Linke,       achim81@gmx.de
+ *              Ralf Kible,        ralf_kible@gmx.de
  *
  *
  * This file is part of Architeuthis.
@@ -29,12 +29,13 @@
  * entwickelt.
  */
 
+
 package de.unistuttgart.architeuthis.abstractproblems;
 
 import java.io.Serializable;
 
-import de.unistuttgart.architeuthis.userinterfaces.PartialProblem;
-import de.unistuttgart.architeuthis.userinterfaces.PartialSolution;
+import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
+import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 
 /**
  * Abstrakte Klasse zur Verwaltung einer festen Anzahl von Teilproblemen und
@@ -47,6 +48,11 @@ import de.unistuttgart.architeuthis.userinterfaces.PartialSolution;
  * @author Andreas Heydlauff
  */
 public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
+
+    /**
+     * Generierte <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 3509399230349106043L;
 
     /**
      * Array, das alle Teilprobleme enthält.
@@ -74,7 +80,8 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
      * ausgegeben, solange noch welche vorhanden sind.
      *
      * @param number  gewünschte Gesamtanzahl der zu generierenden
-     *                Teilprobleme
+     *                Teilprobleme.
+     *
      * @return  genau ein Teilproblem. Dies ist unabhängig von der Gesamtanzahl
      *          der generierten Teilprobleme. <code>null</code> falls
      *          kein Teilproblem mehr ausgegeben werden soll
@@ -98,11 +105,12 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
     }
 
     /**
-     * Nimmt eine Teillösung entgegen, sammelt diese und ruft bei der letzten 
-     * Teillösung <code>createSolution</code> auf, um die Gesamtlösung 
+     * Nimmt eine Teillösung entgegen, sammelt diese und ruft bei der letzten
+     * Teillösung <code>createSolution</code> auf, um die Gesamtlösung
      * zurückzuliefern.
      *
      * @param parSol  Die nächste fertige Teillösung für das Problem.
+     *
      * @return  Gesamtlösung, falls diese bereits fertig ist, sonst
      *          <code>null</code>
      */
@@ -121,12 +129,11 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
      * Stellt ein Array von Teilproblemen zur Verwaltung bereit.<p>
      * Diese Methode muss von einer konkreten Unterklasse implementiert werden.
      *
-     * @param porblemsExpected  gewünschte Anzahl von Teilproblemen.
+     * @param problemsExpected  gewünschte Anzahl von Teilproblemen.
      *
      * @return  Array von Teilproblemen.
      */
     protected abstract PartialProblem[] createPartialProblems(long problemsExpected);
-
 
     /**
      * Erstellt eine Gesamtlösung aus allen Teillösungen.<p>
@@ -136,5 +143,5 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
      * @return  Gesamtlösung
      */
     protected abstract Serializable createSolution(PartialSolution[] partialSolutions);
-
 }
+

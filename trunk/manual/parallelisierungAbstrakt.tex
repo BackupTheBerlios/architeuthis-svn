@@ -3,7 +3,20 @@
 %% Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
 %% entwickelt.
 
-\chapter[Parallelisierung anhand eines Beispiels]{Der Weg zum parallelisierten Programm anhand eines Beispiels}
+
+\chapter[Beispiele zur Parallelisierung]{Der Weg zum parallelisierten Programm anhand eines Beispiels}
+
+Dieses Kapitel beschreibt die Parallelisierung eines nicht--serialisierten
+Problems, das vollständig auf dem Compute-System ausgeführt werden kann, das
+also insbesondere keine Daten mit anderen Programmen austauschen muß und
+keine Eingaben vom Benutzer benötigt. Das Kapitel dient daher primär der
+Darstellung der Parallelisierung selbst, nicht der Darstellung der Benutzung
+des Compute-Systems.
+
+In einer realen Anwendung wird das Problem das Interface
+{\tt SerializableProblem} implementieren und der Benutzer wird mit dem
+Compute-Systems nur über die Klasse
+{\tt de.unistuttgart.architeuthis.user.ProblemComputation} interagieren.
 
 \section{Ein einfaches Beispiel}
 Man betrachte zunächst die Methode {\tt primzahlTeilbereich} aus {\tt Primzahlen.java} :
@@ -66,8 +79,8 @@ Probleme und eine kurze Beschreibung dazu:
 
 \begin{enumerate}
 \item de.unistuttgart.architeuthis.testenvironment.montecarlo.MonteCarloProblemImpl\\
-	Hier wird das MonteCarlo-Verfahren zur Bestimmung der Zahl Pi parallelisert. Man bekommt somit bei einer
-	festgelegten Rechenzeit eine bessere Genauigkeit f"ur Pi.
+	Hier wird das MonteCarlo-Verfahren zur Bestimmung der Zahl $Pi$ parallelisert. Man bekommt somit bei einer
+	festgelegten Rechenzeit eine bessere Genauigkeit f"ur $Pi$.
 \item de.unistuttgart.architeuthis.testenvironment.random.RandomProblemImpl\\
 	Hier wartet jedes Teilproblem einfach eine zuf"allige Anzahl von Sekunden. Dies ist f"ur Testzwecke recht
 	interessant gewesen.
@@ -75,11 +88,11 @@ Probleme und eine kurze Beschreibung dazu:
 	Hier werden drei Dummy-Klassen in den Teilproblemen geladen. Mit diesem Problem wurde verglichen, inwiefern
 	sich das Laden von Klassen zeitlich bemerkbar macht. Siehe dazu auch im Kapitel Performance.
 \item de.unistuttgart.architeuthis.testenvironment.prim.example.OrderedPrimeRangeProblem\\
-	Dies ist das Einf"uhrungsbeispiel mittels der abstrakten Klasse {\tt Abstract\-Ordered\-Problem.java}.
+	Dies ist das Einf"uhrungsbeispiel mittels der abstrakten Klasse\\
+        {\tt AbstractOrderedProblem.java}.
 \item de.unistuttgart.architeuthis.testenvironment.prim.PrimRangeProblemImpl\\
 	Dieses Problem macht das gleiche wie {\tt OrderedPrimeRangeProblem}, nur dass es keine abstrakten 	Hilfsklassen benutzt.
 \item de.unistuttgart.architeuthis.testenvironment.prim.PrimSequenceProblemImpl\\
 	Dies ist das Beispiel f"ur Fortgeschrittene im n"achsten Kapitel.
-
-		
 \end{enumerate}
+

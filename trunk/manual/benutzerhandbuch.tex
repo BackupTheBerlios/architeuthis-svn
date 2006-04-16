@@ -1,7 +1,8 @@
 %% Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
-%% Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
-%% Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+%% Universität Stuttgart (http://www.iis.uni-stuttgart.de/) unter Leitung
+%% von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
 %% entwickelt.
+
 
 \documentclass[a4,10pt]{report}
 \usepackage[german]{babel} % Einbindung des deutschen Sprachpaketes
@@ -11,10 +12,10 @@
 \usepackage{palatino}
 \pagestyle{headings}
 \usepackage[pdftex=true
-,pdftitle={Glossar des Compute-Systems}
-,pdfauthor={Achim Linke, Ralf Kible}
-,pdfsubject={Hiermit sollen die Begriffe geklärt werden, die in den weiteren
-    Dokumenten benutzt werden}
+,pdftitle={Benutzerhandbuch für Architeuthis}
+,pdfauthor={Jürgen Heit, Andreas Heydlauff, Ralf Kible, Achim Linke,
+            Dietmar Lippold}
+,pdfsubject={Beschreibung der Benutzung des Systems Architeuthis}
 %,pdfkeywords={keyword 1, keyword 2, keyword 3, keyword 4}
 %,plainpages=false
 %,hypertexnames=false 
@@ -34,7 +35,7 @@
 ,urlcolor=darkred
 ,citecolor=darkblue}
 
-%% Mögliche Werte: 
+%% Mögliche Werte für secnumdepth:
 %% -1
 %% keine Überschrift wird numeriert 
 %% 0
@@ -56,25 +57,30 @@
 \begin{document}
 \title{Architeuthis - Benutzerhandbuch}
 \author{Jürgen Heit, juergen.heit@gmx.de\\
-Andreas Heydlauff, andiheydlauff@gmx.de\\
-Ralf Kible, ralf\_kible@gmx.de\\
-Achim Linke, achim81@gmx.net}
+        Andreas Heydlauff, andiheydlauff@gmx.de\\
+        Ralf Kible, ralf\_kible@gmx.de\\
+        Achim Linke, achim81@gmx.net\\
+        Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de}
 
-\date{Software Version: 0.9\\Stand: \today}
+\date{Software Version: 2.0\\Stand: \today}
 \maketitle
 \tableofcontents
 %\listoffigures
 %\listoftables
+
 \chapter{Allgemeine Hinweise}
-Das Compue-System soll einem Benutzer die M"oglichkeit geben, ein von
+Das Compute--System soll einem Benutzer die M"oglichkeit geben, ein von
 ihm in Java implementiertes Problem auf mehreren Rechnern verteilt berechnen
 zu lassen. Es besteht aus mehreren Komponenten, die hier erl"autert werden.
-
 
     \include{beschreibung}
     \include{glossar}
     \include{benutzung}
+    \include{gemeinsamerSpeicher}
     \include{parallelisierungAbstrakt}
     \include{parallelisierung}
-%  \printindex
+    \include{performance}
+%    \printindex
+
 \end{document}
+

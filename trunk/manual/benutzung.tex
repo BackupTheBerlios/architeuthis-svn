@@ -64,7 +64,8 @@ Dabei:
   Konfigurationsdatei gemacht, verwendet das Compute-System die Standard-Konfiguration.
   Weitere Informationen finden sich außerdem in der 
   Java API-Do\-ku\-men\-ta\-tion unter java.util.logging.
-  Der Dispatcher arbeitet in dem Namespace ``de.unistuttgart.architeuthis.Dispatcher''.
+  Der Dispatcher arbeitet in dem Namespace\\
+  ``de.unistuttgart.architeuthis.Dispatcher''.
 \par {\bf Tipp:} Normalerweise sollten im Betrieb nur Informationen der
   Informationslevel WARNING oder SEVERE geloggt werden, da sonst die Log-Dateien
   zu schnell zu groß werden. Zum Testen empfiehlt sich manchmal, einen
@@ -155,7 +156,8 @@ Dabei:
 \par {\bf Achtung:} Falls diese Option nicht angegeben wird, werden
   Modifikationen in Problem-Klassen nur dann erkannt, falls diese Klassen
   entweder in einem anderen Verzeichnis auf dem Webserver abgelegt werden oder
-  der Operative neu gestartet wird. 
+  der Operative neu gestartet wird. Wenn die Option angegeben wird, dürfen
+  die class-Dateien nicht geändert werden, während das Problem berechnet wird.
 
 \item[de.unistuttgart.architeuthis.operative.OperativeImpl]
   Die Klasse zum Starten des Operatives.
@@ -204,43 +206,43 @@ wird, muss sie und alle darin verwendeten Klassen {\tt Serializable-Objekte} sei
 Es ist lediglich ein parameterloser Konstruktor (wegen der Serialisierbarkeit) notwendig:
 {\scriptsize \verbatiminput{java/PartialSolution.java}}
 
-
 \subsection{Wichtige allgemeine Hinweise}
-\begin{enumerate}
-\item {\bf Achtung:} Selbst durch diese Massnahme kann es zu merkwürdigen
-  Effekten kommen, wenn mehrere Probleme gleichzeitig in modifizierter Form
-  berechnet werden, oder wenn mehrere Probleme im gleichen Verzeichnis des
-  Webservers bereitgestellt werden. Daher sollte am Einfachsten für jedes neue
-  Problem auch ein neues Verzeichnis auf dem Webserver angelegt werden. Dann
-  treten die oben angedeuteten Probleme nicht mehr auf.
-\item Generell ist es empfehlenswert, jedes neue Problem, das auf dem
-  Compute-System berechnet werden soll, in einem neuen Verzeichnis auf dem
-  Webserver abzulegen.
-\item In den Objekten der Klassen {\tt Partial\-Problem} und {\tt Partial\-Solution} dürfen keine
-        sta\-ti\-schen Variablen \marginpar{Statische Variablen}
-         verwendet werden, da diese beim Versenden der Objekte via RMI nicht
-        serialisiert werden. Konstanten (also {\tt static final}-Attribute) dürfen jedoch verwendet
-        werden.
-\item Kommunikation zwischen {\tt Partial\-Problem}-Objekten wird vom \\{\tt Compute\-System} nicht
-        unterstützt
-        \marginpar{Kom\-muni\-kation zwischen Teilproblemen}
-        und läßt sich auch nicht einfach realisieren. Jedoch kann eine Kommunikation 
-        zwischen dem {\tt Pro\-blem}-Ob\-jekt auf dem {\tt Dispatcher} und den 
-        {\tt Partial\-Problem}-Objekten realisiert werden, indem der Programmierer der
-        {\tt Pro\-blem}-Klas\-se selbst RMI-Methoden vorsieht und jedem generierten {\tt Partial\-Problem}
-        eine Referenz auf das {\tt Problem} mitgibt. Diese Möglichkeit wird jedoch auch nicht direkt 
-        vom {\tt Compute\-System} unterstützt und funktioniert davon
-        unbeeinträchtigt nebenher.
-\item Wenn das Ergebnis bereits vorliegt, sollte das {\tt Problem} keine weiteren
-  {\tt Partial\-Problem}-Objekte mehr generieren, da solange neue {\tt
-  Partial\-Problem}s geliefert werden diese auch berechnet werden, ohne nach der
-  Lösung zu fragen. Bei der Ankunft einer berechneten {\tt Par\-tial\-So\-lu\-tion}
-  wird jedoch nach dem Endergebnis gefragt.
-\item Die Erzeugung und das Zusammensetzen der Teilprobleme sowie das Berechnen der Gesamtl"osung
-        sollte, da es auf dem Dispatcher-Rechner ausgef"uhrt wird, nur geringen Rechenaufwand erfordern.
-        Falls es mehr Rechenaufwand erfordert, sollten diese T"atigkeiten als eigene Teilprobleme
-        vergeben werden.
 
+\begin{enumerate}
+\item Generell ist es empfehlenswert, jedes neue Problem, das auf dem
+      Compute-System berechnet werden soll, in einem neuen Verzeichnis auf
+      dem Webserver abzulegen.
+
+\item In den Objekten der Klassen {\tt Partial\-Problem} und
+      {\tt Partial\-Solution} dürfen keine sta\-ti\-schen Variablen
+      \marginpar{Statische Variablen} verwendet werden, da diese beim
+      Versenden der Objekte via RMI nicht serialisiert werden. Konstanten
+      (also {\tt static final}-Attribute) dürfen jedoch verwendet werden.
+
+\item Kommunikation zwischen {\tt Partial\-Problem}-Objekten wird vom \\
+      {\tt Compute\-System} nicht unterstützt
+      \marginpar{Kom\-muni\-kation zwischen Teilproblemen} und läßt sich
+      auch nicht einfach realisieren. Jedoch kann eine Kommunikation 
+      zwischen dem {\tt Pro\-blem}-Ob\-jekt auf dem {\tt Dispatcher} und
+      den  {\tt Partial\-Problem}-Objekten realisiert werden, indem der
+      Programmierer der {\tt Pro\-blem}-Klas\-se selbst RMI-Methoden
+      vorsieht und jedem generierten {\tt Partial\-Problem} eine Referenz
+      auf das {\tt Problem} mitgibt. Diese Möglichkeit wird jedoch auch
+      nicht direkt  vom {\tt Compute\-System} unterstützt und funktioniert
+      davon unbeeinträchtigt nebenher.
+
+\item Wenn das Ergebnis bereits vorliegt, sollte das {\tt Problem} keine
+      weiteren {\tt Partial\-Problem}-Objekte mehr generieren, da solange
+      neue {\tt Partial\-Problem}s geliefert werden diese auch berechnet
+      werden, ohne nach der Lösung zu fragen. Bei der Ankunft einer
+      berechneten {\tt Par\-tial\-So\-lu\-tion} wird jedoch nach dem
+      Endergebnis gefragt.
+
+\item Die Erzeugung und das Zusammensetzen der Teilprobleme sowie das
+      Berechnen der Gesamtl"osung sollte, da es auf dem Dispatcher-Rechner
+      ausgef"uhrt wird, nur geringen Rechenaufwand erfordern. Falls es mehr
+      Rechenaufwand erfordert, sollten diese T"atigkeiten als eigene
+      Teilprobleme vergeben werden.
 \end{enumerate}
 
 \subsection[Hilfestellung]{Hilfestellung bei der Implementierung mittels abstrakten Klassen}
@@ -260,36 +262,89 @@ Mini-Webserver, der nur dazu dient, Klassen an RMI-Applikationen
 auszuliefern. Die Benutzung ist sehr einfach. Man starte den
 ClassFileServer mit folgender Kommandozeile:\\
 {\tt java de.unistuttgart.architeuthis.user.ClassFileServer <port> <root>}\\
-Wobei:
+
+Dabei ist:
 \begin{description}
 \item[port] Der Port auf dem der Webserver ansprechbar sein soll.
-\item[docroot] Das Verzeichnis, das als Wurzel-Verzeichnis für die Dateien des
-  Webservers dienen soll.
+\item[root] Das Verzeichnis, das als Wurzel-Verzeichnis für die Dateien des
+  Web\-servers dienen soll.
 \end{description}
 Danach sind unter {\tt http://<rechnername>:<port>/} alle Dateien und
 Verzeichnisse unter {\tt<root>} erreichbar.
 
 \subsubsection*{Achtung!}
-Der ClassFileServer gibt beim Starten immer eine Usage-Meldung aus. Man sollte sich dadurch 
-nicht irritieren lassen und glauben, man hätte falsche Parameter übergeben.
+Der ClassFileServer gibt beim Starten immer eine Usage-Meldung aus. Man
+sollte sich dadurch  nicht irritieren lassen und glauben, man hätte falsche
+Parameter übergeben. Außerdem werden alle Dokumente (nicht nur class-Dateien)
+unterhalb des angegebenen Verzeichnisses zugänglich gemacht. Mas sollte
+daher für die class-Dateien ein eigenes Verzeichnis erzeugen.
 
-\section{Der Problem-"Ubermittler}
+
+\section{Die Problem-Verarbeitung}
+Zur Verarbeitung eines (serialisierbaren) Problems steht als Schnittstelle
+zwischen Benutzer und Compute-System die Klasse
+{\tt de.unistuttgart.architeuthis.user.ProblemComputation} zur Verfügung.
+Diese bieten zwei Arten von Methoden:
+
+\begin{description}
+\item[computeProblem] Dieser Methode berechnet ein übergebenes serialisierbares
+  Probem lokal, d.h.\ ohne Übertragung an das Compute-System. Diese Methode
+  ist besonders in der Phase der Entwicklung nützlich, da z.B.\ Testausgaben
+  möglich sind. Der Methode kann optional die vorzuschlagende Anzahl der 
+  Teilprobleme und außerdem noch optional eine Instanz von
+  {\tt RemoteStoreGenerator} übergeben werden.
+
+\item[transmitProblem] Diese Methode überträge ein übergebenes serialisierbares
+  Problem zur Verarbeitung an das Compute-System. Dabei ist zumindest der
+  Rechnername des Compute-Managers anzugeben. Außerdem ist eine \emph{codebase},
+  d.h.\ ein URL, unter dem die vom Problem benötigten Klassen abrufbar sind,
+  oder ein Array von codebases entweder zu übergeben oder über das Property
+  <code>java.rmi.server.codebase</code> beim Aufruf der JVM anzugeben. In
+  jedem Fall kann zusätzlich (optional) noch Instanz von
+  {\tt RemoteStoreGenerator} übergeben werden.
+\end{description}
+
+Die Verwendung der beiden Arten von Methoden ist ansonsten gleich und
+unterscheidet sich nicht vom Aufruf von Methoden, die vom Benutzer selbst
+implementiert wurden und lokal ablaufen.
+
+Sollen mehrere Probleme nacheinander verarbeitet werden, sollte von der
+oben genannten Klasse aus Effizienzgründen trotzdem nur eine Instanz erzeugt
+werden.
+
+
+\section{Der Problem-Übermittler}
+Für den Ausnahmefall, daß ein Problem nicht serialisierbar ist, kann das
+Problem vom Compute-Manager geladen und vollständig auf dem Compute-System
+ausgeführt werden. Dazu steht die Klasse
+{\tt de.unistuttgart.architeuthis.user.ProblemTransmitterImpl} zur Verfügung.
+Sie bietet außerdem die Möglichkeit, während der Berechnung eines Problems
+auf dem Compute-System nebenläufig eine Problem-Statistik oder auch eine
+System-Statistik abzufragen oder die Berechnung des Problems abzubrechen.
+
+Von der Klasse muß unter Angabe des Rechnernames des Compute-Managers
+eine Instanz zu erzeugen. Die Klasse bietet mehrere Methoden mit dem Namen
+{\tt transmitProblem}, mit denen ein nicht-serialisierbares und auch eine
+Instanz eines serialisierbaren Problems zum Compute-System übertragen
+werden kann. Bei einem nicht-serialisierbaren Problem, von dem eine Instanz
+auf dem Compute-Manager erzeugt wird, ist ein Array mit serialisierbaren
+Parametern für den Konstruktor anzugeben.
+
+Als Beispiel für die Verwendung von {\tt ProblemTransmitterImpl}  kann die
+Klasse\\
+{\tt de.unistuttgart.architeuthis.testenvironment.myprime.PrimeNumbersParallel}
+zusammen mit den anderen Klassen dieses Packages betrachtet werden.
+
+
+\section{Ausführung eines eigenständigen Problems}
 \subsection*{Kurzbeschreibung}
-Der Problem-Übermittler stellt die Schnittstelle zwischen dem Benutzer
-und dem Compute-System her und erlaubt es, selbst implementierte
-Probleme auf das Compute-System zu übertragen. Dies kann grundsätzlich
-auf zwei Arten geschehen:
-\begin{itemize}
-\item Das Benutzen der Kommandozeilenapplikation {\tt
-  Prob\-lem\-Trans\-mit\-ter\-App}
-\item Schreiben eines eigenen Programmes unter Benutzung der
-Klasse {\tt Pro\-blem\-Trans\-mit\-ter\-Impl}
-\end{itemize}
-Beide genannten Klassen befinden sich im Package \\{\tt
-  de.unistuttgart.architeuthis.user}.
+Für den Sonderfall, daß ein Problem komplett eigenständig ist und keine
+Daten mit anderen Programmen austauscht und keine Eingaben vom Benutzer
+benötigt, steht die Klasse
+{\tt de.unistuttgart.architeuthis.user.ProblemTransmitterApp} zur Verfügung:
 
 \subsection[Kommandozeilenapplikation]{Die Kommandozeilenapplikation}
-Zuerst muss gesagt werden, dass bei Benutzung der
+Zuerst muss gesagt werden, dass bei Benutzung dieser
 Kommandozeilenapplikation einige Einschränkungen in Kauf genommen
 werden müssen. Es können beispielsweise keine Parameter an den
 Konstruktor der eigenen Problem-Klasse übergeben werden, so dass alle
@@ -302,9 +357,9 @@ angeschaut werden.
   Kommandozeilenparameter}
 Die Kommandozeile zum Aufrufen der ProblemTransmitterApp:\\
 {\tt java -Djava.security.policy=transmitter.pol\\
-  de.unistuttgart.architeuthis.user.ProblemTransmitterApp -u\\
-  <classURL> -r <computesystem> -c <klassenname> -f \\
-  <dateiname> -d -n -p}\\
+  de.unistuttgart.architeuthis.user.ProblemTransmitterApp\\
+  -u <packageURL> -r <ProblemManager> -c <klassenname>\\
+  -f <dateiname> -s -d -n -p}\\
 
 \begin{description}
 \item[-Djava.security.policy=transmitter.pol]
@@ -314,13 +369,13 @@ Die Kommandozeile zum Aufrufen der ProblemTransmitterApp:\\
   \hyperref[sicherh]{Sicherheit}.
 \item[de.unistuttgart.architeuthis.user.ProblemTransmitterApp]
   Die Haupt-Klasse des Problem-Übermittlers.
-\item[-u <classURL>] Die vollständige Adresse inklusive Unterverzeichnisse
-  des Webservers, auf dem die Klassen des Problems bereitgestellt
-  werden. Die Adresse muss entweder mit ``/'' enden, falls die Klassen ungepackt 
-in der Package-Hierarchie vorliegen, oder mit dem Namen der Jar-Datei, die die Klassen
-in der Package-Hierarchie enthält. Man kann auch
+\item[-u <packageURL>] Der URL des äußersten Pakets der Klassen des
+  Problems. Die Adresse muss entweder mit ``/'' enden, falls die Klassen
+  ungepackt in der Package-Hierarchie vorliegen, oder mit dem Namen der
+  jar-Datei, die die Klassen in der Package-Hierarchie enthält. Anstatt
+  einem vorhandenen Web-Server kann man auch
   den\hyperref[classfileserver]{ClassFileServer} verwenden.
-\item[-r <computesystem>]
+\item[-r <ProblemManager>]
         Die Adresse der RMI-Registry, in der der
         Dispatcher eingetragen ist, an den sich der
         Operative anmelden soll. Exemplarisch:\\
@@ -335,40 +390,39 @@ in der Package-Hierarchie enthält. Man kann auch
         \end{description}
 
 \item[-c <klassenname>] Der vollständige Klassenname (inklusive aller Packages)
-  der Klasse des Problems, die das Interface Problem implementiert.\\
- {\bf Achtung:} \\
+  der Klasse des Problems, die das Interface {\tt Problem} implementiert.\\
+ {\bf Achtung:}
 \begin{description} 
 \item
-Da bei der Übermittlung durch den Problem-Transmitter keine Parameter dem Problem 
-übergeben werden können, ist es notwendig, dass das Problem einen parameterlosen
-Konstruktor implementiert, der die benötigten Werte initialisiert.
+Da bei der Übermittlung durch den Problem-Transmitter dem Problem keine
+Parameter übergeben werden können, ist es notwendig, dass das Problem einen
+parameterlosen Konstruktor implementiert, der mögliche Variablen mit den
+benötigten Werten initialisiert.
 \item
 Die Unterverzeichnisse, die durch die Package-Struktur
   entstehen, müssen auf dem Webserver ebenfalls vorhanden
   sein. Beispiel: Die Klasse {\tt MyProblem} aus dem Package {\tt
-  mypackage} ist unter der URL {\tt
-  http://myserver/mydir/my\-pack\-age/My\-Prob\-lem\-.class} erreichbar. Dann
-  muss der Parameter -w den Wert {\tt http://my\-ser\-ver/my\-dir/} erhalten
-  und der Parameter -c den Wert {\tt my\-pack\-age.My\-Prob\-lem}.
+  mypackage} ist unter der URL\\
+  {\tt http://myserver/mydir/my\-pack\-age/My\-Prob\-lem\-.class} erreichbar.
+  Dann muss der Parameter {\tt -w} den Wert {\tt http://my\-ser\-ver/my\-dir/}
+  erhalten und der Parameter {\tt -c} den Wert {\tt my\-pack\-age.My\-Prob\-lem}.
 \end{description}
 \item[-f <dateiname>] Der Name der Datei, in dem die Lösung des Problems
   gespeichert werden soll. Die Lösung wird dabei einfach in ihrer
   serialisierten Form in die Datei geschrieben.
+\item[-s] Optional. Überträgt das Problem als serialisierbares Problem.
 \item[-d] Optional. Schaltet zusätliche Debug-Meldungen ein.
-\item[-n] Optional. Schaltet die graphischen Elemente aus.
-\item[-p] Optional. Schaltet die allgemeine Statistik aus.
+\item[-n] Optional. Schaltet die beiden graphischen Statistik--Fenster ab.
+          Nach der Berechnung wird eine Statistik in Textform ausgegeben.
+\item[-p] Optional. Startet nur das Fenster für die Problem--Statistik, nicht
+          jedoch das für die System--Statistik.
 \end{description}
-\subsubsection*{Achtung!}
-Durch Schließen eines der graphischen Statistik-Fenster oder durch Abbrechen
-der Applikation mit Strg-C wird der Problem-Übermittler
-beendet. Dadurch kann das Compute-System keine Lösung mehr zurücksenden. Dies
-beendet aber nicht die Berechnung des Problems auf dem Dispatcher.
 
-\subsection[Problem-spezifisches Übermittlungsprogramm]{Hinweise zum
-  Erstellen eines Pro\-blem-spe\-zi\-fi\-schen Über\-mit\-tlungs-Pro\-gramms}
-Als Beispiel kann hierzu die Klasse \\
-{\tt de.unistuttgart.architeuthis.testenvironment.prim.\-PrimzahlenParallel}
-betrachtet werden.
+Das Schließen der beiden graphischen Statistik--Fenster hat keinen Einfluß
+auf die Berechnung des Problems. Die Berechnung des Problems kann jedoch
+durch {\tt Strg-C} im Fenster, in dem das Problem gestartet wurde,
+abgebrochen werden.
+
 
 \section{Die Statistik}
 \subsection*{Kurzbeschreibung}
@@ -382,12 +436,14 @@ installiertes Java-Runtime-Environment der Version 1.3 oder neuer und eine
 Netzwerkanbindung oder lokal auf dem Dispatcher-Rechner. Für die graphische Statistik-Ausgabe ist eine funktionierende graphische Oberfläche.
 
 \subsection[Kommandozeilenparameter]{Aufruf und Kommandozeilenparameter}
+
 Aufruf der graphischen Version:\\
 {\tt java -Djava.security.policy=statisticreader.pol\\
-de.unistuttgart.architeuthis.user.StatisticReaderFrame <computeSystem>}
+de.unistuttgart.architeuthis.user.SystemGUIStatisticsReader <computeSystem>}
+
 Aufruf der Konsole-Version:\\
 {\tt java -Djava.security.policy=statisticreader.pol\\
-de.unistuttgart.architeuthis.user.StatisticReader <computeSystem>}
+de.unistuttgart.architeuthis.user.SystemTextStatisticsReader <computeSystem>}
 
 \begin{description}
 \item[-Djava.security.policy=statisticreader.pol]
@@ -395,10 +451,10 @@ de.unistuttgart.architeuthis.user.StatisticReader <computeSystem>}
   darf sich nicht in einer Jar-Datei befinden; der Pfad muss also relativ
   oder absolut angegeben werden. Siehe dazu das Kapitel
   \hyperref[sicherh]{Sicherheit}.
-\item[de.unistuttgart.architeuthis.user.StatisticReaderFrame]
+\item[de.unistuttgart.architeuthis.user.SystemGUIStatisticsReader]
   Die Haupt-Klasse der graphischen Statistik-Anzeige.
-\item[de.unistuttgart.architeuthis.user.StatisticReader]
-  Die Haupt-Klasse der Konsole-Statistik-Anzeige.
+\item[de.unistuttgart.architeuthis.user.SystemTextStatisticsReader]
+  Die Haupt-Klasse der textuellen Statistik-Anzeige.
 \item{<computeSystem>}
         Die Adresse der RMI-Registry, in der der
         Dispatcher eingetragen ist, an den sich der
@@ -432,15 +488,15 @@ seriell berechnet und dann zur Gesamtl"osung zusammengefasst.
 
 \subsection{Verteilte Berechnung}
 Bei der verteilte Berechnung wird das Problem dem Compute-System mittels
-dem Problem-"Ubermittler an ein Compute-System "ubergeben und berechnet.
+dem Problem-Übermittler an ein Compute-System "ubergeben und berechnet.
 
 \subsection[Kommandozeilenparameter]{Aufruf und
   Kommandozeilenparameter}
 Die Kommandozeile zum Aufrufen der Testumgebung:\\
 {\tt java -Djava.security.policy=transmitter.pol\\
-  de.unistuttgart.architeuthis.testenvironment.Testumgebung\\
-  -u <classURL> -r <computesystem>\\
-   -c <klassenname> -f <dateiname>}\\
+  de.unistuttgart.architeuthis.user.ProblemTransmitterApp\\
+  -u <packageURL> -r <ProblemManager>\\
+  -c <klassenname> -f <dateiname> -d}\\
 Dabei:
 \begin{description}
 \item[-Djava.security.policy=transmitter.pol]
@@ -474,9 +530,11 @@ Dabei:
   http://myserver/mydir/my\-pack\-age/My\-Prob\-lem\-.class} erreichbar. Dann
   muss der Parameter -w den Wert {\tt http://my\-ser\-ver/my\-dir/} erhalten
   und der Parameter -c den Wert {\tt my\-pack\-age.My\-Prob\-lem}.
-\item[-f <dateiname>] Der Name der Datei, in dem die Lösung des Problems
-  gespeichert werden soll. Die Lösung wird dabei einfach in ihrer
-  serialisierten Form in die Datei geschrieben.
+\item[-f <dateiname>] Optional. Der Name der Datei, in dem die Lösung des
+  Problems gespeichert werden soll. Die Lösung wird dabei einfach in ihrer
+  serialisierten Form in die Datei geschrieben. Wird kein Dateiname angegeben,
+  wird die Lösung auf der Standard-Ausgabe ausgegeben.
+\item[-d] Optional. Schaltet zusätliche Debug-Meldungen ein.
 \end{description}
 
 \chapter{Sicherheit}
@@ -547,275 +605,16 @@ untersagt. Beispiele dazu finden sich direkt in der Datei {\tt dispatcher.pol} o
 in der Java API Dokumentation unter {\tt java.net.Socket\-Permission}.
 
 
-\chapter{Performance}
-\section{Einführung}
-In diesem Kapitel sind die Ergebnisse einiger Untersuchungen festgehalten, denen
-das Compute-System unterzogen wurde, um herauszufinden, wie hoch der
-Geschwindigkeitszuwachs bei mehreren Operatives ist, aber auch, wie hoch
-der Zeitverlust ist, der sich durch das Verteilen der Probleme ergibt.
-
-\section{Testkonfiguration}
-Die Tests wurden in einem Computer-Pool durchgeführt, der während der
-Durchführung der Test auch von anderen Leuten benutzt wurde. Alle genannten
-Zeiten verstehen sich, falls nicht anders bezeichnet, in Sekunden und sind
-gerundete Mittelwerte mehrerer Messreihen eines bereits benutzten
-Compute-Systems (siehe dazu ``Der erste Start'').
-
-\subsection{Dispatcher}
-  \begin{itemize}
-  \item Dual-Athlon 1800+
-  \item 1 GB RAM
-  \item Red Hat Linux 9
-  \item Sun JRE Version 1.4.2
-  \end{itemize}
-\subsection{Operatives}
-  \begin{itemize}
-  \item Pentium III 600 MHz
-  \item 256 MB RAM
-  \item Red Hat Linux 7.3
-  \item Sun JRE Version 1.4.0
-  \end{itemize}
-
-\subsection{Testprobleme}
-\subsubsection{Prim-Problem}
-Für das Prim-Problem ist die Aufgabenstellung: Berechne die 2000000te Primzahl.
-Verwendet wurde die Klasse {\tt PrimTest} aus dem Package {\tt
-  de.unistuttgart.architeuthis.testenvironment.prim}.
-
-\subsubsection{Caching-Problem}
-Hier ist die Aufgabe: Berechne die 2000000te Primzahl. Außerdem werden jedoch
-drei Klassen zusätzlich vom Webserver geladen, um zu testen, wie stark sich
-das Caching der Klassen auf die Performance auswirkt. Verwendet wurde die Klasse
-{\tt CachingTestProblem} in {\tt de.unistuttgart.architeuthis.\-testenvironment.caching}.
-
-\subsection{Referenzwerte}
-Folgender Wert ist als Referenzwert zu betrachten: Die lokale Berechnung des
-Prim-Problems auf einem Operative-Rechner benötigt 307,6s. Dies definiert
-einem Speed-Up von 1. Wenn man das Prim-Problem auf einem Rechner verteilt (also
-mit einem Dispatcher und einem Operative) berechnet, dann ergibt sich
-eine Dauer von 413,8s, also ein ``Speed-Up'' von 0,74.
-\begin{table*}[htbp]
-  \centering
-  \begin{tabular}{l l l}
-  Beschreibung & Dauer in Sekunden & Speed-Up\\ \hline
-  Berechnung mit lokaler Klasse & 307,6 & 1\\
-  Verteilte Berechnung auf nur einem Rechner & 391,2 & 0,79\\
-  \end{tabular}
-  \caption{Referenzwerte}
-\end{table*}
-
-\section{Testergebnisse}
-\subsection{Verschiedene Anzahlen von Operatives}
-\subsubsection{Aufgabenstellung}
-Dieser Test soll Aufschluss über die effektive Geschwindigkeitssteigerung geben,
-die bei Verwendung mehrerer Operatives zu erwarten ist. Gestellt wurde das
-Prim-Problem.
-
-\subsubsection{Ergebnisse}
-
-\begin{table*}[htbp]
-  \centering
-  \begin{tabular}{l l l}
-  Anzahl Operatives & Gesamtdauer & Speed-Up\\
-  \hline
-  25 & 20,9 & 14,7 \\
-  20 & 25,0 & 12,3\\
-  15 & 33,2 & 9,3\\
-  10 & 44,7 & 6,9\\
-  5  & 84,2 & 3,6\\
-  3  &133,6 & 2,3\\
-  1  &349,2 & 0,88\\
-  \end{tabular}
-  \caption{Prim-Problem ohne Caching auf Operativeseite}
-  
-\end{table*}
-
-\begin{table*}[htbp]
-  \centering
-  \begin{tabular}{l l l}
-  Anzahl Operatives & Gesamtdauer & Speed-Up\\
-  \hline
-  25 & 20,9 & 14,7 \\
-  20 & 24,8 & 12,4\\
-  15 & 32,6 & 9,4\\
-  10 & 46,6 & 6,6\\
-  5  & 86,4 & 3,6\\
-  3  &138,2 & 2,2\\
-  1  &360,9 & 0,85\\
-  \end{tabular}
-  \caption{Prim-Problem mit aktiviertem Caching auf Operativeseite}
-\end{table*}
-
-Aus den Messwerten ist zu entnehmen, dass die Geschwindigkeit nahezu linear mit
-der Anzahl der Operatives skaliert.
-
-\subsection{Einfluss des Caching}
-
-\subsubsection{Aufgabenstellung}
-Wie oben bereits ersichtlich ist, beeinflusst das Caching bei großen
-Rechenzeiten pro Teilproblem und wenig zu ladenden Klassen die Geschwindikeit
-kaum. Um einen Unterschied zu messen, wurde das Caching-Problem gestellt. Bei
-diesem Test wurden 15 Operatives verwendet.
-
-\subsubsection{Ergebnisse}
-\begin{table*}[htbp]
-  \centering
-  \begin{tabular}{l l}
-  Status & Dauer in Millisekunden\\ \hline
-  Caching aktiviert & 1182\\
-  Caching deaktiviert & 2239\\
-  \end{tabular}
-  \caption{Berechnung des Caching-Problems mit 15 Operatives}
-\end{table*}
-
-Man sieht, dass erst bei sehr kurzen Berechnungszeiten der Teilprobleme das
-Caching einen Geschwindigkeitsvorteil bringt, da dann das Laden der Klassen
-überproportional viel Zeit benötigt.
-
-\subsubsection{Aufgabenstellung}
-Ein weiterer Test zum Caching bestand darin, 3 Probleme, die ebenfalls die 
-2000000te Primzahl berechnen, zu vergleichen. Zusätzlich zum Prim- und zum
-Caching-Problem wurde ein MyInteger-Problem geschrieben, dass die Lösung in
-eine eigene Klasse, die ebenfalls vom Webserver geladen werden muss, schreibt.
-
-\subsubsection{Ergebnisse}
-\begin{table*}[htbp]
-\centering
-\begin{tabular}{l l l l}
-Anzahl der Operatives & Prim-Problem & Caching-Problem & MyInteger-Problem \\
-\hline
-25 & 17  & 18  & 17  \\
-20 & 21  & 22  & 23  \\
-15 & 27  & 27  & 27  \\
-10 & 41  & 41  & 42  \\
-5  & 82  & 82  & 82  \\
-3  & 133 & 132 & 131 \\
-1  & 346 & 346 & 346 \\
-\end{tabular}
-\caption{Unterschiede zwischen den Problemen mit Cache}
-\end{table*}
-
-\begin{table*}[htbp]
-\centering
-\begin{tabular}{l l l l}
-Anzahl der Operatives & Prim-Problem & Caching-Problem & MyInteger-Problem \\
-\hline
-25 & 22  & 25  & 22  \\
-20 & 23  & 26  & 27  \\
-15 & 31  & 32  & 32  \\
-10 & 43  & 43  & 43  \\
-5  & 85  & 82  & 81  \\
-3  & 133 & 133 & 133 \\
-1  & 350 & 345 & 346 \\
-\end{tabular}
-\caption{Unterschiede zwischen den Problemen ohne Cache}
-\end{table*}
-
-\subsubsection{Speedup}
-Als Referenzwerte dienten:
-\begin{table*}[htbp]
-\centering
-\begin{tabular}{l | l}
-Prim-Problem & 304,6 \\
-Caching-Problem & 305,2 \\
-MyInteger-Problem & 310,3 \\
-\end{tabular}
-\end{table*}
-
-Das ergibt einen Speedup von:
-\begin{table*}[htbp]
-\centering
-\begin{tabular}{l l l}
-Anzahl der Operatives & Prim-Problem & Prim-Problem \\
-& mit Cache & ohne Cache \\ \hline
-25 & 17,92 & 13,85 \\
-20 & 14,51 & 13,24 \\
-15 & 11,28 & 9,83  \\
-10 & 7,43  & 7,08  \\
-5  & 3,72  & 3,58  \\
-3  & 2,29  & 2,29  \\
-1  & 0,88  & 0,87  \\
-\end{tabular}
-\end{table*}
-
-\begin{table*}[htbp]
-\centering
-\begin{tabular}{l l l}
-Anzahl der Operatives& Caching-Problem & 
-Caching-Problem \\
-& mit Cache & ohne Cache \\ \hline
-25 & 17,24 & 12,41\\
-20 & 14,10 & 11,93\\
-15 & 11,49 & 9,70 \\
-10 & 7,57  & 7,22 \\
-5  & 3,78  & 3,78 \\
-3  & 2,35  & 2,33 \\
-1  & 0,90  & 0,90 \\
-\end{tabular}
-\end{table*}
-
-\begin{table*}[htbp]
-\centering
-\begin{tabular}{l l l}
-Anzahl der Operatives & MyInteger-Problem & MyInteger-Problem \\
-& mit Cache & ohne Cache\\ \hline
-25 & 17,95 & 13,87 \\
-20 & 13,27 & 11,30 \\
-15 & 11,30 & 9,54  \\
-10 & 7,27  & 7,10  \\
-5  & 3,72  & 3,77  \\
-3  & 2,33  & 2,29  \\
-1  & 0,88  & 0,88  \\
-\end{tabular}
-\end{table*}
-
-\subsection{Der erste Start}
-
-\subsubsection{Aufgabenstellung}
-Während der Tests stellten wir fest, dass aufgrund einiger Eigenarten des
-RMI-Systems die erste Eingabe eines Problems in das Compute-Systems stets länger
-dauert als die folgenden Eingaben (selbst bei abgeschaltetem Caching). Dies
-hängt vor allem mit der Benutzung der Socket-Verbindungen zusammen, da diese
-unter RMI wiederverwendet werden, sobald einmal eine Verbindung hergestellt
-wurde. Um diesen Einfluss zu testen, wurden die folgenden Testreihen
-durchgeführt.
-
-\subsubsection{Ergebnisse}
-\begin{table*}[htbp]
-  \centering
-  \begin{tabular}{l l}
-  Status & Dauer in Millisekunden\\ \hline
-  Erster Start, Caching aktiviert & 7197\\
-  Weitere Starts, Caching aktiviert & 1166\\ \hline
-  Erster Start, Caching deaktiviert & 7457\\
-  Weitere Starts, Caching deaktiviert & 2239\\
-  \end{tabular}
-  \caption{Berechnung des Caching-Problems mit 15 Operatives}
-\end{table*}
-
-\begin{table*}[htbp]
-  \centering
-  \begin{tabular}{l l}
-  Status & Dauer in Millisekunden\\ \hline
-  Erster Start, Caching aktiviert & 31,0\\
-  Weitere Starts, Caching aktiviert & 20,4\\ \hline
-  Erster Start, Caching deaktiviert & 29,3\\
-  Weitere Starts, Caching deaktiviert & 21,2\\
-  \end{tabular}
-  \caption{Berechnung des Prim-Problems mit 25 Operatives}
-\end{table*}
-
-
 \chapter{Abstrakte Hilfsklassen}\label{abstrakt}
-Alle abstrakten Hilfsklassen sollen nur eine Hilfestellung sein, (einfache) Probleme
-schnell zu implementieren.
+Alle abstrakten Hilfsklassen sollen nur eine Hilfestellung sein, (einfache)
+Probleme schnell zu implementieren.
 
-Die abstrakten Klassen bieten drei Funktionen an:
+Die abstrakten Problem-Klassen bieten drei Funktionen an:
 
 \begin{enumerate}
-\item  Sie liefern oder ordnen die Teillösungen in der Reihenfolge der
-       erzeugten Teilprobleme. Diese Funktion ist bei allen drei abstrakten
-       Klassen vorhanden.
+\item  Sie ordnen und liefern die Teillösungen in der Reihenfolge, in der
+       die Teilprobleme erzeugt wurden. Diese Funktion ist bei allen drei
+       abstrakten Klassen vorhanden.
 \item  Sie fragen die Teilprobleme nicht einzeln sondern als Menge ab und
        liefern eine Menge der zughörigen Teillösungen. Diese Funktionalität
        ist nur bei \texttt{AbstractFixedSizeProblem} und\\
@@ -824,6 +623,8 @@ Die abstrakten Klassen bieten drei Funktionen an:
        vorgegebenen Reihenfolge. Diese Funktionalität ist nur bei\\
        \texttt{AbstractFixedSizePriorityProblem} vorhanden.
 \end{enumerate}
+
+Zusätzlich gibt es noch eine konkrete Teillösungs-Hilfsklasse.
 
 Die Klassen sind nachfolgend einzeln beschrieben.
 
@@ -844,7 +645,7 @@ onkrete Unterklasse muß dazu die beiden folgenden Methoden implementieren:
 
 Nachfolgend ist der komplette Quelltext angegeben.
 
-{\scriptsize \verbatiminput{java/AbstractOrderedProblem.java}}
+{\scriptsize \verbatiminput{java/AbstractOrderedProblem.jav}}
 
 
 \section{AbstractFixedSizeProblem.java}
@@ -864,9 +665,9 @@ der Benutzer muss nur noch zwei Methoden implementieren:
   geordnet.
 \end{itemize}
 
-Nachfolgend ist der komplette Quelltext angegeben.
+Nachfolgend ist der komplette Quelltext der Klasse angegeben.
 
-{\scriptsize \verbatiminput{java/AbstractFixedSizeProblem.java}}
+{\scriptsize \verbatiminput{java/AbstractFixedSizeProblem.jav}}
 
 
 \section{AbstractFixedSizePriorityProblem.java}
@@ -897,6 +698,18 @@ Berechnung \texttt{compute} heißt (wie es durch das Interface
 
 Nachfolgend ist der komplette Quelltext der beiden Klassen angegeben.
 
-{\scriptsize \verbatiminput{java/AbstractFixedSizePriorityProblem.java}}
-{\scriptsize \verbatiminput{java/AbstractFixedSizePriorityPartialProblem.java}}
+{\scriptsize \verbatiminput{java/AbstractFixedSizePriorityProblem.jav}}
+{\scriptsize \verbatiminput{java/AbstractFixedSizePriorityPartialProblem.jav}}
+
+
+\section{ContainerPartialSolution.java}
+Diese Klasse kann dafür verwendet werden, ein serialisierbares Objekt, das
+von einem Teilproblem erzeugt wurde, auf einfache Weise als Teillösung
+zurückzugeben. Dazu wird das erzeugte Objekt vom Teilproblem dem Konstruktor
+der Klasse {\tt ContainerPartialSolution} übergeben und kann vom Problem
+dann mit der Methode {\tt getPartialSolution} abgefragt werden.
+
+Nachfolgend ist der komplette Quelltext der Klasse angegeben.
+
+{\scriptsize \verbatiminput{java/ContainerPartialSolution.jav}}
 

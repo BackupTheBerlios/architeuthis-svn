@@ -1,6 +1,6 @@
 /*
  * file:        PartialSolution.java
- * last change: 11.02.2004 by Jürgen Heit
+ * last change: 26.05.2004 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -29,7 +29,8 @@
  * entwickelt.
  */
 
-package de.unistuttgart.architeuthis.userinterfaces;
+
+package de.unistuttgart.architeuthis.userinterfaces.develop;
 
 import java.io.Serializable;
 
