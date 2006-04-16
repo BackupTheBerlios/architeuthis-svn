@@ -36,7 +36,6 @@ package de.unistuttgart.architeuthis.testenvironment.fullprime;
 import de.unistuttgart.architeuthis.testenvironment.MyPrimeNumbers;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
-import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 
 /**
@@ -63,7 +62,6 @@ public class PrimePartialProblemImpl implements NonCommPartialProblem {
      *
      * @param min  Ab hier werden PrimeNumbers gesucht.
      * @param max  Bis hier werden PrimeNumbers gesucht.
-     * @param num  interne Verwaltungsnummer.
      */
     public PrimePartialProblemImpl(long min, long max) {
         minWert = min;
