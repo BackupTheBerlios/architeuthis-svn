@@ -284,7 +284,7 @@ daher für die class-Dateien ein eigenes Verzeichnis erzeugen.
 \section{Die Problem-Verarbeitung}
 Zur Verarbeitung eines (serialisierbaren) Problems steht als Schnittstelle
 zwischen Benutzer und Compute-System die Klasse
-{\tt de.unistuttgart.architeuthis.user.ProblemComputation} zur Verfügung.
+{\tt de...user.ProblemComputation} zur Verfügung.
 Diese bieten zwei Arten von Methoden:
 
 \begin{description}
@@ -318,7 +318,7 @@ werden.
 Für den Ausnahmefall, daß ein Problem nicht serialisierbar ist, kann das
 Problem vom Compute-Manager geladen und vollständig auf dem Compute-System
 ausgeführt werden. Dazu steht die Klasse
-{\tt de.unistuttgart.architeuthis.user.ProblemTransmitterImpl} zur Verfügung.
+{\tt de...user.ProblemTransmitterImpl} zur Verfügung.
 Sie bietet außerdem die Möglichkeit, während der Berechnung eines Problems
 auf dem Compute-System nebenläufig eine Problem-Statistik oder auch eine
 System-Statistik abzufragen oder die Berechnung des Problems abzubrechen.
@@ -333,7 +333,7 @@ Parametern für den Konstruktor anzugeben.
 
 Als Beispiel für die Verwendung von {\tt ProblemTransmitterImpl}  kann die
 Klasse\\
-{\tt de.unistuttgart.architeuthis.testenvironment.fullprime.PrimeNumbersParallel}
+{\tt de...testenvironment.fullprime.PrimeNumbersParallel}
 zusammen mit den anderen Klassen dieses Packages betrachtet werden.
 
 
@@ -342,7 +342,7 @@ zusammen mit den anderen Klassen dieses Packages betrachtet werden.
 Für den Sonderfall, daß ein Problem komplett eigenständig ist und keine
 Daten mit anderen Programmen austauscht und keine Eingaben vom Benutzer
 benötigt, steht die Klasse
-{\tt de.unistuttgart.architeuthis.user.ProblemTransmitterApp} zur Verfügung:
+{\tt de...user.ProblemTransmitterApp} zur Verfügung:
 
 \subsection[Kommandozeilenapplikation]{Die Kommandozeilenapplikation}
 Zuerst muss gesagt werden, dass bei Benutzung dieser
