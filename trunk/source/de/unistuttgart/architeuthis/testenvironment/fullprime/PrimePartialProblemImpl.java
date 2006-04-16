@@ -33,7 +33,7 @@
 
 package de.unistuttgart.architeuthis.testenvironment.fullprime;
 
-import de.unistuttgart.architeuthis.testenvironment.MyPrimeNumbers;
+import de.unistuttgart.architeuthis.testenvironment.PrimeNumbers;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
@@ -83,7 +83,7 @@ public class PrimePartialProblemImpl implements NonCommPartialProblem {
      */
     public PartialSolution compute() throws ProblemComputeException {
         return new PrimePartialSolutionImpl(
-            MyPrimeNumbers.primzahlTeilbereich(minWert, maxWert));
+            PrimeNumbers.primzahlTeilbereich(minWert, maxWert));
     }
 }
 

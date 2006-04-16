@@ -73,11 +73,11 @@ public class PrimeTest {
         System.out.println();
 
         System.out.println("PrimeNumbers zwischen 1234567 und 1234765:");
-        System.out.println(MyPrimeNumbers.primzahlTeilbereich(1234567, 1234765));
+        System.out.println(PrimeNumbers.primzahlTeilbereich(1234567, 1234765));
         System.out.println();
 
         System.out.println("Primzahl Nummer 1234567 bis 1234576:");
-        System.out.println(MyPrimeNumbers.primzahlTeilfolge(1234567, 1234576));
+        System.out.println(PrimeNumbers.primzahlTeilfolge(1234567, 1234576));
     }
 }
 
