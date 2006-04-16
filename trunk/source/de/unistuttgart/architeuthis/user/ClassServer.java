@@ -47,7 +47,7 @@
  *  - added logger
  *  - added URLdecoder in the getPath() method
  *
- * Last change: 05. Mar 2006 by Dietmar Lippold
+ * Last change: 17. Apr 2006 by Dietmar Lippold
  */
 
 
@@ -68,7 +68,7 @@ import java.net.URLDecoder;
  * ClassServer.java -- a simple file server that can serve
  * Http get request in both clear and secure channel.<p>
  *
- * Based on ClassServer.java in tutorial/rmi
+ * Based on ClassServer.java in tutorial/rmi.
  */
 public abstract class ClassServer implements Runnable {
 
@@ -88,7 +88,7 @@ public abstract class ClassServer implements Runnable {
      * obtains a file's bytecodes using the method <CODE>getBytes</CODE>.
      * This constructor is protected and only used by subclasses.
      *
-     * @param ss the socket this server will listen to
+     * @param ss  the socket this server will listen to
      */
     protected ClassServer(ServerSocket ss) {
         server = ss;
@@ -100,12 +100,12 @@ public abstract class ClassServer implements Runnable {
      * Returns an array of bytes containing the bytes for
      * the file represented by the argument <b>path</b>.
      *
-     * @return the bytes for the file
+     * @param path  the filepath of the file to serve
      *
-     * @param path the filepath of the file to serve
+     * @return  the bytes for the file
      *
-     * @exception IOException if the file corresponding
-     *  to <b>path</b> could not be loaded
+     * @exception IOException  if the file corresponding to <b>path</b>
+     *                         could not be loaded
      */
     public abstract byte[] getBytes(String path) throws IOException;
 
@@ -149,12 +149,12 @@ public abstract class ClassServer implements Runnable {
                 try {
                     out.writeBytes("HTTP/1.0 200 OK\r\n");
                     out.writeBytes("Content-Length: "
-                             + bytecodes.length + "\r\n");
+                                   + bytecodes.length + "\r\n");
                     out.writeBytes("Content-Type: text/html\r\n\r\n");
                     out.write(bytecodes);
                     out.flush();
-                    if (LOGGER.isLoggable(Level.INFO)) {
-                        LOGGER.info("served file: " + path);
+                    if (LOGGER.isLoggable(Level.FINE)) {
+                        LOGGER.fine("served file: " + path);
                     }
                 } catch (IOException e) {
                     LOGGER.warning(e.getMessage());
@@ -191,12 +191,12 @@ public abstract class ClassServer implements Runnable {
      * Returns the path to the file obtained from
      * parsing the HTML header.
      *
-     * @param in reader to get the HTML header from
+     * @param in  reader to get the HTML header from
      *
-     * @exception IOException thrown if there are problems with the reader
-     *            or the format of the header can't be parsed
+     * @return  the path of the requested file
      *
-     * @return the path of the requested file
+     * @exception IOException  thrown if there are problems with the reader
+     *                         or the format of the header can't be parsed
      */
     private static String getPath(BufferedReader in) throws IOException {
 

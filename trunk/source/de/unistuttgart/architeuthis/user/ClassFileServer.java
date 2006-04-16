@@ -48,7 +48,7 @@
  *  - added logger
  *  - extra method of usage
  *
- * Last change: 16. Apr 2006 by Dietmar Lippold
+ * Last change: 17. Apr 2006 by Dietmar Lippold
  */
 
 
@@ -182,15 +182,13 @@ public class ClassFileServer extends ClassServer {
      */
     private static void printUsage() { // static because it's called in main()
 
-        System.out.println(
-            "USAGE: java ClassFileServer port docroot [TLS [true]]");
-        System.out.println("");
-        System.out.println(
-                "If the third argument is TLS, it will start as\n"
-                + "a TLS/SSL file server, otherwise, it will be\n"
-                +  "an ordinary file server. \n"
-                +  "If the fourth argument is true,it will require\n"
-                + "client authentication as well.");
+        System.out.println("USAGE: java ClassFileServer port docroot [TLS [true]]");
+        System.out.println();
+        System.out.println("If the third argument is TLS, it will start as\n"
+                           + "a TLS/SSL file server, otherwise, it will be\n"
+                           + "an ordinary file server. \n"
+                           + "If the fourth argument is true,it will require\n"
+                           + "client authentication as well.");
     }
 
     /**
@@ -240,15 +238,17 @@ public class ClassFileServer extends ClassServer {
             ServerSocketFactory ssf =
                 ClassFileServer.getServerSocketFactory(type);
             ServerSocket ss = ssf.createServerSocket(port);
+
             // using authentication
             if (clientAuth) {
                 ((SSLServerSocket) ss).setNeedClientAuth(true);
             }
 
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("creating ClassFileServer at "
-                        + ss.getLocalSocketAddress());
+            if (LOGGER.isLoggable(Level.CONFIG)) {
+                LOGGER.config("creating ClassFileServer at "
+                              + ss.getLocalSocketAddress());
             }
+
             // create the classfileserver
             new ClassFileServer(ss, directory);
 
