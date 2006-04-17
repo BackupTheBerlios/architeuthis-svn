@@ -38,7 +38,7 @@ Zeilenumbrüche wurden nur zur besseren Übersicht eingefügt):\\
   -Djava.security.policy=dispatcher.pol\\
   de.unistuttgart.architeuthis.dispatcher.DispatcherImpl\\
   -c <config-Datei> -port <Port-Nummer>\\
-  -deadtime <Zeit> -deadtries <Anzahl>}\\
+  -deadtime <Zeit> -deadtries <Anzahl> -d -t -help}\\
 
 Dabei: 
 \begin{description}
@@ -100,6 +100,14 @@ Dabei:
   Optional. Setzt die Anzahl der Fehler, die sich bei einer Verbindung zu einem Operative
   ereignen dürfen, bis dieser entfernt wird.
 
+\item[-d] Optional. Schaltet den Debug-Modus mit zusätzlichen Meldungen
+  ein.
+
+\item[-t] Optional. Erzeugt für die Übergabe und für den Abbruch eines
+  Teilproblems an die bzw.\ auf den Operatives einen neuen Thread.
+
+\item[-help] Optional. Gibt eine Meldung zur Benutzung aus und beendet das
+  anschließend Programm.
 \end{description}
 
 
