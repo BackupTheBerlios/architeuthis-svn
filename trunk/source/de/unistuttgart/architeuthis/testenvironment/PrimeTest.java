@@ -1,7 +1,7 @@
 /*
  * file:        PrimeTest.java
  * created:     08. Juni 2003
- * last change: 16.04.2006 by Dietmar Lippold
+ * last change: 17.04.2006 by Dietmar Lippold
  * developers:  Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
  *
  * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
@@ -55,17 +55,17 @@ public class PrimeTest {
         System.out.println("Ermittlung von PrimeNumbers");
         System.out.println();
 
-        if (MyPrimeNumbers.istPrim(2)) {
+        if (PrimeNumbers.istPrim(2)) {
             System.out.println("2 ist eine Primzahl");
         } else {
             System.out.println("2 ist keine Primzahl");
         }
-        if (MyPrimeNumbers.istPrim(5)) {
+        if (PrimeNumbers.istPrim(5)) {
             System.out.println("5 ist eine Primzahl");
         } else {
             System.out.println("5 ist keine Primzahl");
         }
-        if (MyPrimeNumbers.istPrim(9)) {
+        if (PrimeNumbers.istPrim(9)) {
             System.out.println("9 ist eine Primzahl");
         } else {
             System.out.println("9 ist keine Primzahl");
