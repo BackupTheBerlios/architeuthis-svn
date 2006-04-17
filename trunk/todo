@@ -1,16 +1,11 @@
             Weitere geplante Arbeiten und Ideen für Architeuthis
 
 
-Stand: 06.04.2006
+Stand: 17.04.2006
 
 
 Änderungen größerer Wichtigkeit
 -------------------------------
-
- * Die Klassen PutProcedure und PutAllProcedure sowie AddProcedure und
-   AddAllProcedure zu jeweils einer Klasse zusammenfassen, so daß auch bei
-   asynchroner Übertragung die Aufrufe beim RelayStore in der gleichen
-   Reihenfolge eingehen wie beim RemoteStore.
 
  * Eine Möglichkeit vorsehen, daß ein asynchron laufender Thread zur
    Übertragung von Daten zum RelayStore eine Fehlermeldung an den Operative
@@ -26,10 +21,6 @@ Stand: 06.04.2006
  * Seltene ClassCastException im Dispatcher (wahrscheinlich nur bei
    Verwendung von CacheFlushingRMIClSpi) beseitigen.
 
- * Die Möglichkeit einbauen, daß dem Dispatcher zur Laufzeit über ein
-   Administrationsinterface ein Befehl geschickt werden kann, z.B. daß
-   er sich beenden soll (als Prototyp schon implementiert).
-
  * Alle Meldungen in eigene Dateien ausgliedern und eine englischsprachige
    Version anbieten (wurde schon partiell testweise realisiert).
 
@@ -40,12 +31,16 @@ Stand: 06.04.2006
    das in Java 1.5 neu enthaltene Package java.util.concurrent, das für
    Java 1.4 gesondert erhältlich ist, zu verwenden.
 
- * Steigerung der Skalierbarkeit durch eine mehrstufige (zweistufige)
-   Hierarchie von Dispatchern.
-
 
 Änderungen geringerer Wichtigkeit
 ---------------------------------
+
+ * Die Möglichkeit einbauen, daß dem Dispatcher zur Laufzeit über ein
+   Administrationsinterface ein Befehl geschickt werden kann, z.B. daß
+   er sich beenden soll (als Prototyp schon implementiert).
+
+ * Steigerung der Skalierbarkeit durch eine mehrstufige (zweistufige)
+   Hierarchie von Dispatchern.
 
  * Den Parameter dispatcherHost vom Konstruktor von ProblemTransmitterImpl
    in die Parameter dispatcherName und DispatcherPort aufteilen. Einen
