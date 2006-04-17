@@ -8,8 +8,14 @@
 # CLASS_FILE_PATH) werden gesetzt
 . ./setup.sh
 
+LOGGING_CONF=logging.properties
+
+# die Parameter für die JVM
+JVMPAR=" "
+JVMPAR="$JVMPAR -Djava.util.logging.config.file=$CONFIG_DIR/$LOGGING_CONF"
+
 # die Main-Klasse
 MAIN="de.unistuttgart.architeuthis.user.ClassFileServer"
 
-exec $JAVA -cp $DEPLOY_DIR/User.jar $MAIN $CLASS_SERVER_PORT $CLASS_FILE_PATH
+exec $JAVA $JVMPAR -cp $DEPLOY_DIR/User.jar $MAIN $CLASS_SERVER_PORT $CLASS_FILE_PATH
 
