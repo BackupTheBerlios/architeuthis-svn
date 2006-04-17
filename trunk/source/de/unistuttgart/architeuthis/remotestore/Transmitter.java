@@ -1,7 +1,7 @@
 /*
  * file:        Transmitter.java
  * created:     05.04.2005
- * last change: 11.04.2006 by Dietmar Lippold
+ * last change: 17.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -88,7 +88,7 @@ public class Transmitter extends Thread {
      * @param object  Das zu speichernde und anschließend zu übertragende
      *                Objekt.
      */
-    public void enqueue(Object object) {
+    public void enqueue(TransmitObject object) {
         objectBuffer.enqueue(object);
     }
 
@@ -120,9 +120,11 @@ public class Transmitter extends Thread {
      * welche verfügbar sind.
      */
     public void run() {
+        TransmitObject transmitObject;
+
         try {
             while (!terminating || !objectBuffer.isEmpty()) {
-                Object transmitObject = objectBuffer.dequeue();
+                transmitObject = (TransmitObject) objectBuffer.dequeue();
                 if (transmitObject != null) {
                     transmitProc.transmit(transmitObject);
                 }

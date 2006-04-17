@@ -1,7 +1,7 @@
 /*
- * file:        PutAllProcedure.java
- * created:     17.04.2005
- * last change: 12.04.2006 by Dietmar Lippold
+ * file:        HashSetTransProc.java
+ * created:     17.04.2006
+ * last change: 17.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -28,32 +28,34 @@
  */
 
 
-package de.unistuttgart.architeuthis.remotestore.hashmap.impl;
+package de.unistuttgart.architeuthis.remotestore.hashset.impl;
 
-import java.util.Map;
+import java.util.Collection;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
+import de.unistuttgart.architeuthis.remotestore.TransmitObject;
 import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
-import de.unistuttgart.architeuthis.remotestore.hashmap.interf.LocalHashMap;
-import de.unistuttgart.architeuthis.remotestore.hashmap.interf.RelayHashMap;
+import de.unistuttgart.architeuthis.remotestore.hashset.interf.LocalHashSet;
+import de.unistuttgart.architeuthis.remotestore.hashset.interf.RelayHashSet;
 
 /**
- * Implementiert eine Methode, die beim RelayStore für eine Map die Methode
- * <CODE>putAll</CODE> aufruft.
+ * Implementiert eine Methode, die beim RelayStore für ein Objekt die Methode
+ * <CODE>add</CODE> aufruft.
  *
  * @author Dietmar Lippold
  */
-public class PutAllProcedure implements TransmitProcedure {
+public class HashSetTransProc implements TransmitProcedure {
 
     /**
      * Lokaler RemotStore, von dem die zu übertragenden Daten stammen.
      */
-    private LocalHashMap localStore;
+    private LocalHashSet localStore;
 
     /**
      * RelayStore, an den die Daten übertragen werden sollen.
      */
-    private RelayHashMap relayStore;
+    private RelayHashSet relayStore;
 
     /**
      * Erzeugt eine Instanz.
@@ -63,24 +65,39 @@ public class PutAllProcedure implements TransmitProcedure {
      * @param relayStore  Der RelayStore, an den die Objekte übertragen
      *                    werden.
      */
-    public PutAllProcedure(LocalHashMap localStore, RelayHashMap relayStore) {
+    public HashSetTransProc(LocalHashSet localStore, RelayHashSet relayStore) {
 
         this.localStore = localStore;
         this.relayStore = relayStore;
     }
 
     /**
-     * Übertragt die übergebenen Map zur zentralen <CODE>RelayHashMap</CODE>,
-     * die dem Konstruktor übergeben wurde.
+     * Übertragt das im übergebenen Objekt enthaltene Objekt zum zentralen
+     * <CODE>RelayHashSet</CODE>, das im Konstruktor angegeben wurde.
      *
-     * @param mapObject  Die zu übertragende Map.
+     * @param transObject  Das Objekt, das das zu übertragende Objekt enthält.
      *
-     * @throws RemoteException  Bei einem RMI Problem.
+     * @throws RemoteException           Bei einem RMI Problem.
+     * @throws IllegalArgumentException  Wenn das übergebene Objekt keinen
+     *                                   zulässigen Typs besitzt.
      */
-    public void transmit(Object mapObject) throws RemoteException {
+    public void transmit(TransmitObject transObject) throws RemoteException {
 
-        Map map = (Map) mapObject;
-        relayStore.putAll(map, localStore);
+        if (transObject instanceof AddObject) {
+
+            relayStore.add((Serializable) transObject.storedObject(), localStore);
+
+        } else if (transObject instanceof AddAllObject) {
+
+            Collection collection = (Collection) transObject.storedObject();
+            relayStore.addAll(collection, localStore);
+
+        } else {
+
+            throw new IllegalArgumentException("Besitzt keinen zulässiger Typ: "
+                                               + transObject);
+
+        }
     }
 }
 

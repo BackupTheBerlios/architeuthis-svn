@@ -81,16 +81,10 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
     private RelayHashMap relayHashMap = null;
 
     /**
-     * Der <CODE>Transmitter</CODE>, an den die Argumente der Methode
-     * <CODE>put</CODE> übergeben werden.
+     * Der <CODE>Transmitter</CODE> zur Übertragung der Objekte an den
+     * RelayStore.
      */
-    private Transmitter putTransmitter = null;
-
-    /**
-     * Der <CODE>Transmitter</CODE>, an den das Argument der Methode
-     * <CODE>putAll</CODE> übergeben werden.
-     */
-    private Transmitter putAllTransmitter = null;
+    private Transmitter transmitter = null;
 
     /**
      * Gibt an, ob diese Instanz bei Verwendung eines RelayStore dessen
@@ -134,17 +128,14 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
     public void registerRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
-        PutProcedure    putProcedure;
-        PutAllProcedure putAllProcedure;
+        HashMapTransProc transmitProc;
 
         synchronized (relayStoreSyncObj) {
             if (remoteStore != null) {
                 relayHashMap = (RelayHashMap) remoteStore;
                 if (!synchronComm) {
-                    putProcedure = new PutProcedure(this, relayHashMap);
-                    putTransmitter = new Transmitter(putProcedure);
-                    putAllProcedure = new PutAllProcedure(this, relayHashMap);
-                    putAllTransmitter = new Transmitter(putAllProcedure);
+                    transmitProc = new HashMapTransProc(this, relayHashMap);
+                    transmitter = new Transmitter(transmitProc);
                 }
             }
         }
@@ -166,10 +157,8 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
             if ((remoteStore != null) && (remoteStore == relayHashMap)) {
                 relayHashMap = null;
                 if (!synchronComm) {
-                    putTransmitter.terminate();
-                    putTransmitter = null;
-                    putAllTransmitter.terminate();
-                    putAllTransmitter = null;
+                    transmitter.terminate();
+                    transmitter = null;
                 }
             }
         }
@@ -241,7 +230,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
     protected boolean storeLocal() {
 
         synchronized (relayStoreSyncObj) {
-            storeLocal = (relayHashMap == null) || !synchronComm;
+            return ((relayHashMap == null) || !synchronComm);
         }
     }
 
@@ -271,7 +260,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
                     // Das Objekt-Paar an den Transmitter zur Weiterleitung an
                     // den RelayStore und damit an die anderen RemoteHashMaps
                     // übergeben.
-                    putTransmitter.enqueue(new MapEntry(key, value));
+                    transmitter.enqueue(new PutObject(new MapEntry(key, value)));
                 }
             }
         }
@@ -321,7 +310,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
                     // Die Map an den Transmitter zur Weiterleitung an den
                     // RelayStore und damit an die anderen RemoteHashMaps
                     // übergeben.
-                    putAllTransmitter.enqueue(map);
+                    transmitter.enqueue(new PutAllObject(map));
                 }
             }
         }

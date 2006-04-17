@@ -81,16 +81,10 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     private RelayHashSet relayHashSet = null;
 
     /**
-     * Der <CODE>Transmitter</CODE>, an den die Objekte der Methode
-     * <CODE>add</CODE> übergeben werden.
+     * Der <CODE>Transmitter</CODE> zur Übertragung der Objekte an den
+     * RelayStore.
      */
-    private Transmitter addTransmitter = null;
-
-    /**
-     * Der <CODE>Transmitter</CODE>, an den die Objekte der Methode
-     * <CODE>addAll</CODE> übergeben werden.
-     */
-    private Transmitter addAllTransmitter = null;
+    private Transmitter transmitter = null;
 
     /**
      * Gibt an, ob diese Instanz bei Verwendung eines RelayStore dessen
@@ -134,17 +128,14 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     public void registerRemoteStore(RemoteStore remoteStore)
         throws RemoteException {
 
-        AddProcedure    addProcedure;
-        AddAllProcedure addAllProcedure;
+        HashSetTransProc transmitProc;
 
         synchronized (relayStoreSyncObj) {
             if (remoteStore != null) {
                 relayHashSet = (RelayHashSet) remoteStore;
                 if (!synchronComm) {
-                    addProcedure = new AddProcedure(this, relayHashSet);
-                    addTransmitter = new Transmitter(addProcedure);
-                    addAllProcedure = new AddAllProcedure(this, relayHashSet);
-                    addAllTransmitter = new Transmitter(addAllProcedure);
+                    transmitProc = new HashSetTransProc(this, relayHashSet);
+                    transmitter = new Transmitter(transmitProc);
                 }
             }
         }
@@ -166,10 +157,8 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
             if ((remoteStore != null) && (remoteStore == relayHashSet)) {
                 relayHashSet = null;
                 if (!synchronComm) {
-                    addTransmitter.terminate();
-                    addTransmitter = null;
-                    addAllTransmitter.terminate();
-                    addAllTransmitter = null;
+                    transmitter.terminate();
+                    transmitter = null;
                 }
             }
         }
@@ -240,7 +229,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     protected boolean storeLocal() {
 
         synchronized (relayStoreSyncObj) {
-            storeLocal = (relayHashSet == null) || !synchronComm;
+            return ((relayHashSet == null) || !synchronComm);
         }
     }
 
@@ -266,7 +255,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
                     // Das Objekt an den Transmitter zur Weiterleitung an den
                     // RelayStore und damit an die anderen RemoteHashSets
                     // übergeben.
-                    addTransmitter.enqueue(object);
+                    transmitter.enqueue(new AddObject(object));
                 }
             }
         }
@@ -314,7 +303,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
                     // Die Collection an den Transmitter zur Weiterleitung an
                     // den RelayStore und damit an die anderen RemoteHashSets
                     // übergeben.
-                    addAllTransmitter.enqueue(collection);
+                    transmitter.enqueue(new AddAllObject(collection));
                 }
             }
         }

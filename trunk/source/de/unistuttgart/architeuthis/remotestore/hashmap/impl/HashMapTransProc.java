@@ -1,7 +1,7 @@
 /*
- * file:        PutProcedure.java
- * created:     05.04.2005
- * last change: 12.04.2006 by Dietmar Lippold
+ * file:        HashMapTransProc.java
+ * created:     17.04.2006
+ * last change: 17.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -30,8 +30,10 @@
 
 package de.unistuttgart.architeuthis.remotestore.hashmap.impl;
 
+import java.util.Map;
 import java.rmi.RemoteException;
 
+import de.unistuttgart.architeuthis.remotestore.TransmitObject;
 import de.unistuttgart.architeuthis.remotestore.TransmitProcedure;
 import de.unistuttgart.architeuthis.remotestore.hashmap.interf.LocalHashMap;
 import de.unistuttgart.architeuthis.remotestore.hashmap.interf.RelayHashMap;
@@ -42,7 +44,7 @@ import de.unistuttgart.architeuthis.remotestore.hashmap.interf.RelayHashMap;
  *
  * @author Dietmar Lippold
  */
-public class PutProcedure implements TransmitProcedure {
+public class HashMapTransProc implements TransmitProcedure {
 
     /**
      * Lokaler RemotStore, von dem die zu übertragenden Daten stammen.
@@ -62,25 +64,39 @@ public class PutProcedure implements TransmitProcedure {
      * @param relayStore  Der RelayStore, an den die Objekte übertragen
      *                    werden.
      */
-    public PutProcedure(LocalHashMap localStore, RelayHashMap relayStore) {
+    public HashMapTransProc(LocalHashMap localStore, RelayHashMap relayStore) {
 
         this.localStore = localStore;
         this.relayStore = relayStore;
     }
 
     /**
-     * Übertragt die beiden Objekte aus dem übergebenen Objekt-Paar zur
-     * zentralen <CODE>RelayHashMap</CODE>, der dem Konstruktor übergeben
-     * wurde.
+     * Übertragt das im übergebenen Objekt enthaltene Objekt zum zentralen
+     * <CODE>RelayHashMap</CODE>, die im Konstruktor angegeben wurde.
      *
-     * @param objectPair  Das zu übertragende Objekt-Paar.
+     * @param transObject  Das Objekt, das das zu übertragende Objekt enthält.
      *
-     * @throws RemoteException  Bei einem RMI Problem.
+     * @throws RemoteException           Bei einem RMI Problem.
+     * @throws IllegalArgumentException  Wenn das übergebene Objekt keinen
+     *                                   zulässigen Typs besitzt.
      */
-    public void transmit(Object objectPair) throws RemoteException {
+    public void transmit(TransmitObject transObject) throws RemoteException {
 
-        MapEntry mapEntry = (MapEntry) objectPair;
-        relayStore.put(mapEntry.getKey(), mapEntry.getValue(), localStore);
+        if (transObject instanceof PutObject) {
+
+            MapEntry mapEntry = (MapEntry) transObject.storedObject();
+            relayStore.put(mapEntry.getKey(), mapEntry.getValue(), localStore);
+
+        } else if (transObject instanceof PutAllObject) {
+
+            relayStore.putAll((Map) transObject.storedObject(), localStore);
+
+        } else {
+
+            throw new IllegalArgumentException("Besitzt keinen zulässiger Typ: "
+                                               + transObject);
+
+        }
     }
 }
 
