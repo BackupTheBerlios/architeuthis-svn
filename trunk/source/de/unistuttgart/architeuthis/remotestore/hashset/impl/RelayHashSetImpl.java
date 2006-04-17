@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSetImpl.java
  * created:     08.02.2005
- * last change: 12.04.2006 by Dietmar Lippold
+ * last change: 17.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -103,7 +103,10 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
      *
      * @param object       Das zu speichernde Objekt.
      * @param remoteStore  Der RemoteStore, von dem das übergebene Objekt
-     *                     kommt.
+     *                     kommt und an den das Opjekt nicht weitergeleitet
+     *                     werden soll. Wenn der Wert <code>null</code> ist,
+     *                     wird der Wert auch an den aufrufenden Operative
+     *                     weitergeleitet.
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
@@ -135,7 +138,10 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
      *
      * @param collection   Die Collection der zu speichernden Objekte.
      * @param remoteStore  Der RemoteStore, von dem die übergebene Collection
-     *                     kommt.
+     *                     kommt und an den sie nicht weitergeleitet werden
+     *                     soll. Wenn der Wert <code>null</code> ist, wird die
+     *                     Collection auch an den aufrufenden Operative
+     *                     weitergeleitet.
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */

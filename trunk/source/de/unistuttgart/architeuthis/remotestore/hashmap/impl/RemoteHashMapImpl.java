@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapImpl.java
  * created:     08.02.2005
- * last change: 12.04.2006 by Dietmar Lippold
+ * last change: 17.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -230,8 +230,26 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
     }
 
     /**
+     * Ermittelt, ob Daten, die über eine Methode vom Interface
+     * <code>UserRemoteHashSet</code> übergeben wurden, lokal gespeichert
+     * werden müssen.
+     *
+     * @return  <code>true</code> genau dann, wenn Daten vom zugehörigen
+     *          Operative lokal gespeichert werden müssen, sonst
+     *          <code>false</code>.
+     */
+    protected boolean storeLocal() {
+
+        synchronized (relayStoreSyncObj) {
+            storeLocal = (relayHashMap == null) || !synchronComm;
+        }
+    }
+
+    /**
      * Überträgt die übergebenen Objekte zum RelayStore, falls dieser
-     * vorhanden ist.
+     * vorhanden ist. Die übergebenen Objekte werden genau dann wieder vom
+     * RelayStore an dieses Objekt übertragen, wenn die Kommunikation synchron
+     * ist.
      *
      * @param key    Das key-Objekt, unter dem das value-Objekt gespeichert
      *               wird.
@@ -246,8 +264,9 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
             if (relayHashMap != null) {
                 if (synchronComm) {
                     // Das Objekt-Paar direkt an den RelayStore und damit an
-                    // die anderen RemoteHashMaps übergeben.
-                    relayHashMap.put(key, value, this);
+                    // die anderen RemoteHashMaps und indirekt an diese
+                    // RemoteHashMap übergeben.
+                    relayHashMap.put(key, value, null);
                 } else {
                     // Das Objekt-Paar an den Transmitter zur Weiterleitung an
                     // den RelayStore und damit an die anderen RemoteHashMaps
@@ -274,13 +293,16 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      */
     public void put(Serializable key, Serializable value) throws RemoteException {
 
-        putLocal(key, value);
+        if (storeLocal()) {
+            putLocal(key, value);
+        }
         putRemote(key, value);
     }
 
     /**
      * Überträgt die übergebenen Map zum RelayStore, falls dieser vorhanden
-     * ist.
+     * ist. Die Map wird genau dann wieder vom RelayStore an dieses Objekt
+     * übertragen, wenn die Kommunikation synchron ist.
      *
      * @param map  Die Map, die übertragen werden soll.
      *
@@ -292,8 +314,9 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
             if (relayHashMap != null) {
                 if (synchronComm) {
                     // Die Map direkt an den RelayStore und damit an die
-                    // anderen RemoteHashMaps übergeben.
-                    relayHashMap.putAll(map, this);
+                    // anderen RemoteHashMaps und indirekt an diese
+                    // RemoteHashMap übergeben.
+                    relayHashMap.putAll(map, null);
                 } else {
                     // Die Map an den Transmitter zur Weiterleitung an den
                     // RelayStore und damit an die anderen RemoteHashMaps
@@ -318,7 +341,9 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      */
     public void putAll(Map map) throws RemoteException {
 
-        putAllLocal(map);
+        if (storeLocal()) {
+            putAllLocal(map);
+        }
         putAllRemote(map);
     }
 

@@ -134,8 +134,9 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
      * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
      * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
      * <P>
-     * Das übergebene Objekt wird nicht in der Menge der neuen Objekte
-     * gespeichert.
+     * Das übergebene Objekt wird nur dann in der Menge der neuen Objekte
+     * gespeichert, wenn es ein RelayHashSet gibt und eine synchrone
+     * Kommunikation erfolgt.
      *
      * @param object  Das zu speichernde Objekt.
      *
@@ -143,7 +144,9 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
      */
     public void add(Serializable object) throws RemoteException {
 
-        super.addLocal(object);
+        if (storeLocal()) {
+            super.addLocal(object);
+        }
         addRemote(object);
     }
 
@@ -156,8 +159,9 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
      * oder dies ein RMI-Aufruf ist und das angesprochene Storage-Objekt
      * (centralStore) auf den Dispatcher liegt.<P>
      *
-     * Die übergebenen Objekte werden nicht in der Menge der neuen Objekte
-     * gespeichert.
+     * Die übergebenen Objekte werden nur dann in der Menge der neuen Objekte
+     * gespeichertn wenn es ein RelayHashSet gibt und eine synchrone
+     * Kommunikation erfolgt.
      *
      * @param collection  Die aufzunehmenden Objekte.
      *
@@ -165,7 +169,9 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
      */
     public void addAll(Collection collection) throws RemoteException {
 
-        super.addAllLocal(collection);
+        if (storeLocal()) {
+            super.addAllLocal(collection);
+        }
         addAllRemote(collection);
     }
 

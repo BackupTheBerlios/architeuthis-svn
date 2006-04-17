@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 12.04.2006 by Dietmar Lippold
+ * last change: 17.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -229,8 +229,25 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     }
 
     /**
+     * Ermittelt, ob Daten, die über eine Methode vom Interface
+     * <code>UserRemoteHashSet</code> übergeben wurden, lokal gespeichert
+     * werden müssen.
+     *
+     * @return  <code>true</code> genau dann, wenn Daten vom zugehörigen
+     *          Operative lokal gespeichert werden müssen, sonst
+     *          <code>false</code>.
+     */
+    protected boolean storeLocal() {
+
+        synchronized (relayStoreSyncObj) {
+            storeLocal = (relayHashSet == null) || !synchronComm;
+        }
+    }
+
+    /**
      * Überträgt das übergebene Objekt zum RelayStore, falls dieser vorhanden
-     * ist.
+     * ist. Das übergebene Objekt wird genau dann wieder vom RelayStore an
+     * dieses Objekt übertragen, wenn die Kommunikation synchron ist.
      *
      * @param object  Das zu übertragende Objekt.
      *
@@ -242,8 +259,9 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
             if (relayHashSet != null) {
                 if (synchronComm) {
                     // Das Objekt direkt an den RelayStore und damit an die
-                    // anderen RemoteHashSets übergeben.
-                    relayHashSet.add(object, this);
+                    // anderen RemoteHashSets und indirekt an dieses
+                    // RemoteHashSet übergeben.
+                    relayHashSet.add(object, null);
                 } else {
                     // Das Objekt an den Transmitter zur Weiterleitung an den
                     // RelayStore und damit an die anderen RemoteHashSets
@@ -268,13 +286,16 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      */
     public void add(Serializable object) throws RemoteException {
 
-        addLocal(object);
+        if (storeLocal()) {
+            addLocal(object);
+        }
         addRemote(object);
     }
 
     /**
      * Überträgt die übergebene Collection zum RelayStore, falls dieser
-     * vorhanden ist.
+     * vorhanden ist. Die Collection wird genau dann wieder vom RelayStore an
+     * dieses Objekt übertragen, wenn die Kommunikation synchron ist.
      *
      * @param collection  Die zu übertragende Collection.
      *
@@ -286,8 +307,9 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
             if (relayHashSet != null) {
                 if (synchronComm) {
                     // Die Collection direkt an den RelayStore und damit an
-                    // die anderen RemoteHashSets übergeben.
-                    relayHashSet.addAll(collection, this);
+                    // die anderen RemoteHashSets und indirekt an dieses
+                    // RemoteHashSet übergeben.
+                    relayHashSet.addAll(collection, null);
                 } else {
                     // Die Collection an den Transmitter zur Weiterleitung an
                     // den RelayStore und damit an die anderen RemoteHashSets
@@ -313,7 +335,9 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      */
     public void addAll(Collection collection) throws RemoteException {
 
-        addAllLocal(collection);
+        if (storeLocal()) {
+            addAllLocal(collection);
+        }
         addAllRemote(collection);
     }
 

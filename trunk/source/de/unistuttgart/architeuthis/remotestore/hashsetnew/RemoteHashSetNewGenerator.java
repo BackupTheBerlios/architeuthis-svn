@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetNewGenerator.java
  * created:     12.04.2006
- * last change: 14.04.2006 by Dietmar Lippold
+ * last change: 17.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -50,7 +50,11 @@ import de.unistuttgart.architeuthis.remotestore.hashset.impl.RelayHashSetImpl;
  * RealyStore gibt, gibt es auch keine Menge der vom RealyStore neu
  * hinzugefügten Objekte bzw. ist diese Menge immer leer. Dies ist sinnvoll,
  * da die Menge dafür gedacht ist, nur durch ein Teilproblem und nicht durch
- * mehrere konkurrierend abgefragt zu werden.
+ * mehrere konkurrierend abgefragt zu werden.<P>
+ *
+ * Wenn es einen zentralen und zusätzlich dezentrale RemoteStores gibt, werden
+ * auch Objekte, die vom Operative übergeben werden, genau dann in der Menge
+ * der neuen Objekte gespeichert, wenn die Kommunikation synchron ist.
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */

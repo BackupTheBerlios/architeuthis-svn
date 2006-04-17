@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashMap.java
  * created:     08.02.2005
- * last change: 12.04.2006 by Dietmar Lippold
+ * last change: 17.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -57,7 +57,10 @@ public interface RelayHashMap extends RemoteStore {
      * @param value        Das value-Objekt, das zum key-Objekt gespeichert
      *                     wird.
      * @param remoteStore  Der RemoteStore, von dem die übergebenen Objekte
-     *                     kommen.
+     *                     kommen und an den die Opjekte nicht weitergeleitet
+     *                     werden sollen. Wenn der Wert <code>null</code> ist,
+     *                     werden die Werte auch an den aufrufenden Operative
+     *                     weitergeleitet.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
@@ -70,7 +73,10 @@ public interface RelayHashMap extends RemoteStore {
      * der das Objekt übergeben hat, weitergegeben.
      *
      * @param map          Die Map, deren Einträge gespeichert werden.
-     * @param remoteStore  Der RemoteStore, von dem die übergebene Map kommt.
+     * @param remoteStore  Der RemoteStore, von dem die übergebene Map kommt
+     *                     und an den sie nicht weitergeleitet werden soll.
+     *                     Wenn der Wert <code>null</code> ist, wird die Map
+     *                     auch an den aufrufenden Operative weitergeleitet.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
