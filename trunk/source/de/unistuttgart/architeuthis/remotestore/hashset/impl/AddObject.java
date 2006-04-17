@@ -33,7 +33,8 @@ package de.unistuttgart.architeuthis.remotestore.hashset.impl;
 import de.unistuttgart.architeuthis.remotestore.TransmitObject;
 
 /**
- * Verwaltet ein Objekt, das an die add-Prozedur übertragen werden soll.
+ * Verwaltet ein Objekt, das an die add-Methode des RelayHashSet übertragen
+ * werden soll.
  *
  * @author Dietmar Lippold
  */

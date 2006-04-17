@@ -33,7 +33,8 @@ package de.unistuttgart.architeuthis.remotestore.hashmap.impl;
 import de.unistuttgart.architeuthis.remotestore.TransmitObject;
 
 /**
- * Verwaltet ein Objekt, das an die put-Prozedur übertragen werden soll.
+ * Verwaltet ein Objekt, das an die put-Methode der RelayHashMap übertragen
+ * werden soll.
  *
  * @author Dietmar Lippold
  */
