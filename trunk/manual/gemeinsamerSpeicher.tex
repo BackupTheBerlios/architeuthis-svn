@@ -39,11 +39,11 @@ folgendes zu tun:
        implementieren.
 
 \item  Es muß eine konkrete Klasse erstellt werden, die das Interface
-       \texttt{RemoteStore} implementiert.
+       \texttt{RemoteStore} implementiert. In der Regel wird diese Klasse
+       durch ein zusätzliches Interface beschrieben.
 
 \item  Es muß eine konkrete Klasse erstellt werden, die das Interface\\
-       \texttt{RemoteStoreGenerator} implementiert. In der Regel wird diese
-       Klasse durch ein zusätzliches Interface beschrieben.
+       \texttt{RemoteStoreGenerator} implementiert.
 \end{itemize}
 
 Im Package \texttt{de.unistuttgart.architeuthis.remotestore} sind schon
@@ -60,21 +60,21 @@ folgende drei Möglichkeiten sinnvoll:
        erfolgt \emph{synchron}.
 
 \item  Es ist ein zentraler Speicher und zusätzlich auf jedem Operation ein
-       Speicher vorhanden. Das Lesen der Teilprobleme aus dem Speicher
-       erfolgt dabei \emph{asynchron}. Für das Schreiben gibt es beide
-       Möglicheiten.
+       dezentraler Speicher vorhanden. Das Lesen der Teilprobleme aus dem
+       (dezentralen) Speicher erfolgt dabei \emph{asynchron}. Für das
+       Schreiben gibt es beide Möglicheiten.
 
        \begin{itemize}
-       \item  Das Schreiben in den Speicher erfolgt \emph{synchron} (der
-              Aufruf einer Methode zum Schreiben durch ein Teilproblem ist
-              erst abgeschlossen, wenn die Methode auch bei allen anderen
-              Speichern aufgerufen wurde).
+       \item  Das Schreiben in den (zentralen) Speicher erfolgt
+              \emph{synchron} (der Aufruf einer Methode zum Schreiben durch
+              ein Teilproblem ist erst abgeschlossen, wenn die Methode auch
+              bei allen anderen Speichern aufgerufen wurde).
 
-       \item  Das Schreiben in den Speicher erfolgt \emph{asynchron} (der
-              Aufruf einer Methode zum Schreiben durch ein Teilproblem ist
-              sofort abgeschlossen und die Methode wird bei allen anderen
-              Speichern anschließend. d.h.\ nebenläufig zur weiteren
-              Berechnung des Teilproblems, aufgerufen).
+       \item  Das Schreiben in den (zentralen) Speicher erfolgt
+              \emph{asynchron} (der Aufruf einer Methode zum Schreiben durch
+              ein Teilproblem ist sofort abgeschlossen und die Methode wird
+              bei allen anderen Speichern anschließend. d.h.\ nebenläufig
+              zur weiteren Berechnung des Teilproblems, aufgerufen).
        \end{itemize}
 \end{itemize}
 
@@ -84,7 +84,7 @@ Teilprobleme identisch ist. Ein asynchrones Lesen bzw.\ Schreiben ist jedoch
 in der Regel effizienter.
 
 Es ist jedoch zu beachten, daß die Reihenfolge des Aufrufens von Methoden
-des Speichers durch die Teilprobleme aber in allen Fällen unbestimmt ist (so
+des Speichers durch die Teilprobleme in allen Fällen unbestimmt ist (so
 wie die Reihenfolge des Eintreffens von Teillösungen beim Problem unbestimmt
 ist).
 
@@ -92,9 +92,9 @@ In jedem Fall sollte ein gemeinsamer Speicher aber folgende Bedingungen
 sicherstellen:
 
 \begin{itemize}
-\item  Wenn ein Teilproblem ein Objekt in den Speicher schreibt und
-       dieses Teilproblem anschließend aus dem Speicher ließt, sollte das
-       vorherige Schreiben schon erfolgt sein.
+\item  Wenn ein Teilproblem ein Objekt in den Speicher schreibt und dieses
+       Teilproblem anschließend aus dem Speicher ließt, sollte das vorherige
+       Schreiben schon erfolgt sein.
 
 \item  Mehrere Aufrufe zur Veränderung des Speichers durch ein Teilproblem
        sollten in den Speicher für alle anderen Teilprobleme in der gleichen
@@ -109,5 +109,55 @@ Interface \texttt{RemoteStoreGenerator} implementiert, angegeben.
 
 \subsection{Hinweise für den Entwickler}
 
-Text zu ergänzen.
+Die Entwicklung eines Remote-Store soll anhand des Bespiels vom Package
+\texttt{de...remotestore.hashset} beschrieben werden. Die jeweiligen
+Klassen aus diesem Package werden nachfolgend in Klammern angegeben.
+
+Im Haupt-Package sollte nur ein Interface zur Benutzung durch das Teilproblem
+(\texttt{UserRemoteHashSet}) und die Implementierung von
+\texttt{RemoteStoreGenerator} (\texttt{RemoteHashSetGenerator}) enthalten
+sein. Die weiteren Interfaces und die konkreten Klassen sollten sich in
+Unter-Packages befinden.
+
+Es sind zwei weitere Interfaces sinnvoll, eines für den zentralen Speicher
+mit den Methoden zum Aufruf durch den dezentalen Speicher
+(\texttt{interf.RelayHashSet}) und eines für den dezentralen Speicher mit den
+Methoden zum Aufruf durch den zentalen Speicher (\texttt{interf.LocalHashSet}).
+Entsprechend werden die Implementierungen der Interfaces im folgenden als
+Relay-Store und Local-Store bezeichnet.
+
+Zum asynchronen Übertragen von Daten vom Local-Store zum Relay-Store
+sind einige Hilfsklassen vorhanden. Die Übertragung selbst kann durch
+die Klasse \texttt{de...remotestore.Transmitter} erfolgen. Für jede beim
+Relay-Store aufzurufende Methode ist eine Unterklasse von
+\texttt{de...remotestore.TransmitObject} zu erzeugen. Die zu übertragenden
+Objekte sind an \texttt{Transmitter}, der sie seinerseits an eine Instanz
+von \texttt{de...remotestore.TransmitProcedure} (im Beispiel
+\texttt{HashSetTransProc}) übergibt. In dieser
+Prozedur können für die Objekte entsprechend ihrer Klasse die jeweils
+zugehörige Methode aufgerufen werden. Wenn einer Methode mehrere Objekte
+zu übergeben sind, sind diese vorher in der Instanz einer neuen Klasse
+zusammenzufassen (wie in \texttt{de...remotestore.hashmap.impl.MapEntry}).
+
+In den Methoden vom Relay-Store werden die entsprechenden Methoden aller
+Local-Stores aufgerufen. Bei der asynchronen Kommunikation braucht jedoch
+die Methode desjenigen Local-Store, der die Methode beim Relay-Store
+aufgerufen hat, nicht aufgerufen zu werden. Der Local-Store muß die
+Daten dann selbst lokal speichern.
+
+Im Remote-Store (\texttt{RemoteHashSetImpl}), der sowohl das Interface für
+das Teilproblem wie das Interface vom Local-Store implementiert, sind
+entsprechend der beiden Aufgaben der Klasse (Interaktion mit dem Teilproblem
+und Interaktion mit dem Relay-Store) zwei Arten der Synchronisation
+erforderlich. Die eine dient zur Synchronisation des Zugriffs auf die
+eigentlichen Daten der Datensturktur (im Beispiel auf das Attribut
+\texttt{hashSet}), die andere dient zur Synchronisation des Zugriffs auf
+den Relay-Store bzw.\ auf das Attribut, in dem er gespeichert ist
+(\texttt{relayHashSet}). Die erste Art kann durch die Sychronisation der
+jeweiligen Methode (also auf das Objekts \texttt{this}) geschehen,
+für die andere sollte ein extra Objekt angelegt werden (im Beispiel
+\texttt{relayStoreSyncObj}). Zur Vermeidung von dealocks ist wichtig, daß
+die beiden Arten der Synchronisation nicht geschachtelt werden, d.h.\ an
+keiner Stelle eine Synchronisation (ein Lock) sowohl auf \texttt{this} wie
+auf das extra Objekt besteht.
 
