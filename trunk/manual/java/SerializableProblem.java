@@ -1,12 +1,10 @@
 /*
- * file:        PartialProblem.java
- * created:     <???>
+ * file:        SerializableProblem.java
+ * created:     18.02.2004
  * last change: 19.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
- *              Achim Linke,       achim81@gmx.de
- *              Ralf Kible,        ralf_kible@gmx.de
- *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
+ *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
  *
  * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
  * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
@@ -37,10 +35,11 @@ package de.unistuttgart.architeuthis.userinterfaces.develop;
 import java.io.Serializable;
 
 /**
- * Muss vom der Teilproblem-Klasse implementiert werden.
+ * Definiert ein serialisierbares Problem. Dessen Instanzen können vom
+ * Problem-Übermittler zum Dispatcher gesendet werden.
  *
- * @author Jürgen Heit
+ * @author Andreas Heydlauff
  */
-public interface PartialProblem extends Serializable {
+public interface SerializableProblem extends Problem, Serializable {
 }
 
