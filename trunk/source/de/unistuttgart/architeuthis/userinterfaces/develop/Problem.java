@@ -1,11 +1,17 @@
 /*
  * file:        Problem.java
  * created:     <???>
- * last change: 06.04.2006 by Dietmar Lippold
+ * last change: 19.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
+ *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -23,12 +29,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
@@ -37,33 +37,32 @@ package de.unistuttgart.architeuthis.userinterfaces.develop;
 import java.io.Serializable;
 
 /**
- * Muss von der Problem-Klasse implementiert werden.
- * Die einzelnen Methoden müssen nicht synchronisiert werden, die
- * Synchronisation wird vollständig auf dem ComputeManager vorgenommen.
+ * Muss von der Problem-Klasse implementiert werden. Die einzelnen Methoden
+ * müssen nicht synchronisiert werden, die Synchronisation wird vollständig
+ * auf dem ComputeManager vorgenommen.
  *
  * @author Jürgen Heit, Dietmar Lippold
  */
 public interface Problem {
 
     /**
-     * Teilt dem Problem die gewünschte Anzahl zu generierender Teilprobleme
-     * mit. Diese Zahl kann, abhängig von der Netzarchitektur in dem das
-     * Compute-System betrieben wird, von der Anzahl der verfügbaren Operatives
-     * abhängen.
+     * Liefert ein neues Teilproblem. Die übergebene, vorgeschlagene Anzahl
+     * der insgesamt zu erzeugenden Teilprobleme hängt von der Anzahl der
+     * verfügbaren Operatives ab.
      *
-     * @param number  gewünschte Gesamtanzahl der zu generierenden
-     *                Teilprobleme
-     * @return  genau ein Teilproblem. Dies ist unabhängig von der Gesamtanzahl
-     *          der generierten Teilprobleme. <code>null</code> falls
-     *          kein Teilproblem mehr ausgegeben werden soll
+     * @param number  Vorgeschlagene Gesamtanzahl der zu erzeugenden
+     *                Teilprobleme.
+     *
+     * @return  Genau ein Teilproblem oder <code>null</code>, falls derzeit
+     *          kein neues Teilproblem erzeugt werden soll.
      */
     public PartialProblem getPartialProblem(long number);
 
     /**
-     * Diese Methode wird vom ComputeManager aufgerufen um dem eigentlichen
-     * Problem-Objekt eine Teillösung zu übermitteln.
+     * Nimmt eine Teillösung entgegen, um daraus zusammen mit den anderen
+     * Teillösungen eine Gesamtlösung zu erzeugen.
      *
-     * @param parSol   Teillösung zur Übergabe an das Problem-Objekt.
+     * @param parSol   Die zum Teilproblem ermittelte Teillösung.
      * @param parProb  Referenz auf das Teilproblem, zu dem die Teillösung
      *                 ermittelt wurde.
      */
@@ -71,16 +70,14 @@ public interface Problem {
                                        PartialProblem parProb);
 
     /**
-     * Gibt die Gesamtlösung zurück.<p>
-     * Nachdem eine Teillösung an den ComputeManager gegeben wurde, wird das
-     * Problem nach einer Gesamtlösung gefragt. Falls diese schon existiert wird
-     * die Berechnung der übrigen Teilprobleme abgebrochen. Dies sollte
-     * spätestens der Fall sein, nachdem die letzte Teillösung zurückgegeben
-     * wurde.
+     * Liefert die Gesamtlösung, falls diese schon existiert. In dem Fall
+     * wird die Berechnung der übrigen Teilprobleme vom ComputeManager
+     * abgebrochen. Die Gesamtlösung muß spätestens geliefert werden, wenn die
+     * letzte Teillösung zurückgegeben wurde.
      *
-     * @return Gesamtlösung, die an den Problem-übermittler geschickt wird.
-     *         <code>null</code> falls das Gesamtproblem noch nicht
-     *         zusammengefügt werden kann.
+     * @return  Die Gesamtlösung, die an den Problem-Übermittler geschickt
+     *          wird oder <code>null</code>, falls die Gesamtlösung noch nicht
+     *          ermittelt werden kann.
      */
     public Serializable getSolution();
 }

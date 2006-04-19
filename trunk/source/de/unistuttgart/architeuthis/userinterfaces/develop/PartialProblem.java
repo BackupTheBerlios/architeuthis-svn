@@ -1,12 +1,17 @@
 /*
  * file:        PartialProblem.java
  * created:     <???>
- * last change: 08.02.2005 by Michael Wohlfart
+ * last change: 19.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -24,25 +29,12 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
-// letzte Änderung:
-//
-// die compute() Methode wurde auf die beiden interfaces
-// CommunicationPartialProblem und NonCommPartialProblem
-// aufgeteil
-//
-//
+
 package de.unistuttgart.architeuthis.userinterfaces.develop;
 
 import java.io.Serializable;
-
 
 /**
  * Muss vom der Teilproblem-Klasse implementiert werden.
@@ -50,5 +42,5 @@ import java.io.Serializable;
  * @author Jürgen Heit
  */
 public interface PartialProblem extends Serializable {
-
 }
+
