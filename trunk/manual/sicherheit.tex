@@ -1,0 +1,75 @@
+%% Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+%% Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+%% Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+%% entwickelt.
+
+
+\chapter{Sicherheit}
+\label{sicherh}
+\section{Wichtiger Hinweis}
+Bei Benutzung des Compute-Systems muss man sich dringend vor Augen führen,
+dass man explizit anderen Benutzern erlaubt, Programme auf dem eigenen 
+Dispatcher-Rechner und den Operative-Rechnern auszuführen. Mit der
+folgenden  Massnahme ist es jedoch anderen Benutzern nicht möglich,
+schädlichen Code  auszuführen. Dies gilt natürlich nur dann, falls die
+policy-Dateien und die  Security-Manager korrekt eingebunden werden.
+
+\section{Benutzung der policy-Dateien}
+Durch die Angabe von {\tt -Djava.security.policy=<policy-Datei>} wird die 
+Java Virtual Machine dazu veranlasst, den verwendeten Security-Manager 
+entsprechend den Regeln in der policy-Datei zu konfigurieren. Die 
+policy-Datei muss dazu frei zugänglich sein, darf sich also nicht in  einer
+jar-Datei mit den Klassen befinden. Deshalb ist der Pfad relativ oder
+absolut anzugeben.
+
+\section{Die policy-Dateien}
+Um eine möglichst große Sicherheit zu gewährleisten, werden in allen Teilen
+des Systems Security-Manager verwendet (für nähere Informationen siehe bitte
+Java-API-Dokumentation). Damit die einzelnen Programm-Teile dann nur die
+nötigsten Rechte auf den ausführenden Computern erhalten, wurden die
+policy-Dateien entwickelt. Außerdem bietet dieses Konzept den Vorteil, dass
+jeder Benutzer in Klartext (zumindest beinahe) die Rechte einsehen kann, die
+jedes einzelne Java-Programm hat, indem er direkt die policy-Dateien editiert.
+Welche policy-Dateien im Einzelnen zu verwenden sind, findet sich bei den
+Kapiteln zu den jeweiligen Programmteilen.
+\par Wichtige Einschränkungen in den policy-Dateien sind:
+\begin{itemize}
+\item Kein Zugriff auf das Dateisystem (außer Problem-Übermittler).
+\item Kein Zugriff auf die Systemeigenschaften.
+\item Kein Zugriff auf die Security-Manager.
+\end{itemize}
+\par Erlaubt ist standard-mäßig jedoch:
+\begin{itemize}
+\item Jeglicher Netzwerkverkehr.
+\end{itemize}
+Für das Benutzen eines neuen RMIClassLoaderSpi für den Dispatcher und
+eventuell für den Operative wird zusätzlich benötigt:
+\begin{itemize}
+\item Erstellen und Benutzen von eigenen ClassLoadern.
+\item Zugriff auf die RMI-Codebase.
+\item Zugriff auf Sockets, um den Socket zum Laden von Klassen zu setzen.
+\end{itemize}
+\par Die weiteren Einstellungen können direkt aus den policy-Dateien abgelesen
+werden. Die oben genannten Einschränkungen können natürlich aufgehoben werden,
+falls dies für ein Problem von Bedeutung ist. Möglich ist z.B. auch, nur
+gewissen signierten Java-Klassen weitere Rechte zu geben. Dazu sei jedoch auf
+die Dokumentation von Sun verwiesen.
+
+\subsection{Höhere Sicherheit}
+Die policy-Dateien können an einigen Stellen weiter eingeschränkt werden. So
+kann auf dem Operative beispielsweise nur Netzwerk-Verkehr zu einem
+bestimmten Dispatcher erlaubt werden. Um diese weiteren Einstellungen
+vorzunehmen wird  jedoch empfohlen, die policy-Dateien direkt zu editieren,
+und die dortigen  Kommentare zu lesen.
+
+\subsection{Sicherheit für den Benutzer}
+Da sich beliebige Operatives an das Compute-System zur Berechnung von
+Teilproblemen anmelden dürfen, wäre es auch denkbar, dass die Ergebnisse
+dadurch verfälscht werden, dass gehackte Operatives mutwillig falsche
+Ergebnisse zurückliefern. Dies läßt sich beispielsweise dadurch verhindern,
+dass man in der policy-Datei des Dispatchers nur gewissen Rechnern das
+Betreiben eines Operatives erlaubt, indem man zu anderen Rechnern die
+Netzwerkverbindungen untersagt. Beispiele dazu finden sich direkt in der
+Datei {\tt dispatcher.pol} oder in der Java API Dokumentation unter
+{\tt java.net.Socket\-Permission}.
+
