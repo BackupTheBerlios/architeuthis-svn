@@ -66,7 +66,7 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
 
 \subsection{Benutzer Stufe}
 
-\paragraph*{Problem-Paket}\label{probpak}
+\textbf{Problem-Paket}\label{probpak}
   steht für folgende Java-Klassen:
 \begin{enumerate}
     \item {\em Problem}
@@ -74,12 +74,12 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
     \item {\em PartialSolution (Teillösung)}
 \end{enumerate}
 
-\paragraph*{Benutzer}\label{benutzer}
+\textbf{Benutzer}\label{benutzer}
     startet ein Anwendungsprogramm des
     \hyperref[compsys]{Compute-Systems}. Er ist im Normalfall auch derjenige,
     der das {\em Problem-Paket} implementiert hat.
 
-\paragraph*{Testumgebung}\label{testumg}
+\textbf{Testumgebung}\label{testumg}
     stellt Tests zur Überprüfung der Funktion und zur Messung der
     Performance des \hyperref[compsys]{Compute-Systems} bereit. Für
     letzteres kann ein {\em Problem} jeweils auf dem
@@ -89,10 +89,10 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
 
 \subsection{Dispatcher Stufe}
 
-\paragraph*{Administrator}\label{admin}
+\textbf{Administrator}\label{admin}
     startet den Dispatcher mit der Java-Klasse {\tt ComputeManagerImpl}.
 
-\paragraph*{Problem}\label{prob}
+\textbf{Problem}\label{prob}
     bezeichnet eine Java-Klasse, die das Interface {\em Problem}
     implementiert und so mit Hilfe des \hyperref[compsys]{Compute-Systems}
     eine Berechnung vornimmt. Das Interface erfordert, dass die Java-Klasse
@@ -100,7 +100,7 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
     die zugehörigen {\em Teillösungen} wieder zusammenfassen kann, um daraus
     die {\em Gesamtlösung} zu erstellen.
 
-\paragraph*{Gesamtlösung}\label{gesl"os}
+\textbf{Gesamtlösung}\label{gesl"os}
     wird vom {\em Problem} erzeugt,  nachdem alle notwendigen
     {\em Teilprobleme} berechnet worden sind. Die Gesamtlösung muss ein
     {\em Serializable-Objekt} sein.
@@ -108,18 +108,18 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
 
 \subsection{Operative Stufe}
 
-\paragraph*{Operative-Bereitsteller}\label{clber}
+\textbf{Operative-Bereitsteller}\label{clber}
     startet einen Operative. Da mehere Operatives in einem Compute-System 
     arbeiten können, handelt es sich bei den Operative-Bereitstellern
     ebenfalls um mehrere Personen (die aber nicht notwendig verschieden sein
     müssen).
 
-\paragraph*{Teilproblem (PartialProblem)}\label{teilprob}
+\textbf{Teilproblem (PartialProblem)}\label{teilprob}
     ist ein von einem {\em Problem} erzeugtes Objekt, das von einem
     \hyperref[compclie]{Operative} verarbeitet werden kann, indem es das
     Interface {\em PartialProblem} implementiert.
 
-\paragraph*{Teillösung (PartialSolution)}\label{teillos}
+\textbf{Teillösung (PartialSolution)}\label{teillos}
     ist ein von einem {\em Teilproblem} erzeugtes Objekt, das dem {\em
     Problem} zurückgegeben wird. Die Klasse muss {\em Serializable}
     implementieren.
@@ -128,7 +128,7 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
 \section{Compute-System Ebene}
 
 
-\paragraph*{Compute-System}\label{compsys}
+\textbf{Compute-System}\label{compsys}
     bezeichnet die Gesamtheit aller Komponenten, die zur Berechnung eines
     parallelisierten \hyperref[prob]{Problems} benötigt werden, also den
     {\em Problem-Übermittler}, den {\em Dispatcher} und die {\em Operatives}.
@@ -136,14 +136,14 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
 
 \subsection{Benutzer Stufe}
 
-\paragraph*{Problem-Übermittler (ProblemTransmitter)}\label{probueb}
+\textbf{Problem-Übermittler (ProblemTransmitter)}\label{probueb}
 \label{anwpr}
     ist die Software-Komponente, die Kontakt zum {\em Dispatcher} herstellt
     und das Übertragen des \hyperref[prob]{Problems} vom
     \hyperref[benutzer]{Benutzer} ermöglicht. Die zugehörigen Klassen sind
     \emph{ProblemTransmitterImpl} und \emph{ProblemComputation}.
 
-\paragraph*{Statistik-Anzeige},
+\textbf{Statistik-Anzeige}
     stellt dem Benutzer aktuelle Informationen zum Compute-Systems insgesamt
     (\texttt{Systems-Statistik}) und zu seinem \hyperref[prob]{Problem}
     (\texttt{Problem-Statistik}) bereit. Die zugehörigen Klassen sind
@@ -154,24 +154,24 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
 \subsection{Dispatcher Stufe}
 
 
-\paragraph*{Dispatcher}\label{compserv}
+\textbf{Dispatcher}\label{compserv}
     besteht aus drei Komponenten: Dem {\em Compute-Manager}, dem
     \emph{Prob\-lem-Manager} und der {\em Statistik}. Er ist das Herzst"uck
     des {\em Compute-Systems}. Er wird durch den
     \hyperref[admin]{\em Administrator} auf dem
     \hyperref[servrech]{\em Dispatcher-Rechner} gestartet.
 
-\paragraph*{Problem-Manager}\label{problman}
+\textbf{Problem-Manager}\label{problman}
     bezeichnet den Teil des {\em Dispatchers}, der sich um die Verwaltung
     der \hyperref[prob]{Probleme} und \hyperref[teilprob]{Teilprobleme}
     k"ummert, da dies bei mehreren {\em Problemen} notwendig ist.
 
-\paragraph*{Compute-Manager}\label{compman}
+\textbf{Compute-Manager}\label{compman}
     bezeichnet den Teil des {\em Dispatchers}, der sich um die Verwaltung
     der {\em Operatives} k"ummert und die Verteilung der
     \hyperref[teilprob]{Teilprobleme} "ubernimmt.
 
-\paragraph*{Statistik}\label{stat}
+\textbf{Statistik}\label{stat}
     bezeichnet den Teil des {\em Dispatchers}, der die  statistischen Daten
     des {\em Compute-Systems} verwaltet. 
 
@@ -179,7 +179,7 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
 \subsection{Operative Stufe}
 
 
-\paragraph*{Operative}\label{compclie}
+\textbf{Operative}\label{compclie}
     bekommt von dem {\em Compute-Manager} genau ein
     \hyperref[teilprob]{Teilproblem} und berechnet dieses. Die
     \hyperref[teillos]{Teillösung} schickt er dann wieder an ihn zurück.
@@ -194,23 +194,23 @@ gleichzeitig {\em Dispatcher-Rechner} und {\em Operative-Rechner} sein).
 
 \subsection{Benutzer Stufe}
 
-\paragraph*{Benutzer Rechner}\label{benrech}
+\textbf{Benutzer Rechner}\label{benrech}
   startet die Kommunikation zum \hyperref[compsys]{Compute-System}.
 
-\paragraph*{Web-Server}\label{weserver}
+\textbf{Web-Server}\label{weserver}
     ist nötig, damit das \hyperref[compsys]{Compute-System} das
     \hyperref[probpak]{Problem-Paket}  laden kann.
 
 
 \subsection{Dispatcher Stufe}
 
-\paragraph*{Dispatcher Rechner}\label{servrech}
+\textbf{Dispatcher Rechner}\label{servrech}
   stellt die Hardware für den \hyperref[compsys]{Dispatcher} zur Verfügung.
 
 
 \subsection{Operative Stufe}
 
-\paragraph*{Operative Rechner}\label{clierech} 
+\textbf{Operative Rechner}\label{clierech} 
   ist mit dem {\em Dispatcher-Rechner} verbunden. Auf ihm laufen die
   eigentlichen Berechnungen ab.
 
