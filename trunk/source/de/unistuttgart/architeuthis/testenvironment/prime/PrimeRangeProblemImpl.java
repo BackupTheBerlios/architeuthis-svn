@@ -1,12 +1,17 @@
 /*
  * file:        PrimeRangeProblemImpl.java
  * created:     <???>
- * last change: 06.04.2006 by Dietmar Lippold
+ * last change: 20.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -24,11 +29,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
@@ -45,7 +45,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 
 /**
  * Mit dieser Klasse können entsprechend dem Interface <code>Problem</code>
- * PrimeNumbers innerhalb eines Zahlenbereichs verteilt berechnet werden.
+ * Primzahlen innerhalb eines Zahlenbereichs verteilt berechnet werden.
  *
  * @author Ralf Kible, Achim Linke, Dietmar Lippold
  */
@@ -60,14 +60,14 @@ public class PrimeRangeProblemImpl implements SerializableProblem {
      * Speichert, wieviele Probleme bisher verarbeitet wurden.
      */
     private long probsProcessed = 0;
-    
+
     /**
-     * Die kleinste Zahl, ab der PrimeNumbers gesucht werden.
+     * Die kleinste Zahl, ab der Primzahlen gesucht werden.
      */
     private long minNumber = 200000;
 
     /**
-     * Die größte Zahl, bis zu der PrimeNumbers gesucht werden.
+     * Die größte Zahl, bis zu der Primzahlen gesucht werden.
      */
     private long maxNumber = 201000;
 
@@ -82,14 +82,14 @@ public class PrimeRangeProblemImpl implements SerializableProblem {
     private HashMap solutions = new HashMap();
 
     /**
-     * Liste, die die bisher eingetroffenen PrimeNumbers hält.
+     * Liste, die die bisher eingetroffenen Primzahlen hält.
      */
     private ArrayList finalSolution = new ArrayList();
 
     /**
-     * Speichert, ob die Methode <code>getProblem()</code> zum ersten Mal
-     * aufgerufen wurde. Falls das der Fall ist, werden zuerst Teilprobleme
-     * generiert.
+     * Speichert, ob die Methode <code>getPartialProblem()</code> zum ersten
+     * Mal aufgerufen wurde. Falls das der Fall ist, werden zuerst
+     * Teilprobleme generiert.
      */
     private boolean firstCall = true;
 
@@ -108,8 +108,8 @@ public class PrimeRangeProblemImpl implements SerializableProblem {
      * Konstruktor, der dem Problem die richtigen Grenzen für die
      * Primzahl-Bestimmung zuweist.
      *
-     * @param minWert  kleinste Zahl, ab der PrimeNumbers gesucht werden.
-     * @param maxWert  größte Zahl, bis zu der PrimeNumbers gesucht werden.
+     * @param minWert  Kleinste Zahl, ab der Primzahlen gesucht werden.
+     * @param maxWert  Größte Zahl, bis zu der Primzahlen gesucht werden.
      */
     public PrimeRangeProblemImpl(Long minWert, Long maxWert) {
         minNumber = minWert.longValue();
@@ -120,19 +120,21 @@ public class PrimeRangeProblemImpl implements SerializableProblem {
      * Liefert auf Anfrage vom ProblemManager ein Teilproblem zurück.
      * Beim ersten Aufruf werden außerdem die Teilprobleme generiert.
      *
-     * @param suggestedPartProbs  Vom ProblemManager erbetene Anzahl
-     *                            bereitzuhaltender Teilprobleme
+     * @param suggestedParProbs  Vom ProblemManager vorgeschlagene Anzahl
+     *                           bereitzuhaltender Teilprobleme.
      *
      * @return  Neues Teilproblem zur Berechnung.
      */
-    public PartialProblem getPartialProblem(long suggestedPartProbs) {
+    public PartialProblem getPartialProblem(long suggestedParProbs) {
+
         // Erster Aufruf? Falls ja, dann Teilprobleme generieren.
         if (firstCall) {
             firstCall = false;
 
             // Festlegen der Bereiche für die Teilprobleme
-            long schrittweite = (maxNumber - minNumber + suggestedPartProbs - 1)
-                                / suggestedPartProbs;
+            long schrittweite = (maxNumber - minNumber + suggestedParProbs - 1)
+                                / suggestedParProbs;
+
             // Beginn des aktuellen Teilbereichs
             long current = minNumber;
 
@@ -148,10 +150,13 @@ public class PrimeRangeProblemImpl implements SerializableProblem {
             partialProblems.addLast(
                 new PrimePartialProblemImpl(current, maxNumber));
 
-            // Nun noch die Anzahl der gesamt generierten Teilprobleme sichern
+            // Nun noch die Anzahl der insgesamt generierten Teilprobleme
+            // sichern.
             probsGenerated = partialProblems.size();
         }
-        // Dieser Teil wird immer ausgeführt, er liefert ein Teilproblem zurück
+
+        // Dieser Teil wird immer ausgeführt, er liefert ein Teilproblem
+        // zurück.
         try {
             PartialProblem p = (PartialProblem) partialProblems.getFirst();
             partialProblems.removeFirst();
@@ -186,28 +191,32 @@ public class PrimeRangeProblemImpl implements SerializableProblem {
             // soll, wird aus der solutions-HashMap entnommen
             ArrayList partialSolutionList = (ArrayList)
                     solutions.get(dispensedProblems.getFirst());
-            // Die darin enthaltenen PrimeNumbers werden an die Lösung angefügt.
+
+            // Die darin enthaltenen Primzahlen werden an die Lösung angefügt.
             finalSolution.addAll(partialSolutionList);
+
             // Die Anzahl der verarbeiteten Probleme wird hochgesetzt.
             probsProcessed++;
+
             // Nächste Teillösung suchen
             dispensedProblems.removeFirst();
         }
-
     }
 
     /**
      * Liefert die Gesamtlösung des Problems zurück, oder <code>null</code>,
      * falls diese noch nicht bekannt ist.
      *
-     * @return Die Gesamtlösung.
+     * @return  Die Gesamtlösung.
      */
     public Serializable getSolution() {
+
         // Wenn bereits alle generierten Probleme verarbeitet wurden:
         if (probsGenerated == probsProcessed) {
             return finalSolution;
+        } else {
+            return null;
         }
-        return null;
     }
 }
 

@@ -1,11 +1,16 @@
 /*
  * file:        PrimePartialProblemImpl.java
  * created:     <???>
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 20.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -23,11 +28,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
@@ -36,7 +36,6 @@ package de.unistuttgart.architeuthis.testenvironment.prime;
 import de.unistuttgart.architeuthis.testenvironment.PrimeNumbers;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
-import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 
 /**
@@ -48,22 +47,20 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 public class PrimePartialProblemImpl implements NonCommPartialProblem {
 
     /**
-     * Untere Grenze, ab der PrimeNumbers gesucht werden
+     * Untere Grenze, ab der Primzahlen gesucht werden
      */
-    private long minWert = 0;
+    private long minWert;
 
     /**
-     * Obere Grenze, bis zu welcher PrimeNumbers gesucht werden
+     * Obere Grenze, bis zu welcher Primzahlen gesucht werden
      */
-    private long maxWert = 0;
+    private long maxWert;
 
     /**
-     * Zu verwendender Standard-Konstruktor, der alle wichtigen Parameter
-     * zuweist.
+     * Erzeugt zum übergebenen Intervall eine neue Instanz.
      *
-     * @param min  Ab hier werden PrimeNumbers gesucht.
-     * @param max  Bis hier werden PrimeNumbers gesucht.
-     * @param num  interne Verwaltungsnummer.
+     * @param min  Ab hier werden Primzahlen gesucht.
+     * @param max  Bis hier werden Primzahlen gesucht.
      */
     public PrimePartialProblemImpl(long min, long max) {
         minWert = min;
@@ -71,20 +68,20 @@ public class PrimePartialProblemImpl implements NonCommPartialProblem {
     }
 
     /**
-     * Berechnet alle PrimeNumbers von <code>min</code> bis <code>max</code> und
-     * liefert die Lösung in Form eines <code>PartialSolution</code> Objekts
-     * zurück. Die Nummer des <code>PartialProblems</code> wird in die Lösung
-     * übernommen. Intern wird ausschließlich die Methode
-     * <code>primzahlTeilbereich</code> der Klasse <code>PrimeNumbers</code>
-     * benutzt.
+     * Berechnet alle Primzahlen aus dem Intervall, das dem Konstruktor
+     * übergeben wurde, und liefert die Lösung in Form eines
+     * <code>PartialSolution</code> Objekts zurück. Intern wird ausschließlich
+     * die Methode <code>primzahlTeilbereich</code> der Klasse
+     * <code>PrimeNumbers</code> benutzt.
      *
-     * @return die berechnete Teillösung.
+     * @return  Die berechnete Teillösung.
      *
-     * @throws ProblemComputeException Falls ein Fehler bei der Berechnung auftritt
+     * @throws ProblemComputeException  Falls ein Fehler bei der Berechnung
+     *                                  auftritt.
      */
     public PartialSolution compute() throws ProblemComputeException {
         return new PrimePartialSolutionImpl(
             PrimeNumbers.primzahlTeilbereich(minWert, maxWert));
     }
-
 }
+

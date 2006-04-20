@@ -7,6 +7,11 @@
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
+ *
  *
  * This file is part of Architeuthis.
  *
@@ -23,11 +28,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
@@ -47,7 +47,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 public class PrimePartialSolutionImpl implements PartialSolution {
 
     /**
-     * Enthält alle PrimeNumbers in einem gewissen Bereich, der von
+     * Enthält alle Primzahlen in einem gewissen Bereich, der von
      * <code>Problem</code> anhand der Nummer <code>number</code> festgestellt
      * werden kann.
      */
@@ -57,22 +57,22 @@ public class PrimePartialSolutionImpl implements PartialSolution {
      * Standard-Konstruktor, package-local, da er nur von
      * <code>RandomPartialProblemImpl</code> verwendet werden muss.
      *
-     * @param list  Liste von PrimeNumbers.
-     * @param num   Identifikationsnummer.
+     * @param list  Liste von Primzahlen.
      */
     PrimePartialSolutionImpl(ArrayList list) {
         solution = list;
     }
 
     /**
-     * Liefert eine Liste von PrimeNumbers, die noch von
+     * Liefert eine Liste von Primzahlen, die noch von
      * <code>PrimeSequenceProblemImpl</code> weiterverarbeitet werden muss.
      * Der Zugriff ist package-local, da die Methode nur von
      * <code>PrimeSequenceProblemImpl</code> verwendet werden muss.
      *
-     * @return  Liste mit PrimeNumbers
+     * @return  Liste mit Primzahlen
      */
     ArrayList getSolution() {
         return solution;
     }
 }
+

@@ -1,7 +1,7 @@
 /*
  * file:        GeneratePrimes.java
  * created:     <???>
- * last change: 16.04.2006 by Dietmar Lippold
+ * last change: 20.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -30,6 +30,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
 package de.unistuttgart.architeuthis.testenvironment.prime;
 
 /**
@@ -43,9 +44,12 @@ public class GeneratePrimes {
      * Errechnet die Primzahlteilfolge für zwei als Kommandozeilenargumente
      * übergebene Zahlen.
      *
-     * @param args  die Standardargumente einer main-Methode
+     * @param args  Ein Array, das die Untergrenze und die Obergrenze des
+     *              Intervalls enthält, aus dem die Nummern der zu
+     *              ermittelnden Primzahlen stammen.
      */
     public static void main(String[] args) {
+        long startTime;
 
         System.out.println("Berechnet eine Folge von PrimeNumbers\n");
 
@@ -53,13 +57,14 @@ public class GeneratePrimes {
             System.out.println("Folge von " + args[0] + " bis " + args[1]);
             try {
                 System.out.println("Beginn...");
-                long i = System.currentTimeMillis();
+                startTime = System.currentTimeMillis();
                 System.out.println(
                     PrimeNumbersParallel.primzahlTeilfolge(
                         (new Long(args[0])).intValue(),
                         (new Long(args[1])).intValue()));
                 System.out.println("Fertig!");
-                System.out.println("Dauer: " + (System.currentTimeMillis() - i));
+                System.out.println("Dauer: " +
+                                   (System.currentTimeMillis() - startTime));
             } catch (Exception e) {
                 e.printStackTrace();
             }

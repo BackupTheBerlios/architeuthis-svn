@@ -1,11 +1,16 @@
 /*
  * file:        PrimeNumbersParallel.java
  * created:     <???>
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 20.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -23,11 +28,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
@@ -44,8 +44,8 @@ import de.unistuttgart.architeuthis.systeminterfaces.UserProblemTransmitter;
 import de.unistuttgart.architeuthis.user.ProblemTransmitterImpl;
 
 /**
- * Beinhaltet Methoden zur verteilten Errechnung von PrimeNumbers.
- * Nach außen soll sich die Klasse genau so verhalten wie
+ * Beinhaltet Methoden zur verteilten Errechnung von Primzahlen. Nach außen
+ * soll sich die Klasse genau so verhalten wie
  * {@link de.unistuttgart.architeuthis.testenvironment.PrimeNumbers}.
  *
  * @author Ralf Kible
@@ -54,7 +54,7 @@ public class PrimeNumbersParallel {
 
     /**
      * Der Name des Dispatchers des ComputeSystems, das zur Berechnung
-     * verwendet werden soll. Dies muss angepasst werden!
+     * verwendet werden soll. Dieser muss angepasst werden!
      */
     private static final String DISPATCHER = "ischia";
 
@@ -80,28 +80,29 @@ public class PrimeNumbersParallel {
         "de.unistuttgart.architeuthis.testenvironment.prime.PrimeRangeProblemImpl";
 
     /**
-     * Ermittelt alle PrimeNumbers aus einem angegebenen Intervall. Die
-     * übergebenen Intervallgrenzen gehören beide zum Intervall. Die Berechnung
-     * wird verteilt auf dem unter COMPUTE_SYSTEM angegebenen ComputeSystem
-     * ausgeführt. Die Klassen dieses Packages müssen unter CLASS_URL
-     * bereitgestellt werden.
+     * Ermittelt alle Primzahlen aus einem angegebenen Intervall. Die
+     * übergebenen Intervallgrenzen gehören beide zum Intervall. Die
+     * Berechnung wird verteilt auf dem unter <code>COMPUTE_SYSTEM</code>
+     * angegebenen ComputeSystem ausgeführt. Die Klassen dieses Packages
+     * müssen unter <code>CLASS_URL</code> bereitgestellt werden.
      *
-     * @param minWert  der untere Wert des Intervalls, aus dem die PrimeNumbers
-     *                 ausgegeben werden
-     * @param maxWert  der obere Wert des Intervalls, aus dem die PrimeNumbers
-     *                 ausgegeben werden
-     * @return         Eine Liste, deren Elemente vom Typ <CODE>Integer</CODE>
-     *                 die PrimeNumbers aus dem angegebenen Intervall sind.
+     * @param minWert  Der untere Wert des Intervalls, aus dem die Primzahlen
+     *                 ausgegeben werden.
+     * @param maxWert  Der obere Wert des Intervalls, aus dem die Primzahlen
+     *                 ausgegeben werden.
+     *
+     * @return  Eine Liste, deren Elemente vom Typ <CODE>Long</CODE> die
+     *          Primzahlen aus dem angegebenen Intervall sind.
      *
      * @throws MalformedURLException    Falls der DISPATCHER ungültig ist.
-     * @throws RemoteException          Falls Fehler bei der Verbindung mit dem
-     *                                  DISPATCHER auftreten.
+     * @throws RemoteException          Falls Fehler bei der Verbindung mit
+     *                                  dem DISPATCHER auftreten.
      * @throws ClassNotFoundException   Falls die unter TEILBEREICHS_KLASSE
      *                                  angegebene Klasse nicht gefunden wurde
-     * @throws ProblemComputeException  Falls ein Fehler bei der Berechnung auf
-     *                                  dem ComputeSystem auftritt.
-     * @throws NotBoundException        Falls das ComputeSystem nicht unter der
-     *                                  Adresse DISPATCHER gefungen wurde.
+     * @throws ProblemComputeException  Falls ein Fehler bei der Berechnung
+     *                                  auf dem ComputeSystem auftritt.
+     * @throws NotBoundException        Falls das ComputeSystem nicht unter
+     *                                  der Adresse DISPATCHER gefungen wurde.
      */
     public static ArrayList primzahlTeilbereich(long minWert, long maxWert)
         throws
@@ -125,19 +126,19 @@ public class PrimeNumbersParallel {
     }
 
     /**
-     * Ermittelt alle PrimeNumbers aus einem angegebenen Nummern-Intervall,
-     * also alle PrimeNumbers mit einer Nummer aus dem angegebenen Intervall.
-     * Die übergebenen Intervallgrenzen gehören beide zum Intervall. Die
-     * erste Primzahl, die Zwei, hat die Nummer Eins.
+     * Ermittelt alle Primzahlen aus einem angegebenen Nummern-Intervall, also
+     * alle Primzahlen mit einer Nummer aus dem angegebenen Intervall. Die
+     * übergebenen Intervallgrenzen gehören beide zum Intervall. Die erste
+     * Primzahl, die Zwei, hat die Nummer Eins.
      *
-     * @param minNummer  der untere Wert des Nummern-Intervalls, zu dem die
-     *                   PrimeNumbers ausgegeben werden. Wenn der Wert kleiner
+     * @param minNummer  Der untere Wert des Nummern-Intervalls, zu dem die
+     *                   Primzahlen ausgegeben werden. Wenn der Wert kleiner
      *                   als Eins ist, wird er als Eins interpretiert.
-     * @param maxNummer  der obere Wert des Nummern-Intervalls, zu dem die
-     *                   PrimeNumbers ausgegeben werden
-     * @return           Eine Liste, deren Elemente vom Typ <CODE>Integer</CODE>
-     *                   die PrimeNumbers mit den Nummern aus dem angegebenen
-     *                   Intervall sind.
+     * @param maxNummer  Der obere Wert des Nummern-Intervalls, zu dem die
+     *                   Primzahlen ausgegeben werden.
+     *
+     * @return  Eine Liste, deren Elemente vom Typ <CODE>Long</CODE> die
+     *          Primzahlen mit den Nummern aus dem angegebenen Intervall sind.
      *
      * @throws MalformedURLException    Falls der DISPATCHER ungültig ist.
      * @throws RemoteException          Falls Fehler bei der Verbindung mit dem
@@ -170,3 +171,4 @@ public class PrimeNumbersParallel {
         return solution;
     }
 }
+

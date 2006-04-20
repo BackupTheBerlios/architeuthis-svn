@@ -1,12 +1,17 @@
 /*
  * file:        PrimeSequenceProblemImpl.java
  * created:     <???>
- * last change: 06.04.2006 by Dietmar Lippold
+ * last change: 20.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -24,11 +29,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
@@ -119,9 +119,10 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
      * Liefert auf Anfrage vom ProblemManager ein Teilproblem zurück.
      * Beim ersten Aufruf werden außerdem die Teilprobleme generiert.
      *
-     * @param number  Vom ProblemManager erbetene Anzahl bereitzuhaltender Teilprobleme
+     * @param number  Vom ProblemManager vorgeschlagene Anzahl
+     *                bereitzuhaltender Teilprobleme.
      *
-     * @return Neues Teilproblem zur Berechnung.
+     * @return  Neues Teilproblem zur Berechnung.
      */
     public PartialProblem getPartialProblem(long number) {
         // Erster Aufruf? Falls ja, dann Teilprobleme generieren.
@@ -184,8 +185,8 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
     }
 
     /**
-     * Methode, die vom ProblemManager aufgerufen wird, um dem Problem eine neu
-     * eingetroffene Lösung zu übermitteln.
+     * Methode, die vom ProblemManager aufgerufen wird, um dem Problem eine
+     * neu eingetroffene Lösung zu übermitteln.
      *
      * @param parSol   Vom ProblemManager übermittelte Teillösung.
      * @param parProb  Referenz auf das Teilproblem, zu dem die Teillösung
@@ -201,7 +202,7 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
         // Durch die Liste laufen, solange die Lösungen in der richtigen
         // Reihenfolge vorliegen
         while ((!dispensedProblems.isEmpty())
-            && (solutions.containsKey(dispensedProblems.getFirst()))) {
+               && (solutions.containsKey(dispensedProblems.getFirst()))) {
             ArrayList partialSolutionList =
                 (ArrayList) solutions.get(dispensedProblems.getFirst());
 
@@ -236,14 +237,13 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
                 currentlyFound = currentlyFound + temp;
             }
         }
-
     }
 
     /**
      * Liefert die Gesamtlösung des Problems zurück, oder <code>null</code>,
      * falls diese noch nicht bekannt ist.
      *
-     * @return Die Gesamtlösung.
+     * @return  Die Gesamtlösung.
      */
     public Serializable getSolution() {
 
@@ -253,8 +253,9 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
         if (finalSolution.size() >= (maxNumber - minNumber + 1)) {
             return new ArrayList(
                 finalSolution.subList(0, maxNumber - minNumber + 1));
+        } else {
+            return null;
         }
-        return null;
     }
 }
 
