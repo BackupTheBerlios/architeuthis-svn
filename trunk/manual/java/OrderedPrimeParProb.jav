@@ -1,11 +1,16 @@
 /*
  * file:        OrderedPrimeParProb.java
  * created:     <???>
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 20.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -23,11 +28,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
@@ -36,7 +36,6 @@ package de.unistuttgart.architeuthis.testenvironment.prime.example;
 import de.unistuttgart.architeuthis.testenvironment.PrimeNumbers;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
-import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
 
@@ -44,41 +43,41 @@ import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
  * Test zur Benutzung der abstrakten Klasse <code>AbstractOrderedProblem</code>.
  * Es werden alle PrimeNumbers zwischen anzugebenden Grenzen berechnet.
  *
- * @author Achim Linke
+ * @author Achim Linke, Dietmar Lippold
  */
 public class OrderedPrimeParProb implements NonCommPartialProblem {
 
     /**
-     * Zahl, ab der nach PrimeNumbers gesucht wird.
+     * Zahl, ab der nach Primzahlen gesucht werden soll.
      */
-    private long minWert = 1;
+    private long minWert;
 
     /**
-     * Zahl, bis zu der nach PrimeNumbers gesucht wird.
+     * Zahl, bis zu der nach Primzahlen gesucht werden soll.
      */
-    private long maxWert = 2;
+    private long maxWert;
 
     /**
-     * Konstruktor, der die Grenzen zur Primzahlsuche zuweist.
-     * Die Grenzen werden ebenfalls untersucht.
+     * Liefert eine neue Instanz zu einem vorgegebenen Intervall. Die
+     * Grenzen des Interalls sind Teil sind Teil von diesem.
      *
-     * @param min  Die Zahl, ab der nach PrimeNumbers gesucht wird.
-     * @param max  Die Zahl, bis zu der nach PrimeNumbers gesucht wird.
+     * @param min  Die Zahl, ab der nach Primzahlen gesucht werden soll.
+     * @param max  Die Zahl, bis zu der nach Primzahlen gesucht werden soll.
      */
     public OrderedPrimeParProb(long min, long max) {
         minWert = min;
         maxWert = max;
     }
 
-
     /**
-     * Führt die konkrete Berechnung der PrimeNumbers aus.
+     * Führt die konkrete Berechnung der Primzahlen aus.
      *
-     * @return  Container-Klasse, die die Liste der PrimeNumbers im Bereich
-     *          enthält.
+     * @return  Container-Klasse, die die Liste der Primzahlen im vorgegebenen
+     *          Bereich enthält.
      */
     public PartialSolution compute() throws ProblemComputeException {
         return new ContainerPartialSolution(
             PrimeNumbers.primzahlTeilbereich(minWert, maxWert));
     }
 }
+
