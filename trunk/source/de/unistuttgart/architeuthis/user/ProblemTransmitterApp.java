@@ -1,7 +1,7 @@
 /*
  * file:        ProblemTransmitterApp.java
  * created:     08.08.2003
- * last change: 06.03.2006 by Dietmar Lippold
+ * last change: 20.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -186,14 +186,14 @@ public class ProblemTransmitterApp {
      */
     public static void main(String[] args) {
         ProblemGUIStatisticsReader problemStatisticsReader = null;
-        SystemGUIStatisticsReader systemStatisticReader = null;
-        ProblemStatistics finalStat = null;
-        Serializable solution;
-        String problemManagerHost = null;
-        String filename = null;
-        boolean serializable = false;
-        boolean graphicalMode = true;
-        boolean onlyProblemGraphical = false;
+        SystemGUIStatisticsReader  systemStatisticReader = null;
+        ProblemStatistics          finalStat = null;
+        Serializable               solution;
+        String                     problemManagerHost = null;
+        String                     filename = null;
+        boolean                    serializable = false;
+        boolean                    graphicalMode = true;
+        boolean                    onlyProblemGraphical = false;
 
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new RMISecurityManager());
@@ -229,7 +229,7 @@ public class ProblemTransmitterApp {
 
         Option filenameOption = new Option("f");
         filenameOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
-        filenameOption.setOptional(false);
+        filenameOption.setOptional(true);
         filenameOption.setDescription("filename");
         parser.addOption(filenameOption);
 
@@ -276,8 +276,11 @@ public class ProblemTransmitterApp {
 
             packageURL = new URL(parser.getParameter(urlOption));
             classname = parser.getParameter(classnameOption);
-            filename = parser.getParameter(filenameOption);
             problemManagerHost = parser.getParameter(problemManagerOption);
+
+            if (parser.isEnabled(filenameOption)) {
+                filename = parser.getParameter(filenameOption);
+            }
 
             // Status ausgeben
             if (LOGGER.isLoggable(Level.CONFIG)) {
@@ -340,8 +343,16 @@ public class ProblemTransmitterApp {
 
             LOGGER.log(Level.FINE, "Schreibe Lösung in Datei");
 
-            Miscellaneous.writeSerializableToFile(solution, filename);
-            LOGGER.log(Level.INFO, "Lösung erhalten und geschrieben!");
+            // Lösung in Datei speichern oder auf der Standard-Ausgabe
+            // ausgeben.
+            if (filename == null) {
+                System.out.println("Ergebnis:");
+                System.out.println(solution.toString());
+                LOGGER.log(Level.INFO, "Lösung erhalten und ausgegeben!");
+            } else {
+                Miscellaneous.writeSerializableToFile(solution, filename);
+                LOGGER.log(Level.INFO, "Lösung erhalten und geschrieben!");
+            }
             LOGGER.log(Level.INFO, "Berechnung beeendet!");
 
             // Die letzte Problem-Statistik ausgeben
