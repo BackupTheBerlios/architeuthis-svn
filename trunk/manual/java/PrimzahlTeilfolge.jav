@@ -1,7 +1,7 @@
 /*
  * Auschnitt aus Klasse
  * de.unistuttgart.architeuthis.testenvironment.PrimeNumbers.
- * Version: 16.04.2006
+ * Version: 20.04.2006
  */
 
     /**
@@ -11,13 +11,14 @@
      * Primzahl, die Zwei, hat die Nummer Eins.
      *
      * @param minNummer  Der untere Wert des Nummern-Intervalls, zu dem die
-     *                   PrimeNumbers ausgegeben werden. Wenn der Wert kleiner
+     *                   Primzahlen geliefert werden. Wenn der Wert kleiner
      *                   als Eins ist, wird er als Eins interpretiert.
      * @param maxNummer  Der obere Wert des Nummern-Intervalls, zu dem die
-     *                   PrimeNumbers ausgegeben werden.
+     *                   Primzahlen geliefert werden.
      *
-     * @return  Eine Liste, deren Elemente vom Typ <CODE>Long</CODE> die
-     *          Primzahlen mit den Nummern aus dem angegebenen Intervall sind.
+     * @return  Eine aufsteigend geordnete Liste, deren Elemente vom Typ
+     *          <CODE>Long</CODE> die Primzahlen mit den Nummern aus dem
+     *          angegebenen Intervall sind.
      */
     public static ArrayList primzahlTeilfolge(int minNummer, int maxNummer) {
         ArrayList teilfolge   = new ArrayList();
@@ -37,7 +38,7 @@
                 testZahl += 2;
             }
 
-            // Primzahl aufnehmen, wenn sie größer als minNummer ist
+            // Primzahl aufnehmen, wenn sie größer als minNummer ist.
             if (testNummer >= minNummer) {
                 teilfolge.add(new Long(testZahl));
             }

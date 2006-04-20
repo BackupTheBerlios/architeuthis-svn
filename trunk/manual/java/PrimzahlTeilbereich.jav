@@ -1,7 +1,7 @@
 /*
  * Auschnitt aus Klasse
  * de.unistuttgart.architeuthis.testenvironment.PrimeNumbers.
- * Version: 16.04.2006
+ * Version: 20.04.2006
  */
 
     /**
@@ -9,12 +9,13 @@
      * übergebenen Intervallgrenzen gehören beide zum Intervall.
      *
      * @param minWert  Der untere Wert des Intervalls, aus dem die Primzahlen
-     *                 ausgegeben werden
+     *                 geliefert werden
      * @param maxWert  Der obere Wert des Intervalls, aus dem die Primzahlen
-     *                 ausgegeben werden.
+     *                 geliefert werden.
      *
-     * @return  Eine Liste, deren Elemente vom Typ <CODE>Long</CODE> die
-     *          Primzahlen aus dem angegebenen Intervall sind.
+     * @return  Eine aufsteigend geordnete Liste, deren Elemente vom Typ
+     *          <CODE>Long</CODE> die Primzahlen aus dem angegebenen Intervall
+     *          sind.
      */
     public static ArrayList primzahlTeilbereich(int minWert, int maxWert) {
         ArrayList  teilbereich = new ArrayList();
@@ -26,7 +27,7 @@
         }
 
         // Wenn der Startwert gerade ist, als Startwert nächsten ungeraden
-        // Wert nehmen
+        // Wert nehmen.
         if (startWert % 2 == 0) {
             startWert++;
         }

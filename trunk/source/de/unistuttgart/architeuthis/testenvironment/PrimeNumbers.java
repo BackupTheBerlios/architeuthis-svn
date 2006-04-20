@@ -1,7 +1,7 @@
 /*
  * file:        PrimeNumbers.java
  * created:     09. Juni 2003
- * last change: 16.04.2006 by Dietmar Lippold
+ * last change: 20.04.2006 by Dietmar Lippold
  * developers:  Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
  *
  * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
@@ -76,12 +76,13 @@ public class PrimeNumbers {
      * übergebenen Intervallgrenzen gehören beide zum Intervall.
      *
      * @param minWert  Der untere Wert des Intervalls, aus dem die Primzahlen
-     *                 ausgegeben werden
+     *                 geliefert werden
      * @param maxWert  Der obere Wert des Intervalls, aus dem die Primzahlen
-     *                 ausgegeben werden.
+     *                 geliefert werden.
      *
-     * @return  Eine Liste, deren Elemente vom Typ <CODE>Long</CODE> die
-     *          Primzahlen aus dem angegebenen Intervall sind.
+     * @return  Eine aufsteigend geordnete Liste, deren Elemente vom Typ
+     *          <CODE>Long</CODE> die Primzahlen aus dem angegebenen Intervall
+     *          sind.
      */
     public static ArrayList primzahlTeilbereich(long minWert, long maxWert) {
         ArrayList teilbereich = new ArrayList();
@@ -93,7 +94,7 @@ public class PrimeNumbers {
         }
 
         // Wenn der Startwert gerade ist, als Startwert nächsten ungeraden
-        // Wert nehmen
+        // Wert nehmen.
         if (startWert % 2 == 0) {
             startWert++;
         }
@@ -114,13 +115,14 @@ public class PrimeNumbers {
      * Primzahl, die Zwei, hat die Nummer Eins.
      *
      * @param minNummer  Der untere Wert des Nummern-Intervalls, zu dem die
-     *                   PrimeNumbers ausgegeben werden. Wenn der Wert kleiner
+     *                   Primzahlen geliefert werden. Wenn der Wert kleiner
      *                   als Eins ist, wird er als Eins interpretiert.
      * @param maxNummer  Der obere Wert des Nummern-Intervalls, zu dem die
-     *                   PrimeNumbers ausgegeben werden.
+     *                   Primzahlen geliefert werden.
      *
-     * @return  Eine Liste, deren Elemente vom Typ <CODE>Long</CODE> die
-     *          Primzahlen mit den Nummern aus dem angegebenen Intervall sind.
+     * @return  Eine aufsteigend geordnete Liste, deren Elemente vom Typ
+     *          <CODE>Long</CODE> die Primzahlen mit den Nummern aus dem
+     *          angegebenen Intervall sind.
      */
     public static ArrayList primzahlTeilfolge(long minNummer, long maxNummer) {
         ArrayList teilfolge   = new ArrayList();
@@ -140,7 +142,7 @@ public class PrimeNumbers {
                 testZahl += 2;
             }
 
-            // Primzahl aufnehmen, wenn sie größer als minNummer ist
+            // Primzahl aufnehmen, wenn sie größer als minNummer ist.
             if (testNummer >= minNummer) {
                 teilfolge.add(new Long(testZahl));
             }
