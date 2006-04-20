@@ -21,7 +21,7 @@ Bedeutung:
 
 \begin{itemize}
 \item  \texttt{de...userinterfaces.develop.RemoteStoreGenerator}
-       definiert die Klasse, die die Instanzen vom gemeinsamen Speicher
+       definiert die Klasse, die die Instanzen des gemeinsamen Speichers
        erzeugt.
 
 \item  \texttt{de...userinterfaces.develop.RemoteStore}
@@ -41,16 +41,18 @@ folgendes zu tun:
 
 \item  Es muß eine konkrete Klasse erstellt werden, die das Interface
        \texttt{RemoteStore} implementiert. In der Regel wird diese Klasse
-       durch ein zusätzliches Interface beschrieben.
+       durch ein zusätzliches Interface beschrieben, über das ein Teilproblem
+       auf den gemeinsamen Speicher zugreift.
 
 \item  Es muß eine konkrete Klasse erstellt werden, die das Interface\\
        \texttt{RemoteStoreGenerator} implementiert.
 \end{itemize}
 
 Im Package \texttt{de.unistuttgart.architeuthis.remotestore} sind schon
-Klassen, die die Interfaces \texttt{RemoteStore} und \texttt{RemoteStoreGenerator}
-implementieren, vorhanden und können benutzt werden. Die Entwicklung eigener
-Klassen wird im nächsten Abschnitt beschrieben.
+Klassen, die die Interfaces \texttt{RemoteStore} und
+\texttt{RemoteStoreGenerator} implementieren, vorhanden und können benutzt
+werden. Die Entwicklung eigener Klassen wird im nächsten Abschnitt
+beschrieben.
 
 Für die Kommunikation der Teilprobleme mit dem gemeinsamen Speicher scheinen
 folgende drei Möglichkeiten sinnvoll:
@@ -98,7 +100,7 @@ sicherstellen:
        Schreiben schon erfolgt sein.
 
 \item  Mehrere Aufrufe zur Veränderung des Speichers durch ein Teilproblem
-       sollten in den Speicher für alle anderen Teilprobleme in der gleichen
+       sollten im Speicher für alle anderen Teilprobleme in der gleichen
        Reihenfolge vorgenommen werden.
 \end{itemize}
 
@@ -110,7 +112,7 @@ Interface \texttt{RemoteStoreGenerator} implementiert, angegeben.
 
 \section{Hinweise für den Entwickler}
 
-Die Entwicklung eines Remote-Store soll anhand des Bespiels vom Package
+Die Entwicklung eines Remote-Store soll anhand des Beispiels vom Package
 \texttt{de...remotestore.hashset} beschrieben werden. Die jeweiligen
 Klassen aus diesem Package werden nachfolgend in Klammern angegeben.
 
@@ -127,24 +129,24 @@ Methoden zum Aufruf durch den zentalen Speicher (\texttt{interf.LocalHashSet}).
 Entsprechend werden die Implementierungen der Interfaces im folgenden als
 Relay-Store und Local-Store bezeichnet.
 
-Zum asynchronen Übertragen von Daten vom Local-Store zum Relay-Store
-sind einige Hilfsklassen vorhanden. Die Übertragung selbst kann durch
-die Klasse \texttt{de...remotestore.Transmitter} erfolgen. Für jede beim
-Relay-Store aufzurufende Methode ist eine Unterklasse von
+Zum asynchronen Übertragen von Daten vom Local-Store zum Relay-Store sind
+einige Hilfsklassen vorhanden. Die Übertragung selbst kann durch die Klasse
+\texttt{de...remotestore.Transmitter} erfolgen. Für jede beim Relay-Store
+aufzurufende Methode ist eine Unterklasse von
 \texttt{de...remotestore.TransmitObject} zu erzeugen. Die zu übertragenden
-Objekte sind an \texttt{Transmitter}, der sie seinerseits an eine Instanz
-von \texttt{de...remotestore.TransmitProcedure} (im Beispiel
-\texttt{HashSetTransProc}) übergibt. In dieser
-Prozedur können für die Objekte entsprechend ihrer Klasse die jeweils
-zugehörige Methode aufgerufen werden. Wenn einer Methode mehrere Objekte
-zu übergeben sind, sind diese vorher in der Instanz einer neuen Klasse
-zusammenzufassen (wie in \texttt{de...remotestore.hashmap.impl.MapEntry}).
+Objekte sind an den \texttt{Transmitter} zu übergeben, der sie seinerseits
+an eine Instanz von \texttt{de...remotestore.TransmitProcedure} (im Beispiel
+\texttt{HashSetTransProc}) übergibt. In dieser Prozedur kann für die Objekte
+entsprechend ihrer Klasse die jeweils zugehörige Methode aufgerufen werden.
+Wenn einer Methode mehrere Objekte zu übergeben sind, sind diese vorher in
+der Instanz einer neuen Klasse zusammenzufassen (wie in
+\texttt{de...remotestore.hashmap.impl.MapEntry}).
 
-In den Methoden vom Relay-Store werden die entsprechenden Methoden aller
-Local-Stores aufgerufen. Bei der asynchronen Kommunikation braucht jedoch
-die Methode desjenigen Local-Store, der die Methode beim Relay-Store
-aufgerufen hat, nicht aufgerufen zu werden. Der Local-Store muß die
-Daten dann selbst lokal speichern.
+In den Methoden vom Relay-Store (\texttt{RelayHashSetImpl}) werden die
+entsprechenden Methoden aller Local-Stores aufgerufen. Bei der asynchronen
+Kommunikation braucht jedoch die Methode desjenigen Local-Store, der die
+Methode beim Relay-Store aufgerufen hat, nicht aufgerufen zu werden. Der
+Local-Store muß die Daten dann selbst lokal speichern.
 
 Im Remote-Store (\texttt{RemoteHashSetImpl}), der sowohl das Interface für
 das Teilproblem wie das Interface vom Local-Store implementiert, sind

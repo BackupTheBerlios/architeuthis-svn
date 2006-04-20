@@ -8,8 +8,7 @@
   als Dispatcher-Administrator}
 
 \section{Der Dispatcher}
-\subsection*{Kurzbeschreibung}
-Der Dispatcher besteht aus drei Komponenten: Dem Compute-Manager,
+Der Dispatcher besteht aus drei Komponenten: Dem Com\-pute-Manager,
 dem Problem-Manager und der Statistik. Er ist das Herzst"uck des 
 Compute-Systems. 
 
@@ -116,30 +115,28 @@ Dabei ist:
   Operative-Administrator}
 
 \section{Der Operative}
-\subsection*{Kurzbeschreibung}
 Die Operatives stellen die Rechenleistung des Compute-Systems bereit und
 führen die tatsächlichen Berechnungen aus.
 
 \subsection{Voraussetzungen}
 Die einzige Voraussetzung zum Betreiben eines Operatives ist ein
 installiertes Java-Runtime-Environment der Version 1.3 oder neuer und eine
-Netzwerkanbindung. Bei Benutzung von Version 1.3 ist jedoch zu beachten, dass
-dann ein nicht-cachender Betrieb nicht möglich ist (siehe
+Netzwerkanbindung. Bei Benutzung von Version 1.3 ist jedoch zu beachten,
+dass dann ein nicht-cachender Betrieb nicht möglich ist (siehe
 \hyperref[cachen]{nicht-cachender Betrieb}).
 
 \subsection{Benutzung}
-Die Benutzung gestaltet sich sehr einfach. Der Operative muss nur
-gestartet werden, wobei als Kommandozeilenparameter die RMI-Adresse
-des Compute-Managers angegeben werden muss, bei dem sich der
-Operative anmelden soll. Der Operative sollte am Besten mit
-nicht zu hoher Priorität im Hintergrund laufen, falls auf dem Rechner
-zusätzlich eine interaktive Arbeit erfolgt.
-\par {\bf Tipp:} Falls der Compute-Manager dauerhaft läuft, kann der
-Operative problemlos beim Rechnerstart im Hintergrund gestartet werden. Das 
-Herunterfahren des Rechners beendet den Operative ord\-nungs\-ge\-mäß. Ebenfalls
-denkbar ist es, den Operative im Hintergrund des GDM laufen zu lassen. 
-\par {\bf Achtung:} Der Dispatcher und der Operative müssen gegenseitig
-erreichbar sein.
+Die Benutzung gestaltet sich sehr einfach. Der Operative muss nur gestartet
+werden, wobei als Kommandozeilenparameter die RMI-Adresse des
+Compute-Mana\-gers angegeben werden muss, bei dem sich der Operative anmelden
+soll. Der Operative sollte am Besten mit nicht zu hoher Priorität im
+Hintergrund laufen, falls auf dem Rechner zusätzlich eine interaktive Arbeit
+erfolgt. \par {\bf Tipp:} Falls der Compute-Manager dauerhaft läuft, kann
+der Operative problemlos beim Rechnerstart im Hintergrund gestartet werden.
+Das  Herunterfahren des Rechners beendet den Operative ord\-nungs\-ge\-mäß.
+Ebenfalls denkbar ist es, den Operative im Hintergrund des GDM laufen zu
+lassen.  \par {\bf Achtung:} Der Dispatcher und der Operative müssen
+gegenseitig erreichbar sein.
 
 \subsection[Kommandozeilenparameter]{Aufruf und Kommandozeilenparameter}
 Kommandozeile zum Aufruf des Operatives:
@@ -234,8 +231,8 @@ rechenintensiv ist, ist es ratsam dafür selbst Teilprobleme zu generieren.
 
 \subsection[Teilproblem]{Das Teilproblem - PartialProblem.java}
 Das Teilproblem ist das eigentliche Rechenprogramm, das auf dem Operative
-ausgeführt wird. Das Interface selbst dient lediglich als Oberklasse ohne
-Methoden, erweitert aber das Interface \texttt{Serializable}.
+ausgeführt wird. Das Interface selbst dient lediglich als Ober-Interface
+ohne Methoden, erweitert aber das Interface \texttt{Serializable}.
 
 %{\scriptsize \verbatiminput{java/PartialProblem.jav}}
 
@@ -398,7 +395,7 @@ Parametern für den Konstruktor anzugeben.
 
 Als Beispiel für die Verwendung von {\tt ProblemTransmitterImpl}  kann die
 Klasse \texttt{de...testenvironment.fullprime.PrimeNumbersParallel}
-zusammen mit den anderen Klassen dieses Packages betrachtet werden.
+zusam\-men mit den anderen Klassen dieses Packages betrachtet werden.
 
 
 \section{Ausführung eines eigenständigen Problems}
@@ -410,7 +407,7 @@ Verfügung.
 
 \subsection[Kommandozeilen-Applikation]{Die Kommandozeilen-Applikation}
 Zuerst muss gesagt werden, dass bei Benutzung dieser
-Kommandozeilen-Applikation einige Einschränkungen in Kauf genommen
+Kommandozeilen-Appli\-kation einige Einschränkungen in Kauf genommen
 werden müssen. Es können beispielsweise keine Parameter an den
 Konstruktor der eigenen Problem-Klasse übergeben werden, so dass alle
 Initialisierungswerte darin fest vorgegeben werden
@@ -605,12 +602,14 @@ Statistik-Ausgabe ist eine funktionierende graphische Oberfläche.
 Aufruf der Version mit eigenem Fenster:
 
 {\tt java -Djava.security.policy=statisticreader.pol\\
-de.unistuttgart.architeuthis.user.SystemGUIStatisticsReader <computeSystem>}
+     de.unistuttgart.architeuthis.user.SystemGUIStatisticsReader\\
+     <computeSystem>}
 
 Aufruf der Konsole-Version:
 
 {\tt java -Djava.security.policy=statisticreader.pol\\
-de.unistuttgart.architeuthis.user.SystemTextStatisticsReader <computeSystem>}
+     de.unistuttgart.architeuthis.user.SystemTextStatisticsReader\\
+     <computeSystem>}
 
 \begin{description}
 \item[-Djava.security.policy=statisticreader.pol]
@@ -620,7 +619,7 @@ de.unistuttgart.architeuthis.user.SystemTextStatisticsReader <computeSystem>}
   \hyperref[sicherh]{Sicherheit}.
 
 \item[de.unistuttgart.architeuthis.user.SystemGUIStatisticsReader]
-  Die Haupt-Klasse der Statistik-Anzeige in eigenem Fenster.
+  Die Haupt-Klasse der Statistik-Anzeige in einem eigenen Fenster.
 
 \item[de.unistuttgart.architeuthis.user.SystemTextStatisticsReader]
   Die Haupt-Klasse der textuellen Statistik-Anzeige.

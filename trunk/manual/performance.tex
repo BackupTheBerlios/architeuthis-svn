@@ -10,26 +10,33 @@ Die folgenden Werte beziehen sich auf die Version 0.9 des Systems und sind
 für die aktuelle Version nur noch begrenzt aussagekräftig.
 
 \section{Einführung}
-In diesem Kapitel sind die Ergebnisse einiger Untersuchungen festgehalten, denen
-das Compute-System unterzogen wurde, um herauszufinden, wie hoch der
-Geschwindigkeitszuwachs bei mehreren Operatives ist, aber auch, wie hoch
-der Zeitverlust ist, der sich durch das Verteilen der Probleme ergibt.
+In diesem Kapitel sind die Ergebnisse einiger Untersuchungen festgehalten,
+denen das Compute-System unterzogen wurde, um herauszufinden, wie hoch der
+Geschwindigkeitszuwachs bei mehreren Operatives ist, aber auch, wie hoch der
+Zeitverlust ist, der sich durch das Verteilen der Teilprobleme ergibt.
 
 \section{Testkonfiguration}
 Die Tests wurden in einem Computer-Pool durchgeführt, der während der
-Durchführung der Test auch von anderen Leuten benutzt wurde. Alle genannten
-Zeiten verstehen sich, falls nicht anders bezeichnet, in Sekunden und sind
+Durchführung der Tests auch von anderen Leuten benutzt wurde. Alle genannten
+Zeiten verstehen sich, falls nicht anders angegeben, in Sekunden und sind
 gerundete Mittelwerte mehrerer Messreihen eines bereits benutzten
 Compute-Systems (siehe dazu ``Der erste Start'').
 
 \subsection{Dispatcher}
+
+Hardware des Dispatchers:
+
   \begin{itemize}
   \item Dual-Athlon 1800+
   \item 1 GB RAM
   \item Red Hat Linux 9
   \item Sun JRE Version 1.4.2
   \end{itemize}
+
 \subsection{Operatives}
+
+Hardware der Operatives:
+
   \begin{itemize}
   \item Pentium III 600 MHz
   \item 256 MB RAM
@@ -39,41 +46,41 @@ Compute-Systems (siehe dazu ``Der erste Start'').
 
 \subsection{Testprobleme}
 \subsubsection{Prim-Problem}
-Für das Prim-Problem ist die Aufgabenstellung: Berechne die 2000000te Primzahl.
-Verwendet wurde die Klasse {\tt PrimTest} aus dem Package\\
-{\tt de.unistuttgart.architeuthis.testenvironment.prim}.
+Für das Prim-Problem ist die Aufgabenstellung: Berechne die 2.000.000te
+Primzahl. Verwendet wurde die Klasse {\tt GeneratePrimes} aus dem Package
+\texttt{de.unistuttgart.architeuthis.testenvironment.prime}.
 
 \subsubsection{Caching-Problem}
-Hier ist die Aufgabe: Berechne die 2000000te Primzahl. Außerdem werden jedoch
-drei Klassen zusätzlich vom Webserver geladen, um zu testen, wie stark sich
-das Caching der Klassen auf die Performance auswirkt. Verwendet wurde die Klasse
-{\tt CachingTestProblem} in\\
+Hier ist die Aufgabe ebenfalls: Berechne die 2.000.000te Primzahl. Außerdem
+werden jedoch drei Klassen zusätzlich vom Webserver geladen, um zu testen,
+wie stark sich das Caching der Klassen auf die Performance auswirkt.
+Verwendet wurde die Klasse {\tt CachingTestProblem} in\\
 {\tt de.unistuttgart.architeuthis.testenvironment.caching}.
 
 \subsection{Referenzwerte}
 Folgender Wert ist als Referenzwert zu betrachten: Die lokale Berechnung des
 Prim-Problems auf einem Operative-Rechner benötigt 307,6s. Dies definiert
-einem Speed-Up von 1. Wenn man das Prim-Problem auf einem Rechner verteilt (also
-mit einem Dispatcher und einem Operative) berechnet, dann ergibt sich
-eine Dauer von 413,8s, also ein ``Speed-Up'' von 0,74.
+einem Speed-Up von 1. Wenn man das Prim-Problem auf einem Rechner verteilt
+berechnet (also mit einem Dispatcher und einem Operative) berechnet, dann
+ergibt sich eine Dauer von 391,2s, also ein ``Speed-Up'' von 0,79.
+
 \begin{table*}[htbp]
   \centering
   \begin{tabular}{l l l}
-  Beschreibung & Dauer in Sekunden & Speed-Up\\ \hline
-  Berechnung mit lokaler Klasse & 307,6 & 1\\
-  Verteilte Berechnung auf nur einem Rechner & 391,2 & 0,79\\
+  Beschreibung                  & Dauer in Sekunden  & Speed-Up\\ \hline
+  Berechnung mit lokaler Klasse &      307,6         & 1       \\
+  Verteilte Berechnung auf nur einem Rechner & 391,2 & 0,79    \\
   \end{tabular}
   \caption{Referenzwerte}
 \end{table*}
 
-\section{Testergebnisse}
-\subsection{Verschiedene Anzahlen von Operatives}
-\subsubsection{Aufgabenstellung}
-Dieser Test soll Aufschluss über die effektive Geschwindigkeitssteigerung geben,
-die bei Verwendung mehrerer Operatives zu erwarten ist. Gestellt wurde das
-Prim-Problem.
 
-\subsubsection{Ergebnisse}
+\section{Testergebnisse}
+
+\subsection{Verschiedene Anzahlen von Operatives}
+Dieser Test soll Aufschluss über die effektive Geschwindigkeitssteigerung
+geben, die bei Verwendung mehrerer Operatives zu erwarten ist. Verwendet
+wurde das Prim-Problem.
 
 \begin{table*}[htbp]
   \centering
@@ -108,18 +115,18 @@ Prim-Problem.
   \caption{Prim-Problem mit aktiviertem Caching auf Operativeseite}
 \end{table*}
 
-Aus den Messwerten ist zu entnehmen, dass die Geschwindigkeit nahezu linear mit
-der Anzahl der Operatives skaliert.
+Aus den Messwerten ist zu entnehmen, dass die Geschwindigkeit nahezu linear
+mit der Anzahl der Operatives skaliert.
 
 \subsection{Einfluss des Caching}
 
-\subsubsection{Aufgabenstellung}
-Wie oben bereits ersichtlich ist, beeinflusst das Caching bei großen
-Rechenzeiten pro Teilproblem und wenig zu ladenden Klassen die Geschwindikeit
-kaum. Um einen Unterschied zu messen, wurde das Caching-Problem gestellt. Bei
-diesem Test wurden 15 Operatives verwendet.
+\subsubsection{Test mit Caching von Teilproblem-Klassen}
 
-\subsubsection{Ergebnisse}
+Wie oben bereits ersichtlich ist, beeinflusst das Caching bei großen
+Rechenzeiten pro Teilproblem und wenigen zu ladenden Klassen die
+Geschwindikeit kaum. Um einen Unterschied genauer zu untersuchen, wurde das
+Caching-Problem verwandt. Bei diesem Test wurden 15 Operatives verwendet.
+
 \begin{table*}[htbp]
   \centering
   \begin{tabular}{l l}
@@ -130,17 +137,19 @@ diesem Test wurden 15 Operatives verwendet.
   \caption{Berechnung des Caching-Problems mit 15 Operatives}
 \end{table*}
 
-Man sieht, dass erst bei sehr kurzen Berechnungszeiten der Teilprobleme das
-Caching einen Geschwindigkeitsvorteil bringt, da dann das Laden der Klassen
-überproportional viel Zeit benötigt.
+Man sieht, dass bei kurzen Berechnungszeiten der Teilprobleme und vielen zu
+ladenden Klassen das Caching einen Geschwindigkeitsvorteil bringt, da dann
+das Laden der Klassen überproportional viel Zeit benötigt.
 
-\subsubsection{Aufgabenstellung}
+\subsubsection{Test mit Caching von Teillösungs-Klasse}
+
 Ein weiterer Test zum Caching bestand darin, 3 Probleme, die ebenfalls die 
-2000000te Primzahl berechnen, zu vergleichen. Zusätzlich zum Prim- und zum
+2.000.000te Primzahl berechnen, zu vergleichen. Zusätzlich zum Prim- und zum
 Caching-Problem wurde ein MyInteger-Problem geschrieben, dass die Lösung in
-eine eigene Klasse, die ebenfalls vom Webserver geladen werden muss, schreibt.
+eine eigene Klasse, die ebenfalls vom Webserver geladen werden muss,
+schreibt. Die Ergebnisse sind in den Tabellen \ref{Tab-Caching-2.1} und
+\ref{Tab-Caching-2.2} angegeben.
 
-\subsubsection{Ergebnisse}
 \begin{table*}[htbp]
 \centering
 \begin{tabular}{l l l l}
@@ -155,6 +164,7 @@ Anzahl der Operatives & Prim-Problem & Caching-Problem & MyInteger-Problem \\
 1  & 346 & 346 & 346 \\
 \end{tabular}
 \caption{Unterschiede zwischen den Problemen mit Cache}
+\label{Tab-Caching-2.1}
 \end{table*}
 
 \begin{table*}[htbp]
@@ -171,10 +181,15 @@ Anzahl der Operatives & Prim-Problem & Caching-Problem & MyInteger-Problem \\
 1  & 350 & 345 & 346 \\
 \end{tabular}
 \caption{Unterschiede zwischen den Problemen ohne Cache}
+\label{Tab-Caching-2.2}
 \end{table*}
 
+\newpage
+
 \subsubsection{Speedup}
-Als Referenzwerte dienten:
+
+Als Referenzwerte dienten die Werte aus Tabelle \ref{Tab-Caching-3.1}.
+
 \begin{table*}[htbp]
 \centering
 \begin{tabular}{l | l}
@@ -182,14 +197,19 @@ Prim-Problem & 304,6 \\
 Caching-Problem & 305,2 \\
 MyInteger-Problem & 310,3 \\
 \end{tabular}
+\caption{Referenzwerte zur Berechnung des Speedup}
+\label{Tab-Caching-3.1}
 \end{table*}
 
-Das ergibt einen Speedup von:
+Der Speedup ist in den Tabellen \ref{Tab-Caching-3.2}, \ref{Tab-Caching-3.3}
+und \ref{Tab-Caching-3.4} angegeben.
+
 \begin{table*}[htbp]
 \centering
 \begin{tabular}{l l l}
 Anzahl der Operatives & Prim-Problem & Prim-Problem \\
-& mit Cache & ohne Cache \\ \hline
+& mit Cache & ohne Cache \\
+\hline
 25 & 17,92 & 13,85 \\
 20 & 14,51 & 13,24 \\
 15 & 11,28 & 9,83  \\
@@ -198,6 +218,8 @@ Anzahl der Operatives & Prim-Problem & Prim-Problem \\
 3  & 2,29  & 2,29  \\
 1  & 0,88  & 0,87  \\
 \end{tabular}
+\caption{Speedup beim Prim-Problem}
+\label{Tab-Caching-3.2}
 \end{table*}
 
 \begin{table*}[htbp]
@@ -205,7 +227,8 @@ Anzahl der Operatives & Prim-Problem & Prim-Problem \\
 \begin{tabular}{l l l}
 Anzahl der Operatives& Caching-Problem & 
 Caching-Problem \\
-& mit Cache & ohne Cache \\ \hline
+& mit Cache & ohne Cache \\
+\hline
 25 & 17,24 & 12,41\\
 20 & 14,10 & 11,93\\
 15 & 11,49 & 9,70 \\
@@ -214,13 +237,16 @@ Caching-Problem \\
 3  & 2,35  & 2,33 \\
 1  & 0,90  & 0,90 \\
 \end{tabular}
+\caption{Speedup bezüglich Caching von Teilproblemen}
+\label{Tab-Caching-3.3}
 \end{table*}
 
 \begin{table*}[htbp]
 \centering
 \begin{tabular}{l l l}
 Anzahl der Operatives & MyInteger-Problem & MyInteger-Problem \\
-& mit Cache & ohne Cache\\ \hline
+& mit Cache & ohne Cache\\
+\hline
 25 & 17,95 & 13,87 \\
 20 & 13,27 & 11,30 \\
 15 & 11,30 & 9,54  \\
@@ -229,11 +255,12 @@ Anzahl der Operatives & MyInteger-Problem & MyInteger-Problem \\
 3  & 2,33  & 2,29  \\
 1  & 0,88  & 0,88  \\
 \end{tabular}
+\caption{Speedup bezüglich Caching von Teillösungen}
+\label{Tab-Caching-3.4}
 \end{table*}
 
 \subsection{Der erste Start}
 
-\subsubsection{Aufgabenstellung}
 Während der Tests stellten wir fest, dass aufgrund einiger Eigenarten des
 RMI-Systems die erste Eingabe eines Problems in das Compute-Systems stets länger
 dauert als die folgenden Eingaben (selbst bei abgeschaltetem Caching). Dies
@@ -242,14 +269,15 @@ unter RMI wiederverwendet werden, sobald einmal eine Verbindung hergestellt
 wurde. Um diesen Einfluss zu testen, wurden die folgenden Testreihen
 durchgeführt.
 
-\subsubsection{Ergebnisse}
 \begin{table*}[htbp]
   \centering
   \begin{tabular}{l l}
-  Status & Dauer in Millisekunden\\ \hline
-  Erster Start, Caching aktiviert & 7197\\
-  Weitere Starts, Caching aktiviert & 1166\\ \hline
-  Erster Start, Caching deaktiviert & 7457\\
+  Status                              & Dauer in Millisekunden\\
+  \hline
+  Erster Start, Caching aktiviert     & 7197\\
+  Weitere Starts, Caching aktiviert   & 1166\\
+  \hline
+  Erster Start, Caching deaktiviert   & 7457\\
   Weitere Starts, Caching deaktiviert & 2239\\
   \end{tabular}
   \caption{Berechnung des Caching-Problems mit 15 Operatives}
@@ -258,10 +286,12 @@ durchgeführt.
 \begin{table*}[htbp]
   \centering
   \begin{tabular}{l l}
-  Status & Dauer in Millisekunden\\ \hline
-  Erster Start, Caching aktiviert & 31,0\\
-  Weitere Starts, Caching aktiviert & 20,4\\ \hline
-  Erster Start, Caching deaktiviert & 29,3\\
+  Status                              & Dauer in Millisekunden\\
+  \hline
+  Erster Start, Caching aktiviert     & 31,0\\
+  Weitere Starts, Caching aktiviert   & 20,4\\
+  \hline
+  Erster Start, Caching deaktiviert   & 29,3\\
   Weitere Starts, Caching deaktiviert & 21,2\\
   \end{tabular}
   \caption{Berechnung des Prim-Problems mit 25 Operatives}
