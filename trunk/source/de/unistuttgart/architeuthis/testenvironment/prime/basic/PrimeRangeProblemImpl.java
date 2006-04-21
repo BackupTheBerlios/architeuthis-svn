@@ -32,9 +32,10 @@
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment.prime.example;
+package de.unistuttgart.architeuthis.testenvironment.prime.basic;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.ArrayList;
 
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
@@ -81,8 +82,8 @@ public class PrimeRangeProblemImpl extends AbstractFixedSizeProblem {
      * @return  Array von Teilproblemen.
      */
     protected PartialProblem[] createPartialProblems(long suggestedParProbs) {
-        PartialProblem[] parProbs = new PartialProblem[suggestedParProbs];
-        int              nextValue;
+        PartialProblem[] parProbs = new PartialProblem[(int) suggestedParProbs];
+        long             parItvSize, nextValue;
         int              pIndex;
 
         // Das Array der Teilprobleme mit null initialisieren, falls das
@@ -105,7 +106,7 @@ public class PrimeRangeProblemImpl extends AbstractFixedSizeProblem {
             parProbs[pIndex] = new PrimePartialProblemImpl(nextValue,
                                                            nextValue + parItvSize);
             pIndex++;
-            nextVal += parItvSize;
+            nextValue += parItvSize;
         }
 
         // Dem letzten Teilproblem das Restintervall zuweisen.
