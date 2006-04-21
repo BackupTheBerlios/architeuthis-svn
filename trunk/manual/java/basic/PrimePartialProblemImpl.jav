@@ -1,7 +1,7 @@
 /*
- * file:        OrderedPrimeParProb.java
+ * file:        PrimePartialProblemImpl.java
  * created:     <???>
- * last change: 20.04.2006 by Dietmar Lippold
+ * last change: 21.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -31,7 +31,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment.prime.example;
+package de.unistuttgart.architeuthis.testenvironment.prime.basic;
 
 import de.unistuttgart.architeuthis.testenvironment.PrimeNumbers;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
@@ -45,7 +45,7 @@ import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
  *
  * @author Achim Linke, Dietmar Lippold
  */
-public class OrderedPrimeParProb implements NonCommPartialProblem {
+public class PrimePartialProblemImpl implements NonCommPartialProblem {
 
     /**
      * Zahl, ab der nach Primzahlen gesucht werden soll.
@@ -64,7 +64,7 @@ public class OrderedPrimeParProb implements NonCommPartialProblem {
      * @param min  Die Zahl, ab der nach Primzahlen gesucht werden soll.
      * @param max  Die Zahl, bis zu der nach Primzahlen gesucht werden soll.
      */
-    public OrderedPrimeParProb(long min, long max) {
+    public PrimePartialProblemImpl(long min, long max) {
         minWert = min;
         maxWert = max;
     }
