@@ -40,8 +40,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
 
 /**
- * Test zur Benutzung der abstrakten Klasse <code>AbstractOrderedProblem</code>.
- * Es werden alle PrimeNumbers zwischen anzugebenden Grenzen berechnet.
+ * Dient zur Berechnung der Primzahlen in einem anzugebeden Intervall.
  *
  * @author Achim Linke, Dietmar Lippold
  */
@@ -59,7 +58,7 @@ public class PrimePartialProblemImpl implements NonCommPartialProblem {
 
     /**
      * Liefert eine neue Instanz zu einem vorgegebenen Intervall. Die
-     * Grenzen des Interalls sind Teil sind Teil von diesem.
+     * Grenzen des Interalls sind Teil von diesem.
      *
      * @param min  Die Zahl, ab der nach Primzahlen gesucht werden soll.
      * @param max  Die Zahl, bis zu der nach Primzahlen gesucht werden soll.
@@ -70,10 +69,15 @@ public class PrimePartialProblemImpl implements NonCommPartialProblem {
     }
 
     /**
-     * Führt die konkrete Berechnung der Primzahlen aus.
+     * Berechnet alle Primzahlen aus dem Intervall, das dem Konstruktor
+     * übergeben wurde, und liefert die Lösung in Form eines
+     * <code>ContainerPartialSolution</code> Objekts zurück. 
      *
-     * @return  Container-Klasse, die die Liste der Primzahlen im vorgegebenen
-     *          Bereich enthält.
+     * @return  Instanz der Container-Klasse, die die Liste der Primzahlen im
+     *          vorgegebenen Bereich enthält.
+     *
+     * @throws ProblemComputeException  Falls ein Fehler bei der Berechnung
+     *                                  auftritt.
      */
     public PartialSolution compute() throws ProblemComputeException {
         return new ContainerPartialSolution(
