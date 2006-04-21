@@ -6,6 +6,7 @@
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
+ *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
  *
  * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
  * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
@@ -31,14 +32,14 @@
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment.prime.basic;
+package de.unistuttgart.architeuthis.testenvironment.prime.example;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
-import de.unistuttgart.architeuthis.abstractproblems.AbstractOrderedProblem;
+import de.unistuttgart.architeuthis.abstractproblems.AbstractFixedSizeProblem;
 import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
 
 /**
@@ -46,9 +47,9 @@ import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
  * Teilintervalle mittels einer quadratischen Verteilungsfunktion berechnet
  * werden, welche als Teilprobleme an die Operatives geschickt werden.
  *
- * @author Achim Linke
+ * @author Achim Linke, Dietmar Lippold
  */
-public class PrimeRangeProblemImpl extends AbstractOrderedProblem {
+public class PrimeRangeProblemImpl extends AbstractFixedSizeProblem {
 
     /**
      * Die Zahl, ab der nach Primzahlen gesucht wird.
@@ -61,53 +62,11 @@ public class PrimeRangeProblemImpl extends AbstractOrderedProblem {
     private long maxValue;
 
     /**
-     * Speichert alle Primzahlen im angegebenen Bereich.
-     */
-    private ArrayList finalSolution = new ArrayList();
-
-    /**
-     * Gibt an, wieviele Teillösungen noch verbleiben, bis die Gesamtlösung
-     * fertig ist.
-     */
-    private long solutionsRemaining = 0;
-
-    /**
-     * Gibt an, ob das als nächstes zu liefernde Teilproblem das erste ist.
-     */
-    private boolean firstPartialProblem = true;
-
-    /**
-     * Koeffizient für die quadratische Verteilungsfunktion.
-     */
-    private float coeffA = 0;
-
-    /**
-     * Koeffizient für die quadratische Verteilungsfunktion.
-     */
-    private float coeffB = 0;
-
-    /**
-     * Aus diesem Wert werden in der Verteilungsfunktion die nächsten Grenzen
-     * des Intervalls berechnet.
-     */
-    private long distributeValue = 0;
-
-    /**
-     * Der Anfangswert des Intervalls vom letzten rausgegebenem Teilproblem.
-     */
-    private long lastStartValue = 0;
-
-    /**
-     * Der Endwert des Intervalls vom letzten rausgegebenem Teilproblem.
-     */
-    private long lastEndValue = 0;
-
-    /**
      * Zu verwendender Konstruktor, der sofort die Grenzen zur Berechnung der
      * Primzahlen setzt.
      *
-     * @param min  Die Untergrenze zur Suche der Primzahlen.
-     * @param max  Die Obergrenze zur Suche der Primzahlen.
+     * @param min  Kleinste Zahl, ab der Primzahlen gesucht werden.
+     * @param max  Größte Zahl, bis zu der Primzahlen gesucht werden.
      */
     public PrimeRangeProblemImpl(long min, long max) {
         minValue = min;
@@ -115,93 +74,64 @@ public class PrimeRangeProblemImpl extends AbstractOrderedProblem {
     }
 
     /**
-     * Generiert ein neues Teilproblem zur Berechnung auf einem Operative.
+     * Liefert ein Array mit allen Teilproblemen.
      *
-     * @param problemsExpected  Anzahl zu generierender Teilprobleme. Wird
-     *                          nur beim ersten Aufruf ausgewertet.
+     * @param suggestedParProbs  Vorgeschlagene Anzahl von Teilproblemen.
      *
-     * @return  Ein Teilproblem zur Berechnung.
+     * @return  Array von Teilproblemen.
      */
-    protected PartialProblem createPartialProblem(long problemsExpected) {
+    protected PartialProblem[] createPartialProblems(long suggestedParProbs) {
+        PartialProblem[] parProbs = new PartialProblem[suggestedParProbs];
+        int              nextValue;
+        int              pIndex;
 
-        // Prüfen, ob die Methode das erste Mal aufgerufen wird.
-        if (firstPartialProblem) {
-            firstPartialProblem = false;
-
-            // Koeffizienten der Verteilungsfunktion bestimmen, siehe
-            // distributionFunction.
-            coeffA = (float) (-1.0 / ((float) problemsExpected * problemsExpected));
-            coeffB = (float) (2.0 / (float) problemsExpected);
+        // Das Array der Teilprobleme mit null initialisieren, falls das
+        // Gesamtintervall kleiner als die Anzahl der Teilprobleme ist.
+        for (int i = 0; i < suggestedParProbs; i++) {
+            parProbs[i] = null;
         }
 
-        // Es wurden schon alle Zahlen verteilt, dann null zurückgeben.
-        if (lastEndValue == maxValue) {
-            return null;
+        // Die Größe der Teilintervalle ermitteln. Der Quotient von Größe des
+        // Gesamtintervalls und vorgeschlagener Anzahl der Teilprobleme wird
+        // auf den nächsten ganzen Wert aufgerundet.
+        parItvSize = ((maxValue - minValue + suggestedParProbs - 1)
+                      / suggestedParProbs);
+
+        // Nummer und Anfangswert des nächstes Teilintervalls initialisieren.
+        pIndex = 0;
+        nextValue = minValue;
+
+        while (nextValue + parItvSize < maxValue) {
+            parProbs[pIndex] = new PrimePartialProblemImpl(nextValue,
+                                                           nextValue + parItvSize);
+            pIndex++;
+            nextVal += parItvSize;
         }
 
-        // Sonst: mittels while-Schleife die nächste Intervall-Grenze
-        // bestimmen.
-        long start = 0;
-        while (start <= lastStartValue) {
-            start = (long) Math.floor(distributionFunction(distributeValue));
-            distributeValue++;
-        }
+        // Dem letzten Teilproblem das Restintervall zuweisen.
+        parProbs[pIndex] = new PrimePartialProblemImpl(nextValue, maxValue);
 
-        // Das Ende des Intervalls bestimmen
-        long end = (long) Math.floor(distributionFunction(distributeValue) - 1);
-
-        // Falls das Ende nicht größer ist (kann bei kleinen Intervallen und
-        // vielen Operatives auftreten), dann end neu setzen.
-        if (start > end) {
-            end = start;
-        }
-
-        // Werte für die nächsten überprüfungen sichern
-        lastStartValue = start;
-        lastEndValue =  end;
-
-        // Anzahl der noch zu erwartenden Probleme hochzählen
-        solutionsRemaining++;
-
-        return new PrimePartialProblemImpl(start, end);
+        return parProbs;
     }
 
     /**
-     * Berechnet die Verteilungsfunktion, gemäß welcher die Intervallgrenzen
-     * bestimmt werden. Dabei handelt es sich um die quadratische Funktion
-     * f:x -> a*x^2 + b*x, deren Koeffizienten a und b so bestimmt sind, dass
-     * gilt: f(0) = minValue, f(maxProb) = maxValue und f'(maxProb) = 0 (dabei
-     * sei maxProb die Zahl, die beim ersten Start für
-     * <code>problemsExpected</code> in <code>createPartialProblem</code>
-     * übergeben wurde).
+     * Erstellt eine Gesamtlösung aus den übergebenen Teillösungen. Sowohl die
+     * Teillösungen wie die Gesamtlösung sind Listen von Primzahlen.
      *
-     * @param x  Der Wert, für den die Funktion berechnet wird.
-     *
-     * @return  Den berechneten Funktionswert.
-     */
-    protected float distributionFunction(float x) {
-        return (coeffA * x * x + coeffB * x) * (maxValue + 1 - minValue) + minValue;
-    }
-
-    /**
-     * Erhält die nächste Teillösung und gibt die Gesamtlösung zurück, falls
-     * diese schon fertig ist, sonst <code>null</code>.
-     *
-     * @param parSol  Eine Teillösung.
+     * @param partialSolutions  Alle eingegangenen Teillösungen.
      *
      * @return  Die Gesamtlösung.
      */
-    protected Serializable receivePartialSolution(PartialSolution parSol) {
+    protected Serializable createSolution(PartialSolution[] partialSolutions) {
+        ArrayList                finalSolution;
+        ContainerPartialSolution parSol;
 
-        finalSolution.addAll((ArrayList)
-            ((ContainerPartialSolution) parSol).getPartialSolution());
-        solutionsRemaining--;
-
-        if ((solutionsRemaining == 0) && (lastEndValue == maxValue)) {
-            return finalSolution;
-        } else {
-            return null;
+        finalSolution = new ArrayList();
+        for (int i = 0; i < partialSolutions.length; i++) {
+            parSol = (ContainerPartialSolution) partialSolutions[i];
+            finalSolution.addAll((List) parSol.getPartialSolution());
         }
+        return finalSolution;
     }
 }
 
