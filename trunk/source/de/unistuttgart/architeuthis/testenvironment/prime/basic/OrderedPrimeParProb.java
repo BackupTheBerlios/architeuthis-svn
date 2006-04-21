@@ -1,7 +1,7 @@
 /*
  * file:        OrderedPrimeParProb.java
  * created:     <???>
- * last change: 20.04.2006 by Dietmar Lippold
+ * last change: 21.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -31,7 +31,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment.prime.example;
+package de.unistuttgart.architeuthis.testenvironment.prime.basic;
 
 import de.unistuttgart.architeuthis.testenvironment.PrimeNumbers;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
