@@ -1,5 +1,5 @@
 /*
- * file:        OrderedPrimeRangeProblem.java
+ * file:        PrimeRangeProblemImpl.java
  * created:     <???>
  * last change: 21.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
@@ -48,7 +48,7 @@ import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
  *
  * @author Achim Linke
  */
-public class OrderedPrimeRangeProblem extends AbstractOrderedProblem {
+public class PrimeRangeProblemImpl extends AbstractOrderedProblem {
 
     /**
      * Die Zahl, ab der nach Primzahlen gesucht wird.
@@ -109,7 +109,7 @@ public class OrderedPrimeRangeProblem extends AbstractOrderedProblem {
      * @param min  Die Untergrenze zur Suche der Primzahlen.
      * @param max  Die Obergrenze zur Suche der Primzahlen.
      */
-    public OrderedPrimeRangeProblem(long min, long max) {
+    public PrimeRangeProblemImpl(long min, long max) {
         minValue = min;
         maxValue = max;
     }
@@ -163,7 +163,7 @@ public class OrderedPrimeRangeProblem extends AbstractOrderedProblem {
         // Anzahl der noch zu erwartenden Probleme hochzählen
         solutionsRemaining++;
 
-        return new OrderedPrimeParProb(start, end);
+        return new PrimePartialProblemImpl(start, end);
     }
 
     /**
