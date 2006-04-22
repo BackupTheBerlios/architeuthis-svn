@@ -5,6 +5,7 @@
 
 
 \chapter{Abstrakte Hilfsklassen}\label{abstrakt}
+
 Alle abstrakten Hilfsklassen sollen nur eine Hilfestellung sein, (einfache)
 Probleme schnell zu implementieren.
 
@@ -31,6 +32,7 @@ Die Klassen sind nachfolgend einzeln beschrieben.
 
 
 \section{AbstractOrderedProblem.java}
+
 Diese Klasse sorgt dafür, das die Teillösungen in der gleichen Reihenfolge
 geliefert werden, in der die zugehörigen Teilprobleme erzeugt wurden. Eine
 konkrete Unterklasse muß dazu die beiden folgenden Methoden implementieren:
@@ -47,10 +49,11 @@ konkrete Unterklasse muß dazu die beiden folgenden Methoden implementieren:
 
 Nachfolgend ist der komplette Quelltext angegeben.
 
-{\scriptsize \verbatiminput{java/AbstractOrderedProblem.jav}}
+{\scriptsize \verbatiminput{java/abstract/AbstractOrderedProblem.jav}}
 
 
 \section{AbstractFixedSizeProblem.java}
+
 Diese Klasse eignet sich für Probleme, die am Anfang schon alle
 Teilprobleme  erstellen können, die auch alle für die Lösung erforderlich
 sind. Die Anzahl kann  von der vom Dispatcher vorgeschlagenen Anzahl
@@ -72,7 +75,7 @@ folgenden Methoden implementieren:
 
 Nachfolgend ist der komplette Quelltext der Klasse angegeben.
 
-{\scriptsize \verbatiminput{java/AbstractFixedSizeProblem.jav}}
+{\scriptsize \verbatiminput{java/abstract/AbstractFixedSizeProblem.jav}}
 
 
 \section{AbstractFixedSizePriorityProblem.java}
@@ -110,11 +113,12 @@ das Interface \texttt{CommunicationPartialProblem} implementieren muss.
 
 Nachfolgend ist der komplette Quelltext der beiden Klassen angegeben.
 
-{\scriptsize \verbatiminput{java/AbstractFixedSizePriorityProblem.jav}}
-{\scriptsize \verbatiminput{java/AbstractFixedSizePriorityPartialProblem.jav}}
+{\scriptsize \verbatiminput{java/abstract/AbstractFixedSizePriorityProblem.jav}}
+{\scriptsize \verbatiminput{java/abstract/AbstractFixedSizePriorityPartialProblem.jav}}
 
 
 \section{ContainerPartialSolution.java}
+
 Diese Klasse kann dafür verwendet werden, ein serialisierbares Objekt, das
 von einem Teilproblem erzeugt wurde, auf einfache Weise als Teillösung
 zurückzugeben. Dazu wird das erzeugte Objekt vom Teilproblem dem Konstruktor
@@ -123,5 +127,5 @@ dann mit der Methode {\tt getPartialSolution} abgefragt werden.
 
 Nachfolgend ist der komplette Quelltext der Klasse angegeben.
 
-{\scriptsize \verbatiminput{java/ContainerPartialSolution.jav}}
+{\scriptsize \verbatiminput{java/abstract/ContainerPartialSolution.jav}}
 
