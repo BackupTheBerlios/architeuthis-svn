@@ -1,7 +1,7 @@
 /*
  * file:        PrimeSequenceProblemImpl.java
  * created:     <???>
- * last change: 20.04.2006 by Dietmar Lippold
+ * last change: 22.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -105,12 +105,13 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
 
     /**
      * Konstruktor, der dem Problem die richtigen Grenzen für die
-     * Primzahl-Bestimmung zuweist.
+     * Primzahl-Bestimmung zuweist. Die übergebenen Werte müssen im Bereich
+     * von <code>int</code> liegen.
      *
      * @param minWert  Die Nummer der kleinsten Primzahl, die gesucht wird.
      * @param maxWert  Die Nummer der größten Primzahl, die gesucht wird.
      */
-    public PrimeSequenceProblemImpl(Integer minWert, Integer maxWert) {
+    public PrimeSequenceProblemImpl(Long minWert, Long maxWert) {
         minNumber = minWert.intValue();
         maxNumber = maxWert.intValue();
     }
