@@ -20,7 +20,7 @@ set ARGS=%ARGS% -u %CLASSURL%
 set ARGS=%ARGS% -r %DISPATCHER_HOST%:%DISPATCHER_PORT%
 set ARGS=%ARGS% -s
 set ARGS=%ARGS% -c de.unistuttgart.architeuthis.testenvironment.prime.advanced.PrimeRangeProblemImpl
-set ARGS=%ARGS% -f %SOLUTIONFILE%
+REM set ARGS=%ARGS% -f %SOLUTIONFILE%
 
 # Auf der Kommandozeile können die Optionen -d und entweder -p oder -n
 # angegeben werden.

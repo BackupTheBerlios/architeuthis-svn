@@ -18,7 +18,7 @@ set ARGS=
 set ARGS=%ARGS% -u %CLASSURL%
 set ARGS=%ARGS% -r %DISPATCHER_HOST%:%DISPATCHER_PORT%
 set ARGS=%ARGS% -c de.unistuttgart.architeuthis.testenvironment.montecarlo.MonteCarloProblemImpl
-set ARGS=%ARGS% -f %SOLUTIONFILE%
+REM set ARGS=%ARGS% -f %SOLUTIONFILE%
 
 REM Auf der Kommandozeile können die Optionen -d und entweder -p oder -n
 REM angegeben werden.

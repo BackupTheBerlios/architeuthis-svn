@@ -17,7 +17,7 @@ ARGS=" "
 ARGS="$ARGS -u $CLASSURL"
 ARGS="$ARGS -r $DISPATCHER_HOST:$DISPATCHER_PORT"
 ARGS="$ARGS -c de.unistuttgart.architeuthis.testenvironment.prime.advanced.PrimeRangeProblemImpl"
-ARGS="$ARGS -f $SOLUTIONFILE"
+# ARGS="$ARGS -f $SOLUTIONFILE"
 
 # Auf der Kommandozeile können die Optionen -d und entweder -p oder -n
 # angegeben werden.
