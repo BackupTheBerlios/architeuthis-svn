@@ -31,7 +31,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment.prime;
+package de.unistuttgart.architeuthis.testenvironment.prime.advanced;
 
 import de.unistuttgart.architeuthis.testenvironment.PrimeNumbers;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;

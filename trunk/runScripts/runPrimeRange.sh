@@ -16,7 +16,7 @@ JVMPAR="$JVMPAR -Djava.security.policy=$CONFIG_DIR/transmitter.pol"
 ARGS=" "
 ARGS="$ARGS -u $CLASSURL"
 ARGS="$ARGS -r $DISPATCHER_HOST:$DISPATCHER_PORT"
-ARGS="$ARGS -c de.unistuttgart.architeuthis.testenvironment.prime.PrimeRangeProblemImpl"
+ARGS="$ARGS -c de.unistuttgart.architeuthis.testenvironment.prime.advanced.PrimeRangeProblemImpl"
 ARGS="$ARGS -f $SOLUTIONFILE"
 
 # Auf der Kommandozeile können die Optionen -d und entweder -p oder -n

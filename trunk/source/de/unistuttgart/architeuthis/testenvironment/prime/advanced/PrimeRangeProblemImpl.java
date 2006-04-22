@@ -32,7 +32,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment.prime;
+package de.unistuttgart.architeuthis.testenvironment.prime.advanced;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -17,7 +17,7 @@ REM die Parameter für die Anwendung
 set ARGS=
 set ARGS=%ARGS% -u %CLASSURL%
 set ARGS=%ARGS% -r %DISPATCHER_HOST%:%DISPATCHER_PORT%
-set ARGS=%ARGS% -c de.unistuttgart.architeuthis.testenvironment.prime.PrimeSequenceProblemImpl
+set ARGS=%ARGS% -c de.unistuttgart.architeuthis.testenvironment.prime.advanced.PrimeSequenceProblemImpl
 set ARGS=%ARGS% -f %SOLUTIONFILE%
 
 REM Auf der Kommandozeile können die Optionen -d und entweder -p oder -n
