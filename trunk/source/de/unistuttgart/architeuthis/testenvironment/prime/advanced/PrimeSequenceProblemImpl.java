@@ -43,6 +43,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
+import de.unistuttgart.architeuthis.testenvironment.prime.PrimePartialProblemImpl;
 
 /**
  * Mit dieser Klasse können entsprechend dem Interface <code>Problem</code>

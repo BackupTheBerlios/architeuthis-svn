@@ -31,7 +31,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment.prime.advanced;
+package de.unistuttgart.architeuthis.testenvironment.prime;
 
 import de.unistuttgart.architeuthis.testenvironment.PrimeNumbers;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
@@ -40,28 +40,28 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
 
 /**
- * Implementierung des <code>PartialProblem</code>-Interfaces, um ein neues
- * Problem für das <code>ProblemManager</code> bereitzustellen.
+ * Dient zur Berechnung der Primzahlen in einem anzugebeden Intervall.
  *
- * @author Ralf Kible, Achim Linke
+ * @author Achim Linke, Dietmar Lippold
  */
 public class PrimePartialProblemImpl implements NonCommPartialProblem {
 
     /**
-     * Untere Grenze, ab der Primzahlen gesucht werden
+     * Zahl, ab der nach Primzahlen gesucht werden soll.
      */
     private long minWert;
 
     /**
-     * Obere Grenze, bis zu welcher Primzahlen gesucht werden
+     * Zahl, bis zu der nach Primzahlen gesucht werden soll.
      */
     private long maxWert;
 
     /**
-     * Erzeugt zum übergebenen Intervall eine neue Instanz.
+     * Liefert eine neue Instanz zu einem vorgegebenen Intervall. Die
+     * Grenzen des Interalls sind Teil von diesem.
      *
-     * @param min  Ab hier werden Primzahlen gesucht.
-     * @param max  Bis hier werden Primzahlen gesucht.
+     * @param min  Die Zahl, ab der nach Primzahlen gesucht werden soll.
+     * @param max  Die Zahl, bis zu der nach Primzahlen gesucht werden soll.
      */
     public PrimePartialProblemImpl(long min, long max) {
         minWert = min;
@@ -71,11 +71,10 @@ public class PrimePartialProblemImpl implements NonCommPartialProblem {
     /**
      * Berechnet alle Primzahlen aus dem Intervall, das dem Konstruktor
      * übergeben wurde, und liefert die Lösung in Form eines
-     * <code>ContainerPartialSolution</code> Objekts zurück. Intern wird
-     * ausschließlich die Methode <code>primzahlTeilbereich</code> der Klasse
-     * <code>PrimeNumbers</code> benutzt.
+     * <code>ContainerPartialSolution</code> Objekts zurück.
      *
-     * @return  Die berechnete Teillösung.
+     * @return  Instanz der Container-Klasse, die die Liste der Primzahlen im
+     *          vorgegebenen Bereich enthält.
      *
      * @throws ProblemComputeException  Falls ein Fehler bei der Berechnung
      *                                  auftritt.

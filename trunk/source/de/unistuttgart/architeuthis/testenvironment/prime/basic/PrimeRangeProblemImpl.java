@@ -1,7 +1,7 @@
 /*
  * file:        PrimeRangeProblemImpl.java
  * created:     <???>
- * last change: 21.04.2006 by Dietmar Lippold
+ * last change: 22.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -42,6 +42,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.abstractproblems.AbstractFixedSizeProblem;
 import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
+import de.unistuttgart.architeuthis.testenvironment.prime.PrimePartialProblemImpl;
 
 /**
  * Es werden alle Primzahlen zwischen anzugebenden Grenzen berechnet, indem
