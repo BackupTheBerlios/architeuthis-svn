@@ -4,95 +4,116 @@
 %% entwickelt.
 
 
-\chapter[Beispiele zur Parallelisierung]{Der Weg zum parallelisierten Programm anhand eines Beispiels}
+\chapter[Beispiele zur Parallelisierung]{Der Weg zum parallelisierten Programm
+         anhand eines Beispiels}
 
-Dieses Kapitel beschreibt die Parallelisierung eines nicht--serialisierten
-Problems, das vollständig auf dem Compute-System ausgeführt werden kann, das
-also insbesondere keine Daten mit anderen Programmen austauschen muß und
-keine Eingaben vom Benutzer benötigt. Das Kapitel dient daher primär der
-Darstellung der Parallelisierung selbst, nicht der Darstellung der Benutzung
-des Compute-Systems.
+Dieses Kapitel beschreibt die einfache Parallelisierung eines vorgegebenen
+Programms.
 
-In einer realen Anwendung wird das Problem das Interface
-{\tt SerializableProblem} implementieren und der Benutzer wird mit dem
-Compute-Systems nur über die Klasse
-{\tt de.unistuttgart.architeuthis.user.ProblemComputation} interagieren.
 
-\section{Ein einfaches Beispiel}
-Man betrachte zunächst die Methode {\tt primzahlTeilbereich} aus {\tt Primzahlen.java} :
+\section{Aufgabenstellung}
+
+Man betrachte zunächst die Methode {\tt primzahlTeilbereich} aus
+\texttt{de.unistuttgart.architeuthis.testenvironment.PrimeNumbers}:
+
 {\scriptsize \verbatiminput{java/PrimzahlTeilbereich.jav}}
-\par
-Gesucht werden also Primzahlen, die zwischen einem Intervall von zwei Zahlen existieren.
-{\tt Prim\-zahl\-Teil\-bereich} eignet sich sehr gut zum Verteilen, da hier jeder {\tt Operative} 
-für sich alleine rechnen kann, ohne weitere Informationen
-zu benötigen. Die Verwaltung wird von der abstrakten
-Klasse {\tt AbstractOrderedProblem.java} "ubernommen, bei der auf die Reihenfolge der zur"uckkommenden 
-{\tt Teill"osungen} geachtet wird. Siehe dazu auch Kapitel 9 - Abstrakte Hilfsklassen.
 
-\par
-Desweiteren muss das Interface {\tt PartialProblem} implementiert werden.
-
-\par
-Das Interface {\tt PartialSolution} ist durch die Verwendung der vorliegenden Klasse 
-{\tt ContainerPartialSolution.java} schon fertig, in der die Teill"osung einfach in
-ein {\tt Serializable-Objekt} gespeichert wird.
+Ermittelt werden sollen also alle Primzahlen, die in einem Intervall von
+zwei Zahlen liegen. Da dies so geschieht, daß die Zahlen einzeln überprüft
+werden, ob sie jeweils eine Primzahl sind, sind die Überprüfungen
+unabhängig voneinander. Die Gesamtaufgabe kann also recht einfach in
+Teilaufgaben zerlegt werden, indem das Gesamtintervall in Teilintervalle
+zerlegt wird. Jedes Teilintervall bildet dann ein Teilproblem und eine
+Teillösung ist eine Liste der Primzahlen aus dem Teilintervall. Die
+Gesamtlösung ergibt sich dann durch hintereinander hängen der Listen
+der Teillösungen. Dabei ist zu beachten, daß die Primzahlen in der
+Gesamtliste aufsteigend sortiert sein müssen.
 
 
-\subsection{Implementierung von \texttt{AbstractOrderedProblem}}
-In der abstrakten Klasse, die das Interface {\tt Problem} implementiert, m"ussen die zwei Methoden 
+\subsection{Implementierung}
+
+Die Sortierung der Primzahlen in der Gesamtliste kann dadurch implizit
+erfolgen, daß den Teilproblemen die Teilintervalle aufsteigend zugeordnet
+werden (wie es naheliegend ist) und die Teillösungen (die Listen der
+Primzahlen) in der entsprechenden Reihenfolge aneinander gehängt werden.
+Da die Berechnung der Teilprobleme unabhängig voneinander ist, können sie
+außerdem alle geleichzeitig erzeugt werden.
+
+Die Rückgabe der Teillösungen in der Reihenfolge der Ausgabe der Teilprobleme
+wird durch die zur Verfügung stehenden abstrakten Hilfsklassen
+(s.\ Kapitel \ref{abstrakt}) erledigt. Da die Teilprobleme außerdem alle
+gleichzeitig erzeugt werden können, kann die Klasse
+\texttt{AbstractFixedSizeProblem} verwendet werden. Für diese müssen
+die folgenden beiden Methoden implementiert werden:
+
 \begin{itemize}
-\item protected PartialProblem createPartialProblem(int problemsExpected)
-\item protected Serializable receivePartialSolution(PartialSolution parSol)
+\item protected PartialProblem[] createPartialProblems(long suggestedParProbs)
+\item protected Serializable createSolution(PartialSolution[] partialSolutions)
 \end{itemize}
-noch implementiert werden.
-\par
-Es wird eine untere und obere Grenze f"ur das zu durchsuchende Intervall ben"otigt, sowie
-eine Schrittweite f"ur die Teilprobleme. Desweiteren wird eine Liste f"ur die L"osung gebraucht und ein Z"ahler
-f"ur die noch zur"uckkommenenden Teill"osungen. Als Beispiel: \\
-Gesucht sind die Primzahlen zwischen 1 und 1000. Der erste {\tt Operative} berechnet die Primzahlen von 1-100, der
-zweite von 101-200 usw. D.h. die Schrittweite ist 100 und der Z"ahler f"ur die Teill"osungen wird auf 10 gesetzt.\\
-\par
-In der {\tt createPartialProblem} Methode wird ein neues {\tt Teilproblem} zur"uckgegeben. Hierzu werden einfach
-die Grenzen des Intervalls berechnet und die untere Grenze mit der Schrittweite nach oben gez"ahlt.
-\par
-In der {\tt receivePartialSolution} Methode wird die erhaltene Teill"osung zur Gesamtl"osung dazugef"ugt und
-"uberpr"uft, ob dies die letzte Teill"osung war. Ist dies der Fall wird die Gesamtl"osung zur"uckgegeben. Wenn
-dies nicht der Fall ist, muss {\tt null} zur"uckgegeben werden, da dies das Zeichen f"ur den {\tt Compute-Manager}
-ist, dass das Problem noch nicht fertig berechnet ist.
 
-{\scriptsize \verbatiminput{java/OrderedPrimeRangeProblem.java}}
+Deren Implementierung erfolgt wie schon beschrieben. In
+\texttt{createPartialProblems} werden die Teilprobleme dadurch erzeugt,
+daß jedem Teilproblem ein Teilintervall zugeordnet wird. In
+\texttt{createSolution} werden dann alle Teillösungen ihrer Reihenfolge
+im Array aneinandergehängt (zum konkreten Typ der Elemente von Array s.u.).
+Das Gesamtintervall wird die Unter- und Obergrenze dem Konsruktor übergeben.
+Nachfolgend die vollständige Implementierung der Problem-Klasse.
 
-\subsection{Implementierung von \texttt{PartialProblem}}
-Klar ist, dass jedes Teilproblem den Bereich enthalten muss, in dem die Primzahlen bestimmt
-werden sollen. Also legt man dazu Attribute an. Dann modifiziere man den Konstruktor, so dass diese
-Grenzen des Bereichs festgelegt werden.
-\par
-Zu guter Letzt wird noch {\tt compute()} implementiert, indem man aus der Klasse
-{\tt Primzahlen} die vorher ausgewählte Methode \\{\tt primzahlTeilberech} aufruft. 
+{\scriptsize \verbatiminput{java/basic/PrimeRangeProblemImpl.jav}}
 
-{\scriptsize \verbatiminput{java/OrderedPrimeParProb.java}}
+Die Implementierung des Teilproblems erfolgt einfach dadurch, daß dem
+Konstruktor wird das zu durchsuchende Teilintervall übergeben wird und
+in der Methode \texttt{compute()} zur Berechnung der Primzahlen die
+vorgegebene Methode \texttt{primzahlTeilbereich} aufgerufen wird. Um die
+Liste als Teillösung zurückzugeben, wird die zur Verfügung stehende
+Hilfsklasse \texttt{ContainerPartialSolution} verwandt. Aus dieser muß
+die Liste dann in der schon oben genannten Methode \texttt{createSolution}
+abgerufen werden. Nachfolgend die vollständige Implementierung der
+Teilproblem-Klasse.
+
+{\scriptsize \verbatiminput{java/basic/PrimePartialProblemImpl.jav}}
 
 
 \section{Weitere Beispiele}
-Weiter Beispiele kann man in dem Ordner {\tt de/unis/architeuthis/testumgebung} finden. Hier eine kurze Auflistung aller
-Probleme und eine kurze Beschreibung dazu:
+
+Weiter Beispiele kann man Package \texttt{de.unis.architeuthis.testumgebung}
+finden. Hier eine kurze Auflistung der Probleme und jeweils eine kurze
+Beschreibung dazu.
 
 \begin{enumerate}
-\item \texttt{de...testenvironment.montecarlo.MonteCarloProblemImpl}\\
-	Hier wird das MonteCarlo-Verfahren zur Bestimmung der Zahl $Pi$ parallelisert. Man bekommt somit bei einer
-	festgelegten Rechenzeit eine bessere Genauigkeit f"ur $Pi$.
-\item \texttt{de...testenvironment.random.RandomProblemImpl}\\
-	Hier wartet jedes Teilproblem einfach eine zuf"allige Anzahl von Sekunden. Dies ist f"ur Testzwecke recht
-	interessant gewesen.
-\item \texttt{de...testenvironment.caching.CachingTestProblem}\\
-	Hier werden drei Dummy-Klassen in den Teilproblemen geladen. Mit diesem Problem wurde verglichen, inwiefern
-	sich das Laden von Klassen zeitlich bemerkbar macht. Siehe dazu auch im Kapitel Performance.
-\item \texttt{de...testenvironment.prim.example.OrderedPrimeRangeProblem}\\
-	Dies ist das Einf"uhrungsbeispiel mittels der abstrakten Klasse\\
-        {\tt AbstractOrderedProblem.java}.
-\item \texttt{de...testenvironment.prim.PrimRangeProblemImpl}\\
-	Dieses Problem macht das gleiche wie {\tt OrderedPrimeRangeProblem}, nur dass es keine abstrakten 	Hilfsklassen benutzt.
-\item \texttt{de...testenvironment.prim.PrimSequenceProblemImpl}\\
+\item \texttt{de...testenvironment.prime.basic.PrimRangeProblemImpl}\\
+	Dies ist das obige Beispiel dieses Kapitels mittels der abstrakten
+        Klasse \texttt{AbstractFixedSizeProblem}.
+
+\item \texttt{de...testenvironment.prime.PrimRangeProblemImpl}\\
+        Dieses Problem macht das gleiche wie das obige Problem, nur daß
+        die Aufteilung in Teilprobleme geschickter so erfolgt, daß der
+        Rechenaufwand für die einzelnen Teilprobleme noch gleicher ist.
+
+\item \texttt{de...testenvironment.prime.PrimSequenceProblemImpl}\\
 	Dies ist das Beispiel f"ur Fortgeschrittene im n"achsten Kapitel.
+
+\item \texttt{de...testenvironment.montecarlo.MonteCarloProblemImpl}\\
+        Hier wird das MonteCarlo-Verfahren zur Bestimmung der Zahl $Pi$
+        parallelisert. Man bekommt somit bei einer festgelegten Rechenzeit
+        eine bessere Genauigkeit f"ur $Pi$.
+
+\item \texttt{de...testenvironment.random.RandomProblemImpl}\\
+        Hier wartet jedes Teilproblem einfach eine zuf"allige Anzahl von
+        Sekunden. Dies ist f"ur Testzwecke recht interessant.
+
+\item \texttt{de...testenvironment.fail.FailProblemImpl}\\
+        Ein Problem für Testzwecke, bei dem die Abfrage nach einer Lösung
+        immer den Wert \texttt{null} liefert.
+
+\item \texttt{de...testenvironment.caching.CachingTestProblem}\\
+        Hier werden drei Dummy-Klassen in den Teilproblemen geladen. Mit
+        diesem Problem wurde verglichen, inwiefern sich das Laden von
+        Klassen zeitlich bemerkbar macht. Siehe dazu auch im Kapitel
+        Performance.
+
+\item \texttt{de...testenvironment.hashstore.HashStoreProblemImpl}\\
+        Bei diesem Problem benutzen die Teilprobleme das Package
+        \texttt{de...remotestore.hashmap} als gemeinsamen Speicher.
 \end{enumerate}
 
