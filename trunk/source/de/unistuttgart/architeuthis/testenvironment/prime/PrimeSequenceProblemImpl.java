@@ -42,6 +42,7 @@ import java.util.LinkedList;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
+import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
 
 /**
  * Mit dieser Klasse können entsprechend dem Interface <code>Problem</code>
@@ -197,8 +198,8 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
                                        PartialProblem parProb) {
 
         // Zuerst Lösung casten und in die Warteschlange einfügen.
-        PrimePartialSolutionImpl p = (PrimePartialSolutionImpl) parSol;
-        solutions.put(parProb, p.getSolution());
+        ContainerPartialSolution p = (ContainerPartialSolution) parSol;
+        solutions.put(parProb, p.getPartialSolution());
 
         // Durch die Liste laufen, solange die Lösungen in der richtigen
         // Reihenfolge vorliegen

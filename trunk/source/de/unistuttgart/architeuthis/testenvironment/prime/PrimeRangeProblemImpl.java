@@ -1,7 +1,7 @@
 /*
  * file:        PrimeRangeProblemImpl.java
  * created:     <???>
- * last change: 20.04.2006 by Dietmar Lippold
+ * last change: 22.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -42,6 +42,7 @@ import java.util.LinkedList;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
+import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
 
 /**
  * Mit dieser Klasse können entsprechend dem Interface <code>Problem</code>
@@ -179,8 +180,8 @@ public class PrimeRangeProblemImpl implements SerializableProblem {
                                        PartialProblem parProb) {
 
         // Zuerst Lösung casten und in die Warteschlange einfügen.
-        PrimePartialSolutionImpl p = (PrimePartialSolutionImpl) parSol;
-        solutions.put(parProb, p.getSolution());
+        ContainerPartialSolution p = (ContainerPartialSolution) parSol;
+        solutions.put(parProb, p.getPartialSolution());
 
         // Durch die Liste laufen, solange die Lösungen in der richtigen
         // Reihenfolge vorliegen

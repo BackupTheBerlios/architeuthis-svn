@@ -1,7 +1,7 @@
 /*
  * file:        PrimePartialProblemImpl.java
  * created:     <???>
- * last change: 20.04.2006 by Dietmar Lippold
+ * last change: 22.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -37,6 +37,7 @@ import de.unistuttgart.architeuthis.testenvironment.PrimeNumbers;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.userinterfaces.develop.NonCommPartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
+import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
 
 /**
  * Implementierung des <code>PartialProblem</code>-Interfaces, um ein neues
@@ -70,8 +71,8 @@ public class PrimePartialProblemImpl implements NonCommPartialProblem {
     /**
      * Berechnet alle Primzahlen aus dem Intervall, das dem Konstruktor
      * übergeben wurde, und liefert die Lösung in Form eines
-     * <code>PartialSolution</code> Objekts zurück. Intern wird ausschließlich
-     * die Methode <code>primzahlTeilbereich</code> der Klasse
+     * <code>ContainerPartialSolution</code> Objekts zurück. Intern wird
+     * ausschließlich die Methode <code>primzahlTeilbereich</code> der Klasse
      * <code>PrimeNumbers</code> benutzt.
      *
      * @return  Die berechnete Teillösung.
@@ -80,7 +81,7 @@ public class PrimePartialProblemImpl implements NonCommPartialProblem {
      *                                  auftritt.
      */
     public PartialSolution compute() throws ProblemComputeException {
-        return new PrimePartialSolutionImpl(
+        return new ContainerPartialSolution(
             PrimeNumbers.primzahlTeilbereich(minWert, maxWert));
     }
 }
