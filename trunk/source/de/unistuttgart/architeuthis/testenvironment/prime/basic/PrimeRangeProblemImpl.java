@@ -46,8 +46,8 @@ import de.unistuttgart.architeuthis.testenvironment.prime.PrimePartialProblemImp
 
 /**
  * Es werden alle Primzahlen zwischen anzugebenden Grenzen berechnet, indem
- * Teilintervalle mittels einer quadratischen Verteilungsfunktion berechnet
- * werden, welche als Teilprobleme an die Operatives geschickt werden.
+ * das Gesamtintervall in gleich groﬂe Teilintervalle zerlegt wird die diese
+ * Teilintervalle die Teilprobleme definieren.
  *
  * @author Achim Linke, Dietmar Lippold
  */
