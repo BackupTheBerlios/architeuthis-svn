@@ -76,6 +76,7 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
      * geliefert wird.
      *
      * @param number  Die vorgeschlagene Anzahl zu generierender Teilprobleme.
+     *                Diese ist grösser oder gleich Eins.
      *
      * @return  Von der implementierenden Unterklasse erzeugtes Teilproblem.
      */
@@ -141,6 +142,7 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
      * mehr existiert.
      *
      * @param problemsExpected  Die vorgeschlagene Anzahl von Teilproblemen.
+     *                          Diese ist grösser oder gleich Eins.
      *
      * @return  Ein Teilproblem.
      */

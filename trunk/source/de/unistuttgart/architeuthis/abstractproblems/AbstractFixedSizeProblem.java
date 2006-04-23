@@ -117,8 +117,8 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
      * um alle Teilprobleme zu generieren. Bei allen Aufrufen werden
      * Teilprobleme ausgegeben, solange noch welche vorhanden sind.
      *
-     * @param number  Die vorgeschalgene Gesamtanzahl der zu generierenden
-     *                Teilprobleme.
+     * @param number  Die vorgeschlagene Gesamtanzahl der zu generierenden
+     *                Teilprobleme. Diese ist grösser oder gleich Eins.
      *
      * @return  Das nächste Teilproblem oder <code>null</code>, falls kein
      *          Teilproblem mehr geliefert werden kann.
@@ -168,6 +168,7 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
      * <code>null</code> bleiben unberücksichtigt.
      *
      * @param problemsExpected  Die vorgeschlagene Anzahl von Teilproblemen.
+     *                          Diese ist grösser oder gleich Eins.
      *
      * @return  Array von Teilproblemen.
      */

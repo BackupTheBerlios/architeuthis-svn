@@ -122,7 +122,7 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      * Teilprobleme ausgegeben, solange noch welche vorhanden sind.
      *
      * @param number  Die vorgeschlagene Gesamtanzahl der zu generierenden
-     *                Teilprobleme.
+     *                Teilprobleme. Diese ist grösser oder gleich Eins.
      *
      * @return  Das nächste Teilproblem oder <code>null</code>, falls kein
      *          Teilproblem mehr geliefert werden kann.
@@ -194,6 +194,7 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      * <code>null</code> bleiben unberücksichtigt.
      *
      * @param problemsExpected  Die vorgeschlagene Anzahl von Teilproblemen.
+     *                          Diese ist grösser oder gleich Eins.
      *
      * @return  Array von Teilproblemen.
      */

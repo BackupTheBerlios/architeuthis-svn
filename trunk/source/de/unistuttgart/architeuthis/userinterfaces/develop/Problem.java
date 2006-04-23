@@ -1,7 +1,7 @@
 /*
  * file:        Problem.java
  * created:     <???>
- * last change: 19.04.2006 by Dietmar Lippold
+ * last change: 23.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -51,7 +51,7 @@ public interface Problem {
      * verfügbaren Operatives ab.
      *
      * @param number  Vorgeschlagene Gesamtanzahl der zu erzeugenden
-     *                Teilprobleme.
+     *                Teilprobleme. Dieser Wert ist grösser oder gleich Eins.
      *
      * @return  Genau ein Teilproblem oder <code>null</code>, falls derzeit
      *          kein neues Teilproblem erzeugt werden soll.
