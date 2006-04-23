@@ -46,6 +46,9 @@ Stand 23.04.2006
    Array darf jetzt auch den Wert null enthalten, der dann unberücksichtigt
    bleibt.
 
+ * Klasse AbstractFixedSizePriorityPartialProblem umbenannt in
+   PriorityPartialProblem
+
 
 Release 1.4
 -----------

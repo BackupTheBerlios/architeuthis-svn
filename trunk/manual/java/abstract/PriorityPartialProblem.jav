@@ -1,6 +1,6 @@
 /*
- * file:        AbstractFixedSizePriorityPartialProblem.java
- * last change: 12.04.2006 von Dietmar Lippold
+ * file:        PriorityPartialProblem.java
+ * last change: 23.04.2006 von Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -36,14 +36,13 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 
 /**
  * Abstrakte Klasse für ein Teilproblem, das von einer Unterklasse von
- * <code>AbstractFixedSizePriorityProblem</code> verwendet wird.
- * Das Setzen der Priorität eines Teilproblems geschieht über den Konstruktor
- * {@link AbstractFixedSizePriorityPartialProblem#AbstractFixedSizePriorityPartialProblem(long)},
- * wobei größere Zahlen eine höhere Priorität darstellen.
+ * <code>AbstractFixedSizePriorityProblem</code> verwendet wird. Das Setzen
+ * der Priorität eines Teilproblems geschieht über den Konstruktor dieser
+ * Klasse, wobei größere Zahlen eine höhere Priorität darstellen.
  *
  * @author Andreas Heydlauff
  */
-public abstract class AbstractFixedSizePriorityPartialProblem
+public abstract class PriorityPartialProblem
     implements PartialProblem, Comparable {
 
     /**
@@ -52,9 +51,9 @@ public abstract class AbstractFixedSizePriorityPartialProblem
     private static final long serialVersionUID = 6255594252588525298L;
 
     /**
-     * Priorität des Teilproblems.
+     * Priorität dieses Teilproblems.
      */
-    private int prio = 0;
+    private int prio;
 
     /**
      * Einzig erlaubter Konstruktor, der die Priorität eines Teilproblems
@@ -63,25 +62,24 @@ public abstract class AbstractFixedSizePriorityPartialProblem
      * @param priority  Priorität eines Teilproblems. Größere Zahlen stellen
      *                  höhere Prioritäten dar.
      */
-    public AbstractFixedSizePriorityPartialProblem(int priority) {
+    public PriorityPartialProblem(int priority) {
         prio = priority;
     }
 
     /**
-     * Vergleicht die Priorität.
+     * Vergleicht die Priorität der übergebenen Instanz mit dieser Instanz.
      *
-     * @param o  Erbe des <code>AbstractFixedSizePriorityPartialProlem</code>,
-     *           mit dem verglichen wird.
+     * @param o  Eine andere Instanz von <code>PriorityPartialProblem</code>,
+     *           mit der diese Instanz verglichen wird.
      *
-     * @return  positiver Integer-Wert, falls die eigene Priorität kleiner,
-     *          0 falls gleich, negativ falls größer ist.
+     * @return  Positiver Integer-Wert, falls die eigene Priorität kleiner
+     *          ist, 0 falls gleich, negativ falls sie größer ist.
      *
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     public int compareTo(Object o) {
 
-        AbstractFixedSizePriorityPartialProblem compProb =
-            (AbstractFixedSizePriorityPartialProblem) o;
+        PriorityPartialProblem compProb = (PriorityPartialProblem) o;
         return (compProb.prio - prio);
     }
 }

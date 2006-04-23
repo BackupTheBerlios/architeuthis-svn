@@ -51,7 +51,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
  * entsprechenden Teilprobleme der konkreten Unterklasse zur Erstellung
  * einer Gesamtlösung übergeben.<p>
  * Die verwendeten Teilprobleme müssen von
- * {@link de.unistuttgart.architeuthis.abstractproblems.AbstractFixedSizePriorityPartialProblem}
+ * {@link de.unistuttgart.architeuthis.abstractproblems.PriorityPartialProblem}
  * erben.
  *
  * @author Andreas Heydlauff, Dietmar Lippold
@@ -89,10 +89,10 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      *
      * @return  Array von Teilproblemen ohne den Wert <code>null</code>.
      */
-    private AbstractFixedSizePriorityPartialProblem[] withoutNull(AbstractFixedSizePriorityPartialProblem[] parProbArray) {
-        AbstractFixedSizePriorityPartialProblem[] parProbs;
-        int              notNullNumber;
-        int              nextParProbIndex;
+    private PriorityPartialProblem[] withoutNull(PriorityPartialProblem[] parProbArray) {
+        PriorityPartialProblem[] parProbs;
+        int                      notNullNumber;
+        int                      nextParProbIndex;
 
         notNullNumber = 0;
         for (int i = 0; i < parProbArray.length; i++) {
@@ -104,7 +104,7 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
         if (notNullNumber == parProbArray.length) {
             return parProbArray;
         } else {
-            parProbs = new AbstractFixedSizePriorityPartialProblem[notNullNumber];
+            parProbs = new PriorityPartialProblem[notNullNumber];
             nextParProbIndex = 0;
             for (int i = 0; i < parProbArray.length; i++) {
                 if (parProbArray[i] != null) {
@@ -197,7 +197,7 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      *
      * @return  Array von Teilproblemen.
      */
-    protected abstract AbstractFixedSizePriorityPartialProblem[] createPartialProblems(long problemsExpected);
+    protected abstract PriorityPartialProblem[] createPartialProblems(long problemsExpected);
 
     /**
      * Erstellt eine Gesamtlösung aus den übergebenen Teillösungen

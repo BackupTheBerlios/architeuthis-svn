@@ -81,22 +81,20 @@ Nachfolgend ist der komplette Quelltext der Klasse angegeben.
 
 \section{AbstractFixedSizePriorityProblem.java}
 
-Diese Klasse benutzt die Klasse
-\texttt{AbstractFixedSizePriorityPartialProblem}. Diese beiden Klassen
-eignen sich für Probleme, die am Anfang schon alle Teilprobleme erstellen
-können und diese in einer durch Priorisierung gekennzeichneten Reihenfolge
-berechnet werden sollen. Die Kennzeichnung findet für jedes Teilproblem
-individuell statt, indem dessen Priorität durch den Konstruktor gesetzt
-wird. Dabei bedeuten höhere Werte eine höhere Priorität, d.h.\ dass dieses
-Teilproblem früher berechnet wird.
+Diese Klasse benutzt die Klasse \texttt{PriorityPartialProblem}. Diese
+beiden Klassen eignen sich für Probleme, die am Anfang schon alle
+Teilprobleme erstellen können und diese in einer durch Priorisierung
+gekennzeichneten Reihenfolge berechnet werden sollen. Die Kennzeichnung
+findet für jedes Teilproblem individuell statt, indem dessen Priorität durch
+den Konstruktor gesetzt wird. Dabei bedeuten höhere Werte eine höhere
+Priorität, d.h.\ dass dieses Teilproblem früher berechnet wird.
 
 Das Ausgeben der einzelnen Teilprobleme in der Reihenfolge der Priorität und
 das Einsammeln der Teillösungen wird von der abstrakten Klasse übernommen.
 Außerdem werden die Teillösungen wieder in die Reihenfolge gebracht, wie
 ihre Teilprobleme \emph{erstellt} (nicht unbedingt zur Berechnung
 ausgegeben) wurden. Der Benutzer muss folgende zwei Methoden implementieren,
-wobei die Teilprobleme von \texttt{AbstractFixedSizePriorityPartialProblem}
-erben müssen.
+wobei die Teilprobleme von \texttt{PriorityPartialProblem} erben müssen.
 
 \begin{itemize}
 \item \texttt{createPartialProblems}, die bei der ersten Anfrage für ein
@@ -115,7 +113,7 @@ das Interface \texttt{CommunicationPartialProblem} implementieren muss.
 Nachfolgend ist der komplette Quelltext der beiden Klassen angegeben.
 
 {\scriptsize \verbatiminput{java/abstract/AbstractFixedSizePriorityProblem.jav}}
-{\scriptsize \verbatiminput{java/abstract/AbstractFixedSizePriorityPartialProblem.jav}}
+{\scriptsize \verbatiminput{java/abstract/PriorityPartialProblem.jav}}
 
 
 \section{ContainerPartialSolution.java}
