@@ -1,10 +1,11 @@
 /*
  * file:        AbstractOrderedProblem.java
- * last change: 12.04.2006 by Dietmar Lippold
+ * last change: 23.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
+ *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
  *
  *
  * This file is part of Architeuthis.
@@ -65,16 +66,16 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
     private HashMap partialSolutions = new HashMap();
 
     /**
-     * Schlange der ausgegebenen Teilprobleme
+     * Schlange der ausgegebenen Teilprobleme.
      */
     private LinkedList dispensedPartialProblems = new LinkedList();
 
     /**
-     * Ruft <code>createPartialProblem</code> der implementierenden Unterklasse
-     * auf und behält sich eine Referenz auf das erstellte Teilproblem.
+     * Ruft <code>createPartialProblem</code> der implementierenden
+     * Unterklasse auf und speichert es, bis die zugehörige Teillösung
+     * geliefert wird.
      *
-     * @param number  Vom ComputeManager vorgeschlagene Anzahl zu generierender
-     *                Teilprobleme.
+     * @param number  Die vorgeschlagene Anzahl zu generierender Teilprobleme.
      *
      * @return  Von der implementierenden Unterklasse erzeugtes Teilproblem.
      */
@@ -86,15 +87,14 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
             return null;
         }
 
-        // der Schlange hinten anfügen
+        // Der Schlange hinten anfügen.
         dispensedPartialProblems.addLast(prob);
 
         return prob;
     }
 
     /**
-     * Methode, die vom ComputeManager aufgerufen wird, um dem Problem eine neu
-     * eingetroffene Lösung zu übermitteln.
+     * Übergibt eine neu eingetroffene Teillösung.
      *
      * @param parSol   Vom ComputeManager übermittelte Teillösung.
      * @param parProb  Referenz auf das Teilproblem, das bearbeitet wurde.
@@ -102,24 +102,26 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
     public void collectPartialSolution(PartialSolution parSol,
                                        PartialProblem parProb) {
 
-        //Die Teillösung in die Hashmap einfügen.
+        // Die Teillösung in die Hashmap einfügen.
         partialSolutions.put(parProb, parSol);
 
-        //solange die gesuchte Teillösung vorhanden ist
+        // Die nächsten Teillösungen, falls diese vorhanden sind, an die
+        // Unterklasse übergeben.
         while ((!dispensedPartialProblems.isEmpty())
-            && (partialSolutions.containsKey(dispensedPartialProblems.getFirst()))
-            && (finalSolution == null)) {
-            //Die gesuchte Teillösung aus der Hashmap holen.
+               && (partialSolutions.containsKey(dispensedPartialProblems.getFirst()))
+               && (finalSolution == null)) {
+
+            // Die gesuchte Teillösung aus der Hashmap holen.
             PartialSolution userParSol =
                 (PartialSolution) partialSolutions.get(dispensedPartialProblems.getFirst());
 
-            //Teillösung an das Problem schicken.
-            //finalSolution bleibt null, wenn die Gesamtlösung noch nicht
-            //vorhanden ist
+            // Teillösung an das Problem schicken.
+            // finalSolution bleibt null, wenn die Gesamtlösung noch nicht
+            // vorhanden ist.
             finalSolution = receivePartialSolution(userParSol);
 
-            //Die verschickte Teillösung kann nun aus der Hashmap und der Liste
-            //entfernt werden
+            // Die verschickte Teillösung kann nun aus der Hashmap und der
+            // Liste entfernt werden.
             partialSolutions.remove(dispensedPartialProblems.removeFirst());
         }
     }
@@ -135,23 +137,23 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
     }
 
     /**
-     * Stellt ein Teilproblem zur Verwaltung bereit.<p>
-     * Diese Methode muss von einer konkreten Unterklasse implementiert werden.
+     * Liefert das nächste Teilproblem oder <code>null</code>, wenn keines
+     * mehr existiert.
      *
-     * @param problemsExpected  gewünschte Anzahl von Teilproblemen.
-     * @return  ein Teilproblem
+     * @param problemsExpected  Die vorgeschlagene Anzahl von Teilproblemen.
+     *
+     * @return  Ein Teilproblem.
      */
     protected abstract PartialProblem createPartialProblem(long problemsExpected);
 
     /**
      * Nimmt eine Teillösung entgegen und liefert die Gesamtlösung oder
-     * <code>null</code>, falls diese noch nicht fertig ist.<p>
-     * Diese Methode muss von einer konkreten Unterklasse implementiert werden.
+     * <code>null</code>, falls diese noch nicht fertig ist.
      *
      * @param parSol  Die nächste fertige Teillösung für das Problem.
      *
      * @return  Gesamtlösung, falls diese bereits fertig ist, sonst
-     *          <code>null</code>
+     *          <code>null</code>.
      */
     protected abstract Serializable receivePartialSolution(PartialSolution parSol);
 }
