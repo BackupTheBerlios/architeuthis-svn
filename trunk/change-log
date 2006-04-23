@@ -49,6 +49,9 @@ Stand 23.04.2006
  * Klasse AbstractFixedSizePriorityPartialProblem umbenannt in
    PriorityPartialProblem
 
+ * Die Package-Struktur der Primzahl-Testprogramme und die Programme selbst
+   überarbeitet.
+
 
 Release 1.4
 -----------
