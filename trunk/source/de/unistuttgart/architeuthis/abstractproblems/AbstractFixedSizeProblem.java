@@ -1,10 +1,11 @@
 /*
  * file:        AbstractFixedSizeProblem.java
- * last change: 12.04.2006 by Dietmar Lippold
+ * last change: 23.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
+ *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
  *
  *
  * This file is part of Architeuthis.
@@ -45,7 +46,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
  * (entsprechend der Reihenfolge der Teilprobleme) gebracht und der konkreten
  * Unterklasse zur Erstellung einer Gesamtlösung übergeben.
  *
- * @author Andreas Heydlauff
+ * @author Andreas Heydlauff, Dietmar Lippold
  */
 public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
 
@@ -75,22 +76,59 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
     private int collected = 0;
 
     /**
-     * Beim ersten Aufruf wird <code>createParitalProblem</code> aufgerufen, um
-     * alle Teilprobleme zu generieren. Bei allen Aufrufen werden Teilprobleme
-     * ausgegeben, solange noch welche vorhanden sind.
+     * Liefert ein Array, in dem alle übergebenen Teilprobleme in der gleichen
+     * Reihenfolge enthalten sind aber kein Wert <code>null</code> enthalten
+     * ist.
      *
-     * @param number  gewünschte Gesamtanzahl der zu generierenden
+     * @param parProbArray  Ein Array mit Teilproblemen und eventuell dem Wert
+     *                      <code>null</code>.
+     *
+     * @return  Array von Teilproblemen ohne den Wert <code>null</code>.
+     */
+    private PartialProblem[] withoutNull(PartialProblem[] parProbArray) {
+        PartialProblem[] parProbs;
+        int              notNullNumber;
+        int              nextParProbIndex;
+
+        notNullNumber = 0;
+        for (int i = 0; i < parProbArray.length; i++) {
+            if (parProbArray[i] != null) {
+                notNullNumber++;
+            }
+        }
+
+        if (notNullNumber == parProbArray.length) {
+            return parProbArray;
+        } else {
+            parProbs = new PartialProblem[notNullNumber];
+            nextParProbIndex = 0;
+            for (int i = 0; i < parProbArray.length; i++) {
+                if (parProbArray[i] != null) {
+                    parProbs[nextParProbIndex] = parProbArray[i];
+                    nextParProbIndex++;
+                }
+            }
+            return parProbs;
+        }
+    }
+
+    /**
+     * Beim ersten Aufruf wird <code>createParitalProblem</code> aufgerufen,
+     * um alle Teilprobleme zu generieren. Bei allen Aufrufen werden
+     * Teilprobleme ausgegeben, solange noch welche vorhanden sind.
+     *
+     * @param number  Die vorgeschalgene Gesamtanzahl der zu generierenden
      *                Teilprobleme.
      *
-     * @return  genau ein Teilproblem. Dies ist unabhängig von der Gesamtanzahl
-     *          der generierten Teilprobleme. <code>null</code> falls
-     *          kein Teilproblem mehr ausgegeben werden soll
+     * @return  Das nächste Teilproblem oder <code>null</code>, falls kein
+     *          Teilproblem mehr geliefert werden kann.
      *
      * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#getPartialProblem(long)
      */
     protected PartialProblem createPartialProblem(long number) {
+
         if (partialProblems == null) {
-            partialProblems = createPartialProblems(number);
+            partialProblems = withoutNull(createPartialProblems(number));
             partialSolutions = new PartialSolution[partialProblems.length];
             distributed = 0;
             collected = 0;
@@ -105,8 +143,8 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
     }
 
     /**
-     * Nimmt eine Teillösung entgegen, sammelt diese und ruft bei der letzten
-     * Teillösung <code>createSolution</code> auf, um die Gesamtlösung
+     * Nimmt eine Teillösung entgegen, speichert diese und ruft bei der
+     * letzten Teillösung <code>createSolution</code> auf, um die Gesamtlösung
      * zurückzuliefern.
      *
      * @param parSol  Die nächste fertige Teillösung für das Problem.
@@ -126,21 +164,21 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
     }
 
     /**
-     * Stellt ein Array von Teilproblemen zur Verwaltung bereit.<p>
-     * Diese Methode muss von einer konkreten Unterklasse implementiert werden.
+     * Liefert ein Array von Teilproblemen. Die im Array enthaltenen Werte
+     * <code>null</code> bleiben unberücksichtigt.
      *
-     * @param problemsExpected  gewünschte Anzahl von Teilproblemen.
+     * @param problemsExpected  Die vorgeschlagene Anzahl von Teilproblemen.
      *
      * @return  Array von Teilproblemen.
      */
     protected abstract PartialProblem[] createPartialProblems(long problemsExpected);
 
     /**
-     * Erstellt eine Gesamtlösung aus allen Teillösungen.<p>
-     * Diese Methode muss von einer konkreten Unterklasse implementiert werden.
+     * Erstellt eine Gesamtlösung aus den übergebenen Teillösungen
      *
-     * @param partialSolutions  alle eingegangenen Teillösungen.
-     * @return  Gesamtlösung
+     * @param partialSolutions  Die Teillösungen zu allen Teilproblemen.
+     *
+     * @return  Die Gesamtlösung.
      */
     protected abstract Serializable createSolution(PartialSolution[] partialSolutions);
 }

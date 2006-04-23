@@ -1,10 +1,11 @@
 /*
  * file:        AbstractFixedSizePriorityProblem.java
- * last change: 12.04.2006 von Dietmar Lippold
+ * last change: 23.04.2006 von Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
+ *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
  *
  *
  * This file is part of Architeuthis.
@@ -79,22 +80,59 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
     private HashMap partialSolutions = new HashMap();
 
     /**
-     * Beim ersten Aufruf wird <code>createParitalProblem</code> aufgerufen, um
-     * alle Teilprobleme zu generieren. Bei allen Aufrufen werden Teilprobleme
-     * ausgegeben, solange es noch vorhandene gibt.
+     * Liefert ein Array, in dem alle übergebenen Teilprobleme in der gleichen
+     * Reihenfolge enthalten sind aber kein Wert <code>null</code> enthalten
+     * ist.
      *
-     * @param number  gewünschte Gesamtanzahl der zu generierenden
+     * @param parProbArray  Ein Array mit Teilproblemen und eventuell dem Wert
+     *                      <code>null</code>.
+     *
+     * @return  Array von Teilproblemen ohne den Wert <code>null</code>.
+     */
+    private AbstractFixedSizePriorityPartialProblem[] withoutNull(AbstractFixedSizePriorityPartialProblem[] parProbArray) {
+        AbstractFixedSizePriorityPartialProblem[] parProbs;
+        int              notNullNumber;
+        int              nextParProbIndex;
+
+        notNullNumber = 0;
+        for (int i = 0; i < parProbArray.length; i++) {
+            if (parProbArray[i] != null) {
+                notNullNumber++;
+            }
+        }
+
+        if (notNullNumber == parProbArray.length) {
+            return parProbArray;
+        } else {
+            parProbs = new AbstractFixedSizePriorityPartialProblem[notNullNumber];
+            nextParProbIndex = 0;
+            for (int i = 0; i < parProbArray.length; i++) {
+                if (parProbArray[i] != null) {
+                    parProbs[nextParProbIndex] = parProbArray[i];
+                    nextParProbIndex++;
+                }
+            }
+            return parProbs;
+        }
+    }
+
+    /**
+     * Beim ersten Aufruf wird <code>createParitalProblem</code> aufgerufen,
+     * um alle Teilprobleme zu generieren. Bei allen Aufrufen werden
+     * Teilprobleme ausgegeben, solange noch welche vorhanden sind.
+     *
+     * @param number  Die vorgeschlagene Gesamtanzahl der zu generierenden
      *                Teilprobleme.
      *
-     * @return  genau ein Teilproblem. Dies ist unabhängig von der Gesamtanzahl
-     *          der generierten Teilprobleme. <code>null</code> falls
-     *          schon alle Teilprobleme ausgegeben wurden.
+     * @return  Das nächste Teilproblem oder <code>null</code>, falls kein
+     *          Teilproblem mehr geliefert werden kann.
      *
      * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#getPartialProblem(long)
      */
     public PartialProblem getPartialProblem(long number) {
+
         if (handoutPartialProblems == null) {
-            givenPartialProblems = createPartialProblems(number);
+            givenPartialProblems = withoutNull(createPartialProblems(number));
             handoutPartialProblems =
                 (new TreeSet(Arrays.asList(givenPartialProblems))).iterator();
         }
@@ -123,10 +161,9 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
     }
 
     /**
-     * Gibt die Lösung zurück, wenn alle Teilprobleme berechnet wurden.
-     * Sobald alle Teillösungen eingegangen sind, wird
-     * <code>createSolution</code> aufgerufen. <code>createSolution</code> muss
-     * aus den Teillösungen eine Gesamtlösung erstellen.
+     * Gibt die Lösung zurück, wenn alle Teilprobleme berechnet wurden. Sobald
+     * alle Teillösungen eingegangen sind, wird <code>createSolution</code>
+     * aufgerufen, um eine Gesamtlösung zu erzeugen.
      *
      * @return  Gesamtlösung, die an den Problem-übermittler geschickt wird.
      *          <code>null</code> falls die Gesamtlösung noch nicht
@@ -135,6 +172,7 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#getSolution()
      */
     public Serializable getSolution() {
+
         if (partialSolutions.size() >= givenPartialProblems.length) {
 
             PartialSolution[] sortedSolutions =
@@ -152,20 +190,19 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
     }
 
     /**
-     * Stellt ein Array von Teilproblemen zur Verwaltung bereit.<p>
-     * Diese Methode muss von einer konkreten Unterklasse implementiert werden.
+     * Liefert ein Array von Teilproblemen. Die im Array enthaltenen Werte
+     * <code>null</code> bleiben unberücksichtigt.
      *
-     * @param problemsExpected  gewünschte Anzahl von Teilproblemen.
+     * @param problemsExpected  Die vorgeschlagene Anzahl von Teilproblemen.
      *
      * @return  Array von Teilproblemen.
      */
     protected abstract AbstractFixedSizePriorityPartialProblem[] createPartialProblems(long problemsExpected);
 
     /**
-     * Erstellt eine Gesamtlösung aus allen Teillösungen.<p>
-     * Diese Methode muss von einer konkreten Unterklasse implementiert werden.
+     * Erstellt eine Gesamtlösung aus den übergebenen Teillösungen
      *
-     * @param partialSolutions  alle eingegangenen Teillösungen.
+     * @param partialSolutions  Die Teillösungen zu allen Teilproblemen.
      *
      * @return  Die Gesamtlösung.
      */
