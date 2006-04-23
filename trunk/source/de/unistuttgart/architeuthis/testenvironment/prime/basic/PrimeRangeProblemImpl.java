@@ -1,7 +1,7 @@
 /*
  * file:        PrimeRangeProblemImpl.java
  * created:     <???>
- * last change: 22.04.2006 by Dietmar Lippold
+ * last change: 23.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -84,7 +84,7 @@ public class PrimeRangeProblemImpl extends AbstractFixedSizeProblem {
      */
     protected PartialProblem[] createPartialProblems(long suggestedParProbs) {
         PartialProblem[] parProbs = new PartialProblem[(int) suggestedParProbs];
-        long             parItvSize, nextValue;
+        long             parItvSize, lowerBound, upperBound;
         int              pIndex;
 
         // Das Array der Teilprobleme mit null initialisieren, falls das
@@ -96,22 +96,23 @@ public class PrimeRangeProblemImpl extends AbstractFixedSizeProblem {
         // Die Größe der Teilintervalle ermitteln. Der Quotient von Größe des
         // Gesamtintervalls und vorgeschlagener Anzahl der Teilprobleme wird
         // auf den nächsten ganzen Wert aufgerundet.
-        parItvSize = ((maxValue - minValue + suggestedParProbs - 1)
+        parItvSize = ((maxValue - minValue + suggestedParProbs)
                       / suggestedParProbs);
 
         // Nummer und Anfangswert des nächstes Teilintervalls initialisieren.
         pIndex = 0;
-        nextValue = minValue;
+        lowerBound = minValue;
+        upperBound = lowerBound + parItvSize - 1;
 
-        while (nextValue + parItvSize < maxValue) {
-            parProbs[pIndex] = new PrimePartialProblemImpl(nextValue,
-                                                           nextValue + parItvSize);
+        while (upperBound < maxValue) {
+            parProbs[pIndex] = new PrimePartialProblemImpl(lowerBound, upperBound);
             pIndex++;
-            nextValue += parItvSize;
+            lowerBound += parItvSize;
+            upperBound = lowerBound + parItvSize - 1;
         }
 
         // Dem letzten Teilproblem das Restintervall zuweisen.
-        parProbs[pIndex] = new PrimePartialProblemImpl(nextValue, maxValue);
+        parProbs[pIndex] = new PrimePartialProblemImpl(lowerBound, maxValue);
 
         return parProbs;
     }
