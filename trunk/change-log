@@ -13,7 +13,7 @@ Operative gelegentlich ein Fehler in der JVM auf, der zu deren Absturz
 führte.
 
 
-Stand 16.04.2006
+Stand 23.04.2006
 ----------------
 
  * Ein deadlock-Problem beseitigt, das auftreten konnte, wenn die
@@ -40,6 +40,11 @@ Stand 16.04.2006
 
  * Das Benutzerhandbuch überarbeitet und ergänzt und auf Version 2.0
    angepaßt.
+
+ * Das von der Methode createPartialProblems aus den Klassen
+   AbstractFixedSizeProblem und AbstractFixedSizePriorityProblem gelieferte
+   Array darf jetzt auch den Wert null enthalten, der dann unberücksichtigt
+   bleibt.
 
 
 Release 1.4
