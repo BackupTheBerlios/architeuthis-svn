@@ -53,7 +53,7 @@ public class GeneratePrimes {
     public static void main(String[] args) {
         long startTime;
 
-        System.out.println("Berechnet eine Folge von PrimeNumbers\n");
+        System.out.println("Berechnet eine Folge von Primzahlen\n");
 
         if ((args.length == 3)
             && (args[2].equals("z") || args[2].equals("n"))) {
