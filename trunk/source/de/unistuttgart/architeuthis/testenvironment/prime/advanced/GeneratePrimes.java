@@ -1,7 +1,7 @@
 /*
  * file:        GeneratePrimes.java
  * created:     <???>
- * last change: 22.04.2006 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -34,44 +34,61 @@
 package de.unistuttgart.architeuthis.testenvironment.prime.advanced;
 
 /**
- * Testet die Methoden der Klasse PrimeNumbersParallel.
+ * Berechnet Primzahlen aus einem Zahlen- oder Nummernbereich unter Benutzung
+ * der Klasse <code>PrimeNumbersParallel</code>.
  *
- * @author  Ralf Kible
+ * @author  Ralf Kible, Dietmar Lippold
  */
 public class GeneratePrimes {
 
     /**
-     * Errechnet die Primzahlteilfolge für zwei als Kommandozeilenargumente
-     * übergebene Zahlen.
+     * Errechnet Primzahlen aus einem Zahlen- oder Nummernbereich, der durch
+     * Kommandozeilenargumente festgelegt wird.
      *
      * @param args  Ein Array, das die Untergrenze und die Obergrenze des
-     *              Intervalls enthält, aus dem die Nummern der zu
-     *              ermittelnden Primzahlen stammen.
+     *              Intervalls eines Zahlen- oder Nummernbereichs sowie den
+     *              Buchstaben z oder n enthält. Der Buchstabe gibt die Art
+     *              des Bereichs an.
      */
     public static void main(String[] args) {
         long startTime;
 
         System.out.println("Berechnet eine Folge von PrimeNumbers\n");
 
-        if (args.length == 2) {
-            System.out.println("Folge von " + args[0] + " bis " + args[1]);
+        if ((args.length == 3)
+            && (args[2].equals("z") || args[2].equals("n"))) {
+
             try {
-                System.out.println("Beginn...");
                 startTime = System.currentTimeMillis();
-                System.out.println(
-                    PrimeNumbersParallel.primzahlTeilfolge(
-                        (new Long(args[0])).intValue(),
-                        (new Long(args[1])).intValue()));
-                System.out.println("Fertig!");
-                System.out.println("Dauer: " +
+
+                if (args[2].equals("z")) {
+                    System.out.println("Die Primzahlen aus dem Zahlenbereich"
+                                       + " von " + args[0] + " bis "
+                                       + args[1] + " :");
+                    System.out.println(
+                        PrimeNumbersParallel.primzahlTeilbereich(
+                            (new Long(args[0])).intValue(),
+                            (new Long(args[1])).intValue()));
+                } else {
+                    System.out.println("Die Primzahlen aus dem Nummernbereich"
+                                       + " von " + args[0] + " bis "
+                                       + args[1] + " :");
+                    System.out.println(
+                        PrimeNumbersParallel.primzahlTeilfolge(
+                            (new Long(args[0])).intValue(),
+                            (new Long(args[1])).intValue()));
+                }
+
+                System.out.println("Dauer [ms]: " +
                                    (System.currentTimeMillis() - startTime));
             } catch (Exception e) {
                 e.printStackTrace();
             }
             System.out.println();
         } else {
-            System.out.println("Fehler! Es müssen zwei Zahlen als "
-                               + "Kommandozeilen-Parameter übergeben werden");
+            System.out.println("Fehler! Es müssen zwei Zahlen und der Buchstabe"
+                               + " z oder n als Kommandozeilen-Parameter"
+                               + " übergeben werden");
         }
     }
 }
