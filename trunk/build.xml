@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!-- build-file fuer Ant zum Projekt Architeuthis                     -->
-<!-- Letzte Aenderung: 14.04.2006 durch Dietmar Lippold               -->
+<!-- Letzte Aenderung: 24.04.2006 durch Dietmar Lippold               -->
 
 <!-- Hinweise zur Benutzung werden nach Aufruf von "ant" ohne weitere -->
 <!-- Parameter ausgegeben.                                            -->
@@ -556,15 +556,12 @@
         <include name="runClassFileServer.sh"/>
         <include name="runConsoleSysStat.sh"/>
         <include name="runGuiSysStat.sh"/>
-        <include name="runPrimeRange.sh"/>
-        <include name="runSerializablePrimeRange.sh"/>
-        <include name="runPrimeSequence.sh"/>
-        <include name="runSerializablePrimeSequence.sh"/>
         <include name="runRemoteHash.sh"/>
         <include name="runMonte.sh"/>
         <include name="runRandom.sh"/>
         <include name="runCaching.sh"/>
         <include name="runFail.sh"/>
+        <include name="prime/*.sh"/>
       </tarfileset>
 
     </tar>
@@ -612,15 +609,12 @@
         <include name="runClassFileServer.bat"/>
         <include name="runConsoleSysStat.bat"/>
         <include name="runGuiSysStat.bat"/>
-        <include name="runPrimeRange.bat"/>
-        <include name="runSerializablePrimeRange.bat"/>
-        <include name="runPrimeSequence.bat"/>
-        <include name="runSerializablePrimeSequence.bat"/>
         <include name="runRemoteHash.bat"/>
         <include name="runMonte.bat"/>
         <include name="runRandom.bat"/>
         <include name="runCaching.bat"/>
         <include name="runFail.bat"/>
+        <include name="prime/*.bat"/>
       </tarfileset>
 
     </tar>
