@@ -12,12 +12,12 @@ LOWER_BORDER="200000"
 UPPER_BORDER="201000"
 
 # die Parameter für die JVM
-JVMPAR=" "
-JVMPAR="$JVMPAR $LOWER_BORDER $UPPER_BORDER"
-JVMPAR="$JVMPAR z"
+ARGS=" "
+ARGS="$ARGS $LOWER_BORDER $UPPER_BORDER"
+ARGS="$ARGS z"
 
 # die Main-Klasse
 MAIN="de.unistuttgart.architeuthis.testenvironment.GeneratePrimes"
 
-exec $JAVA -cp $DEPLOY_DIR/Problems.jar $MAIN $JVMPAR
+exec $JAVA -cp $DEPLOY_DIR/Problems.jar $MAIN $ARGS
 

@@ -13,12 +13,12 @@ set LOWER_BORDER=2000000
 set UPPER_BORDER=2000000
 
 REM die Parameter für die JVM
-set JVMPAR=
-set JVMPAR=%JVMPAR% %LOWER_BORDER% %UPPER_BORDER%
-set JVMPAR=%JVMPAR% n
+set ARGS=
+set ARGS=%ARGS% %LOWER_BORDER% %UPPER_BORDER%
+set ARGS=%ARGS% n
 
 REM die Main-Klasse
 set MAIN=de.unistuttgart.architeuthis.testenvironment.GeneratePrimes
 
-%JAVA% -cp %DEPLOY_DIR%/Problems.jar %MAIN% %JVMPAR%
+%JAVA% -cp %DEPLOY_DIR%/Problems.jar %MAIN% %ARGS%
 
