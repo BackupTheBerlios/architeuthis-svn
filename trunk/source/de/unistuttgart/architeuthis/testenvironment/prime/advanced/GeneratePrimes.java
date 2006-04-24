@@ -75,8 +75,8 @@ public class GeneratePrimes {
                                        + args[1] + " :");
                     System.out.println(
                         PrimeNumbersParallel.primzahlTeilfolge(
-                            (new Long(args[0])).intValue(),
-                            (new Long(args[1])).intValue()));
+                            Long.parseLong(args[0]),
+                            Long.parseLong(args[1])));
                 }
 
                 System.out.println("Dauer [ms]: " +
