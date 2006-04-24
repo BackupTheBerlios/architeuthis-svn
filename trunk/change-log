@@ -52,6 +52,10 @@ Stand 23.04.2006
  * Die Package-Struktur der Primzahl-Testprogramme und die Programme selbst
    überarbeitet.
 
+ * Im Interface Problem sowie in den implementierenden Klassen den Typ vom
+   Parameter der Methode getPartialProblem sowie entsprechender Methoden von
+   long zu int geändert.
+
 
 Release 1.4
 -----------
