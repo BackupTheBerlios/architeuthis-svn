@@ -1,6 +1,6 @@
 /*
  * file:        AbstractFixedSizePriorityProblem.java
- * last change: 23.04.2006 von Dietmar Lippold
+ * last change: 24.04.2006 von Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -129,7 +129,7 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      *
      * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#getPartialProblem(long)
      */
-    public PartialProblem getPartialProblem(long number) {
+    public PartialProblem getPartialProblem(int number) {
 
         if (handoutPartialProblems == null) {
             givenPartialProblems = withoutNull(createPartialProblems(number));
@@ -198,7 +198,7 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      *
      * @return  Array von Teilproblemen.
      */
-    protected abstract PriorityPartialProblem[] createPartialProblems(long problemsExpected);
+    protected abstract PriorityPartialProblem[] createPartialProblems(int problemsExpected);
 
     /**
      * Erstellt eine Gesamtlösung aus den übergebenen Teillösungen

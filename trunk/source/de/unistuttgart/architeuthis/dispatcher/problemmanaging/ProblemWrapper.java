@@ -1,7 +1,7 @@
 /*
  * file:        ProblemWrapper.java
  * created:     29.06.2003
- * last change: 10.04.2006 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -385,10 +385,10 @@ class ProblemWrapper extends Thread {
      *
      * @param sysStat  Die Systemstatistik.
      *
-     * @return  die maximal zulässige Anzahl von ausstehenden Teilproblemen
+     * @return  Die maximal zulässige Anzahl von ausstehenden Teilproblemen.
      */
-    private long parProbsOutLimit(SystemStatistics sysStat) {
-        return (sysStat.getRegisteredOperatives() + 3);
+    private int parProbsOutLimit(SystemStatistics sysStat) {
+        return (int) (sysStat.getRegisteredOperatives() + 3);
     }
 
     /**
@@ -401,16 +401,17 @@ class ProblemWrapper extends Thread {
      *
      * @param sysStat  Die Systemstatistik.
      *
-     * @return  die vorgeschagene Anzahl von zu erzeugenden Teilproblemen
+     * @return  Die vorgeschagene Anzahl von zu erzeugenden Teilproblemen
      */
-    private long suggestedParProbNumber(SystemStatistics sysStat) {
-        float operativesPerProb = ((float) sysStat.getRegisteredOperatives())
-                                  / sysStat.getCurrentProblems();
+    private int suggestedParProbNumber(SystemStatistics sysStat) {
+
+        float operativesPerProb = (((float) sysStat.getRegisteredOperatives())
+                                   / sysStat.getCurrentProblems());
 
         if (operativesPerProb <= 1.0f) {
             return 1;
         } else {
-            return Math.round(operativesPerProb);
+            return (int) Math.round(operativesPerProb);
         }
     }
 
@@ -426,11 +427,12 @@ class ProblemWrapper extends Thread {
      */
     public void run() {
         PartialSolutionParProbWrapper parProbWrapSolPair = null;
-        PartialProblem parProb = null;
-        ParProbWrapper parPropWrapper = null;
-        SystemStatistics sysStat;
-        long parProbsOut = 0;  // Anzahl ausstehender Teilprobleme
-        long suggestedParProbNumber;
+        PartialProblem                parProb = null;
+        ParProbWrapper                parPropWrapper = null;
+        SystemStatistics              sysStat;
+        int                           parProbsOut = 0;  // Anzahl ausstehender
+                                                        // Teilprobleme
+        int                           suggestedParProbNumber;
 
         while (!terminated) {
             sysStat = systemStatistic.getSnapshot();

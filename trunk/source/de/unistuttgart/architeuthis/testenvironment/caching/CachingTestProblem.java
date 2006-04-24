@@ -1,7 +1,7 @@
 /*
  * file:        CachingTestProblem.java
  * created:     <???>
- * last change: 06.04.2006 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -108,7 +108,7 @@ public class CachingTestProblem implements Problem {
      * @param minWert  Die Nummer der kleinsten Primzahl, die gesucht wird.
      * @param maxWert  Die Nummer der größten Primzahl, die gesucht wird.
      */
-    public CachingTestProblem(Integer minWert, Integer maxWert) {
+    public CachingTestProblem(Long minWert, Long maxWert) {
         minNumber = minWert.intValue();
         maxNumber = maxWert.intValue();
     }
@@ -164,14 +164,16 @@ public class CachingTestProblem implements Problem {
     }
 
     /**
-     * Liefert auf Anfrage vom ProblemManager ein Teilproblem zurück.
-     * Beim ersten Aufruf werden außerdem die Teilprobleme generiert.
+     * Liefert auf Anfrage vom ProblemManager ein Teilproblem zurück .Beim 
+     * ersten Aufruf werden außerdem die Teilprobleme generiert.
      *
-     * @param number  Vom ProblemManager erbetene Anzahl bereitzuhaltender Teilprobleme
+     * @param number  Vom ProblemManager vorgeschlagene Anzahl
+     *                bereitzuhaltender Teilprobleme.
      *
-     * @return Neues Teilproblem zur Berechnung.
+     * @return  Neues Teilproblem zur Berechnung.
      */
-    public PartialProblem getPartialProblem(long number) {
+    public PartialProblem getPartialProblem(int number) {
+
         // Erster Aufruf? Falls ja, dann Teilprobleme generieren.
         if (firstCall) {
             // in max wird gespeichert, bis zu welcher konkreten Zahl
@@ -179,7 +181,7 @@ public class CachingTestProblem implements Problem {
             double max = 10;
             // schrittweite ist die Menge der Zahlen, die in einem Teilproblem
             // durchsucht werden.
-            long schrittweite = 0;
+            int schrittweite = 0;
 
             firstCall = false;
 
@@ -198,14 +200,13 @@ public class CachingTestProblem implements Problem {
 
             // Dann die äquidistante Schrittweite für die einzelnen
             // Teilprobleme berechnen.
-            schrittweite = (long) (max / (2 * number));
+            schrittweite = (int) (max / (2 * number));
 
             // Anhand der Schrittweite die Teilprobleme generieren.
-            for (long i = 1; i <= 2 * number; i++) {
+            for (int i = 1; i <= 2 * number; i++) {
                 partialProblems.addLast(
-                    new CachingTestPartialProblem(
-                        (i - 1) * schrittweite + 1,
-                        i * schrittweite));
+                    new CachingTestPartialProblem((i - 1) * schrittweite + 1,
+                                                  i * schrittweite));
             }
 
         }

@@ -1,7 +1,7 @@
 /*
  * file:        MonteCarloProblemImpl.java
  * created:     24.05.2003
- * last change: 06.04.2006 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -48,6 +48,11 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 public class MonteCarloProblemImpl implements Problem {
 
     /**
+     * Die Anzahl der Berechungen, um dann den Mittelwert für Pi zu berechnen.
+     */
+    private static final long anzahlVersucheGesamt = 10000000;
+
+    /**
      * Hier werden die einzelnen Teillösungen aufaddiert.
      */
     private Double zwischenErgebnis = new Double(0);
@@ -61,23 +66,18 @@ public class MonteCarloProblemImpl implements Problem {
     /**
      * Die Anzahl der zu erzeugenden Teilprobleme.
      */
-    private long anzahlPartialProbs;
-
-    /**
-     * Die Anzahl der Berechungen, um dann den Mittelwert für Pi zu berechnen.
-     */
-    private final long anzahlVersucheGesamt = 10000000;
+    private int anzahlPartialProbs;
 
     /**
      * Die Anzahl der Teilprobleme, die noch in Berechnung sind, sowie die
      * berechneten Teilprobleme.
      */
-    private long counterausgabe = 0;
+    private int counterausgabe = 0;
 
     /**
      * Die Anzahl der Teilprobleme, die berechnet sind.
      */
-    private long countererhalten = 0;
+    private int countererhalten = 0;
 
     /**
      * Addiert die Teillösungen auf und zählt einen Zähler hoch für die
@@ -108,9 +108,9 @@ public class MonteCarloProblemImpl implements Problem {
      *
      * @return  das zu berechnende Teilproblem.
      *
-     * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#getPartialProblem(long)
+     * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#getPartialProblem(int)
      */
-    public PartialProblem getPartialProblem(long number) {
+    public PartialProblem getPartialProblem(int number) {
 
         // Abfrage, ob die Methode das erstemal aufgerufen wurde
         if (erstesmal) {
@@ -121,6 +121,7 @@ public class MonteCarloProblemImpl implements Problem {
             } else {
                 anzahlPartialProbs = number;
             }
+
             //neues Teilproblem erzeugen und Zähler auf 1 setzen
             counterausgabe = 1;
             return new PartialProblemImpl(
@@ -141,7 +142,8 @@ public class MonteCarloProblemImpl implements Problem {
      * die Gesamtlösung zurück. Ist diese noch nicht vorhanden, wird
      * <code>null</code> zurückgegeben.
      *
-     * @return die Gesamtlösung
+     * @return  Die Gesamtlösung.
+     *
      * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#getSolution()
      */
     public Serializable getSolution() {

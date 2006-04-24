@@ -1,6 +1,6 @@
 /*
  * file:        AbstractFixedSizeProblem.java
- * last change: 23.04.2006 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -125,7 +125,7 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
      *
      * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#getPartialProblem(long)
      */
-    protected PartialProblem createPartialProblem(long number) {
+    protected PartialProblem createPartialProblem(int number) {
 
         if (partialProblems == null) {
             partialProblems = withoutNull(createPartialProblems(number));
@@ -172,7 +172,7 @@ public abstract class AbstractFixedSizeProblem extends AbstractOrderedProblem {
      *
      * @return  Array von Teilproblemen.
      */
-    protected abstract PartialProblem[] createPartialProblems(long problemsExpected);
+    protected abstract PartialProblem[] createPartialProblems(int problemsExpected);
 
     /**
      * Erstellt eine Gesamtlösung aus den übergebenen Teillösungen

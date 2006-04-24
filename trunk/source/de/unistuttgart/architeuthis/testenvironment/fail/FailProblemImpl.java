@@ -1,6 +1,6 @@
 /*
  * file:        FailProblemImpl.java
- * last change: 06.04.2006 von Dietmar Lippold
+ * last change: 24.04.2006 von Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -51,7 +51,7 @@ public class FailProblemImpl implements Problem {
     /**
      * Die Anzahl der erzeugten Teilprobleme.
      */
-    private long solutionNumber = 0;
+    private int solutionNumber = 0;
 
     /**
      * Liste der ausgegebenen Teilprobleme.
@@ -104,9 +104,9 @@ public class FailProblemImpl implements Problem {
             && (solutions.containsKey(dispensedProblems.getFirst()))) {
             // Das Problem, das gerade in dieser Reihenfolge bearbeitet werden
             // soll, wird aus der solutions-HashMap entnommen
-            Long problemProcessed =
-                (Long) solutions.get(dispensedProblems.getFirst());
-            if (problemProcessed.longValue() == solutionNumber) {
+            Integer problemProcessed =
+                (Integer) solutions.get(dispensedProblems.getFirst());
+            if (problemProcessed.intValue() == solutionNumber) {
                 ready = true;
                 System.out.println("ready auf true gesetzt");
             }
@@ -121,24 +121,25 @@ public class FailProblemImpl implements Problem {
      * @param suggestedPartProbs  Vom ProblemManager erbetene Anzahl
      *                            bereitzuhaltender Teilprobleme.
      */
-    public PartialProblem getPartialProblem(long suggestedPartProbs) {
+    public PartialProblem getPartialProblem(int suggestedPartProbs) {
 
         // Erster Aufruf? Falls ja, dann Teilprobleme generieren.
         if (firstCall) {
             firstCall = false;
-            long max = 6 * suggestedPartProbs ;
+            int max = 6 * suggestedPartProbs ;
             System.out.println("Generiere maximal" + max + " Probleme");
-            solutionNumber = (long) Math.round(max * Math.random());
+            solutionNumber = (int) Math.round(max * Math.random());
             if (solutionNumber == 0) {
                 solutionNumber = 1;
             }
 
-            for (long i = 1; i <= solutionNumber; i++) {
+            for (int i = 1; i <= solutionNumber; i++) {
                 System.out.println("Problem " + i + " generiert!");
                 partialProblems.addLast(new FailPartialProblemImpl(i));
             }
             System.out.println("Probleme generiert");
         }
+
         // Dieser Teil wird immer ausgeführt, er liefert ein Teilproblem zurück
         try {
             if (!partialProblems.isEmpty()) {

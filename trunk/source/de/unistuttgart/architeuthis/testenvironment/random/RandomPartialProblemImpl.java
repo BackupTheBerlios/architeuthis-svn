@@ -1,6 +1,6 @@
 /*
  * file:        RandomPartialProblemImpl.java
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -44,12 +44,6 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 public class RandomPartialProblemImpl implements NonCommPartialProblem {
 
     /**
-     * Die Nummer des <code>PartialProblem</code> Objekts, die zur internen
-     * Verwaltung wichtig ist.
-     */
-    private long number = 0;
-
-    /**
      * Maximale Zeit in Millisekunden, die ein Teilproblem braucht.
      */
     private static final long MAX_MILLISEC_TO_WAIT = 15000;
@@ -60,12 +54,18 @@ public class RandomPartialProblemImpl implements NonCommPartialProblem {
     private static final long CHANGE_TO_SEC = 1000;
 
     /**
+     * Die Nummer des <code>PartialProblem</code> Objekts, die zur internen
+     * Verwaltung wichtig ist.
+     */
+    private int number;
+
+    /**
      * Zu verwendender Standard-Konstruktor, der alle wichtigen Parameter
      * zuweist.
      *
-     * @param num Interne Verwaltungsnummer.
+     * @param num  Interne Verwaltungsnummer.
      */
-    public RandomPartialProblemImpl(long num) {
+    public RandomPartialProblemImpl(int num) {
         number = num;
     }
 
@@ -89,7 +89,8 @@ public class RandomPartialProblemImpl implements NonCommPartialProblem {
             Thread.sleep(zeit);
 
         } catch (InterruptedException e) { }
+
         return new RandomPartialSolutionImpl(number);
     }
-
 }
+

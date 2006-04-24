@@ -1,6 +1,6 @@
 /*
  * file:        AbstractOrderedProblem.java
- * last change: 23.04.2006 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -80,7 +80,7 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
      *
      * @return  Von der implementierenden Unterklasse erzeugtes Teilproblem.
      */
-    public PartialProblem getPartialProblem(long number) {
+    public PartialProblem getPartialProblem(int number) {
 
         PartialProblem prob = createPartialProblem(number);
 
@@ -146,7 +146,7 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
      *
      * @return  Ein Teilproblem.
      */
-    protected abstract PartialProblem createPartialProblem(long problemsExpected);
+    protected abstract PartialProblem createPartialProblem(int problemsExpected);
 
     /**
      * Nimmt eine Teillösung entgegen und liefert die Gesamtlösung oder

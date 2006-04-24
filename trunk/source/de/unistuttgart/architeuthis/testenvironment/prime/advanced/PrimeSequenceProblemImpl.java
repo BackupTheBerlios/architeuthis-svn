@@ -1,7 +1,7 @@
 /*
  * file:        PrimeSequenceProblemImpl.java
  * created:     <???>
- * last change: 22.04.2006 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -114,6 +114,11 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
      * @param maxWert  Die Nummer der größten Primzahl, die gesucht wird.
      */
     public PrimeSequenceProblemImpl(Long minWert, Long maxWert) {
+
+        if (maxWert.longValue() > (long) Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Parameter too great");
+        }
+
         minNumber = minWert.intValue();
         maxNumber = maxWert.intValue();
     }
@@ -127,19 +132,19 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
      *
      * @return  Neues Teilproblem zur Berechnung.
      */
-    public PartialProblem getPartialProblem(long number) {
+    public PartialProblem getPartialProblem(int number) {
+
         // Erster Aufruf? Falls ja, dann Teilprobleme generieren.
         if (firstCall) {
             firstCall = false;
 
             // in max wird gespeichert, bis zu welcher konkreten Zahl
             // die gewünschte Primzahl gesucht wird
-            long max = 10;
+            int max = 10;
 
             // schrittweite ist die Menge der Zahlen, die in einem Teilproblem
             // durchsucht werden.
-            long schrittweite = 0;
-
+            int schrittweite = 0;
 
             // Zuerst den Wert max errechnen, bis zu dem mindestens maxNumber
             // PrimeNumbers vorhanden sind, Abschätzung nach Rosser und
@@ -147,13 +152,13 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
             if (maxNumber < 15) {
                 max = 48;
             } else if (maxNumber < 7022) {
-                max = (long) Math.ceil(maxNumber * (Math.log(maxNumber)
-                                       + Math.log(Math.log(maxNumber))
-                                       - 0.5));
+                max = (int) Math.ceil(maxNumber * (Math.log(maxNumber)
+                                      + Math.log(Math.log(maxNumber))
+                                      - 0.5));
             } else {
-                max = (long) Math.ceil(maxNumber * (Math.log(maxNumber)
-                                       + Math.log(Math.log(maxNumber))
-                                       - 0.9385));
+                max = (int) Math.ceil(maxNumber * (Math.log(maxNumber)
+                                      + Math.log(Math.log(maxNumber))
+                                      - 0.9385));
             }
 
             // Dann die äquidistante Schrittweite für die einzelnen
@@ -161,11 +166,10 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
             schrittweite = max / (2 * number);
 
             // Anhand der Schrittweite die Teilprobleme generieren.
-            for (long i = 1; i < 2 * number; i++) {
+            for (int i = 1; i < 2 * number; i++) {
                 partialProblems.addLast(
-                    new PrimePartialProblemImpl(
-                        (i - 1) * schrittweite + 1,
-                        i * schrittweite));
+                    new PrimePartialProblemImpl((i - 1) * schrittweite + 1,
+                                                i * schrittweite));
             }
 
             // In der Schleife wurden nur gleich große Teilbereiche erzeugt.

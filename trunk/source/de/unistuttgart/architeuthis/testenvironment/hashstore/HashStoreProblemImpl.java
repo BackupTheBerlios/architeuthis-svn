@@ -1,7 +1,7 @@
 /*
  * file:        HashStoreProblemImpl.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 06.04.2006 von Dietmar Lippold
+ * last change: 24.04.2006 von Dietmar Lippold
  * developers:  Michael Wohlfart michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -136,7 +136,8 @@ public class HashStoreProblemImpl implements SerializableProblem {
      * @return  Das erzeugte Teilproblem oder <CODE>null</CODE>, wenn keines
      *          erzeugt wurde.
      */
-    public PartialProblem getPartialProblem(long number) {
+    public PartialProblem getPartialProblem(int number) {
+
         if (putDeliveredNr < putCreateNr) {
             putDeliveredNr++;
             if (LOGGER.isLoggable(Level.FINE)) {

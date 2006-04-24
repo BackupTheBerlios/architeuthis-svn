@@ -1,7 +1,7 @@
 /*
  * file:        RandomPartialSolutionImpl.java
  * created:
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -46,23 +46,24 @@ public class RandomPartialSolutionImpl implements PartialSolution {
      * Identifikationsnummer, die <code>Problem</code> die Zuordnung
      * ermöglicht.
      */
-    private long number = 0;
+    private int number;
 
     /**
      * Constructor RandomPartialSolutionImpl.
      *
      * @param num Interne Verwaltungsnummer.
      */
-    public RandomPartialSolutionImpl(long num) {
+    public RandomPartialSolutionImpl(int num) {
         number = num;
     }
 
     /**
      * Method getNumber.
-     * @return Object
+     *
+     * @return  Object.
      */
-    public Long getNumber() {
-        return new Long(number);
+    public Integer getNumber() {
+        return new Integer(number);
     }
-
 }
+

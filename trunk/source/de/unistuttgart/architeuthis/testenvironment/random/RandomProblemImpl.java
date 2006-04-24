@@ -1,7 +1,7 @@
 /*
  * file:        RandomProblemImpl.java
  * created:
- * last change: 06.04.2006 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -69,15 +69,15 @@ public class RandomProblemImpl implements Problem {
 
     private boolean ready = false;
 
-    private long helpNumber = 1;
+    private int helpNumber = 1;
 
-    private long ausgegebeneParProbs = 0;
+    private int ausgegebeneParProbs = 0;
 
-    private long erhalteneParProbs = 0;
+    private int erhalteneParProbs = 0;
 
-    private long sugPartProbNumber;
+    private int sugPartProbNumber;
 
-    private long solutionNumber = 0;
+    private int solutionNumber = 0;
 
     private LinkedList partialProblems = new LinkedList();
 
@@ -99,7 +99,7 @@ public class RandomProblemImpl implements Problem {
         if (erhalteneParProbs == helpNumber) {
             ausgegebeneParProbs = 0;
             erhalteneParProbs = 0;
-            helpNumber = (long) Math.round(sugPartProbNumber * Math.random());
+            helpNumber = (int) Math.round(sugPartProbNumber * Math.random());
             if (helpNumber == 0) {
                 helpNumber = 1;
             }
@@ -115,8 +115,8 @@ public class RandomProblemImpl implements Problem {
 
             // Das Problem, das gerade in dieser Reihenfolge bearbeitet werden
             // soll, wird aus der solutions-HashMap entnommen
-            Long problemProcessed =
-                (Long) solutions.get(dispensedProblems.getFirst());
+            Integer problemProcessed =
+                (Integer) solutions.get(dispensedProblems.getFirst());
             if (problemProcessed.intValue() == solutionNumber) {
                 ready = true;
                 System.out.println("ready auf true gesetzt");
@@ -133,32 +133,33 @@ public class RandomProblemImpl implements Problem {
      * @param suggestedPartProbNumber  Vom ProblemManager erbetene Anzahl
      *                                 bereitzuhaltender Teilprobleme
      */
-    public PartialProblem getPartialProblem(long suggestedPartProbNumber) {
+    public PartialProblem getPartialProblem(int suggestedPartProbNumber) {
+
         // Erster Aufruf? Falls ja, dann Teilprobleme generieren.
         if (firstCall) {
 
             firstCall = false;
             sugPartProbNumber = suggestedPartProbNumber;
-            helpNumber = (long) Math.round(sugPartProbNumber * Math.random());
-                        if (helpNumber == 0) {
-                            helpNumber = 1;
-                        }
+            helpNumber = (int) Math.round(sugPartProbNumber * Math.random());
+            if (helpNumber == 0) {
+                helpNumber = 1;
+            }
 
             //max gibt die maximale Anzahl von zu generierenden Teilproblemen an
             //max liegt im Bereich von 1 bis 5*suggestedPartProbNumber + 1
-            long max =
-                Math.round(Math.random() * 5 * suggestedPartProbNumber) + 1;
+            int max =
+                (int) Math.round(Math.random() * 5 * suggestedPartProbNumber) + 1;
             System.out.println("generiere " + max + " Probleme");
 
             //Lösung vom Problem erreicht, sobald das Teilproblem solutionNumber
             //berechnet wurde
-            solutionNumber = (long) Math.round(max * Math.random());
+            solutionNumber = (int) Math.round(max * Math.random());
             if (solutionNumber == 0) {
                 solutionNumber = 1;
             }
             System.out.println(
                 "Suche Loesung von Teilproblem Nr." + solutionNumber);
-            for (long i = 1; i <= max; i++) {
+            for (int i = 1; i <= max; i++) {
                 System.out.println("Problem " + i + " generiert!");
                 partialProblems.addLast(new RandomPartialProblemImpl(i));
             }

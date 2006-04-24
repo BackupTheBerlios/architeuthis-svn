@@ -1,6 +1,6 @@
 /*
  * file:        FailPartialProblemImpl.java
- * last change: 26.05.2004 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -44,13 +44,13 @@ public class FailPartialProblemImpl implements NonCommPartialProblem {
      * Die Nummer des <code>PartialProblem</code> Objekts, die zur internen
      * Verwaltung wichtig ist.
      */
-    private long number = 0;
+    private int number = 0;
 
     /**
      * Zu verwendender Standard-Konstruktor, der alle wichtigen Parameter
      * zuweist.
      */
-    public FailPartialProblemImpl(long num) {
+    public FailPartialProblemImpl(int num) {
         number = num;
     }
 
@@ -66,3 +66,4 @@ public class FailPartialProblemImpl implements NonCommPartialProblem {
         return new FailPartialSolutionImpl(number);
     }
 }
+

@@ -1,7 +1,7 @@
 /*
  * file:        ProblemComputation.java
  * created:     19.02.2004
- * last change: 15.04.2006 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit, juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
@@ -64,7 +64,7 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStoreGenerator;
 public class ProblemComputation {
 
     /**
-     * Logger for this class
+     * Logger für diese Klasse.
      */
     private static final Logger LOGGER
         = Logger.getLogger(ProblemComputation.class.getName());
@@ -99,6 +99,7 @@ public class ProblemComputation {
      */
     private void unregisterRemoteStore(RemoteStore centralRemoteStore,
                                        RemoteStore distRemoteStore) {
+
         try {
             if ((centralRemoteStore != null) && (distRemoteStore != null)) {
                 centralRemoteStore.unregisterRemoteStore(distRemoteStore);
@@ -139,19 +140,19 @@ public class ProblemComputation {
      *                                  passendes Interface.
      */
     public Serializable computeProblem(SerializableProblem problem,
-                                       long numberPartialProblems,
+                                       int numberPartialProblems,
                                        RemoteStoreGenerator generator)
         throws ProblemComputeException {
 
-        ProblemStatisticsCollector probStatCollector;
+        ProblemStatisticsCollector  probStatCollector;
         CommunicationPartialProblem commParProb;
-        NonCommPartialProblem nonCommParProb;
-        RemoteStore centralRemoteStore = null;
-        RemoteStore distRemoteStore = null;
-        PartialProblem partialProblem = null;
-        PartialSolution partialSolution = null;
-        Serializable solution = null;
-        long problemId;
+        NonCommPartialProblem       nonCommParProb;
+        RemoteStore                 centralRemoteStore = null;
+        RemoteStore                 distRemoteStore = null;
+        PartialProblem              partialProblem = null;
+        PartialSolution             partialSolution = null;
+        Serializable                solution = null;
+        long                        problemId;
 
         problemId = localProblemNumerator.nextNumber();
         probStatCollector = new ProblemStatisticsCollector(null);
@@ -250,7 +251,7 @@ public class ProblemComputation {
      *                                  passendes Interface.
      */
     public Serializable computeProblem(SerializableProblem problem,
-                                       long numberPartialProblems)
+                                       int numberPartialProblems)
         throws ProblemComputeException {
 
         return computeProblem(problem, numberPartialProblems, null);

@@ -1,7 +1,7 @@
 /*
  * file:        PrimeRangeProblemImpl.java
  * created:     <???>
- * last change: 23.04.2006 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -94,8 +94,8 @@ public class PrimeRangeProblemImpl extends AbstractFixedSizeProblem {
      *
      * @return  Array von Teilproblemen.
      */
-    protected PartialProblem[] createPartialProblems(long suggestedParProbs) {
-        PartialProblem[] parProbs = new PartialProblem[(int) suggestedParProbs];
+    protected PartialProblem[] createPartialProblems(int suggestedParProbs) {
+        PartialProblem[] parProbs = new PartialProblem[suggestedParProbs];
         double           parItvSqrtSize, upperBoundSqrt;
         long             lowerBound, upperBound;
         int              pIndex;

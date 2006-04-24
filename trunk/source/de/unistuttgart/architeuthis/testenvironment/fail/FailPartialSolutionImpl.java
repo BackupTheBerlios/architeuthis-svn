@@ -1,6 +1,6 @@
 /*
  * file:        FailPartialSolutionImpl.java
- * last change: 26.05.2004 by Dietmar LIppold
+ * last change: 24.04.2006 by Dietmar LIppold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -41,13 +41,13 @@ public class FailPartialSolutionImpl implements PartialSolution {
      * Identifikationsnummer, die <code>Problem</code> die Zuordnung
      * ermöglicht.
      */
-    private long number = 0;
+    private int number = 0;
 
     /**
      * Constructor FailPartialSolutionImpl.
      * @param number
      */
-    public FailPartialSolutionImpl(long num) {
+    public FailPartialSolutionImpl(int num) {
        number = num;
     }
 
@@ -55,8 +55,8 @@ public class FailPartialSolutionImpl implements PartialSolution {
      * Method getNumber.
      * @return Object
      */
-    public Long getNumber() {
-        return new Long(number);
+    public Integer getNumber() {
+        return new Integer(number);
     }
-
 }
+
