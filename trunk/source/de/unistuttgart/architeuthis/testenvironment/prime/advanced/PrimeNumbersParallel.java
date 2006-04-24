@@ -1,7 +1,7 @@
 /*
  * file:        PrimeNumbersParallel.java
  * created:     <???>
- * last change: 22.04.2006 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -56,28 +56,28 @@ public class PrimeNumbersParallel {
      * Der Name des Dispatchers des ComputeSystems, das zur Berechnung
      * verwendet werden soll. Dieser muss angepasst werden!
      */
-    private static final String DISPATCHER = "ischia";
+    private static final String DISPATCHER = "localhost";
 
     /**
      * Der URL (in der Regel auf einem WWW-Server), unter dem die Klassen
      * dieses Packages bereitgestellt werden, um für das ComputeSystem
      * verfügbar zu sein. Dies muss angepasst werden!
      */
-    private static final String CLASS_URL = "http://www/ifi/is/RMI-Test/";
+    private static final String CLASS_URL = "http://localhost:1855/";
 
     /**
      * Die Klasse, die die verteilte Berechnung einer Teilfolge übernimmt.
      * Falls dieses Package verwendet wird, muss dies nicht geändert werden.
      */
     private static final String TEILFOLGEN_KLASSE =
-        "de.unistuttgart.architeuthis.testenvironment.prime.PrimeSequenceProblemImpl";
+        "de.unistuttgart.architeuthis.testenvironment.prime.advanced.PrimeSequenceProblemImpl";
 
     /**
      * Die Klasse, die die verteilte Berechnung eines Teilbereichs übernimmt.
      * Falls dieses Package verwendet wird, muss dies nicht geändert werden.
      */
     private static final String TEILBEREICHS_KLASSE =
-        "de.unistuttgart.architeuthis.testenvironment.prime.PrimeRangeProblemImpl";
+        "de.unistuttgart.architeuthis.testenvironment.prime.advanced.PrimeRangeProblemImpl";
 
     /**
      * Ermittelt alle Primzahlen aus einem angegebenen Intervall. Die
