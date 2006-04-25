@@ -114,6 +114,20 @@ Von der Instanz der Klasse \texttt{ProblemComputation} hätte abschließend
 noch die finale Statistik zum Problem abgerufen (mittels der Methode
 \texttt{getFinalProblemStat}) und ausgegeben werden können.
 
+Wichtig ist, das für die JVM dem Property \texttt{java.security.policy}
+die policy-Datei zugewiesen wird, indem auf der Kommandozeile für den
+Befehl \texttt{java} die entsprechende policy-Datei angegeben wird. Ein
+konkreter Aufruf des obigen Programms zur Ausführung auf dem Compute-System
+könnte unter Linux also folgendermaßen aussehen (alles in einer Zeile):
+
+\texttt{java -cp ../deploy/User.jar:../deploy/Problems.jar\\
+        -Djava.security.policy=../config/transmitter.pol\\
+        de.unistuttgart.architeuthis.testenvironment.prime.basic.GeneratePrimes\\
+        200000 201000 r}
+
+Unter Windows müssen die Pfadangaben geändert werden und anstatt des
+Doppelpunktes muß ein Semikolon angegeben werden.
+
 
 \section{Weitere Beispiele}
 
