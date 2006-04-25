@@ -604,7 +604,7 @@ public class ProblemManagerImpl extends UnicastRemoteObject implements ProblemMa
                 "Neuer Operative hat sich angemeldet.");
             break;
         default :
-            LOGGER.servere(
+            LOGGER.severe(
                     "Unbekannte Fehlermeldung: "
                     + exceptionCode
                     + " "
