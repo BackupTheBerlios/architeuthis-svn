@@ -1,7 +1,7 @@
 /*
  * file:        UserRemoteHashSet.java
  * created:     08.02.2005
- * last change: 08.04.2006 by Dietmar Lippold
+ * last change: 25.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -67,6 +67,26 @@ public interface UserRemoteHashSet extends RemoteStore {
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public void addAll(Collection collection) throws RemoteException;
+
+    /**
+     * Ermittelt, ob das HashSet leer ist.
+     *
+     * @return  <code>true</code>, wenn das HashSet leer ist, sonst
+     *          <code>false</code>.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public boolean isEmpty() throws RemoteException;
+
+    /**
+     * Ermittelt, das übergebene Objekt im HashSet enthalten ist.
+     *
+     * @return  <code>true</code>, wenn das übergebene Objekt im HashSet
+     *          enthalten ist, <code>false</code>.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public boolean contains(Serializable object) throws RemoteException;
 
     /**
      * Liefert die Anzahl der in dieser Menge enthaltenen Objekte.

@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetImpl.java
  * created:     08.02.2005
- * last change: 17.04.2006 by Dietmar Lippold
+ * last change: 25.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -328,6 +328,32 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
             addAllLocal(collection);
         }
         addAllRemote(collection);
+    }
+
+    /**
+     * Ermittelt, ob das HashSet leer ist.
+     *
+     * @return  <code>true</code>, wenn das HashSet leer ist, sonst
+     *          <code>false</code>.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public synchronized boolean isEmpty() throws RemoteException {
+        return hashSet.isEmpty();
+    }
+
+    /**
+     * Ermittelt, das übergebene Objekt im HashSet enthalten ist.
+     *
+     * @return  <code>true</code>, wenn das übergebene Objekt im HashSet
+     *          enthalten ist, <code>false</code>.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public synchronized boolean contains(Serializable object)
+        throws RemoteException {
+
+        return hashSet.contains(object);
     }
 
     /**
