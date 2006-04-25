@@ -1,12 +1,17 @@
 /*
  * file:        PrimeSequenceProblemImpl.java
  * created:     <???>
- * last change: 06.04.2006 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -24,15 +29,10 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment.prime;
+package de.unistuttgart.architeuthis.testenvironment.prime.advanced;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -42,6 +42,8 @@ import java.util.LinkedList;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
+import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
+import de.unistuttgart.architeuthis.testenvironment.prime.PrimePartialProblemImpl;
 
 /**
  * Mit dieser Klasse können entsprechend dem Interface <code>Problem</code>
@@ -105,12 +107,18 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
 
     /**
      * Konstruktor, der dem Problem die richtigen Grenzen für die
-     * Primzahl-Bestimmung zuweist.
+     * Primzahl-Bestimmung zuweist. Die übergebenen Werte müssen im Bereich
+     * von <code>int</code> liegen.
      *
      * @param minWert  Die Nummer der kleinsten Primzahl, die gesucht wird.
      * @param maxWert  Die Nummer der größten Primzahl, die gesucht wird.
      */
-    public PrimeSequenceProblemImpl(Integer minWert, Integer maxWert) {
+    public PrimeSequenceProblemImpl(Long minWert, Long maxWert) {
+
+        if (maxWert.longValue() > (long) Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Parameter too great");
+        }
+
         minNumber = minWert.intValue();
         maxNumber = maxWert.intValue();
     }
@@ -119,23 +127,24 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
      * Liefert auf Anfrage vom ProblemManager ein Teilproblem zurück.
      * Beim ersten Aufruf werden außerdem die Teilprobleme generiert.
      *
-     * @param number  Vom ProblemManager erbetene Anzahl bereitzuhaltender Teilprobleme
+     * @param number  Vom ProblemManager vorgeschlagene Anzahl
+     *                bereitzuhaltender Teilprobleme.
      *
-     * @return Neues Teilproblem zur Berechnung.
+     * @return  Neues Teilproblem zur Berechnung.
      */
-    public PartialProblem getPartialProblem(long number) {
+    public PartialProblem getPartialProblem(int number) {
+
         // Erster Aufruf? Falls ja, dann Teilprobleme generieren.
         if (firstCall) {
             firstCall = false;
 
             // in max wird gespeichert, bis zu welcher konkreten Zahl
             // die gewünschte Primzahl gesucht wird
-            long max = 10;
+            int max = 10;
 
             // schrittweite ist die Menge der Zahlen, die in einem Teilproblem
             // durchsucht werden.
-            long schrittweite = 0;
-
+            int schrittweite = 0;
 
             // Zuerst den Wert max errechnen, bis zu dem mindestens maxNumber
             // PrimeNumbers vorhanden sind, Abschätzung nach Rosser und
@@ -143,13 +152,13 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
             if (maxNumber < 15) {
                 max = 48;
             } else if (maxNumber < 7022) {
-                max = (long) Math.ceil(maxNumber * (Math.log(maxNumber)
-                                       + Math.log(Math.log(maxNumber))
-                                       - 0.5));
+                max = (int) Math.ceil(maxNumber * (Math.log(maxNumber)
+                                      + Math.log(Math.log(maxNumber))
+                                      - 0.5));
             } else {
-                max = (long) Math.ceil(maxNumber * (Math.log(maxNumber)
-                                       + Math.log(Math.log(maxNumber))
-                                       - 0.9385));
+                max = (int) Math.ceil(maxNumber * (Math.log(maxNumber)
+                                      + Math.log(Math.log(maxNumber))
+                                      - 0.9385));
             }
 
             // Dann die äquidistante Schrittweite für die einzelnen
@@ -157,11 +166,10 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
             schrittweite = max / (2 * number);
 
             // Anhand der Schrittweite die Teilprobleme generieren.
-            for (long i = 1; i < 2 * number; i++) {
+            for (int i = 1; i < 2 * number; i++) {
                 partialProblems.addLast(
-                    new PrimePartialProblemImpl(
-                        (i - 1) * schrittweite + 1,
-                        i * schrittweite));
+                    new PrimePartialProblemImpl((i - 1) * schrittweite + 1,
+                                                i * schrittweite));
             }
 
             // In der Schleife wurden nur gleich große Teilbereiche erzeugt.
@@ -184,8 +192,8 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
     }
 
     /**
-     * Methode, die vom ProblemManager aufgerufen wird, um dem Problem eine neu
-     * eingetroffene Lösung zu übermitteln.
+     * Methode, die vom ProblemManager aufgerufen wird, um dem Problem eine
+     * neu eingetroffene Lösung zu übermitteln.
      *
      * @param parSol   Vom ProblemManager übermittelte Teillösung.
      * @param parProb  Referenz auf das Teilproblem, zu dem die Teillösung
@@ -195,13 +203,13 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
                                        PartialProblem parProb) {
 
         // Zuerst Lösung casten und in die Warteschlange einfügen.
-        PrimePartialSolutionImpl p = (PrimePartialSolutionImpl) parSol;
-        solutions.put(parProb, p.getSolution());
+        ContainerPartialSolution p = (ContainerPartialSolution) parSol;
+        solutions.put(parProb, p.getPartialSolution());
 
         // Durch die Liste laufen, solange die Lösungen in der richtigen
         // Reihenfolge vorliegen
         while ((!dispensedProblems.isEmpty())
-            && (solutions.containsKey(dispensedProblems.getFirst()))) {
+               && (solutions.containsKey(dispensedProblems.getFirst()))) {
             ArrayList partialSolutionList =
                 (ArrayList) solutions.get(dispensedProblems.getFirst());
 
@@ -236,14 +244,13 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
                 currentlyFound = currentlyFound + temp;
             }
         }
-
     }
 
     /**
      * Liefert die Gesamtlösung des Problems zurück, oder <code>null</code>,
      * falls diese noch nicht bekannt ist.
      *
-     * @return Die Gesamtlösung.
+     * @return  Die Gesamtlösung.
      */
     public Serializable getSolution() {
 
@@ -253,8 +260,9 @@ public class PrimeSequenceProblemImpl implements SerializableProblem {
         if (finalSolution.size() >= (maxNumber - minNumber + 1)) {
             return new ArrayList(
                 finalSolution.subList(0, maxNumber - minNumber + 1));
+        } else {
+            return null;
         }
-        return null;
     }
 }
 

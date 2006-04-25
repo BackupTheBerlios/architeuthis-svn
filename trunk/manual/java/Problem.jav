@@ -1,7 +1,7 @@
 /*
  * file:        Problem.java
  * created:     <???>
- * last change: 19.04.2006 by Dietmar Lippold
+ * last change: 24.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -51,12 +51,12 @@ public interface Problem {
      * verfügbaren Operatives ab.
      *
      * @param number  Vorgeschlagene Gesamtanzahl der zu erzeugenden
-     *                Teilprobleme.
+     *                Teilprobleme. Dieser Wert ist grösser oder gleich Eins.
      *
      * @return  Genau ein Teilproblem oder <code>null</code>, falls derzeit
      *          kein neues Teilproblem erzeugt werden soll.
      */
-    public PartialProblem getPartialProblem(long number);
+    public PartialProblem getPartialProblem(int number);
 
     /**
      * Nimmt eine Teillösung entgegen, um daraus zusammen mit den anderen

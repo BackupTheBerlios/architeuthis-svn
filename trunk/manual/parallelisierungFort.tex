@@ -67,20 +67,16 @@ Teillösungen verarbeitet werden. Dann modifiziere man den Konstruktor, so dass a
 Daten gleich gespeichert werden können.
 \par
 Zu guter Letzt wird noch {\tt compute()} implementiert, und zwar indem man einfach aus der Klasse
-{\tt Primzahlen} die vorher ausgewählte Methode \\{\tt PrimzahlTeilberech} aufruft. Dabei muss
-noch beachtet werden, dass die Identifikationsnummer auch der Teillösung übergeben wird.
+{\tt Primzahlen} die vorher ausgewählte Methode \\{\tt PrimzahlTeilberech} aufruft.
+Dies geschieht wie im vorherigen Kapitel mit dort beschriebenen Klasse
+\texttt{PrimePartialProblemImpl}.
 
-{\scriptsize \verbatiminput{java/advanced/PrimePartialProblemImpl.jav}}
 
 \subsection{Implementierung von \texttt{PartialSolution}}
 Diese Klasse muss eigentlich nur das Ergebnis der Berechnung von {\tt Prim\-zahl\-Teil\-bereich}
-kapseln und außerdem die Identifikationsnummer beinhalten.
-Man erstellt also zwei {\tt get}-Methoden für die Identifikationsnummer und die {\tt Array\-List},
-die als package-local definiert werden, und natürlich ebenfalls Attribute dafür.
-Abschließend erstellt man noch einen Konstruktor, der eben diese beiden Werte als Parameter erwartet und diese
-sofort in die Attribute speichert.
-
-{\scriptsize \verbatiminput{java/advanced/PrimePartialSolutionImpl.jav}}
+kapseln und außerdem die Identifikationsnummer beinhalten. Dafür wird
+im im vorhergehenden Kapitel die Klasse \texttt{ContainerPartialSolution}
+verwendet.
 
 
 \subsection{Implementierung von \texttt{Problem}}

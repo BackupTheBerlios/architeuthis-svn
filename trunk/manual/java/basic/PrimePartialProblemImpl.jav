@@ -1,7 +1,7 @@
 /*
  * file:        PrimePartialProblemImpl.java
  * created:     <???>
- * last change: 21.04.2006 by Dietmar Lippold
+ * last change: 22.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -31,7 +31,7 @@
  */
 
 
-package de.unistuttgart.architeuthis.testenvironment.prime.basic;
+package de.unistuttgart.architeuthis.testenvironment.prime;
 
 import de.unistuttgart.architeuthis.testenvironment.PrimeNumbers;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
@@ -71,7 +71,7 @@ public class PrimePartialProblemImpl implements NonCommPartialProblem {
     /**
      * Berechnet alle Primzahlen aus dem Intervall, das dem Konstruktor
      * übergeben wurde, und liefert die Lösung in Form eines
-     * <code>ContainerPartialSolution</code> Objekts zurück. 
+     * <code>ContainerPartialSolution</code> Objekts zurück.
      *
      * @return  Instanz der Container-Klasse, die die Liste der Primzahlen im
      *          vorgegebenen Bereich enthält.
