@@ -1,7 +1,7 @@
 /*
  * file:        OperativeMonitoringUnit.java
  * created:     12.08.2003
- * last change: 25.04.2004 von Jürgen Heit
+ * last change: 25.04.2006 von Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -123,7 +123,7 @@ class OperativeMonitoringUnit extends Thread {
     void startMonitoring(Operative operative) {
         synchronized (operativesTries) {
             operativesTries.put(operative, new Long(0));
-            LOGGER.info("Operative zur Überwachung hinzugefügt.");
+            LOGGER.fine("Operative zur Überwachung hinzugefügt.");
         }
     }
 
@@ -145,7 +145,7 @@ class OperativeMonitoringUnit extends Thread {
     void stopMonitoring(Operative operative) {
         synchronized (operativesTries) {
             operativesTries.remove(operative);
-            LOGGER.info("Operative aus Überwachung entfernt.");
+            LOGGER.fine("Operative aus Überwachung entfernt.");
         }
     }
 
@@ -157,16 +157,16 @@ class OperativeMonitoringUnit extends Thread {
      * @see java.lang.Thread#destroy()
      */
     public void terminate() {
-        LOGGER.info("Operative Überwachungsprozess wird gestoppt.");
+        LOGGER.fine("Operative Überwachungsprozess wird gestoppt.");
         threadTerminated = true;
         synchronized (this) {
             this.notifyAll();
         }
         try {
             this.join();
-            LOGGER.info("Operative-Überwachung gestoppt.");
+            LOGGER.fine("Operative-Überwachung gestoppt.");
         } catch (InterruptedException e2) {
-            LOGGER.info("Benutzerabbruch.");
+            LOGGER.fine("Benutzerabbruch.");
         }
     }
 
@@ -215,7 +215,7 @@ class OperativeMonitoringUnit extends Thread {
                                     operativesTries.put(operative, new Long(0));
                                 } else {
                                     operativesTries.put(operative, new Long(oldErrNo));
-                                    LOGGER.info(
+                                    LOGGER.config(
                                         "Verbindungsfehler zu Operative. "
                                             + "Erhöhe seinen "
                                             + "Verbindungsfehlerzähler");
@@ -226,9 +226,8 @@ class OperativeMonitoringUnit extends Thread {
                         // war, so überprüft der ComputeManager ob der
                         // Operative aus der Verwaltung entfernt werden muss.
                         if (inList && (oldErrNo > operativeReachableMaxTries)) {
-                            LOGGER.info(
-                                "Verbindungsfehler zu Operative. "
-                                    + "Schlage vor ihn zu entfernen.");
+                            LOGGER.info("Verbindungsfehler zu Operative. "
+                                        + "Schlage vor ihn zu entfernen.");
                             computeManager.verifyOperativeReachability(operative);
                         }
                     }
@@ -248,3 +247,4 @@ class OperativeMonitoringUnit extends Thread {
         }
     }
 }
+
