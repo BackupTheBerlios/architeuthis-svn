@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 14.04.2006 by Dietmar Lippold
+ * last change: 25.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -179,6 +179,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         });
 
         backgroundComputation = new OperativeComputing(this);
+        LOGGER.log(Level.INFO, "Operative gestartet");
     }
 
     /**
@@ -230,6 +231,9 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * @throws RemoteException  Bei RMI-Verbindungsproblemen.
      */
     public synchronized void doExit() throws RemoteException {
+
+        LOGGER.log(Level.INFO, "Operative wird beendet");
+
         if (backgroundComputation != null) {
             // OperativeComputing-Thread beenden
             LOGGER.log(Level.FINE, "Berechnung wird gestoppt");
@@ -251,7 +255,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         }
         computeManager = null;
 
-        LOGGER.log(Level.FINE, "Operative Beendet!");
+        LOGGER.log(Level.INFO, "Operative beendet!");
     }
 
     /**
@@ -261,6 +265,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * abgemeldet.
      */
     private synchronized void shutdown() {
+
         // Vom Dispatcher abmelden
         try {
             if (computeManager != null) {
@@ -278,7 +283,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             doExit();
         } catch (RemoteException e2) {
             // RemoteException kann nicht auftreten.
-            LOGGER.log(Level.WARNING, "RemoteException beim Abmelden vom Dispatcher.");
+            LOGGER.log(Level.WARNING,
+                       "RemoteException beim Abmelden vom Dispatcher.");
         }
     }
 
