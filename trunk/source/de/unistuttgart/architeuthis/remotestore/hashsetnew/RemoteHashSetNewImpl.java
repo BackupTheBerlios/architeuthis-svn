@@ -91,7 +91,7 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
     }
 
     /**
-     * Speichert ein Objekt nur im lokalen HashSet, ohne es an das
+     * Speichert das übergebene Objekt nur im lokalen HashSet, ohne es an das
      * RelayHashSet weiterzugeben. Das übergebene Objekt wird außerdem in der
      * Menge der neuen Objekte gespeichert.
      *
@@ -108,10 +108,10 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
     }
 
     /**
-     * Speichert die Objekte der übergebenen <CODE>Collection</CODE> nur
-     * im lokalen HashSet, ohne sie an das <CODE>RelayHashSet</CODE>
-     * weiterzugeben. Die übergebenen Objekte werden außerdem in der
-     * Menge der neuen Objekte gespeichert.
+     * Speichert die Objekte der übergebenen <CODE>Collection</CODE> nur im
+     * lokalen HashSet, ohne sie an das <CODE>RelayHashSet</CODE>
+     * weiterzugeben. Die übergebenen Objekte werden außerdem in der Menge der
+     * neuen Objekte gespeichert.
      *
      * @param collection  Die Collection der zu speichernden Objekte.
      *
@@ -127,15 +127,18 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
     }
 
     /**
-     * Speichert ein Objekt im lokalen HashSet und sendet es an andere
-     * RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE> angemeldet
-     * wurde. Diese Methode wird vom Teilproblem aufgerufen. Für den
+     * Speichert das übergebene Objekt im lokalen HashSet und sendet es an die
+     * anderen RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE>
+     * angemeldet wurde.<P>
+     *
+     * Diese Methode wird vom Teilproblem aufgerufen. Für den
      * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
      * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
      * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
      * <P>
+     *
      * Das übergebene Objekt wird nur dann in der Menge der neuen Objekte
-     * gespeichert, wenn es ein RelayHashSet gibt und eine synchrone
+     * direkt gespeichert, wenn es ein RelayHashSet gibt und eine synchrone
      * Kommunikation erfolgt.
      *
      * @param object  Das zu speichernde Objekt.
@@ -152,15 +155,17 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
 
     /**
      * Speichert die Objekte der <CODE>Collection</CODE> im lokalen HashSet
-     * und sendet sie an andere RemoteHashSets weiter, wenn ein
-     * <CODE>RelayHashSet</CODE> angemeldet wurde. Diese Methode wird vom
-     * Teilproblem aufgerufen. Für den Anwendungsentwickler ist es
-     * transparent, ob hier ein lokales Objekt (distStore) angesprochen wird
-     * oder dies ein RMI-Aufruf ist und das angesprochene Storage-Objekt
-     * (centralStore) auf den Dispatcher liegt.<P>
+     * und sendet sie an die anderen RemoteHashSets weiter, wenn ein
+     * <CODE>RelayHashSet</CODE> angemeldet wurde.<P>
+     *
+     * Diese Methode wird vom Teilproblem aufgerufen. Für den
+     * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
+     * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
+     * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
+     * <P>
      *
      * Die übergebenen Objekte werden nur dann in der Menge der neuen Objekte
-     * gespeichertn wenn es ein RelayHashSet gibt und eine synchrone
+     * direkt gespeichert, wenn es ein RelayHashSet gibt und eine synchrone
      * Kommunikation erfolgt.
      *
      * @param collection  Die aufzunehmenden Objekte.
