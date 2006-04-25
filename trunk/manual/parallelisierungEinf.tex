@@ -30,7 +30,7 @@ der Teillösungen. Dabei ist zu beachten, daß die Primzahlen in der
 Gesamtliste aufsteigend sortiert sein müssen.
 
 
-\subsection{Implementierung}
+\section{Implementierung}
 
 Die Sortierung der Primzahlen in der Gesamtliste kann dadurch implizit
 erfolgen, daß den Teilproblemen die Teilintervalle aufsteigend zugeordnet
@@ -72,6 +72,47 @@ abgerufen werden. Nachfolgend die vollständige Implementierung der
 Teilproblem-Klasse.
 
 {\scriptsize \verbatiminput{java/basic/PrimePartialProblemImpl.jav}}
+
+
+\section{Ausführung}
+
+Die Ausführung bzw.\ Berechnung des Problems erfolgt in drei einfachen
+Schritten:
+
+\begin{enumerate}
+\item  Es wird eine Instanz der Klasse \texttt{de...user.ProblemComputation}
+       erzeugt.
+
+\item  Es wird eine Instanz des Problems erzeugt. Diese wird in der Praxis
+       in der Regel durch ein Programm, das die Parameter des Problems
+       errechnet und das Ergebnis (die Lösung) des Problems weiterverwendet,
+       erzeugt werden.
+
+\item  Es wird die Methode \texttt{transmitProblem} der Instanz von
+       \texttt{ProblemComputation} aufgerufen und ihr die Instanz vom
+       Problem übergeben. Außerdem ist der Methode der Name des
+       Dispatcher-Rechners und der URL, unter dem die class-Dateien
+       abrufbar sind (z.B.\ mittels des ClassFileServer, s.\ Abschnitt
+       \ref{classfileserver}), zu übergeben. Insbesondere zu Testzwecken
+       und zur Berechnung unabhängig von einem laufenden Compute-System
+       kann alternativ auch die Methode \texttt{computeProblem} aufgerufen
+       werden.
+\end{enumerate}
+
+Die nachfolgend angegebene Klasse
+\texttt{de...testenvironment.prime.basic.GeneratePrimes} kann zur
+Verdeutlichung des Vorgehens dienen.
+
+{\scriptsize \verbatiminput{java/basic/GeneratePrimes.jav}}
+
+Die Klasse besitzt als Beispiel lediglich eine einzelne
+\texttt{main}-Methode, die die Parameter für das Problem als
+Kommandozeilen-Argumente einliest. Der Name des Dispatchers und der URL
+für die class-Dateien sind als Konstanten definiert. Sie hätten natürlich
+z.B.\ ebenfalls als Kommandozeilen-Argumente eingelesen werden können.
+Von der Instanz der Klasse \texttt{ProblemComputation} hätte abschließend
+noch die finale Statistik zum Problem abgerufen (mittels der Methode
+\texttt{getFinalProblemStat}) und ausgegeben werden können.
 
 
 \section{Weitere Beispiele}
