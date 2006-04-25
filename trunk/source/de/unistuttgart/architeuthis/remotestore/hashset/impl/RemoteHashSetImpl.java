@@ -218,6 +218,45 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     }
 
     /**
+     * Entfernt ein Objekt nur aus dem lokalen HashSet, ohne es an das
+     * RelayHashSet weiterzugeben.
+     *
+     * @param object  Das zu entfernende Objekt.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    public synchronized void removeLocal(Object object) throws RemoteException {
+
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.finest("called removeLocal for " + object);
+        }
+
+        // Den Delegatee updaten.
+        hashSet.remove(object);
+    }
+
+    /**
+     * Entfernt die Objekte der übergebenen <CODE>Collection</CODE> nur aus
+     * dem lokalen HashSet, ohne sie an das <CODE>RelayHashSet</CODE>
+     * weiterzugeben.
+     *
+     * @param collection  Die Collection der zu entfernenden Objekte.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    public synchronized void removeAllLocal(Collection collection)
+        throws RemoteException {
+
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.finest("called removeAllLocal, number of elements = "
+                          + collection.size());
+        }
+
+        // Den Delegatee updaten.
+        hashSet.removeAll(collection);
+    }
+
+    /**
      * Ermittelt, ob Daten, die über eine Methode vom Interface
      * <code>UserRemoteHashSet</code> übergeben wurden, lokal gespeichert
      * werden müssen.
@@ -234,9 +273,10 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     }
 
     /**
-     * Überträgt das übergebene Objekt zum RelayStore, falls dieser vorhanden
-     * ist. Das übergebene Objekt wird genau dann wieder vom RelayStore an
-     * dieses Objekt übertragen, wenn die Kommunikation synchron ist.
+     * Ruft für das übergebene Objekt die Methode add beim RelayStore auf,
+     * falls dieser vorhanden ist. Das übergebene Objekt wird genau dann
+     * wieder vom RelayStore an dieses Objekt übertragen, wenn die
+     * Kommunikation synchron ist.
      *
      * @param object  Das zu übertragende Objekt.
      *
@@ -262,9 +302,11 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     }
 
     /**
-     * Speichert ein Objekt im lokalen HashSet und sendet es an andere
-     * RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE> angemeldet
-     * wurde. Diese Methode wird vom Teilproblem aufgerufen. Für den
+     * Speichert das übergebene Objekt im lokalen HashSet und sendet es an
+     * die anderen RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE>
+     * angemeldet wurde.<p>
+     *
+     * Diese Methode wird vom Teilproblem aufgerufen. Für den
      * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
      * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
      * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
@@ -282,9 +324,10 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
     }
 
     /**
-     * Überträgt die übergebene Collection zum RelayStore, falls dieser
-     * vorhanden ist. Die Collection wird genau dann wieder vom RelayStore an
-     * dieses Objekt übertragen, wenn die Kommunikation synchron ist.
+     * Ruft für übergebene Collection die Methode addAll beim RelayStore auf,
+     * falls dieser vorhanden ist. Die Collection wird genau dann wieder vom
+     * RelayStore an dieses Objekt übertragen, wenn die Kommunikation synchron
+     * ist.
      *
      * @param collection  Die zu übertragende Collection.
      *
@@ -311,12 +354,13 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
 
     /**
      * Speichert die Objekte der <CODE>Collection</CODE> im lokalen HashSet
-     * und sendet sie an andere RemoteHashSets weiter, wenn ein
-     * <CODE>RelayHashSet</CODE> angemeldet wurde. Diese Methode wird vom
-     * Teilproblem aufgerufen. Für den Anwendungsentwickler ist es
-     * transparent, ob hier ein lokales Objekt (distStore) angesprochen wird
-     * oder dies ein RMI-Aufruf ist und das angesprochene Storage-Objekt
-     * (centralStore) auf den Dispatcher liegt.
+     * und sendet sie an die anderen RemoteHashSets weiter, wenn ein
+     * <CODE>RelayHashSet</CODE> angemeldet wurde.<p>
+     *
+     * Diese Methode wird vom Teilproblem aufgerufen. Für den
+     * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
+     * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
+     * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
      *
      * @param collection  Die aufzunehmenden Objekte.
      *
@@ -328,6 +372,108 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
             addAllLocal(collection);
         }
         addAllRemote(collection);
+    }
+
+    /**
+     * Ruft für das übergebene Objekt die Methode remove beim RelayStore auf,
+     * falls dieser vorhanden ist. Das übergebene Objekt wird genau dann
+     * wieder vom RelayStore an dieses Objekt übertragen, wenn die
+     * Kommunikation synchron ist.
+     *
+     * @param object  Das zu übertragende Objekt.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    protected void removeRemote(Serializable object) throws RemoteException {
+
+        synchronized (relayStoreSyncObj) {
+            if (relayHashSet != null) {
+                if (synchronComm) {
+                    // Das Objekt direkt an den RelayStore und damit an die
+                    // anderen RemoteHashSets und indirekt an dieses
+                    // RemoteHashSet übergeben.
+                    relayHashSet.remove(object, null);
+                } else {
+                    // Das Objekt an den Transmitter zur Weiterleitung an den
+                    // RelayStore und damit an die anderen RemoteHashSets
+                    // übergeben.
+                    transmitter.enqueue(new RemoveObject(object));
+                }
+            }
+        }
+    }
+
+    /**
+     * Entfernt das übergebene Objekt aus dem lokalen HashSet und sendet es an
+     * die anderen RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE>
+     * angemeldet wurde.<p>
+     *
+     * Diese Methode wird vom Teilproblem aufgerufen. Für den
+     * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
+     * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
+     * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
+     *
+     * @param object  Das zu entfernende Objekt.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    public void remove(Serializable object) throws RemoteException {
+
+        if (storeLocal()) {
+            removeLocal(object);
+        }
+        removeRemote(object);
+    }
+
+    /**
+     * Ruft für übergebene Collection die Methode removeAll beim RelayStore
+     * auf, falls dieser vorhanden ist. Die Collection wird genau dann wieder
+     * vom RelayStore an dieses Objekt übertragen, wenn die Kommunikation
+     * synchron ist.
+     *
+     * @param collection  Die zu übertragende Collection.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    protected void removeAllRemote(Collection collection) throws RemoteException {
+
+        synchronized (relayStoreSyncObj) {
+            if (relayHashSet != null) {
+                if (synchronComm) {
+                    // Die Collection direkt an den RelayStore und damit an
+                    // die anderen RemoteHashSets und indirekt an dieses
+                    // RemoteHashSet übergeben.
+                    relayHashSet.removeAll(collection, null);
+                } else {
+                    // Die Collection an den Transmitter zur Weiterleitung an
+                    // den RelayStore und damit an die anderen RemoteHashSets
+                    // übergeben.
+                    transmitter.enqueue(new RemoveAllObject(collection));
+                }
+            }
+        }
+    }
+
+    /**
+     * Entfernet die Objekte der <CODE>Collection</CODE> aus dem lokalen
+     * HashSet und sendet sie an die anderen RemoteHashSets weiter, wenn ein
+     * <CODE>RelayHashSet</CODE> angemeldet wurde.<p>
+     *
+     * Diese Methode wird vom Teilproblem aufgerufen. Für den
+     * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
+     * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
+     * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
+     *
+     * @param collection  Die zu entfernenden Objekte.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void removeAll(Collection collection) throws RemoteException {
+
+        if (storeLocal()) {
+            removeAllLocal(collection);
+        }
+        removeAllRemote(collection);
     }
 
     /**

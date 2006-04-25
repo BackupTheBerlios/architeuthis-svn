@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSetImpl.java
  * created:     08.02.2005
- * last change: 17.04.2006 by Dietmar Lippold
+ * last change: 25.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -151,7 +151,7 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
 
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.finest("called addAll, number of elements = "
-                        + collection.size());
+                          + collection.size());
         }
 
         // Erstmal den Delegatee updaten.
@@ -163,6 +163,76 @@ public class RelayHashSetImpl extends AbstractRelayStore implements RelayHashSet
             LocalHashSet peer = (LocalHashSet) iterator.next();
             if (!peer.equals(remoteStore)) {
                 peer.addAllLocal(collection);
+            }
+        }
+    }
+
+    /**
+     * Entfernt das übergebene Objekt und gibt es an alle RemoteStores, bis
+     * auf den, der das Objekt übergeben hat, zur Speicherung weiter.
+     *
+     * @param object       Das zu entfernende Objekt.
+     * @param remoteStore  Der RemoteStore, von dem das übergebene Objekt
+     *                     kommt und an den das Opjekt nicht weitergeleitet
+     *                     werden soll. Wenn der Wert <code>null</code> ist,
+     *                     wird der Wert auch an den aufrufenden Operative
+     *                     weitergeleitet.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    public synchronized void remove(Serializable object, LocalHashSet remoteStore)
+        throws RemoteException {
+
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.finest("called remove for : " + object);
+        }
+
+        // Erstmal den Delegatee updaten.
+        hashSet.remove(object);
+
+        // Das Objekt an alle RemoteHashSets übertragen.
+        Iterator iterator = getRemoteStoreIterator();
+        while (iterator.hasNext()) {
+            LocalHashSet peer = (LocalHashSet) iterator.next();
+            if (!peer.equals(remoteStore)) {
+                peer.removeLocal(object);
+            }
+        }
+    }
+
+    /**
+     * Entfernt die Objekte der übergebenen <CODE>Collection</CODE>, die
+     * serialisierbar sein müssen, und gibt die <CODE>Collection</CODE> an
+     * alle RemoteStores, bis auf den, der die <CODE>Collection</CODE>
+     * übergeben hat, weiter.
+     *
+     * @param collection   Die Collection der zu entfernenden Objekte.
+     * @param remoteStore  Der RemoteStore, von dem die übergebene Collection
+     *                     kommt und an den sie nicht weitergeleitet werden
+     *                     soll. Wenn der Wert <code>null</code> ist, wird die
+     *                     Collection auch an den aufrufenden Operative
+     *                     weitergeleitet.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    public synchronized void removeAll(Collection collection,
+                                       LocalHashSet remoteStore)
+        throws RemoteException {
+
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.finest("called removeAll, number of elements = "
+                          + collection.size());
+        }
+
+        // Erstmal den Delegatee updaten.
+        hashSet.removeAll(collection);
+
+        // Das Objekt an alle RemoteHashSets übertragen.
+        Iterator iterator = getRemoteStoreIterator();
+        while (iterator.hasNext()) {
+            LocalHashSet peer = (LocalHashSet) iterator.next();
+            if (!peer.equals(remoteStore)) {
+                peer.removeAllLocal(collection);
             }
         }
     }

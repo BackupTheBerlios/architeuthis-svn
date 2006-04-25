@@ -1,7 +1,7 @@
 /*
  * file:        HashSetTransProc.java
  * created:     17.04.2006
- * last change: 17.04.2006 by Dietmar Lippold
+ * last change: 25.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -91,6 +91,15 @@ public class HashSetTransProc implements TransmitProcedure {
 
             Collection collection = (Collection) transObject.storedObject();
             relayStore.addAll(collection, localStore);
+
+        } else if (transObject instanceof RemoveObject) {
+
+            relayStore.remove((Serializable) transObject.storedObject(), localStore);
+
+        } else if (transObject instanceof RemoveAllObject) {
+
+            Collection collection = (Collection) transObject.storedObject();
+            relayStore.removeAll(collection, localStore);
 
         } else {
 

@@ -1,7 +1,7 @@
 /*
  * file:        LocalHashSet.java
  * created:     10.02.2005
- * last change: 12.04.2006 by Dietmar Lippold
+ * last change: 25.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -40,14 +40,12 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
  * implementieren sind, der die Funktionalität eines <CODE>HashSet</CODE> hat.
  * Er wird von einem Teilproblem verwendet.
  *
- * ToDo: Methode addAllLocal ergänzen.
- *
  * @author Dietmar Lippold
  */
 public interface LocalHashSet extends RemoteStore {
 
     /**
-     * Speichert ein Objekt nur im lokalen HashSet, ohne es an das
+     * Speichert das übergebene Objekt nur im lokalen HashSet, ohne es an das
      * <CODE>RelayHashSet</CODE> weiterzugeben.
      *
      * @param object  Das zu speichernde Objekt.
@@ -66,5 +64,26 @@ public interface LocalHashSet extends RemoteStore {
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public void addAllLocal(Collection collection) throws RemoteException;
+
+    /**
+     * Entfernt das übergebene Objekt nur aus dem lokalen HashSet, ohne es an
+     * das <CODE>RelayHashSet</CODE> weiterzugeben.
+     *
+     * @param object  Das zu entfernende Objekt.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void removeLocal(Object object) throws RemoteException;
+
+    /**
+     * Entfernt die Objekte der übergebenen <CODE>Collection</CODE> nur aus
+     * dem lokalen HashSet, ohne sie an das <CODE>RelayHashSet</CODE>
+     * weiterzugeben.
+     *
+     * @param collection  Die Collection der zu entfernenden Objekte.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void removeAllLocal(Collection collection) throws RemoteException;
 }
 

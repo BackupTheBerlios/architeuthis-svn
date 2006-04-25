@@ -47,9 +47,9 @@ import de.unistuttgart.architeuthis.userinterfaces.develop.RemoteStore;
 public interface UserRemoteHashSet extends RemoteStore {
 
     /**
-     * Speichert ein Objekt im lokalen HashSet und sendet es an andere
-     * RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE> angemeldet
-     * wurde.
+     * Speichert das übergebene Objekt im lokalen HashSet und sendet es an
+     * andere RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE>
+     * angemeldet wurde.
      *
      * @param object  Das aufzunehmende Objekt.
      *
@@ -58,15 +58,39 @@ public interface UserRemoteHashSet extends RemoteStore {
     public void add(Serializable object) throws RemoteException;
 
     /**
-     * Speichert die Objekte der <CODE>Collection</CODE>, die serialisierbar
-     * sein müssen, im lokalen HashSet und sendet sie an andere RemoteHashSets
-     * weiter, wenn ein <CODE>RelayHashSet</CODE> angemeldet wurde.
+     * Speichert das übergebene Objekte der <CODE>Collection</CODE>, die
+     * serialisierbar sein müssen, im lokalen HashSet und sendet sie an die
+     * anderen RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE>
+     * angemeldet wurde.
      *
      * @param collection  Die aufzunehmenden Objekte.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
     public void addAll(Collection collection) throws RemoteException;
+
+    /**
+     * Entfernt das übergebene Objekt im lokalen HashSet und sendet es an andere
+     * RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE> angemeldet
+     * wurde.
+     *
+     * @param object  Das zu entfernende Objekt.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void remove(Serializable object) throws RemoteException;
+
+    /**
+     * Entfernt die Objekte der <CODE>Collection</CODE>, die serialisierbar
+     * sein müssen, aus dem lokalen HashSet und sendet sie an die anderen
+     * RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE> angemeldet
+     * wurde.
+     *
+     * @param collection  Die zu entfernenden Objekte.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void removeAll(Collection collection) throws RemoteException;
 
     /**
      * Ermittelt, ob das HashSet leer ist.

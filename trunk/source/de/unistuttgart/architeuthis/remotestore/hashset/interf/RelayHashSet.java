@@ -1,7 +1,7 @@
 /*
  * file:        RelayHashSet.java
  * created:     08.02.2005
- * last change: 17.04.2006 by Dietmar Lippold
+ * last change: 25.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -80,5 +80,39 @@ public interface RelayHashSet extends RemoteStore {
      */
     public void addAll(Collection collection,
                        LocalHashSet remoteStore) throws RemoteException;
+
+    /**
+     * Entfernt das übergebene Objekt und gibt es an alle RemoteStores, bis
+     * auf den, der das Objekt übergeben hat, weiter.
+     *
+     * @param object       Das zu entfernende Objekt.
+     * @param remoteStore  Der RemoteStore, von dem das übergebene Objekt
+     *                     kommt und an den das Opjekt nicht weitergeleitet
+     *                     werden soll. Wenn der Wert <code>null</code> ist,
+     *                     wird der Wert auch an den aufrufenden Operative
+     *                     weitergeleitet.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void remove(Serializable object,
+                       LocalHashSet remoteStore) throws RemoteException;
+
+    /**
+     * Entfernt die Objekte der übergebenen <CODE>Collection</CODE>, die
+     * serialisierbar sein müssen, und gibt die <CODE>Collection</CODE> an
+     * alle RemoteStores, bis auf den, der die <CODE>Collection</CODE>
+     * übergeben hat, weiter.
+     *
+     * @param collection   Die Collection der zu entfernenden Objekte.
+     * @param remoteStore  Der RemoteStore, von dem die übergebene Collection
+     *                     kommt und an den sie nicht weitergeleitet werden
+     *                     soll. Wenn der Wert <code>null</code> ist, wird die
+     *                     Collection auch an den aufrufenden Operative
+     *                     weitergeleitet.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void removeAll(Collection collection,
+                          LocalHashSet remoteStore) throws RemoteException;
 }
 
