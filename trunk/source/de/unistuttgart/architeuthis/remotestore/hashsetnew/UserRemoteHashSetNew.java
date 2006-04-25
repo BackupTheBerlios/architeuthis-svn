@@ -1,7 +1,7 @@
 /*
  * file:        UserRemoteHashSetNew.java
  * created:     12.04.2006
- * last change: 12.04.2006 by Dietmar Lippold
+ * last change: 25.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -39,8 +39,9 @@ import de.unistuttgart.architeuthis.remotestore.hashset.UserRemoteHashSet;
 /**
  * Dieses Interface gibt die Methoden vor, die für einen RemoteStore zu
  * implementieren sind, der die Funktionalität eines <CODE>HashSet</CODE> hat,
- * wobei zusätzlich die Menge der vom RealyStore neu hinzugefügten Objekte
- * verwaltet wird. Es wird von einem Teilproblem verwendet.
+ * wobei zusätzlich die Menge der vom RealyStore neu hinzugefügten und daraus
+ * noch nicht wieder entferntenObjekte verwaltet wird. Es wird von einem
+ * Teilproblem verwendet.
  *
  * @author Dietmar Lippold
  */
@@ -48,9 +49,12 @@ public interface UserRemoteHashSetNew extends UserRemoteHashSet, RemoteStore {
 
     /**
      * Liefert die Anzahl der vom RelayStore seit dem letzten Aufruf von
-     * <CODE>newElements</CODE> neu hinzugefügten Objekte.
+     * <CODE>newElements</CODE> neu hinzugefügten und noch nicht wieder
+     * entfernten Objekte.
      *
-     * @return  Die Anzahl der enthaltenen Objekte.
+     * @return  Die Anzahl der vom RelayStore seit dem letzten Aufruf von
+     *          <CODE>newElements</CODE> neu hinzugefügten und noch nicht
+     *          wieder entfernten Objekte.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
@@ -58,10 +62,11 @@ public interface UserRemoteHashSetNew extends UserRemoteHashSet, RemoteStore {
 
     /**
      * Liefert eine Menge der vom RelayStore seit dem letzten Aufruf dieser
-     * Methode neu hinzugefügten Objekte.
+     * Methode neu hinzugefügten und noch nicht wieder entfernten Objekte.
      *
      * @return  Eine Menge der vom RelayStore seit dem letzten Aufruf dieser
-     *          Methode neu hinzugefügten Objekte.
+     *          Methode neu hinzugefügten und noch nicht wieder entfernten
+     *          Objekte.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */

@@ -42,9 +42,9 @@ import de.unistuttgart.architeuthis.remotestore.hashset.impl.RemoteHashSetImpl;
 
 /**
  * Diese Klasse implementiert das RemoteStore Interface als HashSet, wobei
- * zusätzlich die Menge der vom RealyStore neu hinzugefügten Objekte verwaltet
- * wird. Derzeit sind nur wenige Methode von <CODE>HashSet</CODE>
- * implementiert.
+ * zusätzlich die Menge der vom RealyStore neu hinzugefügten und daraus noch
+ * nicht wieder entfernten Objekte verwaltet wird. Derzeit sind nur einige
+ * Methoden von <CODE>HashSet</CODE> implementiert.
  *
  * @author Dietmar Lippold
  */
@@ -181,10 +181,103 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
     }
 
     /**
-     * Liefert die Anzahl der vom RelayStore seit dem letzten Aufruf von
-     * <CODE>newElements</CODE> neu hinzugefügten Objekte.
+     * Entfernt das übergebene Objekt nur aus dem lokalen HashSet, ohne es an
+     * das RelayHashSet weiterzugeben. Das übergebene Objekt wird außerdem aus
+     * der Menge der neuen Objekte entfernt.
      *
-     * @return  Die Anzahl der enthaltenen Objekte.
+     * @param object  Das zu entfernende Objekt.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    public synchronized void removeLocal(Object object) throws RemoteException {
+
+        super.removeLocal(object);
+
+        // Aus den neuen Elemente entfernen.
+        newElements.remove(object);
+    }
+
+    /**
+     * Entfernt die Objekte der übergebenen <CODE>Collection</CODE> nur aus
+     * dem lokalen HashSet, ohne sie an das <CODE>RelayHashSet</CODE>
+     * weiterzugeben. Die übergebenen Objekte werden außerdem aus der Menge
+     * der neuen Objekte entfernt.
+     *
+     * @param collection  Die Collection der zu entfernenden Objekte.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    public synchronized void removeAllLocal(Collection collection)
+        throws RemoteException {
+
+        super.removeAllLocal(collection);
+
+        // Aus den neuen Elemente entfernen.
+        newElements.removeAll(collection);
+    }
+
+    /**
+     * Entfernt das übergebene Objekt aus dem lokalen HashSet und sendet es an
+     * die anderen RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE>
+     * angemeldet wurde.<P>
+     *
+     * Diese Methode wird vom Teilproblem aufgerufen. Für den
+     * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
+     * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
+     * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
+     * <P>
+     *
+     * Das übergebene Objekt wird nur dann aus der Menge der neuen Objekte
+     * direkt entfernt, wenn es ein RelayHashSet gibt und eine synchrone
+     * Kommunikation erfolgt.
+     *
+     * @param object  Das zu entfernende Objekt.
+     *
+     * @throws RemoteException  Bei einem RMI-Problem.
+     */
+    public void remove(Serializable object) throws RemoteException {
+
+        if (localStoringNecessary()) {
+            super.removeLocal(object);
+        }
+        removeRemote(object);
+    }
+
+    /**
+     * Entfernt die Objekte der <CODE>Collection</CODE> aus dem lokalen
+     * HashSet und sendet sie an die anderen RemoteHashSets weiter, wenn ein
+     * <CODE>RelayHashSet</CODE> angemeldet wurde.<P>
+     *
+     * Diese Methode wird vom Teilproblem aufgerufen. Für den
+     * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
+     * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
+     * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
+     * <P>
+     *
+     * Die übergebenen Objekte werden nur dann aus der Menge der neuen Objekte
+     * direkt entfernt, wenn es ein RelayHashSet gibt und eine synchrone
+     * Kommunikation erfolgt.
+     *
+     * @param collection  Die zu entfernenden Objekte.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    public void removeAll(Collection collection) throws RemoteException {
+
+        if (localStoringNecessary()) {
+            super.removeAllLocal(collection);
+        }
+        removeAllRemote(collection);
+    }
+
+    /**
+     * Liefert die Anzahl der vom RelayStore seit dem letzten Aufruf von
+     * <CODE>newElements</CODE> neu hinzugefügten und noch nicht wieder
+     * entfernten Objekte.
+     *
+     * @return  Die Anzahl der vom RelayStore seit dem letzten Aufruf von
+     *          <CODE>newElements</CODE> neu hinzugefügten und noch nicht
+     *          wieder entfernten Objekte.
      *
      * @throws RemoteException  Bei einem RMI Problem.
      */
@@ -194,10 +287,11 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
 
     /**
      * Liefert eine Menge der vom RelayStore seit dem letzten Aufruf dieser
-     * Methode neu hinzugefügten Objekte.
+     * Methode neu hinzugefügten und noch nicht wieder entfernten Objekte.
      *
      * @return  Eine Menge der vom RelayStore seit dem letzten Aufruf dieser
-     *          Methode neu hinzugefügten Objekte.
+     *          Methode neu hinzugefügten und noch nicht wieder entfernten
+     *          Objekte.
      *
      * @throws RemoteException  Wenn bei der RMI Kommunikation ein Fehler
      *                          aufgetreten ist.
