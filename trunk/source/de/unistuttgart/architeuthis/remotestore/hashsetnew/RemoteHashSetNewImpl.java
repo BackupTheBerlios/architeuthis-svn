@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetNewImpl.java
  * created:     12.04.2006
- * last change: 12.04.2006 by Dietmar Lippold
+ * last change: 25.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -144,7 +144,7 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
      */
     public void add(Serializable object) throws RemoteException {
 
-        if (storeLocal()) {
+        if (localStoringNecessary()) {
             super.addLocal(object);
         }
         addRemote(object);
@@ -169,7 +169,7 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
      */
     public void addAll(Collection collection) throws RemoteException {
 
-        if (storeLocal()) {
+        if (localStoringNecessary()) {
             super.addAllLocal(collection);
         }
         addAllRemote(collection);

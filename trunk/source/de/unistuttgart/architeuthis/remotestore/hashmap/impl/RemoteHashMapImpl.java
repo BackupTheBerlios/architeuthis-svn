@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashMapImpl.java
  * created:     08.02.2005
- * last change: 17.04.2006 by Dietmar Lippold
+ * last change: 25.04.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -227,7 +227,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      *          Operative lokal gespeichert werden müssen, sonst
      *          <code>false</code>.
      */
-    protected boolean storeLocal() {
+    protected boolean localStoringNecessary() {
 
         synchronized (relayStoreSyncObj) {
             return ((relayHashMap == null) || !synchronComm);
@@ -282,7 +282,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      */
     public void put(Serializable key, Serializable value) throws RemoteException {
 
-        if (storeLocal()) {
+        if (localStoringNecessary()) {
             putLocal(key, value);
         }
         putRemote(key, value);
@@ -330,7 +330,7 @@ public class RemoteHashMapImpl extends UnicastRemoteObject
      */
     public void putAll(Map map) throws RemoteException {
 
-        if (storeLocal()) {
+        if (localStoringNecessary()) {
             putAllLocal(map);
         }
         putAllRemote(map);

@@ -265,7 +265,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      *          Operative lokal gespeichert werden müssen, sonst
      *          <code>false</code>.
      */
-    protected boolean storeLocal() {
+    protected boolean localStoringNecessary() {
 
         synchronized (relayStoreSyncObj) {
             return ((relayHashSet == null) || !synchronComm);
@@ -317,7 +317,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      */
     public void add(Serializable object) throws RemoteException {
 
-        if (storeLocal()) {
+        if (localStoringNecessary()) {
             addLocal(object);
         }
         addRemote(object);
@@ -368,7 +368,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      */
     public void addAll(Collection collection) throws RemoteException {
 
-        if (storeLocal()) {
+        if (localStoringNecessary()) {
             addAllLocal(collection);
         }
         addAllRemote(collection);
@@ -419,7 +419,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      */
     public void remove(Serializable object) throws RemoteException {
 
-        if (storeLocal()) {
+        if (localStoringNecessary()) {
             removeLocal(object);
         }
         removeRemote(object);
@@ -470,7 +470,7 @@ public class RemoteHashSetImpl extends UnicastRemoteObject
      */
     public void removeAll(Collection collection) throws RemoteException {
 
-        if (storeLocal()) {
+        if (localStoringNecessary()) {
             removeAllLocal(collection);
         }
         removeAllRemote(collection);
