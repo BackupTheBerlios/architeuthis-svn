@@ -10,7 +10,7 @@
 # die Grenzen für das Zahlen-Intervall, aus dem die Primzahlen ermittelt
 # werden sollen
 LOWER_BORDER="200000"
-UPPER_BORDER="201000"
+UPPER_BORDER="200000"
 
 # die Parameter für die JVM
 JVMPAR=" "

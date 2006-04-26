@@ -10,7 +10,7 @@ call setup.sh
 REM die Grenzen für das Zahlen-Intervall, aus dem die Primzahlen ermittelt
 REM werden sollen
 set LOWER_BORDER=200000
-set UPPER_BORDER=201000
+set UPPER_BORDER=200000
 
 REM die Parameter für die JVM
 set JVMPAR=
