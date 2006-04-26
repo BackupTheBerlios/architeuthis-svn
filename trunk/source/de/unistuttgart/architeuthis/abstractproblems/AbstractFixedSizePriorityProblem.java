@@ -1,6 +1,6 @@
 /*
  * file:        AbstractFixedSizePriorityProblem.java
- * last change: 24.04.2006 von Dietmar Lippold
+ * last change: 26.04.2006 von Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -121,18 +121,19 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      * um alle Teilprobleme zu generieren. Bei allen Aufrufen werden
      * Teilprobleme ausgegeben, solange noch welche vorhanden sind.
      *
-     * @param number  Die vorgeschlagene Gesamtanzahl der zu generierenden
-     *                Teilprobleme. Diese ist grösser oder gleich Eins.
+     * @param parProbsSuggested  Die vorgeschlagene Gesamtanzahl der zu
+     *                           generierenden Teilprobleme. Diese ist grösser
+     *                           oder gleich Eins.
      *
      * @return  Das nächste Teilproblem oder <code>null</code>, falls kein
      *          Teilproblem mehr geliefert werden kann.
      *
      * @see de.unistuttgart.architeuthis.systeminterfaces.Problem#getPartialProblem(long)
      */
-    public PartialProblem getPartialProblem(int number) {
+    public PartialProblem getPartialProblem(int parProbsSuggested) {
 
         if (handoutPartialProblems == null) {
-            givenPartialProblems = withoutNull(createPartialProblems(number));
+            givenPartialProblems = withoutNull(createPartialProblems(parProbsSuggested));
             handoutPartialProblems =
                 (new TreeSet(Arrays.asList(givenPartialProblems))).iterator();
         }
@@ -193,12 +194,12 @@ public abstract class AbstractFixedSizePriorityProblem implements SerializablePr
      * Liefert ein Array von Teilproblemen. Die im Array enthaltenen Werte
      * <code>null</code> bleiben unberücksichtigt.
      *
-     * @param problemsExpected  Die vorgeschlagene Anzahl von Teilproblemen.
-     *                          Diese ist grösser oder gleich Eins.
+     * @param parProbsSuggested  Die vorgeschlagene Anzahl von Teilproblemen.
+     *                           Diese ist grösser oder gleich Eins.
      *
      * @return  Array von Teilproblemen.
      */
-    protected abstract PriorityPartialProblem[] createPartialProblems(int problemsExpected);
+    protected abstract PriorityPartialProblem[] createPartialProblems(int parProbsSuggested);
 
     /**
      * Erstellt eine Gesamtlösung aus den übergebenen Teillösungen
