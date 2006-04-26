@@ -354,7 +354,7 @@ von Methoden:
   serialisierbares Probem lokal, d.h.\ ohne Übertragung an den
   Dispatcher. Diese Methode ist besonders in der Phase der Entwicklung
   nützlich, da z.B.\ Testausgaben möglich sind. Der Methode kann optional
-  die vorzuschlagende Anzahl der  Teilprobleme und außerdem noch optional
+  die vorzuschlagende Anzahl der Teilprobleme und außerdem noch optional
   eine Instanz von {\tt RemoteStoreGenerator} übergeben werden.
 
 \item[transmitProblem] Diese Methode überträge ein übergebenes serialisierbares
@@ -380,21 +380,35 @@ werden.
 Für den Ausnahmefall, daß ein Problem nicht serialisierbar ist, kann das
 Problem vom Compute-Manager geladen und vollständig auf dem Compute-System
 ausgeführt werden. Dazu steht die Klasse
-{\tt de...user.ProblemTransmit\-terImpl} zur Verfügung.
-Sie bietet außerdem die Möglichkeit, während der Berechnung eines Problems
-auf dem Compute-System nebenläufig eine Problem-Statistik oder eine
-System-Statistik abzufragen oder die Berechnung des Problems abzubrechen.
+\texttt{de...user.ProblemTransmit\-terImpl} zur Verfügung. Sie bietet
+außerdem, auch bei der Übertragung einer Instanz eines serialisierbaren
+Problems, die Möglichkeit, während der Berechnung des Problems auf dem
+Compute-System nebenläufig eine Problem-Statistik oder eine System-Statistik
+abzufragen oder die Berechnung des Problems abzubrechen. Ihre Verwendung
+hat jedoch einige Nachteile:
 
-Von der Klasse muß unter Angabe des Rechnernames des Compute-Managers
-eine Instanz zu erzeugen. Die Klasse bietet mehrere Methoden mit dem Namen
-{\tt transmitProblem}, mit denen ein nicht-serialisierbares oder auch eine
-Instanz eines serialisierbaren Problems zum Compute-System übertragen
-werden kann. Bei einem nicht-serialisierbaren Problem, von dem eine Instanz
-auf dem Compute-Manager erzeugt wird, ist ein Array mit serialisierbaren
-Parametern für den Konstruktor anzugeben.
+\begin{itemize}
+\item  Sie bietet keine Methode zur lokalen Berechnung eines Problems.
+
+\item  Für die Berechnung eines nicht-serialisierbaren Problems kann die
+       zu erzeugende Instanz nur durch den Konstruktor festgelegt werden
+       und als Parameter können nur Objekte angegeben werden (keine Werte
+       elementaren Typs).
+
+\item  Für die Berechnung eines nicht-serialisierbaren Problems muß außerdem
+       der Klassenname als String angegeben werden, wodurch der Compiler
+       keine entsprechenden Prüfungen mehr vornehmen kann.
+\end{itemize}
+
+Zur Übertragung eines Problems mittels \texttt{ProblemTransmitterImpl} muß
+von dieser Klasse unter Angabe des Rechnernames des Compute-Managers eine
+Instanz erzeugt werden. Die Klasse bietet mehrere Methoden mit dem Namen
+{\tt transmitProblem}. Bei einem nicht-serialisierbaren Problem, von dem
+eine Instanz auf dem Compute-Manager erzeugt wird, ist ein Array mit
+serialisierbaren Parameter-Objekten für den Konstruktor anzugeben.
 
 Als Beispiel für die Verwendung von {\tt ProblemTransmitterImpl}  kann die
-Klasse \texttt{de...testenvironment.prime.PrimeNumbersParallel}
+Klasse \texttt{de...testenvironment.prime.advanced.PrimeNumbersParallel}
 zusam\-men mit den anderen Klassen dieses Packages betrachtet werden.
 
 
