@@ -1,6 +1,6 @@
 /*
  * file:        AbstractOrderedProblem.java
- * last change: 24.04.2006 by Dietmar Lippold
+ * last change: 26.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -75,14 +75,15 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
      * Unterklasse auf und speichert es, bis die zugehörige Teillösung
      * geliefert wird.
      *
-     * @param number  Die vorgeschlagene Anzahl zu generierender Teilprobleme.
-     *                Diese ist grösser oder gleich Eins.
+     * @param parProbsSuggested  Die vorgeschlagene Anzahl zu generierender
+     *                           Teilprobleme. Diese ist grösser oder gleich
+     *                           Eins.
      *
      * @return  Von der implementierenden Unterklasse erzeugtes Teilproblem.
      */
-    public PartialProblem getPartialProblem(int number) {
+    public PartialProblem getPartialProblem(int parProbsSuggested) {
 
-        PartialProblem prob = createPartialProblem(number);
+        PartialProblem prob = createPartialProblem(parProbsSuggested);
 
         if (prob == null) {
             return null;
@@ -141,12 +142,13 @@ public abstract class AbstractOrderedProblem implements SerializableProblem {
      * Liefert das nächste Teilproblem oder <code>null</code>, wenn keines
      * mehr existiert.
      *
-     * @param problemsExpected  Die vorgeschlagene Anzahl von Teilproblemen.
-     *                          Diese ist grösser oder gleich Eins.
+     * @param parProbsSuggested  Die vorgeschlagene Gesamtanzahl von
+     *                           Teilproblemen. Diese ist grösser oder gleich
+     *                           Eins.
      *
      * @return  Ein Teilproblem.
      */
-    protected abstract PartialProblem createPartialProblem(int problemsExpected);
+    protected abstract PartialProblem createPartialProblem(int parProbsSuggested);
 
     /**
      * Nimmt eine Teillösung entgegen und liefert die Gesamtlösung oder

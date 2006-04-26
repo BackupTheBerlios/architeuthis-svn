@@ -1,7 +1,7 @@
 /*
  * file:        Problem.java
  * created:     <???>
- * last change: 24.04.2006 by Dietmar Lippold
+ * last change: 26.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -50,13 +50,14 @@ public interface Problem {
      * der insgesamt zu erzeugenden Teilprobleme hängt von der Anzahl der
      * verfügbaren Operatives ab.
      *
-     * @param number  Vorgeschlagene Gesamtanzahl der zu erzeugenden
-     *                Teilprobleme. Dieser Wert ist grösser oder gleich Eins.
+     * @param parProbsSuggested  Vorgeschlagene Gesamtanzahl der zu
+     *                           erzeugenden Teilprobleme. Dieser Wert ist
+     *                           grösser oder gleich Eins.
      *
      * @return  Genau ein Teilproblem oder <code>null</code>, falls derzeit
      *          kein neues Teilproblem erzeugt werden soll.
      */
-    public PartialProblem getPartialProblem(int number);
+    public PartialProblem getPartialProblem(int parProbsSuggested);
 
     /**
      * Nimmt eine Teillösung entgegen, um daraus zusammen mit den anderen
