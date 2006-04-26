@@ -1,7 +1,7 @@
 /*
  * file:        PrimeRangeProblemImpl.java
  * created:     <???>
- * last change: 24.04.2006 by Dietmar Lippold
+ * last change: 26.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -76,15 +76,26 @@ public class PrimeRangeProblemImpl extends AbstractFixedSizeProblem {
     }
 
     /**
-     * Zu verwendender Konstruktor, der sofort die Grenzen zur Berechnung der
-     * Primzahlen setzt.
+     * Konstruktor, dem die Grenzen für das Intervall der Nummern der
+     * Primzahlen übergeben wird.
+     *
+     * @param min  Kleinste Zahl, ab der Primzahlen gesucht werden.
+     * @param max  Größte Zahl, bis zu der Primzahlen gesucht werden.
+     */
+    public PrimeRangeProblemImpl(long min, long max) {
+        minValue = min;
+        maxValue = max;
+    }
+
+    /**
+     * Konstruktor, dem die Grenzen für das Intervall der Nummern der
+     * Primzahlen übergeben wird.
      *
      * @param min  Kleinste Zahl, ab der Primzahlen gesucht werden.
      * @param max  Größte Zahl, bis zu der Primzahlen gesucht werden.
      */
     public PrimeRangeProblemImpl(Long min, Long max) {
-        minValue = min.longValue();
-        maxValue = max.longValue();
+        this(min.longValue(), max.longValue());
     }
 
     /**
