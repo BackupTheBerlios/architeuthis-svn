@@ -4,112 +4,116 @@
 %% entwickelt.
 
 
-\chapter[Beispiel f"ur Fortgeschrittene]{Beispiel f"ur Fortgeschrittene}
+\chapter[Beispiel für Fortgeschrittene]{Beispiel für Fortgeschrittene}
 
-Dieses Kapitel beschreibt die Parallelisierung eines nicht--serialisierten
-Problems, das vollständig auf dem Compute-System ausgeführt werden kann, das
-also insbesondere keine Daten mit anderen Programmen austauschen muß und
-keine Eingaben vom Benutzer benötigt. Das Kapitel dient daher primär der
-Darstellung der Parallelisierung selbst, nicht der Darstellung der Benutzung
-des Compute-Systems.
-
-In einer realen Anwendung wird das Problem das Interface
-{\tt SerializableProblem} implementieren und der Benutzer wird mit dem
-Compute-Systems nur über die Klasse
-{\tt de...user.ProblemComputation} interagieren.
-
-\section{Die Problemstellung}
-Aus dem vorigen Kapitel sind ja schon einige einfache Problem besprochen
-worden. Nun soll ein Problem ohne abstrakte Hilfsklassen realisiert werden.\\
-Man betrachte zunächst die beiden folgenden Methoden:
-
-\begin{enumerate}
-\item primzahlTeilfolge
-        {\scriptsize \verbatiminput{java/PrimzahlTeilfolge.jav}}
-\item primzahlTeilbereich
-        {\scriptsize \verbatiminput{java/PrimzahlTeilbereich.jav}}
-\end{enumerate}
-\par
-Ziel: Parallelisierung von der Methode primzahlTeilfolge
+Dieses Kapitel beschreibt die Parallelisierung eines Problems, das sich nicht
+ganz einfach parallelisieren läst. Als Alternative zum vorherigen Kapitel
+soll das Problem außerdem als nicht-serialisiertes Problem verarbeitet
+werden.
 
 
-\subsection[Strategie]{Beschreibung der Strategie}
-Am Anfang steht natürlich die Überlegung, ob die Methode {\tt prim\-zahl\-Teil\-folge} direkt
-für eine verteilte Berechnung geeignet ist. Hier muss man jedoch feststellen, dass sich die 
-Methode selbst nicht eignet, da hier ein großer Aufwand in die Kommunikation zwischen den
-berechnenden Systemen gesteckt werden müßte.
+\section{Aufgabenstellung}
 
-\par
-Jedoch fällt schnell auf, dass sich {\tt prim\-zahl\-Teil\-bereich} gut zum Verteilen
-eignet, da hier jeder {\tt Operative} für sich alleine rechnen kann, ohne weitere Informationen
-zu benötigen. Die Verwaltung (also das Aufstellen der tatsächlichen Teilfolge) kann von
-der Klasse {\tt Problem} auf dem Dispatcher übernommen werden, da dies keinen großen Aufwand mehr bedeutet,
-falls bereits alle nötigen Primzahlen vorliegen.
+Es soll die folgende Methode \texttt{primzahlTeilfolge} der Klasse
+\texttt{de.unistuttgart.architeuthis.testenvironment.PrimeNumbers}
+parallelisiert werden.
+
+{\scriptsize \verbatiminput{java/primzahlTeilfolge.jav}}
+
+Im Gegensatz zur Methode \texttt{primzahlTeilbereich} aus dem vorherigen
+Kapitel kann das angegebene Intervall nicht einfach in Teilintervalle
+aufgeteilt und Teilproblemen zugeordnet werden. Welche Zahlen zu einem
+Teilintervall in Bezug auf die Primzahl-Eigenschaft zu untersuchen wären
+würde nämlich von der Anzahl der Primzahlen in den vorhergehenden
+Teilintervallen abhängen. Die Teilprobleme könnten nur noch sequentiell
+erzeugt und verarbeitet werden.
+
+Daher wird das gegebene Problem in ein anderes Problem transformiert, das
+sich gut parallelisieren läst, konkret in das Problem aus dem vorhergehenden
+Abschnitt. Dazu werden alle Primzahlen bis zum einem Wert ermittelt, der
+größer (aber möglichst nicht viel größer) ist als die größte Primzahl aus
+dem vorgegebenen Intervall. Die Abschätzung dieser Zahl erfolgt nach der
+Formel von Rosser und Schoenfeld (siehe: J.\ B.\ Rosser and L.\ Schoenfeld.
+\emph{Approximate formulas for some functions of prime numbers}. Illinois
+Journal of Mathematics, 6:64--94, 1962), auf die hier nicht näher
+eingegangen wird. Die Primzahlen aus den ermittelten Listen der
+Teilintervalle werden dann der Reihe nach gezählt und die mit den Nummern
+aus dem vorgegebenen Intervall werden als Ergebnis geliefert.
 
 
-\par
-Die grobe Strategie sieht also wie folgt aus:
+\section{Implementierung}
+
+Um die Problem-Klasse (\texttt{PrimeSequenceProblemImpl} genannt) zu
+implementieren, könnte man sich wie beschrieben auf die Berechnung einer
+Obergrenze des Intervalls, das der Klasse \emph{PrimeRangeProblemImpl}
+übergeben wird, beschränken und aus der von dieser Klasse erzeugten Liste
+von Primzahlen die benötigten extrahieren. In der ereugten Liste von
+Primzahlen könnten aber extrem viel mehr Primzahlen enthalten sein, als
+anschließend benötigt würden, wenn die Größe des Intervalls klein ist (im
+Extremfall z.B.\ nur aus einer Zahl besteht) gegenüber den absoluten Werten
+der Intervallgrenzen. Daher sollen von den Teilintervallen die Primzahlen
+nur gespeichert werden, wenn ihre Nummern im vorgegebenen Intervall liegen.
+Ansonsten soll nur die Anzahl der Primzahlen gespeichert werden, die bereits
+berechnet wurden. Um dies zu erreichen müssen die einzelnen Teillösungen so
+bald wie möglich (unter Beachtung der Reihenfolge der Teillösungen)
+geliefert werden. Dies tut gerade die abstrakte Klasse
+\texttt{AbstractOrderedProblem} (s.\ Abschnitt
+\ref{AbstractOrderedProblem}), von der \texttt{PrimeSequenceProblemImpl}
+also erben sollte.
+
+Dabei sind folgende beiden Methoden zu implementieren:
+
 \begin{itemize}
-\item als {\tt Partial\-Problem} wird ein dynamischer {\tt Prim\-zahl\-Teil\-be\-reich} berechnet
-\item das {\tt Problem} setzt diese Bereiche zusammen und rechnet die Anzahl der Primzahlen aus,
-  um die gewünschte Teilfolge zu extrahieren
+\item protected PartialProblem createPartialProblem(int parProbsSuggested)
+\item protected Serializable receivePartialSolution(PartialSolution parSol)
 \end{itemize}
 
-\section[Vorgehen]{Das Vorgehen zur Realisierung dieser Strategie}
-Um diese Strategie durchzuführen müssen natürlich zuerst die spezifizierten Interfaces implementiert 
-werden. Wir beginnen mit den einfach zu implementierenden:
+In \texttt{parProbsSuggested} wird beim ersten Aufruf die Obergrenze des
+Intervalls ermittelt, das anschließend zur Erzeugung einer Instanz von
+\texttt{PrimeRangeProblemImpl} (einer etwas verbesserten Version der Klasse
+aus dem vorherigen Kapitel) verwendet wird. Anschließend und bei jedem
+weiteren Aufruf liefert die Methode dann das nächste Teilintervall.
 
-\subsection{Implementierung von \texttt{PartialProblem}}
-Klar ist, dass jedes Teilproblem den Bereich enthalten muss, in dem die Primzahlen bestimmt
-werden sollen. Also legt man dazu Attribute an. Ebenso benötigt man eine Identifikationsnummer,
-die später die Teillösung identifiziert, da hier die Reihenfolge wichtig ist, in der die 
-Teillösungen verarbeitet werden. Dann modifiziere man den Konstruktor, so dass alle diese
-Daten gleich gespeichert werden können.
-\par
-Zu guter Letzt wird noch {\tt compute()} implementiert, und zwar indem man einfach aus der Klasse
-{\tt Primzahlen} die vorher ausgewählte Methode \\{\tt PrimzahlTeilberech} aufruft.
-Dies geschieht wie im vorherigen Kapitel mit dort beschriebenen Klasse
-\texttt{PrimePartialProblemImpl}.
+In \texttt{receivePartialSolution} werden die Teillösungen entgegengenommen
+und verarbeitet. Bei den Teillösungen handelt es sich wie im vorhergehenden
+Kapitel um Instanzen von \texttt{ContainerPartialSolution}, in denen eine
+Liste der Primzahlen (der Teilintervalle) gespeichert ist, da ja wie im
+vorhergehenden Kapitel die gleichen Teilprobleme verwendet werden. Die
+Primzahlen der Teilintervalle (die entsprechend den Teilintervallen ja
+aufsteigend geordnet geliefert werden) werden gezählt und die Primzahlen aus
+dem zu ermittelnden Bereich werden gespeichert. Wenn alle Primzahlen aus dem
+vorgegebenen Intervall berechnet wurden, liefert die Methode die Liste
+dieser Primzahlen, ansonsten liefert sie den Wert \texttt{null}.
 
-
-\subsection{Implementierung von \texttt{PartialSolution}}
-Diese Klasse muss eigentlich nur das Ergebnis der Berechnung von {\tt Prim\-zahl\-Teil\-bereich}
-kapseln und außerdem die Identifikationsnummer beinhalten. Dafür wird
-im im vorhergehenden Kapitel die Klasse \texttt{ContainerPartialSolution}
-verwendet.
-
-
-\subsection{Implementierung von \texttt{Problem}}
-Nun wird es etwas komplizierter, da einige Überlegungen zuvor getätigt werden
-müssen. Zunächst scheint es sinnvoll, eine obere Abschätzung für die größte
-gesuchte Primzahl zu finden.
-Wir benutzen hier eine Abschätzung nach Rosser und Schoenfeld (siehe:
-J. B. Rosser and L. Schoenfeld. Approximate formulas for some functions of prime
-numbers. Illinois Journal of Mathematics, 6:64--94, 1962), auf die hier nicht
-weiter eingegangen wird. Die Abschätzung besagt, dass die n-te Primzahl mit
-Sicherheit kleiner ist als n*(ln(n)+ln(ln(n))-1/2) für n > 15. Somit ist eine
-einfache obere Grenze bekannt, bis zu der alle Zahlen untersucht werden müssen.
-Nun muss man noch überlegen, auf welche Art man das gesamte zu untersuchende
-Intervall auf die verschiedenen {\tt Operatives} aufteilt. Der Einfachheit
-halber wählen wir hier eine äquidistante Aufteilung des Intervalls.
-
-\par
-Außerdem ist zu beachten, dass bei diesem Problem die Reihenfolge, in der die Lösungen eintreffen,
-wichtig ist. So kann die Lösung Nr.5 nicht bearbeitet werden, bis Lösung Nr.4 eingetroffen ist. Um diesem
-Problem zu begegnen, speichert man alle eintreffenden Lösungen zunächst in einer {\tt HashMap}, als Schlüssel
-benutzt man die Identifikationsnummer. Anschließend kann man bequem in einer Schleife die aufeinanderfolgenden
-Teillösungen verarbeiten. Dazu muss natürlich noch die Identifikationsnummer der Teillösung gespeichert werden,
-die als nächste bearbeitet werden muss.
-\par
-Nun könnte man alle Lösungen in der {\tt HashMap} behalten und warten, bis genügend Primzahlen ermittelt wurden.
-Das scheint jedoch nicht zweckmäßig. Effizienter ist es, bis zum Erreichen der gesuchten Untergrenze nur die
-Anzahl der bisher gefundenen Primzahlen zu speichern. Erst falls diese Grenze überschritten wird, werden die
-Primzahlen in die Gesamtlösung übernommen. Mit dieser Strategie können alle bearbeiteten Teillösungen sofort
-aus der {\tt HashMap} entfernt werden.
-\par
-Falls nun der {\tt Dispatcher} nach der Gesamtlösung fragt, wird überprüft, ob die Gesamtlösung schon
-die Länge des gesuchten Intervalls hat. Falls dies nicht der Fall ist, wird {\tt null} zurückgegeben, ansonsten
-die Gesamtlösung.
+Die vollständige Klasse ist nachfolgend angegeben.
 
 {\scriptsize \verbatiminput{java/advanced/PrimeSequenceProblemImpl.jav}}
+
+
+\section{Ausführung}
+
+Zur Ausführung bzw.\ Berechnung des Problems kann wie im vorherigen Kapitel
+beschrieben die Klasse \texttt{ProblemComputation} benutzt werden. Als
+Alternative soll hier aber die Benutzung der Klasse
+\texttt{de...user.ProblemTransmitterImpl} dargestellt werden (s.a.\ Abschnitt
+\ref{ProblemTransmitterImpl}).
+
+Von dieser Klasse ist unter Angabe des Namens des Dispatchers eine Instanz
+zu erzegen. Diese bieten dann  u.a.\ eine Methode \texttt{transmitProblem},
+der ein URL, unter dem die class-Dateien abrufbar sind, der Name der
+Problem-Klasse und die Parameter für den Konstruktor der Problem-Klasse
+übergeben werden. Als Ergebnis liefert die Methode die Gesamtlösung. Zur
+Verdeutlichung kann die nachfolgend zusammen mit einigen Konstanten
+angegebene Methode \texttt{primzahlTeilfolge} dienen, die bis auf die
+zusätzlichen Exceptions die gleiche Signatur wie die am Anfang des Kapitels
+angegebene Methode hat.
+
+{\scriptsize \verbatiminput{java/advanced/primzahlTeilfolgeRemote.jav}}
+
+Zum Aufruf dieser Methode kann wie im vorhergehenden Kapitel eine Klasse
+\texttt{GeneratePrimes} verwendet werden. Sie ist in gleicher Weise (mit
+den gleichen Parametern, bis auf den anzugebenden Buchstaben) aufzurufen.
+Auch diese ist zur Verdeutlichung nachfolgend angegeben.
+
+{\scriptsize \verbatiminput{java/advanced/GeneratePrimes.jav}}
 

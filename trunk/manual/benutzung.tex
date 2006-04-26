@@ -311,6 +311,7 @@ sollen. Siehe dazu \hyperref[abstrakt]{Kapitel \ref{abstrakt}
 
 \subsection{Bereitstellen der Klassen mittels des ClassFileServer}
 \label{classfileserver}
+
 Wie schon erwähnt, müssen alle Problem-Klassen auf einem Webserver für alle
 Computer des Systems erreichbar sein (also sowohl für Operatives, wie auch
 für den Dispatcher). Dabei muss die benutzte Package- wie bei
@@ -377,6 +378,8 @@ werden.
 
 
 \section{Der Problem-Übermittler}
+\label{ProblemTransmitterImpl}
+
 Für den Ausnahmefall, daß ein Problem nicht serialisierbar ist, kann das
 Problem vom Compute-Manager geladen und vollständig auf dem Compute-System
 ausgeführt werden. Dazu steht die Klasse
