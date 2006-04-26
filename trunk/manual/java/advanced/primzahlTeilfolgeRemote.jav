@@ -5,6 +5,26 @@
  */
 
     /**
+     * Der Name des Dispatchers des ComputeSystems, das zur Berechnung
+     * verwendet werden soll. Dieser muss angepasst werden!
+     */
+    private static final String DISPATCHER = "localhost";
+
+    /**
+     * Der URL (in der Regel auf einem WWW-Server), unter dem die Klassen
+     * dieses Packages bereitgestellt werden, um für das ComputeSystem
+     * verfügbar zu sein. Dies muss angepasst werden!
+     */
+    private static final String CLASS_URL = "http://localhost:1855/";
+
+    /**
+     * Die Klasse, die die verteilte Berechnung einer Teilfolge übernimmt.
+     * Falls dieses Package verwendet wird, muss dies nicht geändert werden.
+     */
+    private static final String TEILFOLGEN_KLASSE =
+        "de.unistuttgart.architeuthis.testenvironment.prime.advanced.PrimeSequenceProblemImpl";
+
+    /**
      * Ermittelt alle Primzahlen aus einem angegebenen Nummern-Intervall, also
      * alle Primzahlen mit einer Nummer aus dem angegebenen Intervall. Die
      * übergebenen Intervallgrenzen gehören beide zum Intervall. Die erste
