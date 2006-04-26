@@ -1,5 +1,7 @@
 Datei          : Readme
-Letzte Änderung: 15.02.2005 durch Dietmar Lippold
+Letzte Änderung: 26.04.2006 durch Dietmar Lippold
+
+Aktuelle Software-Version: 2.0
 
 
 This file is part of Architeuthis.
@@ -79,15 +81,21 @@ Dabei wird ein Unterverzeichnis im aktuellen Verzeichnis erzeugt. Darin
 liegt ein Readme zu der entsprechenden Komponente, in der sich weitere
 Hinweise finden.
 
-Für die Erzeugung der Distributionspakete aus den Quelldateien mit der
-vorhandenen Datei build.xml muß ant (http://ant.apache.org/) installiert
-sein. Hinweise zur Erzeugung erhält man durch Eingabe von "ant" im
-Verzechnis mit der Datei build.xml. Falls ant gcj benutzt und es dabei
-Probleme gibt, sollte man das JDK von Sun oder IBM installieren und die
-environment-Variable JAVA_HOME auf dieses JDK setzen.
+Nach Auspacken der Datei Problems.jar im Verzeichnis classes (s.a.
+ReadmeTestenvironment) sowie Starten des Dispatcher und mindestens eines
+Operatives auf dem aktuellen Rechner (auf localhost) sollten die
+vorhandenen Test-Programme direkt ausführbar sein.
 
-Allgemein wird für Architeuthis als JDK das J2SE Version 1.4.2_07 oder
-die Version von IBM ab 1.4.1 empfohlen.
+Für die Erzeugung der Distributionspakete aus den Quelldateien mit der
+vorhandenen Datei build.xml muß ant (http://ant.apache.org/) ab Version
+1.6.2 mit einigen Zusatzpaketen installiert sein. Hinweise zur Erzeugung
+erhält man durch Eingabe von "ant" im Verzechnis mit der Datei build.xml.
+Falls ant gcj benutzt und es dabei Probleme gibt, sollte man das JDK von
+Sun oder IBM installieren und die environment-Variable JAVA_HOME auf
+dieses JDK setzen.
+
+Allgemein wird für Architeuthis als JDK das J2SE Version 1.4.2_07 von Sun
+oder die Version von IBM ab 1.4.1 empfohlen.
 
 
 Entwickler von Architeuthis
