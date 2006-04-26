@@ -1,7 +1,7 @@
 /*
  * file:        PrimeSequenceProblemImpl.java
  * created:     <???>
- * last change: 24.04.2006 by Dietmar Lippold
+ * last change: 26.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -35,231 +35,183 @@
 package de.unistuttgart.architeuthis.testenvironment.prime.advanced;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.ArrayList;
 
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialProblem;
 import de.unistuttgart.architeuthis.userinterfaces.develop.PartialSolution;
-import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
+import de.unistuttgart.architeuthis.abstractproblems.AbstractOrderedProblem;
 import de.unistuttgart.architeuthis.abstractproblems.ContainerPartialSolution;
-import de.unistuttgart.architeuthis.testenvironment.prime.PrimePartialProblemImpl;
 
 /**
- * Mit dieser Klasse können entsprechend dem Interface <code>Problem</code>
- * Bereiche von PrimeNumbers verteilt berechnet werden.
+ * Klasse dient der Ermittlung von Primzahlen aus einen Bereichs von Nummern
+ * der Primzahlen.
  *
  * @author Ralf Kible, Achim Linke, Dietmar Lippold
  */
-public class PrimeSequenceProblemImpl implements SerializableProblem {
+public class PrimeSequenceProblemImpl extends AbstractOrderedProblem {
 
     /**
-     * Die kleinste Primzahl, die gesucht wird.
-     */
-    private int minNumber = 2000000;
-
-    /**
-     * Die größte Primzahl, die gesucht wird.
-     */
-    private int maxNumber = 2000000;
-
-    /**
-     * Liste der noch nicht verarbeiteten Teilprobleme.
+     * Liste der noch nicht ausgegebenen Teilprobleme.
      */
     private LinkedList partialProblems = new LinkedList();
 
     /**
-     * Liste der eingetroffenen, aber noch nicht verarbeiteten Lösungen.
-     */
-    private HashMap solutions = new HashMap();
-
-    /**
-     * Liste, die alle PrimeNumbers mit einer größeren Nummer als
+     * Liste, die alle Primzahlen mit einer größeren Nummer als
      * <code>minNumber</code> enthält.
      */
     private ArrayList finalSolution = new ArrayList();
 
     /**
-     * Speichert, ob die Methode <code>getProblem()</code> zum ersten Mal
-     * aufgerufen wurde. Falls das der Fall ist, werden zuerst Teilprobleme
-     * generiert.
+     * Die Nummer der kleinste Primzahl, die gesucht wird.
+     */
+    private long minNumber = 2000000;
+
+    /**
+     * Die Nummer der größten Primzahl, die gesucht wird.
+     */
+    private long maxNumber = 2000000;
+
+    /**
+     * Speichert die Anzahl der bisher ermittelten Primzahlen, so dass nicht
+     * alle Primzahlen gespeichert werden müssen.
+     */
+    private long currentlyFound = 0;
+
+    /**
+     * Gibt an, ob die Methode <code>createPartialProblem()</code> zum ersten
+     * Mal aufgerufen wurde. Falls das der Fall ist, werden zuerst
+     * Teilprobleme generiert.
      */
     private boolean firstCall = true;
 
     /**
-     * Speichert die Anzahl der in einer Reiher gefundenen PrimeNumbers, falls
-     * diese kleiner als <code>minNumber</code> ist, so dass nicht alle
-     * PrimeNumbers in einem Array gespeichert werden müssen.
-     */
-    private int currentlyFound = 0;
-
-    /**
-     * Schlange der ausgegebenen Teilprobleme.
-     */
-    private LinkedList dispensedProblems = new LinkedList();
-
-    /**
-     * Konstruktor ohne Argumente, der wenig Sinn macht.
+     * Konstruktor ohne Argumente, der nur benutzt wird, um die Klasse mit den
+     * vorgegebenen Werten von <code>minValue</code> und <code>maxValue</code>
+     * zu testen.
      */
     public PrimeSequenceProblemImpl() {
-
     }
 
     /**
      * Konstruktor, der dem Problem die richtigen Grenzen für die
-     * Primzahl-Bestimmung zuweist. Die übergebenen Werte müssen im Bereich
-     * von <code>int</code> liegen.
+     * Primzahl-Bestimmung zuweist.
      *
      * @param minWert  Die Nummer der kleinsten Primzahl, die gesucht wird.
      * @param maxWert  Die Nummer der größten Primzahl, die gesucht wird.
      */
     public PrimeSequenceProblemImpl(Long minWert, Long maxWert) {
 
-        if (maxWert.longValue() > (long) Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Parameter too great");
-        }
-
-        minNumber = minWert.intValue();
-        maxNumber = maxWert.intValue();
+        minNumber = minWert.longValue();
+        maxNumber = maxWert.longValue();
     }
 
     /**
-     * Liefert auf Anfrage vom ProblemManager ein Teilproblem zurück.
-     * Beim ersten Aufruf werden außerdem die Teilprobleme generiert.
+     * Liefert ein neues Teilproblem oder <code>null</code>, wenn es kein
+     * Teilproblem mehr gibt. Beim ersten Aufruf werden außerdem die
+     * Teilprobleme generiert.
      *
-     * @param number  Vom ProblemManager vorgeschlagene Anzahl
-     *                bereitzuhaltender Teilprobleme.
+     * @param parProbsSuggested  Die vom ProblemManager vorgeschlagene Anzahl
+     *                           bereitzuhaltender Teilprobleme.
      *
      * @return  Neues Teilproblem zur Berechnung.
      */
-    public PartialProblem getPartialProblem(int number) {
+    protected PartialProblem createPartialProblem(int parProbsSuggested) {
+        PrimeRangeProblemImpl primeRange;
+        PartialProblem[]      createdParProbs;
+        PartialProblem        nextParProb;
+        long                  maxValue;
 
-        // Erster Aufruf? Falls ja, dann Teilprobleme generieren.
+        // Falls erster Aufruf, dann Teilprobleme generieren.
         if (firstCall) {
             firstCall = false;
 
-            // in max wird gespeichert, bis zu welcher konkreten Zahl
-            // die gewünschte Primzahl gesucht wird
-            int max = 10;
-
-            // schrittweite ist die Menge der Zahlen, die in einem Teilproblem
-            // durchsucht werden.
-            int schrittweite = 0;
-
-            // Zuerst den Wert max errechnen, bis zu dem mindestens maxNumber
-            // PrimeNumbers vorhanden sind, Abschätzung nach Rosser und
-            // Schoenfeld, "Approximate formulas for some prime numbers"
+            // Den Wert maxValue errechnen, bis zu dem mindestens maxNumber
+            // Primzahlen vorhanden sind. Abschätzung nach Rosser und
+            // Schoenfeld, "Approximate formulas for some prime numbers".
             if (maxNumber < 15) {
-                max = 48;
+                maxValue = 48;
             } else if (maxNumber < 7022) {
-                max = (int) Math.ceil(maxNumber * (Math.log(maxNumber)
-                                      + Math.log(Math.log(maxNumber))
-                                      - 0.5));
+                maxValue = (long) Math.ceil(maxNumber
+                                            * (Math.log(maxNumber)
+                                               + Math.log(Math.log(maxNumber))
+                                               - 0.5));
             } else {
-                max = (int) Math.ceil(maxNumber * (Math.log(maxNumber)
-                                      + Math.log(Math.log(maxNumber))
-                                      - 0.9385));
+                maxValue = (long) Math.ceil(maxNumber
+                                            * (Math.log(maxNumber)
+                                               + Math.log(Math.log(maxNumber))
+                                               - 0.9385));
             }
 
-            // Dann die äquidistante Schrittweite für die einzelnen
-            // Teilprobleme berechnen.
-            schrittweite = max / (2 * number);
-
-            // Anhand der Schrittweite die Teilprobleme generieren.
-            for (int i = 1; i < 2 * number; i++) {
-                partialProblems.addLast(
-                    new PrimePartialProblemImpl((i - 1) * schrittweite + 1,
-                                                i * schrittweite));
-            }
-
-            // In der Schleife wurden nur gleich große Teilbereiche erzeugt.
-            // Evtl. ist der letzte Teilbereich größer.
-            partialProblems.addLast(
-                new PrimePartialProblemImpl(
-                    (2 * number - 1) * schrittweite + 1, max));
-
+            // Teilprobleme erzeugen und in eine Liste aufnehmen.
+            primeRange = new PrimeRangeProblemImpl(2, maxValue);
+            createdParProbs = primeRange.createPartialProblems(2 * parProbsSuggested);
+            partialProblems = new LinkedList(Arrays.asList(createdParProbs));
         }
 
-        // Dieser Teil wird immer ausgeführt, er liefert ein Teilproblem zurück
-        try {
-            PartialProblem p = (PartialProblem) partialProblems.getFirst();
-            partialProblems.removeFirst();
-            dispensedProblems.addLast(p);
-            return p;
-        } catch (Exception e) {
+        // Nächstes Teilproblem aus der Liste liefern.
+        if (partialProblems.isEmpty()) {
             return null;
+        } else {
+            nextParProb = (PartialProblem) partialProblems.getFirst();
+            partialProblems.removeFirst();
+            return nextParProb;
         }
     }
 
     /**
-     * Methode, die vom ProblemManager aufgerufen wird, um dem Problem eine
-     * neu eingetroffene Lösung zu übermitteln.
+     * Nimmt die nächste Teillösung entgegen und liefert die Gesamtlösung,
+     * wenn diese schon existert oder sonst den Wert <code>null</code>.
      *
-     * @param parSol   Vom ProblemManager übermittelte Teillösung.
-     * @param parProb  Referenz auf das Teilproblem, zu dem die Teillösung
-     *                 ermittelt wurde.
+     * @param parSol  Die nächste fertige Teillösung für das Problem.
+     *
+     * @return  Die Gesamtlösung, falls diese bereits fertig ist, sonst
+     *          <code>null</code>.
      */
-    public void collectPartialSolution(PartialSolution parSol,
-                                       PartialProblem parProb) {
+    protected Serializable receivePartialSolution(PartialSolution parSol) {
+        ContainerPartialSolution parSolContainer;
+        ArrayList                partialSolutionList;
+        int                      newPrimesNumber;
 
-        // Zuerst Lösung casten und in die Warteschlange einfügen.
-        ContainerPartialSolution p = (ContainerPartialSolution) parSol;
-        solutions.put(parProb, p.getPartialSolution());
+        // Die Liste der nächsten Primzahlen ermitteln.
+        parSolContainer = (ContainerPartialSolution) parSol;
+        partialSolutionList = (ArrayList) parSolContainer.getPartialSolution();
 
-        // Durch die Liste laufen, solange die Lösungen in der richtigen
-        // Reihenfolge vorliegen
-        while ((!dispensedProblems.isEmpty())
-               && (solutions.containsKey(dispensedProblems.getFirst()))) {
-            ArrayList partialSolutionList =
-                (ArrayList) solutions.get(dispensedProblems.getFirst());
+        newPrimesNumber = partialSolutionList.size();
 
-            if (partialSolutionList.size() + currentlyFound < minNumber) {
+        if (newPrimesNumber + currentlyFound < minNumber) {
 
-                // Auch mit der angefügten Lösung wird minNumber nicht
-                // überschritten, also nur die Anzahl speichern
-                currentlyFound = currentlyFound + partialSolutionList.size();
-                solutions.remove(dispensedProblems.removeFirst());
+            // Auch mit der angefügten Lösung wird minNumber nicht
+            // überschritten, also nur die Anzahl speichern.
+            currentlyFound += newPrimesNumber;
 
-            } else {
+        } else {
 
-                // Sonst: Dieser Teil ist für die Lösung interessant und
-                // wird in der Gesamtlösung gesichert
-                int temp = partialSolutionList.size();
+            // Dieser Teil ist für die Lösung interessant und wird der 
+            // Gesamtlösung hinzugefügt.
 
-                // Die noch nicht benötigten Elemente entfernen
-                if (minNumber - currentlyFound > 1) {
-                    partialSolutionList =
-                        new ArrayList(
-                            partialSolutionList.subList(
-                                minNumber - currentlyFound - 1,
-                                partialSolutionList.size() - 1));
-                }
-                solutions.remove(dispensedProblems.removeFirst());
-
-                // Rest einfügen in Gesamtlösung
-                finalSolution.addAll(partialSolutionList);
-
-                // currentlyFound darf erst hier gesetzt werden, sonst ist es
-                // in der for-Schleife falsch.
-                currentlyFound = currentlyFound + temp;
+            // Die noch nicht benötigten Elemente entfernen.
+            if (minNumber - currentlyFound > 1) {
+                int numberToAdd = (int) (minNumber - currentlyFound - 1);
+                partialSolutionList =
+                    new ArrayList(
+                        partialSolutionList.subList(numberToAdd,
+                                                    newPrimesNumber - 1));
             }
+
+            // Rest einfügen in Gesamtlösung.
+            finalSolution.addAll(partialSolutionList);
+
+            // Die Anzahl der ermittelten Primzahlen erhöhen.
+            currentlyFound += newPrimesNumber;
         }
-    }
 
-    /**
-     * Liefert die Gesamtlösung des Problems zurück, oder <code>null</code>,
-     * falls diese noch nicht bekannt ist.
-     *
-     * @return  Die Gesamtlösung.
-     */
-    public Serializable getSolution() {
-
-        // Falls die Ergenisliste bereits so viele Elemente enthält, wie
-        // gewünscht sind, dann wird dieser Bereich ausgeschitten und
-        // zurückgegeben.
+        // Falls die Ergebnisliste bereits so viele Elemente enthält, wie
+        // gewünscht sind, dann diesen Bereich extrahieren und zurückgegeben.
         if (finalSolution.size() >= (maxNumber - minNumber + 1)) {
-            return new ArrayList(
-                finalSolution.subList(0, maxNumber - minNumber + 1));
+            int numberToAdd = (int) (maxNumber - minNumber + 1);
+            return new ArrayList(finalSolution.subList(0, numberToAdd));
         } else {
             return null;
         }
