@@ -1,7 +1,7 @@
 /*
  * file:        GeneratePrimes.java
  * created:     <???>
- * last change: 24.04.2006 by Dietmar Lippold
+ * last change: 28.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -82,7 +82,7 @@ public class GeneratePrimes {
                 System.out.println("Dauer [ms]: " +
                                    (System.currentTimeMillis() - startTime));
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println(e);
             }
             System.out.println();
         } else {
