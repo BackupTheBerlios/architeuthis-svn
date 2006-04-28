@@ -73,14 +73,14 @@ gemeinsamen Speicher ohne zwischenzeitliche Schreibzugriffe liefern:
        der Inhalt des gemeinsamen Speichers nach einiger Zeit für alle
        Teilprobleme wieder identisch ist.
 
-       Dieses Verfahren kann dadruch realisiert werden, daß ein zentraler
+       Dieses Verfahren kann dadurch realisiert werden, daß ein zentraler
        Speicher und zusätzlich auf jedem Operative ein dezentraler Speicher
-       vorhanden. Das Schreiben aller Teilprobleme erfolgt
-       unterbrechungsfrei in den zentralen Speicher (d.h.\ ohne daß während
-       des Schreibens ein anderes Teilproblem in den zentralen Speicher
-       schreibt) und ist erst abgeschlossen, wenn das Schreiben auch auf
-       allen dezentralen Speichern erfolgt ist. Das Lesen erfolgt aus dem
-       dezentralen Speicher.
+       vorhanden ist. Das Schreiben aller Teilprobleme erfolgt in den
+       zentralen Speicher und ist erst abgeschlossen, wenn das Schreiben
+       auch auf allen dezentralen Speichern erfolgt ist. Dieser Vorgang
+       erfolgt unterbrechungsfrei, d.h.\ ohne daß während des Schreibens in
+       die dezentralen Speicher ein anderes Teilproblem in den zentralen
+       Speicher schreibt. Das Lesen erfolgt aus den dezentralen Speichern.
 
 \item  Aufeinanderfolgende Lesezugriffe zweier Teilprobleme ohne
        zwischenzeitliche Schreibzugriffe können dauerhaft einen
@@ -88,26 +88,27 @@ gemeinsamen Speicher ohne zwischenzeitliche Schreibzugriffe liefern:
 
        Dies passiert, wenn ein zentraler Speicher und zusätzlich auf jedem
        Operative ein dezentraler Speicher vorhanden ist und sowohl
-       Lesezugriffe wie Schreibzugriffe der Teilprobleme (ersteinmal) nur
-       auf den dezentralen Speicher erfolgen. Schreibzugriffe würden dann
+       Lesezugriffe wie Schreibzugriffe der Teilprobleme (erst einmal) nur
+       auf den dezentralen Speicher erfolgen. Schreibzugriffe werden dann
        anschließend (d.h.\ nebenläufig zur weiteren Berechnung des
-       Teilproblems und zu weiteren Schreibzugriffen ander Teilprobleme auf
-       ihren jeweiligen dezentralen Speicher) an den zentralen Speicher
-       weitergeleitet, der sie wiederum an die anderen dezentralen Speicher
+       Teilproblems und zu weiteren Schreibzugriffen anderer Teilprobleme
+       auf ihren jeweiligen dezentralen Speicher) an den zentralen Speicher
+       weitergeleitet, der sie wiederum an die dezentralen Speicher
        weiterleitet.
 \end{enumerate}
 
 Wenn aufeinanderfolgende Lesezugriffe zweier Teilprobleme auf den
-gemeinsamen Speicher den geleichen Wert liefern, ist dies in der Regel für
+gemeinsamen Speicher den gleichen Wert liefern, ist dies in der Regel für
 den Benutzer des Speichers und damit den Entwickler des Problems leichter
 nachzuvollziehen. Die Verfahren, bei denen die Lesezugriffe oder die Lese-
 und die Scheibzugriffe auf den dezentralen Speicher erfolgen sind aber in
 der Regel Laufzeit-effizienter.
 
-Es ist jedoch zu beachten, daß die Reihenfolge des Aufrufens von Methoden
-des Speichers durch die Teilprobleme in allen Fällen unbestimmt ist (so
-wie die Reihenfolge des Eintreffens von Teillösungen beim Problem unbestimmt
-ist).
+Es ist jedoch zu beachten, daß die Reihenfolge der Lese- und Schreibzugriffe
+auf den gemeinsamen Speichers durch die Teilprobleme untereinander in
+allen Fällen unbestimmt ist (so wie die Reihenfolge des Eintreffens von
+Teillösungen beim Problem unbestimmt ist), d.h.\ in verschiedenen
+Programmläufen unterschiedlich sein kann.
 
 In jedem Fall sollte ein gemeinsamer Speicher aber folgende Bedingungen
 sicherstellen:
