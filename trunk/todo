@@ -1,22 +1,27 @@
             Weitere geplante Arbeiten und Ideen für Architeuthis
 
 
-Stand: 17.04.2006
+Stand: 28.04.2006
 
 
 Änderungen größerer Wichtigkeit
 -------------------------------
 
- * Eine Möglichkeit vorsehen, daß ein asynchron laufender Thread zur
-   Übertragung von Daten zum RelayStore eine Fehlermeldung an den Operative
-   übergeben kann (z.B. als Rückgabewert beim Abmeldes des zentralen
-   RemoteStore).
-
  * Benutzerhandbuch aktualisieren.
+
+ * Prüfen, welche Meldungen nach dem lokalen Abbrechen der Ausführung der
+   Klassen ProblemTransmitterImpl und OperativeImpl (also nach Auslösen des
+   shutdownHook) ausgegeben werden sollen, da nach dem Abbrechen keine
+   logging-Meldungen mehr ausgegeben werden.
 
  * Die lokale Berechnung von Teilproblemen durch die Methoden
    ProblemComputation.computeProblem parallelisieren, d.h. jedes
    Teilproblem in einem eigenen Thread ausführen.
+
+ * Eine Möglichkeit vorsehen, daß ein asynchron laufender Thread zur
+   Übertragung von Daten zum RelayStore eine Fehlermeldung an den Operative
+   übergeben kann (z.B. als Rückgabewert beim Abmeldes des zentralen
+   RemoteStore).
 
  * Seltene ClassCastException im Dispatcher (wahrscheinlich nur bei
    Verwendung von CacheFlushingRMIClSpi) beseitigen.
