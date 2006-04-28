@@ -3,7 +3,7 @@
 # Führt das lokale Programm zur Berechnung von Primzahlen aus
 
 
-# Benötigte Umgebungsvariablen (JAVA, DEPLOY_DIR) werden gesetzt
+# Benötigte Umgebungsvariablen (JAVA, CLASS_FILE_PATH) werden gesetzt
 . ./setup.sh
 
 # die Grenzen für das Zahlen-Intervall, aus dem die Primzahlen ermittelt
@@ -19,5 +19,5 @@ ARGS="$ARGS z"
 # die Main-Klasse
 MAIN="de.unistuttgart.architeuthis.testenvironment.GeneratePrimes"
 
-exec $JAVA -cp $DEPLOY_DIR/Problems.jar $MAIN $ARGS
+exec $JAVA -cp $CLASS_FILE_PATH $MAIN $ARGS
 

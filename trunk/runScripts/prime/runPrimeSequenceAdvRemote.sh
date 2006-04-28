@@ -4,7 +4,8 @@
 # auf dem Compute-System
 
 
-# Benötigte Umgebungsvariablen (JAVA, DEPLOY_DIR, CONFIG_DIR) werden gesetzt
+# Benötigte Umgebungsvariablen (JAVA, CONFIG_DIR, DEPLOY_DIR,
+# CLASS_FILE_PATH) werden gesetzt
 . ./setup.sh
 
 # die Grenzen für das Zahlen-Intervall, aus dem die Primzahlen ermittelt
@@ -24,5 +25,5 @@ ARGS="$ARGS n"
 # die Main-Klasse
 MAIN="de.unistuttgart.architeuthis.testenvironment.prime.advanced.GeneratePrimes"
 
-exec $JAVA -cp $DEPLOY_DIR/User.jar:$DEPLOY_DIR/Problems.jar $JVMPAR $MAIN $ARGS
+exec $JAVA -cp $DEPLOY_DIR/User.jar:$CLASS_FILE_PATH $JVMPAR $MAIN $ARGS
 

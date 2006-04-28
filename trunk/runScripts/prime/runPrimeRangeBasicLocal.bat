@@ -4,7 +4,7 @@ REM Berechnet die Primzahlen unter Verwendung der Klasse ProblemComputation
 REM lokal
 
 
-REM Benötigte Umgebungsvariablen (JAVA, DEPLOY_DIR) werden gesetzt
+REM Benötigte Umgebungsvariablen (JAVA, CLASS_FILE_PATH) werden gesetzt
 call setup.sh
 
 REM die Grenzen für das Zahlen-Intervall, aus dem die Primzahlen ermittelt
@@ -23,5 +23,5 @@ set ARGS=%ARGS% l
 # die Main-Klasse
 MAIN="de.unistuttgart.architeuthis.testenvironment.prime.basic.GeneratePrimes"
 
-exec %JAVA% -cp %DEPLOY_DIR%/Problems.jar %JVMPAR% %MAIN% %ARGS%
+exec %JAVA% -cp %CLASS_FILE_PATH% %JVMPAR% %MAIN% %ARGS%
 

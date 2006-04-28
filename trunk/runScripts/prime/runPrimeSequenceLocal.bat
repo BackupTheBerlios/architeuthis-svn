@@ -3,7 +3,7 @@
 REM Führt das lokale Programm zur Berechnung von Primzahlen aus
 
 
-REM Benötigte Umgebungsvariablen (JAVA, DEPLOY_DIR) werden gesetzt
+REM Benötigte Umgebungsvariablen (JAVA, CLASS_FILE_PATH) werden gesetzt
 call setup.bat
 
 
@@ -20,5 +20,5 @@ set ARGS=%ARGS% n
 REM die Main-Klasse
 set MAIN=de.unistuttgart.architeuthis.testenvironment.GeneratePrimes
 
-%JAVA% -cp %DEPLOY_DIR%/Problems.jar %MAIN% %ARGS%
+%JAVA% -cp %CLASS_FILE_PATH% %MAIN% %ARGS%
 
