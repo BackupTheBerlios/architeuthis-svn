@@ -19,7 +19,7 @@ ersten oder größten Kalmar, nannte. Die Gattung \emph{Architeuthis}
 Riesenkalmare gehören zu den Kopffüßern (Cephalopoda). Sie haben im Ganzen
 zehn Arme, davon zwei lange Tentakel mit keulenförmig verbreiterten Enden,
 die mit Saugnäpfen bewehrt sind und zum Fangen der Beute dienen. Acht kurze
-Arme rund im die Mundöffnung führen die Beute dem Mund zu.
+Arme [\dots] führen die Beute dem Mund zu.
 
 Quelle: http://www.weichtiere.at/Kopffuesser/kalmar.html (Abruf 15.04.2006)
 
@@ -33,7 +33,7 @@ das ``eu'' wie in ``Europa'' und das zweite ``h'' stimmlos.
 \section{Übersicht}
 
 Die Architektur des \hyperref[compsys]{Compute-Systems} ist in drei Ebenen
-und drei Stufen gegliedert, die im folgenden genauer erklärt werden:
+und drei Stufen gegliedert, die im folgenden genauer erklärt werden.
 
 \begin{center}
 \begin{tabular}{l|c|c|c}
@@ -64,6 +64,7 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
     \item \hyperref[clber]{Operative-Bereitsteller}
 \end{itemize}
 
+
 \subsection{Benutzer Stufe}
 
 \textbf{Problem-Paket}\label{probpak}
@@ -86,6 +87,7 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
     \hyperref[benrech]{Benutzer-Rechner} und auf dem
     \hyperref[compsys]{Compute-System} berechnet und die jeweile
     Berechnungzeit verglichen werden.
+
 
 \subsection{Dispatcher Stufe}
 
@@ -127,7 +129,6 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
 
 \section{Compute-System Ebene}
 
-
 \textbf{Compute-System}\label{compsys}
     bezeichnet die Gesamtheit aller Komponenten, die zur Berechnung eines
     parallelisierten \hyperref[prob]{Problems} benötigt werden, also den
@@ -144,15 +145,14 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
     \emph{ProblemTransmitterImpl} und \emph{ProblemComputation}.
 
 \textbf{Statistik-Anzeige}
-    stellt dem Benutzer aktuelle Informationen zum Compute-Systems insgesamt
-    (\texttt{Systems-Statistik}) und zu seinem \hyperref[prob]{Problem}
-    (\texttt{Problem-Statistik}) bereit. Die zugehörigen Klassen sind
+    stellt dem Benutzer aktuelle Informationen zum Compute-Sys\-tems insgesamt
+    (\emph{Systems-Statistik}) und zu seinem \hyperref[prob]{Problem}
+    (\emph{Problem-Statistik}) bereit. Die zugehörigen Klassen sind
     \emph{ProblemGUIStatisticsReader}, \emph{SystemGUIStatisticsReader} und
     \emph{SystemTextStatisticsReader}.
 
 
 \subsection{Dispatcher Stufe}
-
 
 \textbf{Dispatcher}\label{compserv}
     besteht aus drei Komponenten: Dem {\em Compute-Manager}, dem
@@ -177,7 +177,6 @@ Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
 
 
 \subsection{Operative Stufe}
-
 
 \textbf{Operative}\label{compclie}
     bekommt von dem {\em Compute-Manager} genau ein

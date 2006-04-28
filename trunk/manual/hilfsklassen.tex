@@ -14,11 +14,11 @@ Die abstrakten Problem-Klassen bieten drei Funktionen an:
 \begin{enumerate}
 \item  Sie ordnen und liefern die Teillösungen in der Reihenfolge, in der
        die zugehörigen Teilprobleme erzeugt wurden. Diese Funktion ist bei
-       allen drei abstrakten Klassen vorhanden.
+       allen drei abstrakten Problem-Klassen vorhanden.
 
 \item  Sie fragen die Teilprobleme nicht einzeln sondern als Menge ab und
        liefern eine Menge der zughörigen Teillösungen. Diese Funktionalität
-       ist nur bei \texttt{AbstractFixedSizeProblem} und\\
+       ist nur bei \texttt{AbstractFixedSizeProblem} und bei
        \texttt{AbstractFixedSizePriorityProblem} vorhanden.
 
 \item  Sie bearbeiten die Teilprobleme in einer durch Prioritäten
@@ -32,7 +32,7 @@ Zusätzlich gibt es noch die konkrete Teillösungs-Hilfsklasse
 Die Klassen sind nachfolgend einzeln beschrieben.
 
 
-\section{AbstractOrderedProblem.java}
+\section{AbstractOrderedProblem}
 \label{AbstractOrderedProblem}
 
 Diese Klasse sorgt dafür, das die Teillösungen in der gleichen Reihenfolge
@@ -41,12 +41,12 @@ konkrete Unterklasse muß dazu die beiden folgenden Methoden implementieren:
 
 \begin{itemize}
 \item \texttt{createPartialProblem}, die ein neues Teilprobem liefert. Als
-  Parameter wird ihr die empfohlene Anzahl insgesamt zu erzeugender
+  Parameter wird ihr die vorgeschlagene Anzahl insgesamt zu erzeugender
   Teilprobleme übergeben.
 
 \item \texttt{receivePartialSolution}, die jeweils eine Teillösung übergibt
-  und als Rückabewert die Gesamtlösung erwartet, falls diese schon vorhanden
-  ist, oder anderenfalls den Wert \texttt{null}.
+  und als Rückabewert die Gesamtlösung erwartet, falls diese schon erzeugt
+  werden konnte oder anderenfalls den Wert \texttt{null}.
 \end{itemize}
 
 Nachfolgend ist der komplette Quelltext angegeben.
@@ -54,13 +54,13 @@ Nachfolgend ist der komplette Quelltext angegeben.
 {\scriptsize \verbatiminput{java/abstract/AbstractOrderedProblem.jav}}
 
 
-\section{AbstractFixedSizeProblem.java}
+\section{AbstractFixedSizeProblem}
 
 Diese Klasse eignet sich für Probleme, die am Anfang schon alle
 Teilprobleme  erstellen können, die auch alle für die Lösung erforderlich
 sind. Die Anzahl kann  von der vom Dispatcher vorgeschlagenen Anzahl
-abhängen oder konstant sein. Das Ausgeben der einzelnen Teilprobleme, wie
-vom Dispatcher gefordert, und das Sammeln der Teillösungen werden von der
+abhängen oder konstant sein. Das Ausgeben der einzelnen Teilprobleme an
+den Dispatcher und das Sammeln der Teillösungen werden von der
 abstrakten Klasse übernommen. Der Benutzer muss nur noch die beiden
 folgenden Methoden implementieren:
 
@@ -80,11 +80,11 @@ Nachfolgend ist der komplette Quelltext der Klasse angegeben.
 {\scriptsize \verbatiminput{java/abstract/AbstractFixedSizeProblem.jav}}
 
 
-\section{AbstractFixedSizePriorityProblem.java}
+\section{AbstractFixedSizePriorityProblem}
 
 Diese Klasse benutzt die Klasse \texttt{PriorityPartialProblem}. Diese
 beiden Klassen eignen sich für Probleme, die am Anfang schon alle
-Teilprobleme erstellen können und diese in einer durch Priorisierung
+Teilprobleme erstellen können und diese in einer durch Prioritäten
 gekennzeichneten Reihenfolge berechnet werden sollen. Die Kennzeichnung
 findet für jedes Teilproblem individuell statt, indem dessen Priorität durch
 den Konstruktor gesetzt wird. Dabei bedeuten höhere Werte eine höhere
@@ -93,17 +93,18 @@ Priorität, d.h.\ dass dieses Teilproblem früher berechnet wird.
 Das Ausgeben der einzelnen Teilprobleme in der Reihenfolge der Priorität und
 das Einsammeln der Teillösungen wird von der abstrakten Klasse übernommen.
 Außerdem werden die Teillösungen wieder in die Reihenfolge gebracht, wie
-ihre Teilprobleme \emph{erstellt} (nicht unbedingt zur Berechnung
-ausgegeben) wurden. Der Benutzer muss folgende zwei Methoden implementieren,
-wobei die Teilprobleme von \texttt{PriorityPartialProblem} erben müssen.
+ihre Teilprobleme vom Problem \emph{erstellt} (nicht unbedingt von der
+abstrakten Klasse zur Berechnung ausgegeben) wurden. Der Benutzer muss
+folgende zwei Methoden implementieren, wobei die Teilprobleme von
+\texttt{PriorityPartialProblem} erben müssen.
 
 \begin{itemize}
 \item \texttt{createPartialProblems}, die bei der ersten Anfrage für ein
-  Teilproblem aufgerufen wird und eine Liste aller nötigen Teilprobleme,
-  (deren Priorität gesetzt wurde) erstellt. 
+  Teilproblem aufgerufen wird und eine Liste aller nötigen Teilprobleme
+  (deren Priorität gesetzt wurde) erstellen muss.
 
 \item \texttt{createSolution}, die aufgerufen wird, wenn alle Lösungen
-  eingegangen sind. Es muss auf jeden Fall eine Lösung erstellt werden,
+  eingegangen sind. Es muss auf jeden Fall eine Lösung geliefert werden,
   ansonsten ist dieses Problem fehlerhaft und wird entfernt.
 \end{itemize}
 
@@ -117,7 +118,7 @@ Nachfolgend ist der komplette Quelltext der beiden Klassen angegeben.
 {\scriptsize \verbatiminput{java/abstract/PriorityPartialProblem.jav}}
 
 
-\section{ContainerPartialSolution.java}
+\section{ContainerPartialSolution}
 
 Diese Klasse kann dafür verwendet werden, ein serialisierbares Objekt, das
 von einem Teilproblem erzeugt wurde, auf einfache Weise als Teillösung

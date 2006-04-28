@@ -7,9 +7,9 @@
 \chapter[Beispiel für Fortgeschrittene]{Beispiel für Fortgeschrittene}
 
 Dieses Kapitel beschreibt die Parallelisierung eines Problems, das sich nicht
-ganz einfach parallelisieren läst. Als Alternative zum vorherigen Kapitel
-soll das Problem außerdem als nicht-serialisiertes Problem verarbeitet
-werden.
+ganz einfach wie im vorherigen Kapitel parallelisieren läst. Als Alternative
+zum vorherigen Kapitel soll das Problem außerdem als nicht-serialisiertes
+Problem verarbeitet werden.
 
 
 \section{Aufgabenstellung}
@@ -21,7 +21,7 @@ parallelisiert werden.
 {\scriptsize \verbatiminput{java/primzahlTeilfolge.jav}}
 
 Im Gegensatz zur Methode \texttt{primzahlTeilbereich} aus dem vorherigen
-Kapitel kann das angegebene Intervall nicht einfach in Teilintervalle
+Kapitel kann das Intervall der Methode nicht einfach in Teilintervalle
 aufgeteilt und Teilproblemen zugeordnet werden. Welche Zahlen zu einem
 Teilintervall in Bezug auf die Primzahl-Eigenschaft zu untersuchen wären
 würde nämlich von der Anzahl der Primzahlen in den vorhergehenden
@@ -30,13 +30,13 @@ erzeugt und verarbeitet werden.
 
 Daher wird das gegebene Problem in ein anderes Problem transformiert, das
 sich gut parallelisieren läst, konkret in das Problem aus dem vorhergehenden
-Abschnitt. Dazu werden alle Primzahlen bis zum einem Wert ermittelt, der
+Kapitel. Dazu werden alle Primzahlen bis zum einem Wert ermittelt, der
 größer (aber möglichst nicht viel größer) ist als die größte Primzahl aus
 dem vorgegebenen Intervall. Die Abschätzung dieser Zahl erfolgt nach der
 Formel von Rosser und Schoenfeld (siehe: J.\ B.\ Rosser and L.\ Schoenfeld.
 \emph{Approximate formulas for some functions of prime numbers}. Illinois
 Journal of Mathematics, 6:64--94, 1962), auf die hier nicht näher
-eingegangen wird. Die Primzahlen aus den ermittelten Listen der
+eingegangen wird. Die Primzahlen aus den ermittelten Listen zu den
 Teilintervalle werden dann der Reihe nach gezählt und die mit den Nummern
 aus dem vorgegebenen Intervall werden als Ergebnis geliefert.
 
@@ -46,8 +46,9 @@ aus dem vorgegebenen Intervall werden als Ergebnis geliefert.
 Um die Problem-Klasse (\texttt{PrimeSequenceProblemImpl} genannt) zu
 implementieren, könnte man sich wie beschrieben auf die Berechnung einer
 Obergrenze des Intervalls, das der Klasse \emph{PrimeRangeProblemImpl}
-übergeben wird, beschränken und aus der von dieser Klasse erzeugten Liste
-von Primzahlen die benötigten extrahieren. In der ereugten Liste von
+übergeben wird, beschränken (als Untergrenze ist Null, Eins oder Zwei
+zu übergeben) und aus der von dieser Klasse erzeugten Liste
+von Primzahlen die benötigten extrahieren. In der erzeugten Liste von
 Primzahlen könnten aber extrem viel mehr Primzahlen enthalten sein, als
 anschließend benötigt würden, wenn die Größe des Intervalls klein ist (im
 Extremfall z.B.\ nur aus einer Zahl besteht) gegenüber den absoluten Werten
@@ -68,11 +69,12 @@ Dabei sind folgende beiden Methoden zu implementieren:
 \item protected Serializable receivePartialSolution(PartialSolution parSol)
 \end{itemize}
 
-In \texttt{parProbsSuggested} wird beim ersten Aufruf die Obergrenze des
+In \texttt{createPartialProblem} wird beim ersten Aufruf die Obergrenze des
 Intervalls ermittelt, das anschließend zur Erzeugung einer Instanz von
 \texttt{PrimeRangeProblemImpl} (einer etwas verbesserten Version der Klasse
-aus dem vorherigen Kapitel) verwendet wird. Anschließend und bei jedem
-weiteren Aufruf liefert die Methode dann das nächste Teilintervall.
+aus dem vorherigen Kapitel) verwendet wird. Mit dieser wird dann ein
+Array von Teilproblemen erzeugt. Anschließend und bei jedem
+weiteren Aufruf liefert die Methode dann das jeweils nächste Teilproblem.
 
 In \texttt{receivePartialSolution} werden die Teillösungen entgegengenommen
 und verarbeitet. Bei den Teillösungen handelt es sich wie im vorhergehenden

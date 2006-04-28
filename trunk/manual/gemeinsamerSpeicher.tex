@@ -10,7 +10,7 @@
 \section{Vorwort}
 
 Dieses Kapitel beschreibt die Möglichkeit, für die Teilprobleme einen
-gemeinsamen Speicher zu nutzen und neue Arten von gemeinsamen Speicher zu
+gemeinsamen Speicher zu benutzen und neue Arten von gemeinsamen Speicher zu
 entwickeln.
 
 
@@ -55,36 +55,54 @@ werden. Die Entwicklung eigener Klassen wird im nächsten Abschnitt
 beschrieben.
 
 Für die Kommunikation der Teilprobleme mit dem gemeinsamen Speicher scheinen
-folgende drei Möglichkeiten sinnvoll:
+folgende drei Möglichkeiten relevant, die sich danach unterscheiden, welches
+Ergebnis aufeinanderfolgende Lesezugriffe zweier Teilprobleme auf den
+gemeinsamen Speicher ohne zwischenzeitliche Schreibzugriffe liefern:
 
-\begin{itemize}
-\item  Es ist für alle Teilprobleme nur ein zentraler Speicher vorhanden.
-       Das Lesen aus diesem Speicher und das Schreiben in diesen Speicher
-       erfolgt \emph{synchron}.
+\begin{enumerate}
+\item  Aufeinanderfolgende Lesezugriffe zweier Teilprobleme ohne
+       zwischenzeitliche Schreibzugriffe liefern den gleichen Wert.
 
-\item  Es ist ein zentraler Speicher und zusätzlich auf jedem Operation ein
-       dezentraler Speicher vorhanden. Das Lesen der Teilprobleme aus dem
-       (dezentralen) Speicher erfolgt dabei \emph{asynchron}. Für das
-       Schreiben gibt es beide Möglicheiten.
+       Dies kann dadurch realisiert werden, daß nur ein zentraler Speicher
+       vorhanden ist, auf den alle Teilprobleme beim Lesen und Schreiben
+       zugreifen.
 
-       \begin{itemize}
-       \item  Das Schreiben in den (zentralen) Speicher erfolgt
-              \emph{synchron} (der Aufruf einer Methode zum Schreiben durch
-              ein Teilproblem ist erst abgeschlossen, wenn die Methode auch
-              bei allen anderen Speichern aufgerufen wurde).
+\item  Aufeinanderfolgende Lesezugriffe zweier Teilprobleme ohne
+       zwischenzeitliche Schreibzugriffe können vorübergehend einen
+       unterschiedlichen Wert liefert. Es ist aber sicher gestellt, daß
+       der Inhalt des gemeinsamen Speichers nach einiger Zeit für alle
+       Teilprobleme wieder identisch ist.
 
-       \item  Das Schreiben in den (zentralen) Speicher erfolgt
-              \emph{asynchron} (der Aufruf einer Methode zum Schreiben durch
-              ein Teilproblem ist sofort abgeschlossen und die Methode wird
-              bei allen anderen Speichern anschließend. d.h.\ nebenläufig
-              zur weiteren Berechnung des Teilproblems, aufgerufen).
-       \end{itemize}
-\end{itemize}
+       Dieses Verfahren kann dadruch realisiert werden, daß ein zentraler
+       Speicher und zusätzlich auf jedem Operative ein dezentraler Speicher
+       vorhanden. Das Schreiben aller Teilprobleme erfolgt
+       unterbrechungsfrei in den zentralen Speicher (d.h.\ ohne daß während
+       des Schreibens ein anderes Teilproblem in den zentralen Speicher
+       schreibt) und ist erst abgeschlossen, wenn das Schreiben auch auf
+       allen dezentralen Speichern erfolgt ist. Das Lesen erfolgt aus dem
+       dezentralen Speicher.
 
-Ein synchrones Lesen bzw.\ Schreiben bedeutet, daß zum Beginn des Lesens
-bzw.\ zum Abschluß des Schreibens der Zustand des Speichers für alle
-Teilprobleme identisch ist. Ein asynchrones Lesen bzw.\ Schreiben ist jedoch
-in der Regel effizienter.
+\item  Aufeinanderfolgende Lesezugriffe zweier Teilprobleme ohne
+       zwischenzeitliche Schreibzugriffe können dauerhaft einen
+       unterschiedlichen Wert liefert.
+
+       Dies passiert, wenn ein zentraler Speicher und zusätzlich auf jedem
+       Operative ein dezentraler Speicher vorhanden ist und sowohl
+       Lesezugriffe wie Schreibzugriffe der Teilprobleme (ersteinmal) nur
+       auf den dezentralen Speicher erfolgen. Schreibzugriffe würden dann
+       anschließend (d.h.\ nebenläufig zur weiteren Berechnung des
+       Teilproblems und zu weiteren Schreibzugriffen ander Teilprobleme auf
+       ihren jeweiligen dezentralen Speicher) an den zentralen Speicher
+       weitergeleitet, der sie wiederum an die anderen dezentralen Speicher
+       weiterleitet.
+\end{enumerate}
+
+Wenn aufeinanderfolgende Lesezugriffe zweier Teilprobleme auf den
+gemeinsamen Speicher den geleichen Wert liefern, ist dies in der Regel für
+den Benutzer des Speichers und damit den Entwickler des Problems leichter
+nachzuvollziehen. Die Verfahren, bei denen die Lesezugriffe oder die Lese-
+und die Scheibzugriffe auf den dezentralen Speicher erfolgen sind aber in
+der Regel Laufzeit-effizienter.
 
 Es ist jedoch zu beachten, daß die Reihenfolge des Aufrufens von Methoden
 des Speichers durch die Teilprobleme in allen Fällen unbestimmt ist (so
@@ -99,9 +117,15 @@ sicherstellen:
        Teilproblem anschließend aus dem Speicher ließt, sollte das vorherige
        Schreiben schon erfolgt sein.
 
-\item  Mehrere Aufrufe zur Veränderung des Speichers durch ein Teilproblem
-       sollten im Speicher für alle anderen Teilprobleme in der gleichen
-       Reihenfolge vorgenommen werden.
+\item  Mehrere Aufrufe zur Veränderung des Speichers durch \emph{ein}
+       Teilproblem sollten im Speicher für alle anderen Teilprobleme in der
+       gleichen Reihenfolge vorgenommen werden. Wenn also ein Teilproblem
+       \emph{A} die Schreibzugriffe \emph{A1} und \emph{A2} vornimmt und ein
+       Teilproblem \emph{B} den Schreibzugriff \emph{B1}, dann könnten diese
+       im (dezentralen) Speicher eines Teilproblem \emph{C} in der
+       Reihenfolge A1, A2, B1 eingehen  und im (dezentralen) Speicher eines
+       Teilproblem \emph{D} in der Reihenfolge A1, B1, A2. In jedem Fall
+       würde aber A1 vor A2 erfolgen.
 \end{itemize}
 
 Die vorhandenen Implementierungen vom gemeinsamen Speicher erfüllen diese
@@ -114,7 +138,8 @@ Interface \texttt{RemoteStoreGenerator} implementiert, angegeben.
 
 Die Entwicklung eines Remote-Store soll anhand des Beispiels vom Package
 \texttt{de...remotestore.hashmap} beschrieben werden. Die jeweiligen
-Klassen aus diesem Package werden nachfolgend in Klammern angegeben.
+Klassen aus diesem Package werden nachfolgend in Klammern relativ zu diesem
+Package angegeben.
 
 Im Haupt-Package sollte nur ein Interface zur Benutzung durch das Teilproblem
 (\texttt{UserRemoteHashMap}) und die Implementierung von
@@ -150,12 +175,12 @@ der die Methode beim Relay-Store aufgerufen hat, nicht aufgerufen zu werden.
 Der Local-Store muß die Daten dann selbst lokal speichern.
 
 Im Remote-Store (\texttt{hashmap.impl.RemoteHashMapImpl}), der sowohl das
-Interface für das Teilproblem wie das Interface vom Local-Store
-implementiert, sind entsprechend der beiden Aufgaben der Klasse (Interaktion
-mit dem Teilproblem und Interaktion mit dem Relay-Store) zwei Arten der
-Synchronisation erforderlich. Die eine dient zur Synchronisation des
-Zugriffs auf die eigentlichen Daten der Datensturktur (im Beispiel auf das
-Attribut \texttt{hashMap}), die andere dient zur Synchronisation des
+Interface zur Benutzung durch das Teilproblem wie das Interface vom
+Local-Store implementiert, sind entsprechend der beiden Aufgaben der Klasse
+(Interaktion mit dem Teilproblem und Interaktion mit dem Relay-Store) zwei
+Arten der Synchronisation erforderlich. Die eine dient zur Synchronisation
+des Zugriffs auf die eigentlichen Daten der Datensturktur (im Beispiel auf
+das Attribut \texttt{hashMap}), die andere dient zur Synchronisation des
 Zugriffs auf den Relay-Store bzw.\ auf das Attribut, in dem er gespeichert
 ist (\texttt{relayHashMap}). Die erste Art kann durch die Sychronisation der
 jeweiligen Methode (also auf das Objekts \texttt{this}) geschehen, für die

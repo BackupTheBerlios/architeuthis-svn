@@ -4,7 +4,7 @@
 %% entwickelt.
 
 
-\chapter[Beispiele zur Parallelisierung]{Der Weg zum parallelisierten Programm
+\chapter[Beispiel zur Parallelisierung]{Der Weg zum parallelisierten Programm
          anhand eines Beispiels}
 
 Dieses Kapitel beschreibt die einfache Parallelisierung eines vorgegebenen
@@ -13,8 +13,8 @@ Programms.
 
 \section{Aufgabenstellung}
 
-Man betrachte zunächst die Methode {\tt primzahlTeilbereich} aus
-\texttt{de.unistuttgart.architeuthis.testenvironment.PrimeNumbers}:
+Man betrachte zunächst die folgende Methode {\tt primzahlTeilbereich} aus
+\texttt{de.unistuttgart.architeuthis.testenvironment.PrimeNumbers}.
 
 {\scriptsize \verbatiminput{java/primzahlTeilbereich.jav}}
 
@@ -53,21 +53,22 @@ die folgenden beiden Methoden implementiert werden:
 
 Deren Implementierung erfolgt wie schon beschrieben. In
 \texttt{createPartialProblems} werden die Teilprobleme dadurch erzeugt,
-daß jedem Teilproblem ein Teilintervall zugeordnet wird. In
-\texttt{createSolution} werden dann alle Teillösungen ihrer Reihenfolge
-im Array aneinandergehängt (zum konkreten Typ der Elemente von Array s.u.).
-Das Gesamtintervall wird die Unter- und Obergrenze dem Konsruktor übergeben.
-Nachfolgend die vollständige Implementierung der Problem-Klasse.
+daß jedem Teilproblem ein Teilintervall gleicher Größe zugeordnet wird. In
+\texttt{createSolution} werden dann alle Teillösungen in ihrer Reihenfolge
+im Array aneinandergehängt (zum konkreten Typ der Elemente des Array s.u.).
+Das Gesamtintervall wird durch die Unter- und Obergrenze dem Konstruktor
+des Problems übergeben. Nachfolgend die vollständige Implementierung der
+Problem-Klasse.
 
 {\scriptsize \verbatiminput{java/basic/PrimeRangeProblemImpl.jav}}
 
 Die Implementierung des Teilproblems erfolgt einfach dadurch, daß dem
-Konstruktor wird das zu durchsuchende Teilintervall übergeben wird und
+Konstruktor das zu durchsuchende Teilintervall übergeben wird und
 in der Methode \texttt{compute()} zur Berechnung der Primzahlen die
 vorgegebene Methode \texttt{primzahlTeilbereich} aufgerufen wird. Um die
 Liste als Teillösung zurückzugeben, wird die zur Verfügung stehende
 Hilfsklasse \texttt{ContainerPartialSolution} verwandt. Aus dieser muß
-die Liste dann in der schon oben genannten Methode \texttt{createSolution}
+die Liste dann mit der schon oben genannten Methode \texttt{createSolution}
 abgerufen werden. Nachfolgend die vollständige Implementierung der
 Teilproblem-Klasse.
 
@@ -125,27 +126,27 @@ könnte unter Linux also folgendermaßen aussehen (alles in einer Zeile):
         de.unistuttgart.architeuthis.testenvironment.prime.basic.GeneratePrimes\\
         200000 201000 r}
 
-Unter Windows müssen die Pfadangaben geändert werden und anstatt des
-Doppelpunktes muß ein Semikolon angegeben werden.
+Unter Windows müssen in den Pfadangaben die Slashes durch Backslashes
+erseztzt und anstatt des Doppelpunktes ein Semikolon angegeben werden.
 
 
 \section{Weitere Beispiele}
 
-Weiter Beispiele kann man Package \texttt{de.unis.architeuthis.testumgebung}
-finden. Hier eine kurze Auflistung der Probleme und jeweils eine kurze
+Weiter Beispiele sind im Package \texttt{de.unis.architeuthis.testumgebung}
+zu finden. Hier eine kurze Auflistung der Probleme und jeweils eine kurze
 Beschreibung dazu.
 
 \begin{enumerate}
 \item \texttt{de...testenvironment.prime.basic.PrimRangeProblemImpl}\\
-	Dies ist das obige Beispiel dieses Kapitels mittels der abstrakten
+	Das ist das obige Beispiel dieses Kapitels mittels der abstrakten
         Klasse \texttt{AbstractFixedSizeProblem}.
 
-\item \texttt{de...testenvironment.prime.PrimRangeProblemImpl}\\
+\item \texttt{de...testenvironment.prime.advanced.PrimRangeProblemImpl}\\
         Dieses Problem macht das gleiche wie das obige Problem, nur daß
         die Aufteilung in Teilprobleme geschickter so erfolgt, daß der
         Rechenaufwand für die einzelnen Teilprobleme noch gleicher ist.
 
-\item \texttt{de...testenvironment.prime.PrimSequenceProblemImpl}\\
+\item \texttt{de...testenvironment.prime.advanced.PrimSequenceProblemImpl}\\
 	Dies ist das Beispiel f"ur Fortgeschrittene im n"achsten Kapitel.
 
 \item \texttt{de...testenvironment.montecarlo.MonteCarloProblemImpl}\\
@@ -164,8 +165,8 @@ Beschreibung dazu.
 \item \texttt{de...testenvironment.caching.CachingTestProblem}\\
         Hier werden drei Dummy-Klassen in den Teilproblemen geladen. Mit
         diesem Problem wurde verglichen, inwiefern sich das Laden von
-        Klassen zeitlich bemerkbar macht. Siehe dazu auch im Kapitel
-        Performance.
+        Klassen zeitlich bemerkbar macht. Siehe dazu auch das Kapitel
+        \hyperref[performance]{Performance}.
 
 \item \texttt{de...testenvironment.hashstore.HashStoreProblemImpl}\\
         Bei diesem Problem benutzen die Teilprobleme das Package
