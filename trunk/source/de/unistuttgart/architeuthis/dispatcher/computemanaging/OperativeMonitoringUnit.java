@@ -1,7 +1,7 @@
 /*
  * file:        OperativeMonitoringUnit.java
  * created:     12.08.2003
- * last change: 25.04.2006 von Dietmar Lippold
+ * last change: 27.04.2006 von Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -177,7 +177,7 @@ class OperativeMonitoringUnit extends Thread {
      * @see java.lang.Runnable#run()
      */
     public void run() {
-        LOGGER.info("Operative Überwachungsprozess gestartet.");
+        LOGGER.config("Operative Überwachungsprozess gestartet.");
         while (!threadTerminated) {
             LOGGER.finest("Überprüfe Operatives auf Erreichbarkeit");
             Enumeration operatives = (Enumeration) operativesTries.keys();
