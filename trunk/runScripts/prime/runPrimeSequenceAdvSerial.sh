@@ -12,6 +12,7 @@
 # die Parameter für die JVM
 JVMPAR=" "
 JVMPAR="$JVMPAR -Djava.security.policy=$CONFIG_DIR/transmitter.pol"
+JVMPAR="$JVMPAR -Djava.util.logging.config.file=$CONFIG_DIR/logging.properties"
 
 # die Parameter für die Anwendung
 ARGS=" "

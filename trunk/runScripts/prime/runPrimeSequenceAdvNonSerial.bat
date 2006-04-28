@@ -12,6 +12,7 @@ call setup.bat
 REM die Parameter für die JVM
 set JVMPAR=
 set JVMPAR=%JVMPAR% -Djava.security.policy=%CONFIG_DIR%/transmitter.pol
+set JVMPAR=%JVMPAR% -Djava.util.logging.config.file=%CONFIG_DIR%/logging.properties
 
 REM die Parameter für die Anwendung
 set ARGS=
