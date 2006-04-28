@@ -1,7 +1,7 @@
  /*
  * file:        ProblemTransmitterImpl.java
  * created:     08.07.2003
- * last change: 05.03.2006 by Dietmar Lippold
+ * last change: 28.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -148,6 +148,7 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
+                    System.err.println("Abbruch durch Benutzer");
                     abortProblem();
                 } catch (RemoteException ex) {
                 }

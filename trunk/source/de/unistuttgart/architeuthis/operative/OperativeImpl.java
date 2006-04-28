@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 25.04.2006 by Dietmar Lippold
+ * last change: 28.04.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -174,6 +174,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         // Dann wird kurz aufgeräumt.
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
+                System.err.println("Abbruch durch Operative-Administrator");
                 shutdown();
             }
         });
