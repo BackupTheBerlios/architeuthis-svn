@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 28.04.2006 by Dietmar Lippold
+ * last change: 01.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -169,12 +169,11 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      */
     protected synchronized void startComputation() {
 
-        // Hier wird ein shutdownHook gesetzt. Dieser wird aufgerufen, wenn vom
-        // System ein term-Signal kommt (also beim Beenden oder bei Strg+c).
-        // Dann wird kurz aufgeräumt.
+        // Hier wird ein shutdownHook gesetzt. Dieser wird aufgerufen, wenn
+        // vom System ein term-Signal kommt (also beim Beenden oder bei
+        // Strg+c). Dann wird kurz aufgeräumt.
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                System.err.println("Abbruch durch Operative-Administrator");
                 shutdown();
             }
         });
@@ -270,6 +269,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         // Vom Dispatcher abmelden
         try {
             if (computeManager != null) {
+                System.err.println("Abbruch durch Operative-Administrator");
                 LOGGER.log(Level.FINE, "Versuche, Verbindung zu trennen.");
                 computeManager.unregisterOperative(this);
                 computeManager = null;
@@ -409,6 +409,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                 exceptionMessage);
         } catch (RemoteException e) {
             // Dispatcher ist nicht erreichbar, Operative beenden
+            computeManager = null;
             shutdown();
         }
 

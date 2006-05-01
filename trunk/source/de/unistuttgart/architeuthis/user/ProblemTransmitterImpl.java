@@ -1,7 +1,7 @@
  /*
  * file:        ProblemTransmitterImpl.java
  * created:     08.07.2003
- * last change: 28.04.2006 by Dietmar Lippold
+ * last change: 01.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -142,13 +142,12 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
             RemoteException,
             NotBoundException {
 
-        // Hier wird ein shutdownHook gesetzt. Dieser wird aufgerufen, wenn das
-        // Objekt entfernt wird, z.B. weil das verwendende Programm beendet
-        // wird.
+        // Hier wird ein shutdownHook gesetzt. Dieser wird aufgerufen, wenn
+        // das Objekt entfernt wird, z.B. weil das verwendende Programm
+        // beendet wird.
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
-                    System.err.println("Abbruch durch Benutzer");
                     abortProblem();
                 } catch (RemoteException ex) {
                 }
@@ -186,7 +185,8 @@ public class ProblemTransmitterImpl extends UnicastRemoteObject
      */
     public void abortProblem() throws RemoteException {
         if ((problemManager != null) && processing) {
-            LOGGER.log(Level.CONFIG, "Breche Problemberechnung ab");
+            System.err.println("Abbruch durch Benutzer");
+            LOGGER.log(Level.INFO, "Breche Problemberechnung ab");
             problemManager.abortProblemByUser(this);
         }
     }
