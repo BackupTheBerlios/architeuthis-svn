@@ -1,7 +1,7 @@
 /*
  * file:        ProblemComputation.java
  * created:     19.02.2004
- * last change: 24.04.2006 by Dietmar Lippold
+ * last change: 01.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit, juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
@@ -89,8 +89,8 @@ public class ProblemComputation {
 
     /**
      * Meldet, wenn sowohl ein zentraler wie ein dezentraler RemoteStore
-     * vorhanden ist, zuerst den dezentralen beim zentralen und dann den
-     * zentralen beim dezentralen ab.
+     * vorhanden ist, zuerst den zentralen beim dezentralen und dann den
+     * dezentralen beim zentralen ab.
      *
      * @param centralRemoteStore  Der zentrale RemoteStore oder
      *                            <CODE>null</CODE>, wenn keiner existiert.
@@ -102,8 +102,8 @@ public class ProblemComputation {
 
         try {
             if ((centralRemoteStore != null) && (distRemoteStore != null)) {
-                centralRemoteStore.unregisterRemoteStore(distRemoteStore);
                 distRemoteStore.unregisterRemoteStore(centralRemoteStore);
+                centralRemoteStore.unregisterRemoteStore(distRemoteStore);
                 centralRemoteStore = null;
                 distRemoteStore = null;
             }
@@ -261,6 +261,27 @@ public class ProblemComputation {
      * <code>getPartialProblem</code> der konkreten Instanz des Problems als
      * Anzahl der Teilprobleme der Wert 1 übergeben wird.
      *
+     * @param problem    Zu berechnendes Problem.
+     * @param generator  RemoteStoreGenerator zur Erzeugung des zentralen und
+     *                   der verteilten Speicher.
+     *
+     * @return  Lösung des Problems.
+     *
+     * @throws ProblemComputeException  Ausnahme, die bei der Berechnung eines
+     *                                  Teilproblems auftreten kann.
+     */
+    public Serializable computeProblem(SerializableProblem problem,
+                                       RemoteStoreGenerator generator)
+        throws ProblemComputeException {
+
+        return computeProblem(problem, 1, generator);
+    }
+
+    /**
+     * Berechnet ein <code>Problem</code> lokal, wobei der Methode
+     * <code>getPartialProblem</code> der konkreten Instanz des Problems als
+     * Anzahl der Teilprobleme der Wert 1 übergeben wird.
+     *
      * @param problem  Zu berechnendes Problem.
      *
      * @return  Lösung des Problems.
@@ -271,7 +292,7 @@ public class ProblemComputation {
     public Serializable computeProblem(SerializableProblem problem)
         throws ProblemComputeException {
 
-        return computeProblem(problem, 1);
+        return computeProblem(problem, 1, null);
     }
 
     /**
