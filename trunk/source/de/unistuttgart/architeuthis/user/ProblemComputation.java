@@ -110,8 +110,8 @@ public class ProblemComputation {
         } catch (RemoteException e) {
             // Exception kann nicht auftreten, da auf die RemoteStores nicht
             // über RMI zugegriffen wird.
-            System.err.println("Unmöglicher Fehler aufgetreten in Methode"
-                               + " unregisterRemoteStore");
+            LOGGER.warning("Unmöglicher Fehler aufgetreten in Methode"
+                           + " ProblemComputation.unregisterRemoteStore: " + e);
         }
     }
 
@@ -169,7 +169,7 @@ public class ProblemComputation {
                     // Exception kann nicht auftreten, da auf die RemoteStores
                     // nicht über RMI zugegriffen wird.
                     LOGGER.warning("Unmöglicher Fehler aufgetreten in Methode"
-                                   + " computeProblem: " + e);
+                                   + " ProblemComputation.computeProblem: " + e);
                 }
             } else if (distRemoteStore == null) {
                 distRemoteStore = centralRemoteStore;
@@ -196,7 +196,8 @@ public class ProblemComputation {
                         // Exception kann nicht auftreten, da auf die
                         // RemoteStores nicht über RMI zugegriffen wird.
                         LOGGER.warning("Unmöglicher Fehler aufgetreten in"
-                                       + " Methode computeProblem: " + e);
+                                       + " Methode ProblemComputation.computeProblem: "
+                                       + e);
                     }
                 } else {
                     // Zuerst gegenseitige Abmeldung der RemoteStores.
