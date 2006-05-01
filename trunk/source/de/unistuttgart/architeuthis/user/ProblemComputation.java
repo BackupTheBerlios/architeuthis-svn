@@ -33,7 +33,9 @@
 
 package de.unistuttgart.architeuthis.user;
 
-import java.util.logging.Level;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.logging.Logger;
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -88,24 +90,37 @@ public class ProblemComputation {
     }
 
     /**
-     * Meldet, wenn sowohl ein zentraler wie ein dezentraler RemoteStore
-     * vorhanden ist, zuerst den zentralen beim dezentralen und dann den
-     * dezentralen beim zentralen ab.
+     * Meldet, wenn sowohl ein zentraler wie dezentrale RemoteStore vorhanden
+     * sind, zuerst den zentralen bei den dezentralen und dann die dezentralen
+     * beim zentralen ab und beendete alle RemoteStore.
      *
      * @param centralRemoteStore  Der zentrale RemoteStore oder
      *                            <CODE>null</CODE>, wenn keiner existiert.
-     * @param distRemoteStore     Der dezentrale RemoteStore oder
-     *                            <CODE>null</CODE>, wenn keiner existiert.
+     * @param distRemoteStores    Eine Liste der dezentralen RemoteStores.
      */
     private void unregisterRemoteStore(RemoteStore centralRemoteStore,
-                                       RemoteStore distRemoteStore) {
+                                       List distRemoteStores) {
+        Iterator    distIter;
+        RemoteStore distRemoteStore;
 
         try {
-            if ((centralRemoteStore != null) && (distRemoteStore != null)) {
-                distRemoteStore.unregisterRemoteStore(centralRemoteStore);
-                centralRemoteStore.unregisterRemoteStore(distRemoteStore);
-                centralRemoteStore = null;
-                distRemoteStore = null;
+            distIter = distRemoteStores.iterator();
+            while (distIter.hasNext()) {
+                distRemoteStore = (RemoteStore) distIter.next();
+
+                // Die RemoteStore gegenseitig abmelden.
+                if (centralRemoteStore != null) {
+                    distRemoteStore.unregisterRemoteStore(centralRemoteStore);
+                    centralRemoteStore.unregisterRemoteStore(distRemoteStore);
+                }
+
+                // Den dezentalen RemoteStore beenden.
+                distRemoteStore.terminate();
+            }
+
+            // Den zentalen RemoteStore beenden.
+            if (centralRemoteStore != null) {
+                centralRemoteStore.terminate();
             }
         } catch (RemoteException e) {
             // Exception kann nicht auftreten, da auf die RemoteStores nicht
@@ -144,6 +159,7 @@ public class ProblemComputation {
                                        RemoteStoreGenerator generator)
         throws ProblemComputeException {
 
+        LinkedList                  distRemoteStores;
         ProblemStatisticsCollector  probStatCollector;
         CommunicationPartialProblem commParProb;
         NonCommPartialProblem       nonCommParProb;
@@ -157,24 +173,11 @@ public class ProblemComputation {
         problemId = localProblemNumerator.nextNumber();
         probStatCollector = new ProblemStatisticsCollector(null);
 
-        // Erzeugung und gegenseitige Anmeldung der RemoteStores.
+        // Erzeugung des zentralen RemoteStore.
         if (generator != null) {
             centralRemoteStore = generator.generateCentralRemoteStore();
-            distRemoteStore = generator.generateDistRemoteStore();
-            if ((distRemoteStore != null) && (centralRemoteStore != null)) {
-                try {
-                    distRemoteStore.registerRemoteStore(centralRemoteStore);
-                    centralRemoteStore.registerRemoteStore(distRemoteStore);
-                } catch (RemoteException e) {
-                    // Exception kann nicht auftreten, da auf die RemoteStores
-                    // nicht über RMI zugegriffen wird.
-                    LOGGER.warning("Unmöglicher Fehler aufgetreten in Methode"
-                                   + " ProblemComputation.computeProblem: " + e);
-                }
-            } else if (distRemoteStore == null) {
-                distRemoteStore = centralRemoteStore;
-            }
         }
+        distRemoteStores = new LinkedList();
 
         do {
             probStatCollector.notifyRequestedPartialProblem();
@@ -182,6 +185,30 @@ public class ProblemComputation {
 
             if (partialProblem != null) {
                 probStatCollector.notifyCreatedPartialProblem();
+
+                // Dezentralen RemoteStore erzeugen und RemoteStores
+                // gegenseitig anmelden.
+                if (generator != null) {
+                    distRemoteStore = generator.generateDistRemoteStore();
+                    if (distRemoteStore != null) {
+                        distRemoteStores.add(distRemoteStore);
+                        if (centralRemoteStore != null) {
+                            try {
+                                distRemoteStore.registerRemoteStore(centralRemoteStore);
+                                centralRemoteStore.registerRemoteStore(distRemoteStore);
+                            } catch (RemoteException e) {
+                                // Exception kann nicht auftreten, da auf die
+                                // RemoteStores nicht über RMI zugegriffen wird.
+                                LOGGER.warning("Unmöglicher Fehler aufgetreten in"
+                                               + " Methode"
+                                               + " ProblemComputation.computeProblem: "
+                                               + e);
+                            }
+                        }
+                    } else {
+                        distRemoteStore = centralRemoteStore;
+                    }
+                }
 
                 // Teillösung berechnen
                 probStatCollector.startTimeMeasurement(null);
@@ -201,7 +228,7 @@ public class ProblemComputation {
                     }
                 } else {
                     // Zuerst gegenseitige Abmeldung der RemoteStores.
-                    unregisterRemoteStore(centralRemoteStore, distRemoteStore);
+                    unregisterRemoteStore(centralRemoteStore, distRemoteStores);
                     throw new ProblemComputeException("PartialProblem implementiert"
                                                       + " kein passendes Interface");
                 }
@@ -219,7 +246,7 @@ public class ProblemComputation {
         finalProbStat = probStatCollector.getSnapshot();
 
         // Gegenseitige Abmeldung der RemoteStores.
-        unregisterRemoteStore(centralRemoteStore, distRemoteStore);
+        unregisterRemoteStore(centralRemoteStore, distRemoteStores);
 
         if (solution == null) {
             throw new ProblemComputeException("Problem liefert keine"
