@@ -1,13 +1,11 @@
             Weitere geplante Arbeiten und Ideen für Architeuthis
 
 
-Stand: 28.04.2006
+Stand: 04.05.2006
 
 
 Änderungen größerer Wichtigkeit
 -------------------------------
-
- * Benutzerhandbuch aktualisieren.
 
  * Prüfen, welche Meldungen nach dem lokalen Abbrechen der Ausführung der
    Klassen ProblemTransmitterImpl und OperativeImpl (also nach Auslösen des
