@@ -1,5 +1,5 @@
 Datei          : ReadmeDispatcher
-Letzte Änderung: 15.02.2005 durch Dietmar Lippold
+Letzte Änderung: 04.05.2006 durch Dietmar Lippold
 
 
 This file is part of Architeuthis.
@@ -59,7 +59,7 @@ Das Distributionspaket vom Dispatcher enthält folgende Dateien:
 
 Die Dateien zum Starten des Dispatchers liegen im Verzeichnis runScripts.
 
-Zum Starten des Dispatchers muß man die environment-Variable JAVA_HOME auf
+Zum Starten des Dispatchers kann man die environment-Variable JAVA_HOME auf
 das Verzeichnis vom JRE oder JDK setzen. In der tcsh unter Linux/Unix kann
 der Befehl z.B. folgendermaßen aussehen:
 

@@ -1,5 +1,5 @@
 Datei          : ReadmeClassFileServer
-Letzte Änderung: 15.02.2005 durch Dietmar Lippold
+Letzte Änderung: 04.05.2006 durch Dietmar Lippold
 
 
 This file is part of Architeuthis.
@@ -35,7 +35,7 @@ Benutzung vom ClassFileServer
 
 Die Dateien zum Starten des ClassFileServer liegen im Verzeichnis runScripts.
 
-Vor dem Starten des ClassFileServer muß man die environment-Variable
+Vor dem Starten des ClassFileServer kann man die environment-Variable
 JAVA_HOME auf das Verzeichnis vom JRE oder JDK setzen. In der tcsh unter
 Linux/Unix kann der Befehl z.B. folgendermaßen aussehen:
 

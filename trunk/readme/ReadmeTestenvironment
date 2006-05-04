@@ -1,5 +1,5 @@
 Datei          : ReadmeTestenvironment
-Letzte Änderung: 09.05.2005 durch Dietmar Lippold
+Letzte Änderung: 04.05.2006 durch Dietmar Lippold
 
 
 This file is part of Architeuthis.
@@ -67,7 +67,7 @@ Problems.jar enthaltenen Testprobleme vorhanden.
 
 Alle Scripte liegen im Verzeichnis runScripts.
 
-Zum Starten der Testproblem-Scripte muß man die environment-Variable
+Zum Starten der Testproblem-Scripte kann man die environment-Variable
 JAVA_HOME auf das Verzeichnis vom JRE oder JDK setzen. In der tcsh unter
 Linux/Unix kann der Befehl z.B. folgendermaßen aussehen:
 
