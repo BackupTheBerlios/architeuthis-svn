@@ -37,7 +37,10 @@ folgendes zu tun:
 
 \begin{itemize}
 \item  Die Teilprobleme müssen das Interface \texttt{CommunicationPartialProblem}
-       implementieren.
+       implementieren. Methoden des Teilproblems, die direkt oder indirekt
+       den gemeinsamen Speicher benutzen, können eine \texttt{RemoteException}
+       werfen. Diese wird an die Methode \texttt{compute(RemoteStore)} vom
+       Interface weitergegeben.
 
 \item  Es muß eine konkrete Klasse erstellt werden, die das Interface
        \texttt{RemoteStore} implementiert. In der Regel wird diese Klasse
@@ -125,11 +128,11 @@ nachzuvollziehen. Die Verfahren, bei denen die Lesezugriffe oder die Lese-
 und die Scheibzugriffe auf den dezentralen Speicher erfolgen sind aber in
 der Regel Laufzeit-effizienter.
 
-Es ist jedoch zu beachten, daß die Reihenfolge der Lese- und Schreibzugriffe
-auf den gemeinsamen Speichers durch die Teilprobleme untereinander in
-allen Fällen unbestimmt ist (so wie die Reihenfolge des Eintreffens von
-Teillösungen beim Problem unbestimmt ist), d.h.\ in verschiedenen
-Programmläufen unterschiedlich sein kann.
+Es ist jedoch zu beachten, daß die \emph{Reihenfolge} der Lese- und
+Schreibzugriffe auf den gemeinsamen Speichers durch die Teilprobleme
+untereinander in allen Fällen unbestimmt ist (so wie die Reihenfolge des
+Eintreffens von Teillösungen beim Problem unbestimmt ist), d.h.\ in
+verschiedenen Programmläufen unterschiedlich sein kann.
 
 In jedem Fall sollte ein gemeinsamer Speicher aber folgende Bedingungen
 sicherstellen:
@@ -154,6 +157,23 @@ Die vorhandenen Implementierungen vom gemeinsamen Speicher erfüllen diese
 Bedingungen und bieten alle drei Arten der Kommunikation. Die zu verwendende
 Art der Kommunikation wird beim Aufruf des Konstruktors der Klasse, die das
 Interface \texttt{RemoteStoreGenerator} implementiert, angegeben.
+
+Die im gemeinsamen Speicher zu speichernden und damit zwischen den
+Teilproblemen zu übertragenden Objekte müssen serialisierbar sein, d.h.\ das
+Interface \texttt{java.io.Serializable} implementieren. Es ist zu beachten,
+daß die Objekte bei der Übertragung tief kopiert werden, d.h.\ es werden
+alle über Attribute direkt oder indirekt erreichbaren Objekte mitkopiert.
+Das Kopieren ist von besonderer Bedeutung, wenn die Klasse eines Objekts die
+Methode \texttt{equals} selbst nicht implementiert sondern nur von der
+Klasse \texttt{Objekt} erbt. Die Gleichheit zwischen zwischen zwei Objekten
+ist dann die Instanz-Gleichheit. Wenn dann ein Objekt (z.B.\ als Attribut
+anderer Objekte) mehrfach übertragen wird, sind die Kopien des Objekts beim
+empfangenden Teilproblem nicht mehr gleich (da es sich nicht mehr um die
+gleiche Instanz handelt). Bei Benutzung der Speicher aus dem Package
+\texttt{remotestore} ist aber zumindest sicher gestellt, daß ein Objekte,
+das (indirekt) in mehreren Parametern einer Methode vorkommt, auch beim
+empfangenden Teilproblem als ein Objekt erkannt wird (d.h.\ die Kopie
+mehrfach verwendet wird).
 
 
 \section{Hinweise für den Entwickler}
