@@ -54,6 +54,26 @@ Klassen, die die Interfaces \texttt{RemoteStore} und
 werden. Die Entwicklung eigener Klassen wird im nächsten Abschnitt
 beschrieben.
 
+\begin{center}
+\begin{figure}[ht]
+  \begin{center}
+  \includegraphics[angle=-90,width=250pt,]{speicherZentral}
+  \caption{Zentraler Speicher alleine}
+  \label{speicherZentrall}
+  \end{center}
+\end{figure}
+\end{center}
+
+\begin{center}
+\begin{figure}[ht]
+  \begin{center}
+  \includegraphics[angle=-90,width=250pt]{speicherDezentral}
+  \caption{Zentraler und dezentraler Speicher}
+  \label{speicherDezentrall}
+  \end{center}
+\end{figure}
+\end{center}
+
 Für die Kommunikation der Teilprobleme mit dem gemeinsamen Speicher scheinen
 folgende drei Möglichkeiten relevant, die sich danach unterscheiden, welches
 Ergebnis aufeinanderfolgende Lesezugriffe zweier Teilprobleme auf den
@@ -65,7 +85,7 @@ gemeinsamen Speicher ohne zwischenzeitliche Schreibzugriffe liefern:
 
        Dies kann dadurch realisiert werden, daß nur ein zentraler Speicher
        vorhanden ist, auf den alle Teilprobleme beim Lesen und Schreiben
-       zugreifen.
+       zugreifen (s.\ Abbildung \ref{speicherZentrall}).
 
 \item  Aufeinanderfolgende Lesezugriffe zweier Teilprobleme ohne
        zwischenzeitliche Schreibzugriffe können vorübergehend einen
@@ -75,26 +95,27 @@ gemeinsamen Speicher ohne zwischenzeitliche Schreibzugriffe liefern:
 
        Dieses Verfahren kann dadurch realisiert werden, daß ein zentraler
        Speicher und zusätzlich auf jedem Operative ein dezentraler Speicher
-       vorhanden ist. Das Schreiben aller Teilprobleme erfolgt in den
-       zentralen Speicher und ist erst abgeschlossen, wenn das Schreiben
-       auch auf allen dezentralen Speichern erfolgt ist. Dieser Vorgang
-       erfolgt unterbrechungsfrei, d.h.\ ohne daß während des Schreibens in
-       die dezentralen Speicher ein anderes Teilproblem in den zentralen
-       Speicher schreibt. Das Lesen erfolgt aus den dezentralen Speichern.
+       vorhanden ist (s.\ Abbildung \ref{speicherDezentrall}). Das Schreiben
+       aller Teilprobleme erfolgt in den zentralen Speicher und ist erst
+       abgeschlossen, wenn das Schreiben auch auf allen dezentralen
+       Speichern erfolgt ist. Dieser Vorgang erfolgt unterbrechungsfrei,
+       d.h.\ ohne daß während des Schreibens in die dezentralen Speicher ein
+       anderes Teilproblem in den zentralen Speicher schreibt. Das Lesen
+       erfolgt aus den dezentralen Speichern.
 
 \item  Aufeinanderfolgende Lesezugriffe zweier Teilprobleme ohne
        zwischenzeitliche Schreibzugriffe können dauerhaft einen
        unterschiedlichen Wert liefert.
 
        Dies passiert, wenn ein zentraler Speicher und zusätzlich auf jedem
-       Operative ein dezentraler Speicher vorhanden ist und sowohl
-       Lesezugriffe wie Schreibzugriffe der Teilprobleme (erst einmal) nur
-       auf den dezentralen Speicher erfolgen. Schreibzugriffe werden dann
-       anschließend (d.h.\ nebenläufig zur weiteren Berechnung des
-       Teilproblems und zu weiteren Schreibzugriffen anderer Teilprobleme
-       auf ihren jeweiligen dezentralen Speicher) an den zentralen Speicher
-       weitergeleitet, der sie wiederum an die dezentralen Speicher
-       weiterleitet.
+       Operative ein dezentraler Speicher vorhanden ist (s.\ Abbildung
+       \ref{speicherDezentrall}) und sowohl Lesezugriffe wie Schreibzugriffe
+       der Teilprobleme (erst einmal) nur auf den dezentralen Speicher
+       erfolgen. Schreibzugriffe werden dann anschließend (d.h.\ nebenläufig
+       zur weiteren Berechnung des Teilproblems und zu weiteren
+       Schreibzugriffen anderer Teilprobleme auf ihren jeweiligen
+       dezentralen Speicher) an den zentralen Speicher weitergeleitet, der
+       sie wiederum an die dezentralen Speicher weiterleitet.
 \end{enumerate}
 
 Wenn aufeinanderfolgende Lesezugriffe zweier Teilprobleme auf den
