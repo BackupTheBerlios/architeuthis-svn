@@ -13,7 +13,7 @@ Operative gelegentlich ein Fehler in der JVM auf, der zu deren Absturz
 führte.
 
 
-Stand 25.04.2006
+Stand 04.05.2006
 ----------------
 
  * Ein deadlock-Problem beseitigt, das auftreten konnte, wenn die
@@ -60,6 +60,10 @@ Stand 25.04.2006
    long zu int geändert.
 
  * Level der logging-Meldungen des Dispatcher überarbeitet.
+
+ * Wenn ein Fehler bei der Ausführung einer Methode eines Problems oder
+   Teilproblems auftritt, wird dem Benutzer jetzt ein Stack-Trace in der
+   Fehlermeldung übermittelt.
 
 
 Release 1.4

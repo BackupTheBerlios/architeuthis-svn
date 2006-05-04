@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 01.05.2006 by Dietmar Lippold
+ * last change: 04.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -394,14 +394,42 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
     }
 
     /**
-     * Übermittelt dem Dispatcher eine Fehlermeldung und meldet den distRemoteStore ab.
-     * Wenn dies nicht möglich ist, wird der Operative beendet.
+     * Liefert einen Text, der eine Beschreibung der Ausnahme und einen
+     * Stack-Trace enthält.
      *
-     * @param exceptionCode     Integerwert, der die Ausnahme charakterisisert.
-     * @param exceptionMessage  Fehlermeldung, die die Ausnahme näher beschreibt.
+     * @return  Einen Text, der eine Beschreibung der Ausnahme und einen
+     *          Stack-Trace enthält.
+     */
+    String exceptionMessage(Throwable throwable) {
+        StackTraceElement[] traceElements;
+        StringBuffer        message;
+
+        message = new StringBuffer();
+        message.append(throwable.toString() + "\n");
+        message.append("Auf dem Operative >>>\n");
+
+        traceElements = throwable.getStackTrace();
+        for (int e = 0; e < traceElements.length; e++) {
+            message.append("    at " + traceElements[e].toString() + "\n");
+        }
+
+        message.append("<<<");
+
+        return message.toString();
+    }
+
+    /**
+     * Übermittelt dem Dispatcher eine Fehlermeldung und meldet den
+     * distRemoteStore ab. Wenn dies nicht möglich ist, wird der Operative
+     * beendet.
+     *
+     * @param exceptionCode     Wert, der die Ausnahme charakterisisert.
+     * @param exceptionMessage  Fehlermeldung, die die Ausnahme näher
+     *                          beschreibt. 
      */
     synchronized void reportException(int exceptionCode,
                                       String exceptionMessage) {
+
         try {
             computeManager.reportException(
                 this,
@@ -447,7 +475,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             versuch = 1;
         } catch (Exception e) {
             exceptionCode = ExceptionCodes.REMOTE_STORE_EXCEPTION;
-            exceptionMessage = e.getMessage();
+            exceptionMessage = exceptionMessage(e);
             LOGGER.log(Level.WARNING,
                        "Abmeldung von RemoteStore fehlgeschlagen: " + e);
             versuch = CONNECT_RETRIES + 1;
@@ -467,7 +495,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                 transmitted = true;
             } catch (RemoteException e) {
                 exceptionCode = ExceptionCodes.PARTIALSOLUTION_SEND_EXCEPTION;
-                exceptionMessage = e.getMessage();
+                exceptionMessage = exceptionMessage(e);
                 try {
                     LOGGER.log(Level.WARNING,
                                "Teilergebnis konnte nicht zurückgegeben werden");

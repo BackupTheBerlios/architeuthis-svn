@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeComputing.java
  * created:     26.04.2004
- * last change: 05.03.2006 by Dietmar Lippold
+ * last change: 04.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -105,6 +105,7 @@ public class OperativeComputing extends Thread {
     synchronized void fetchPartialProblem(PartialProblem parProb,
                                           RemoteStore store)
         throws ProblemComputeException {
+
         /*
          * note: Um die hässlichen instanceof-Tests in der run() Methode
          *       loszuwerden, könnte man aus dieser Methode zwei Methoden
@@ -113,11 +114,12 @@ public class OperativeComputing extends Thread {
          *       Allerdings würde das die instanceof Tests wohl nur in die
          *       OperativeImpl Klasse verschieben... (MW)
          */
-        LOGGER.entering(OperativeComputing.class.getName(), "fetchPartialProblem",
-                new Object[] {parProb, store});
+        LOGGER.entering(OperativeComputing.class.getName(),
+                        "fetchPartialProblem",
+                        new Object[] {parProb, store});
 
-
-        LOGGER.log(Level.FINE, "OperativeComputing hat Aufgabe vom ComputeManager empfangen.");
+        LOGGER.log(Level.FINE,
+                   "OperativeComputing hat Aufgabe vom ComputeManager empfangen.");
 
         if (partialProblem == null) {
             partialProblem = parProb;
@@ -132,8 +134,8 @@ public class OperativeComputing extends Thread {
     /**
      * Ermittelt, ob der Thread gerade ein Teilproblem berechnet.
      *
-     * @return <code>true</code>, falls der Operative ein Teilproblem berechnet,
-     *         sonst <code>false</code>.
+     * @return  <code>true</code>, falls der Operative ein Teilproblem
+     *          berechnet, sonst <code>false</code>.
      */
     boolean isComputing() {
         return (partialProblem != null);
@@ -200,17 +202,21 @@ public class OperativeComputing extends Thread {
             } catch (ProblemComputeException e) {
                 partialProblem = null;
                 if (LOGGER.isLoggable(Level.WARNING)) {
-                    LOGGER.log(Level.WARNING, "ProblemComputeException ist aufgetreten: " + e);
+                    LOGGER.log(Level.WARNING,
+                               "ProblemComputeException ist aufgetreten: " + e);
                 }
                 operativeImpl.reportException(
-                    ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
+                    ExceptionCodes.PARTIALPROBLEM_ERROR,
+                    operativeImpl.exceptionMessage(e));
             } catch (RuntimeException e) {
                 partialProblem = null;
                 if (LOGGER.isLoggable(Level.WARNING)) {
-                    LOGGER.log(Level.WARNING, "RuntimeException ist aufgetrete: " + e);
+                    LOGGER.log(Level.WARNING,
+                               "RuntimeException ist aufgetrete: " + e);
                 }
                 operativeImpl.reportException(
-                    ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
+                    ExceptionCodes.PARTIALPROBLEM_ERROR,
+                    operativeImpl.exceptionMessage(e));
             } catch (ThreadDeath e) {
                 // Dieser Error darf nicht abgefangen werden.
                 throw e;
@@ -220,7 +226,8 @@ public class OperativeComputing extends Thread {
                     LOGGER.log(Level.WARNING, "Error ist aufgetreten: " + e);
                 }
                 operativeImpl.reportException(
-                    ExceptionCodes.PARTIALPROBLEM_ERROR, e.toString());
+                    ExceptionCodes.PARTIALPROBLEM_ERROR,
+                    operativeImpl.exceptionMessage(e));
             }
         }
     }

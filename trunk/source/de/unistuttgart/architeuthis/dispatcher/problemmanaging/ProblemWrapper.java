@@ -1,7 +1,7 @@
 /*
  * file:        ProblemWrapper.java
  * created:     29.06.2003
- * last change: 24.04.2006 by Dietmar Lippold
+ * last change: 04.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
@@ -350,6 +350,31 @@ class ProblemWrapper extends Thread {
     }
 
     /**
+     * Liefert einen Text, der eine Beschreibung der Ausnahme und einen
+     * Stack-Trace enthält.
+     *
+     * @return  Einen Text, der eine Beschreibung der Ausnahme und einen
+     *          Stack-Trace enthält.
+     */
+    private String exceptionMessage(Throwable throwable) {
+        StackTraceElement[] traceElements;
+        StringBuffer        message;
+
+        message = new StringBuffer();
+        message.append(throwable.toString() + "\n");
+        message.append("Auf dem Dispatcher >>>\n");
+
+        traceElements = throwable.getStackTrace();
+        for (int e = 0; e < traceElements.length; e++) {
+            message.append("    at " + traceElements[e].toString() + "\n");
+        }
+
+        message.append("<<<");
+
+        return message.toString();
+    }
+
+    /**
      * Fragt das Problem nach der Gesamtlösung. Falls diese existiert, wird sie
      * an den Problem-Übermittler gesendet, ausstehende Teilprobleme werden
      * abgebrochen und es wird die Methode <CODE>terminate()</CODE> aufgerufen.
@@ -364,7 +389,7 @@ class ProblemWrapper extends Thread {
                 this,
                 null,
                 ExceptionCodes.SOLUTION_CREATE_EXCEPTION,
-                e.getMessage());
+                exceptionMessage(e));
             solution = null;
             terminate();
         }
@@ -457,7 +482,7 @@ class ProblemWrapper extends Thread {
                         this,
                         null,
                         ExceptionCodes.PARTIALPROBLEM_CREATE_EXCEPTION,
-                        e.toString());
+                        exceptionMessage(e));
                     parPropWrapper = null;
                     terminate();
                     break;
@@ -467,7 +492,7 @@ class ProblemWrapper extends Thread {
                         this,
                         null,
                         ExceptionCodes.PARTIALPROBLEM_CREATE_EXCEPTION,
-                        e.toString());
+                        exceptionMessage(e));
                     parPropWrapper = null;
                     terminate();
                     break;
@@ -522,7 +547,7 @@ class ProblemWrapper extends Thread {
                             this,
                             parPropWrapper,
                             ExceptionCodes.PARTIALSOLUTION_COLLECT_EXCEPTION,
-                            e.toString());
+                            exceptionMessage(e));
                         terminate();
                         break;
                     }
@@ -580,7 +605,7 @@ class ProblemWrapper extends Thread {
                     this,
                     parPropWrapper,
                     ExceptionCodes.REMOTE_STORE_EXCEPTION,
-                    e.toString());
+                    exceptionMessage(e));
             }
         }
 
