@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!-- build-file fuer Ant zum Projekt Architeuthis                     -->
-<!-- Letzte Aenderung: 28.04.2006 durch Dietmar Lippold               -->
+<!-- Letzte Aenderung: 05.05.2006 durch Dietmar Lippold               -->
 
 <!-- Hinweise zur Benutzung werden nach Aufruf von "ant" ohne weitere -->
 <!-- Parameter ausgegeben.                                            -->
@@ -62,7 +62,7 @@
     <rootfileset dir="${build}"
                  includes="de/unistuttgart/architeuthis/operative/OperativeImpl_Stub.class"/>
     <rootfileset dir="${build}"
-                 includes="de/unistuttgart/architeuthis/user/ProblemTransmitterImpl_Stub.class"/>
+                 includes="de/unistuttgart/architeuthis/facade/ProblemTransmitterImpl_Stub.class"/>
   </classfileset>
 
   <classfileset id="operativeClasses" dir="${build}">
@@ -79,7 +79,7 @@
 
   <classfileset id="userClasses" dir="${build}">
     <rootfileset dir="${build}"
-                 includes="de/unistuttgart/architeuthis/user/*"/>
+                 includes="de/unistuttgart/architeuthis/facade/*"/>
     <rootfileset dir="${build}"
                  includes="de/unistuttgart/architeuthis/abstractproblems/*"/>
     <rootfileset dir="${build}"
@@ -120,7 +120,7 @@
            includes="de/unistuttgart/architeuthis/dispatcher/**/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/*.java,
                      de/unistuttgart/architeuthis/operative/OperativeImpl.java,
-                     de/unistuttgart/architeuthis/user/ProblemTransmitterImpl.java,
+                     de/unistuttgart/architeuthis/facade/ProblemTransmitterImpl.java,
                      de/unistuttgart/architeuthis/misc/**/*.java,
                      de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
                      de/unistuttgart/architeuthis/userinterfaces/**/*.java"
@@ -154,7 +154,7 @@
            destdir="${build}"
            encoding="ISO-8859-1"
            debug="true"   
-           includes="de/unistuttgart/architeuthis/user/*.java,
+           includes="de/unistuttgart/architeuthis/facade/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/*.java,
                      de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl.java,
                      de/unistuttgart/architeuthis/remotestore/**/*.java,
@@ -175,7 +175,7 @@
            debug="true"   
            includes="de/unistuttgart/architeuthis/testenvironment/**/*.java,
                      de/unistuttgart/architeuthis/abstractproblems/*.java,
-                     de/unistuttgart/architeuthis/user/ProblemTransmitterImpl.java,
+                     de/unistuttgart/architeuthis/facade/ProblemTransmitterImpl.java,
                      de/unistuttgart/architeuthis/misc/Miscellaneous.java,
                      de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
                      de/unistuttgart/architeuthis/userinterfaces/**/*.java"
@@ -243,7 +243,7 @@
           classname="de.unistuttgart.architeuthis.operative.OperativeImpl"/>
     <rmic base="${build}"
           stubversion="1.2"
-          classname="de.unistuttgart.architeuthis.user.ProblemTransmitterImpl"/>
+          classname="de.unistuttgart.architeuthis.facade.ProblemTransmitterImpl"/>
 
     <mkdir dir="${deploy}"/>
 
@@ -296,7 +296,7 @@
 
     <rmic base="${build}"
           stubversion="1.2"
-          classname="de.unistuttgart.architeuthis.user.ProblemTransmitterImpl"/>
+          classname="de.unistuttgart.architeuthis.facade.ProblemTransmitterImpl"/>
     <rmic base="${build}"
           stubversion="1.2"
           classname="de.unistuttgart.architeuthis.dispatcher.problemmanaging.ProblemManagerImpl"/>

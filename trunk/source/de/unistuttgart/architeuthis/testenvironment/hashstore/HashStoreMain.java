@@ -1,7 +1,7 @@
 /*
  * file:        HashStoreMain.java
  * created:     15.02.2005 von Michael Wohlfart
- * last change: 12.04.2005 von Dietmar Lippold
+ * last change: 05.05.2005 von Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *
  * This software was developed at the Institute for Intelligent Systems at the
@@ -35,7 +35,7 @@ import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
-import de.unistuttgart.architeuthis.user.ProblemComputation;
+import de.unistuttgart.architeuthis.facade.ProblemComputation;
 import de.unistuttgart.architeuthis.remotestore.hashmap.RemoteHashMapGenerator;
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 

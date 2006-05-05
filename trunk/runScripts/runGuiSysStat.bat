@@ -19,6 +19,6 @@ set ARGS=%ARGS% %DISPATCHER_HOST%:%DISPATCHER_PORT%
 
 
 REM die Main-Klasse
-set MAIN=de.unistuttgart.architeuthis.user.SystemGUIStatisticsReader
+set MAIN=de.unistuttgart.architeuthis.facade.SystemGUIStatisticsReader
 
 %JAVA% -cp %DEPLOY_DIR%/User.jar %JVMPAR% %MAIN% %ARGS%

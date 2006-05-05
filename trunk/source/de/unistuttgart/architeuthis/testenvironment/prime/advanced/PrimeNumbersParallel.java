@@ -1,7 +1,7 @@
 /*
  * file:        PrimeNumbersParallel.java
  * created:     <???>
- * last change: 24.04.2006 by Dietmar Lippold
+ * last change: 05.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -41,7 +41,7 @@ import java.util.ArrayList;
 
 import de.unistuttgart.architeuthis.userinterfaces.ProblemComputeException;
 import de.unistuttgart.architeuthis.systeminterfaces.UserProblemTransmitter;
-import de.unistuttgart.architeuthis.user.ProblemTransmitterImpl;
+import de.unistuttgart.architeuthis.facade.ProblemTransmitterImpl;
 
 /**
  * Beinhaltet Methoden zur verteilten Errechnung von Primzahlen. Nach außen

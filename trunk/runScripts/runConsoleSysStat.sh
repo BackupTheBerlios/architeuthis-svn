@@ -13,7 +13,7 @@ JVMPAR=" "
 JVMPAR="$JVMPAR -Djava.security.policy=$CONFIG_DIR/$POLICY_CONF"
 
 # die Main-Klasse 
-MAIN="de.unistuttgart.architeuthis.user.SystemTextStatisticsReader"
+MAIN="de.unistuttgart.architeuthis.facade.SystemTextStatisticsReader"
 
 exec $JAVA $JVMPAR -cp $DEPLOY_DIR/User.jar $MAIN $DISPATCHER_HOST:$DISPATCHER_PORT
 

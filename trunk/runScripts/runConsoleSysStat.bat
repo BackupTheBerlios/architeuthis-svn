@@ -14,6 +14,6 @@ set JVMPAR=
 set JVMPAR=%JVMPAR% -Djava.security.policy=%CONFIG_DIR%/%POLICY_CONF%
 
 REM die Main-Klasse 
-set MAIN=de.unistuttgart.architeuthis.user.SystemTextStatisticsReader
+set MAIN=de.unistuttgart.architeuthis.facade.SystemTextStatisticsReader
 
 %JAVA% %JVMPAR% -cp %DEPLOY_DIR%/User.jar %MAIN% %DISPATCHER_HOST%:%DISPATCHER_PORT%

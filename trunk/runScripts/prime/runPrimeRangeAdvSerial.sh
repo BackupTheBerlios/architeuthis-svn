@@ -26,7 +26,7 @@ ARGS="$ARGS -c de.unistuttgart.architeuthis.testenvironment.prime.advanced.Prime
 # angegeben werden.
 
 # die Main-Klasse
-MAIN="de.unistuttgart.architeuthis.user.ProblemTransmitterApp"
+MAIN="de.unistuttgart.architeuthis.facade.ProblemTransmitterApp"
 
 exec $JAVA -cp $DEPLOY_DIR/User.jar:$CLASS_FILE_PATH $JVMPAR $MAIN $ARGS $@
 

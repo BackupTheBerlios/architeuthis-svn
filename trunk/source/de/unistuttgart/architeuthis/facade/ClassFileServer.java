@@ -48,11 +48,11 @@
  *  - added logger
  *  - extra method of usage
  *
- * Last change: 17. Apr 2006 by Dietmar Lippold
+ * Last change: 05. May 2006 by Dietmar Lippold
  */
 
 
-package de.unistuttgart.architeuthis.user;
+package de.unistuttgart.architeuthis.facade;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -27,6 +27,6 @@ REM set ARGS=%ARGS% -f %SOLUTIONFILE%
 # angegeben werden.
 
 REM die Main-Klasse
-set MAIN=de.unistuttgart.architeuthis.user.ProblemTransmitterApp
+set MAIN=de.unistuttgart.architeuthis.facade.ProblemTransmitterApp
 
 %JAVA% -cp %DEPLOY_DIR%/User.jar;%CLASS_FILE_PATH% %JVMPAR% %MAIN% %ARGS% %1 %2

@@ -27,6 +27,6 @@ REM Auf der Kommandozeile können die Optionen -d und entweder -p oder -n
 REM angegeben werden.
 
 REM die Main-Klasse
-set MAIN=de.unistuttgart.architeuthis.user.ProblemTransmitterApp
+set MAIN=de.unistuttgart.architeuthis.facade.ProblemTransmitterApp
 
 %JAVA% -cp %DEPLOY_DIR%/User.jar;%CLASS_FILE_PATH% %JVMPAR% %MAIN% %ARGS% %1 %2

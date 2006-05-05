@@ -23,7 +23,7 @@ ARGS="$ARGS -c de.unistuttgart.architeuthis.testenvironment.fail.FailProblemImpl
 # angegeben werden.
 
 # die Main-Klasse
-MAIN="de.unistuttgart.architeuthis.user.ProblemTransmitterApp"
+MAIN="de.unistuttgart.architeuthis.facade.ProblemTransmitterApp"
 
 exec $JAVA -cp $DEPLOY_DIR/User.jar $JVMPAR $MAIN $ARGS $@
 

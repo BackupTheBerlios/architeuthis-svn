@@ -340,7 +340,7 @@ Mini-Webserver, der nur dazu dient, Klassen an RMI-Applikationen
 auszuliefern. Die Benutzung ist sehr einfach. Man starte den
 ClassFileServer mit folgender Kommandozeile:
 
-{\tt java de.unistuttgart.architeuthis.user.ClassFileServer <port> <root>}
+{\tt java de.unistuttgart.architeuthis.facade.ClassFileServer <port> <root>}
 
 Dabei ist:
 
@@ -362,8 +362,8 @@ die class-Dateien ein eigenes Verzeichnis erzeugen.
 \section{Die Problem-Verarbeitung}
 Zur Verarbeitung eines (serialisierbaren) Problems steht als Schnittstelle
 zwischen Benutzer und Compute-System die Klasse
-{\tt de...user.ProblemCom\-putation} zur Verfügung. Diese bieten zwei Arten
-von Methoden:
+{\tt de...facade.ProblemCom\-putation} zur Verfügung. Diese bieten zwei
+Arten von Methoden:
 
 \begin{description}
 \item[transmitProblem] Diese Methode überträgt ein übergebenes
@@ -399,7 +399,7 @@ werden.
 Für den Ausnahmefall, dass ein Problem nicht serialisierbar ist, kann das
 Problem vom Compute-Manager geladen und vollständig auf dem Compute-System
 ausgeführt werden. Dazu steht die Klasse
-\texttt{de...user.ProblemTransmit\-terImpl} zur Verfügung. Sie bietet
+\texttt{de...facade.ProblemTransmit\-terImpl} zur Verfügung. Sie bietet
 außerdem, auch bei der Übertragung einer Instanz eines serialisierbaren
 Problems, die Möglichkeit, während der Berechnung des Problems auf dem
 Compute-System nebenläufig eine Problem-Statistik oder eine System-Statistik
@@ -435,7 +435,7 @@ zusam\-men mit den anderen Klassen dieses Packages betrachtet werden.
 
 Für den Sonderfall, dass ein Problem komplett eigenständig ist und keine
 Daten mit anderen Programmen austauscht und keine Eingaben vom Benutzer
-benötigt, steht die Klasse \texttt{de...user.ProblemTransmitterApp} zur
+benötigt, steht die Klasse \texttt{de...facade.ProblemTransmitterApp} zur
 Verfügung. Der Vorteil bei der Benutzung liegt darin, daß zu einem
 Problem keine extra Klasse zur Ausführung des Problems erstellt werden
 braucht und daß automatisch eine Problem- und eine System-Statistik
@@ -444,7 +444,7 @@ angezeigt werden kann.
 Die Kommandozeile zum Ausführen der Klasse ist:
 
 {\tt java -Djava.security.policy=transmitter.pol\\
-  de.unistuttgart.architeuthis.user.ProblemTransmitterApp\\
+  de.unistuttgart.architeuthis.facade.ProblemTransmitterApp\\
   -r <ProblemManager> -u <packageURL> -c <klassenname>\\
   -f <dateiname> -s -d -n -p}
 
@@ -455,7 +455,7 @@ Die Kommandozeile zum Ausführen der Klasse ist:
   relativ oder absolut angegeben werden. Siehe dazu das Kapitel
   \hyperref[sicherh]{Sicherheit}.
 
-\item[de.unistuttgart.architeuthis.user.ProblemTransmitterApp]
+\item[de.unistuttgart.architeuthis.facade.ProblemTransmitterApp]
   Die Haupt-Klasse der Kommandozeilen-Applikation.
 
 \item[-r <ProblemManager>]
@@ -527,10 +527,11 @@ abgebrochen werden.
 
 \section{Der Laufzeitvergleich}
 
-Die Klasse \texttt{de...user.RuntimeComparison} dient zum Vergleich zwischen
-der Berechnung eines Problems auf dem lokalen Computer und der Berechnung
-auf dem Compute-System. Sie gibt jeweils die benötigte Zeit und die L"osung
-von beiden Berechnungen aus oder speichert die L"osungen in Dateien.
+Die Klasse \texttt{de...facade.RuntimeComparison} dient zum Vergleich
+zwischen der Berechnung eines Problems auf dem lokalen Computer und der
+Berechnung auf dem Compute-System. Sie gibt jeweils die benötigte Zeit und
+die L"osung von beiden Berechnungen aus oder speichert die L"osungen in
+Dateien.
 
 \subsection{Durchführung der Berechnungen}
 
@@ -547,7 +548,7 @@ und durch alle verfügbaren Operatives berechnet.
 Die Kommandozeile zum Aufrufen der Testumgebung ist:
 
 {\tt java -Djava.security.policy=transmitter.pol\\
-  de.unistuttgart.architeuthis.user.RuntimeComparison\\
+  de.unistuttgart.architeuthis.facade.RuntimeComparison\\
   -r <ProblemManager> -u <packageURL>\\
   -c <klassenname> -f <dateiname> -d}
 
@@ -559,7 +560,7 @@ Dabei ist:
   sich nicht in einer jar-Datei befinden; der Pfad muss also relativ
   oder absolut angegeben werden. Siehe Kapitel \hyperref[sicherh]{Sicherheit}.
 
-\item[de.unistuttgart.architeuthis.user.RuntimeComparison]
+\item[de.unistuttgart.architeuthis.facade.RuntimeComparison]
   Die Haupt-Klasse des Laufzeitvergleichs.
 
 \item[-r <computesystem>] 
@@ -625,13 +626,13 @@ Oberfläche erforderlich.
 Aufruf der Version mit eigenem Fenster:
 
 {\tt java -Djava.security.policy=statisticreader.pol\\
-     de.unistuttgart.architeuthis.user.SystemGUIStatisticsReader\\
+     de.unistuttgart.architeuthis.facade.SystemGUIStatisticsReader\\
      <computeSystem>}
 
 Aufruf der Konsolen-Version:
 
 {\tt java -Djava.security.policy=statisticreader.pol\\
-     de.unistuttgart.architeuthis.user.SystemTextStatisticsReader\\
+     de.unistuttgart.architeuthis.facade.SystemTextStatisticsReader\\
      <computeSystem>}
 
 \begin{description}
@@ -641,10 +642,10 @@ Aufruf der Konsolen-Version:
   oder absolut angegeben werden. Siehe dazu das Kapitel
   \hyperref[sicherh]{Sicherheit}.
 
-\item[de.unistuttgart.architeuthis.user.SystemGUIStatisticsReader]
+\item[de.unistuttgart.architeuthis.facade.SystemGUIStatisticsReader]
   Die Haupt-Klasse der Statistik-Anzeige in einem eigenen Fenster.
 
-\item[de.unistuttgart.architeuthis.user.SystemTextStatisticsReader]
+\item[de.unistuttgart.architeuthis.facade.SystemTextStatisticsReader]
   Die Haupt-Klasse der textuellen Statistik-Anzeige.
 
 \item[<computeSystem>]

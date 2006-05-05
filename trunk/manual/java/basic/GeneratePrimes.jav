@@ -1,7 +1,7 @@
 /*
  * file:        GeneratePrimes.java
  * created:     <???>
- * last change: 24.04.2006 by Dietmar Lippold
+ * last change: 05.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -34,7 +34,7 @@
 
 package de.unistuttgart.architeuthis.testenvironment.prime.basic;
 
-import de.unistuttgart.architeuthis.user.ProblemComputation;
+import de.unistuttgart.architeuthis.facade.ProblemComputation;
 import de.unistuttgart.architeuthis.userinterfaces.develop.SerializableProblem;
 
 /**

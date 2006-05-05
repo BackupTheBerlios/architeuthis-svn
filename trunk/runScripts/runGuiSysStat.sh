@@ -17,7 +17,7 @@ ARGS=" "
 ARGS="$ARGS $DISPATCHER_HOST:$DISPATCHER_PORT"
 
 # die Main-Klasse
-MAIN="de.unistuttgart.architeuthis.user.SystemGUIStatisticsReader"
+MAIN="de.unistuttgart.architeuthis.facade.SystemGUIStatisticsReader"
 
 exec $JAVA -cp $DEPLOY_DIR/User.jar $JVMPAR $MAIN $ARGS
 

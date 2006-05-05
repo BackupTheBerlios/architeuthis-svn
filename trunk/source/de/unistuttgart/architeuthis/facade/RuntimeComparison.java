@@ -1,13 +1,18 @@
 /*
  * file:        RuntimeComparison.java
  * created:     <???>
- * last change: 15.04.2006 by Dietmar Lippold
+ * last change: 05.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
  *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -25,15 +30,10 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
-package de.unistuttgart.architeuthis.user;
+package de.unistuttgart.architeuthis.facade;
 
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -354,7 +354,7 @@ public class RuntimeComparison {
 
                 // einen ConsoleHandler finden:
                 ConsoleHandler consoleHandler = null;
-                for (int i=0; i < handlers.length; i++) {
+                for (int i = 0; i < handlers.length; i++) {
                     if (handlers[i] instanceof ConsoleHandler) {
                         consoleHandler = (ConsoleHandler) handlers[i];
                     }

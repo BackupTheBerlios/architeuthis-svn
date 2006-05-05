@@ -1,5 +1,5 @@
 Datei          : ReadmeProblemTransmitterApp
-Letzte Änderung: 15.02.2005 durch Dietmar Lippold
+Letzte Änderung: 05.05.2006 durch Dietmar Lippold
 
 
 This file is part of Architeuthis.
@@ -36,7 +36,7 @@ Benutzung von ProblemTransmitterApp
 -----------------------------------
 
 Die Klasse befindet sich im Packet User.jar unter dem Package-Pfad
-de.unistuttgart.architeuthis.user.ProblemTransmitterApp.
+de.unistuttgart.architeuthis.facade.ProblemTransmitterApp.
 
 Bei der Ausführung der Klasse muß als Komandozeilenargument vom Befehl
 "java" folgendes angegeben werden:
