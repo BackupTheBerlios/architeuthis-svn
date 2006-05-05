@@ -13,7 +13,7 @@ Operative gelegentlich ein Fehler in der JVM auf, der zu deren Absturz
 führte.
 
 
-Stand 04.05.2006
+Stand 05.05.2006
 ----------------
 
  * Ein deadlock-Problem beseitigt, das auftreten konnte, wenn die
@@ -64,6 +64,8 @@ Stand 04.05.2006
  * Wenn ein Fehler bei der Ausführung einer Methode eines Problems oder
    Teilproblems auftritt, wird dem Benutzer jetzt ein Stack-Trace in der
    Fehlermeldung übermittelt.
+
+ * Das Package user umbenannt in facade.
 
 
 Release 1.4
