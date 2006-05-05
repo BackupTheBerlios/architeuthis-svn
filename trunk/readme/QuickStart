@@ -1,0 +1,111 @@
+Datei          : QuickStart
+Letzte Änderung: 05.05.2006 durch Dietmar Lippold
+
+
+This file is part of Architeuthis.
+
+Architeuthis is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+Architeuthis is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Architeuthis; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+Allgemein
+---------
+
+Diese Datei beschreibt die konkreten Schritte, um zwei Testprogramme von
+Architeuthis auszuführen und so die Funktionsfähigkeit einer Installation
+von Architeuthis zu überprüfen.
+
+
+Anleitung für Unix/Linux
+------------------------
+
+Im folgenden sind die einzugebenden Befehle direkt angegeben. Zeilen mit
+einem Doppelkreuz am Anfang sind Kommentarzeilen.
+
+# Man leg ein neues Verzeichnis an und wechselt in dieses.
+mkdir Architeuthis
+cd Architeuthis
+
+# Man downloaded die Datei testenvironment-unix.tar.gz von
+# http://developer.berlios.de/project/showfiles.php?group_id=1370
+...
+
+# Man entpackt die Datei.
+tar -zxf testenvironment-unix.tar.gz
+
+# Man wechselt in das Verzeichnis, in dem die Problem-Klassen liegen und
+# entpackt diese.
+cd testenvironment/classes/
+jar -xf Problems.jar
+
+# Man wechselt in das Verzeichnis mit dem ersten Testprogramm.
+cd ../runScripts/prime
+
+# Man führt ein Testprogramm (lokal) mit Architeuthis aus.
+./runPrimeRangeBasicLocal.sh
+
+# Wenn eine Menge von Primzahlen ausgegeben wurde, war der erste Test
+# erfolgreich.
+
+# Man wechselt in das am Anfang angelegte Verzeichnis.
+cd ../../..
+
+# Man downloaded die Dateien dispatcher.tar.gz und operative.tar.gz von
+# http://developer.berlios.de/project/showfiles.php?group_id=1370
+...
+
+# Man entpackt die Dateien.
+tar -zxf dispatcher.tar.gz
+tar -zxf operative.tar.gz
+
+# Man macht vier neue Fenster auf (auf die nachfolgend über ihre Nummer bei
+# der Erzeugung Bezug genommen wird). Das bisherige Fenster wird als
+# "ursprüngliches Fenster" bezeichnet.
+xterm &
+xterm &
+xterm &
+xterm &
+
+# Man wechselt im ersten Fenster in das Verzeichnis mit den Start-Script
+# für den Class-File-Server und startet diesen.
+cd testenvironment/runScripts
+./runClassFileServer.sh
+
+# Man wechselt im zweiten Fenster in das Verzeichnis mit dem Start-Script
+# für den Dispatcher und startet diesen.
+cd dispatcher/runScripts/
+./runDispatcher.sh
+
+# Man wechselt im dritten Fenster in das Verzeichnis mit den Start-Script
+# für den Operative und startet den ersten Operative.
+cd operative/runScripts/
+./runOperative.sh
+
+# Man wechselt im vierten Fenster in das Verzeichnis mit den Start-Script
+# für den Operative und startet den zweiten Operative.
+cd operative/runScripts/
+./runOperative.sh
+
+# Man wechselt im ursprünglichen Fenster in das Verzeichnis mit den
+# Start-Scripten für die Primzahl-Testprogramme und startet eines. Die
+# Berechnung erfolgt dabei in den JVMs der anderen Fenster.
+cd testenvironment/runScripts/prime
+./runPrimeRangeBasicRemote.sh
+
+# Wenn wieder eine Menge von Primzahlen ausgegeben wurde, war der auch der
+# zweite Test erfolgreich.
+
+# Anschließend kann man die Programme in allen Fenstern mit Ctrl-c abbrechen
+# und die Fenster schließen.
+
