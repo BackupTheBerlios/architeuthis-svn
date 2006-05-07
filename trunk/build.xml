@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!-- build-file fuer Ant zum Projekt Architeuthis                     -->
-<!-- Letzte Aenderung: 05.05.2006 durch Dietmar Lippold               -->
+<!-- Letzte Aenderung: 07.05.2006 durch Dietmar Lippold               -->
 
 <!-- Hinweise zur Benutzung werden nach Aufruf von "ant" ohne weitere -->
 <!-- Parameter ausgegeben.                                            -->
@@ -449,6 +449,7 @@
                   prefix="/user/config">
         <include name="transmitter.pol"/>
         <include name="statisticreader.pol"/>
+        <include name="logging.properties"/>
       </tarfileset>
 
       <tarfileset dir="${readme}"
@@ -490,6 +491,7 @@
                   prefix="/user/config">
         <include name="transmitter.pol"/>
         <include name="statisticreader.pol"/>
+        <include name="logging.properties"/>
       </tarfileset>
 
       <tarfileset dir="${readme}"
