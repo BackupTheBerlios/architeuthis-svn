@@ -400,6 +400,9 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * Liefert einen Text, der eine Beschreibung der Ausnahme und einen
      * Stack-Trace enthält.
      *
+     * @param throwable  Die Ausnahme, von der ein Stack-Trace geliefert
+     *                   werden soll.
+     *
      * @return  Einen Text, der eine Beschreibung der Ausnahme und einen
      *          Stack-Trace enthält.
      */
@@ -428,7 +431,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      *
      * @param exceptionCode     Wert, der die Ausnahme charakterisisert.
      * @param exceptionMessage  Fehlermeldung, die die Ausnahme näher
-     *                          beschreibt. 
+     *                          beschreibt.
      */
     synchronized void reportException(int exceptionCode,
                                       String exceptionMessage) {
@@ -504,7 +507,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                                "Teilergebnis konnte nicht zurückgegeben werden");
                     Thread.sleep(SEND_TIMEOUT);
                 } catch (InterruptedException e1) {
-                    // uninteressant
+                    LOGGER.log(Level.WARNING,
+                               "Warten auf neue Übertragung wurde abgebrochen");
                 }
             }
             versuch++;
@@ -582,7 +586,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
 
                 // einen ConsoleHandler finden:
                 ConsoleHandler consoleHandler = null;
-                for (int i=0; i < handlers.length; i++) {
+                for (int i = 0; i < handlers.length; i++) {
                     if (handlers[i] instanceof ConsoleHandler) {
                         consoleHandler = (ConsoleHandler) handlers[i];
                     }
