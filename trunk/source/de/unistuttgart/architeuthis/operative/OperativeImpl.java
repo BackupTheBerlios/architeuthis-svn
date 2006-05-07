@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 04.05.2006 by Dietmar Lippold
+ * last change: 07.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -238,7 +238,10 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
             // OperativeComputing-Thread beenden
             LOGGER.log(Level.FINE, "Berechnung wird gestoppt");
 
-            backgroundComputation.stop();
+            backgroundComputation.terminate();
+            if (backgroundComputation.isComputing()) {
+                backgroundComputation.stop();
+            }
             backgroundComputation = null;
 
             // RemoteStore abmelden

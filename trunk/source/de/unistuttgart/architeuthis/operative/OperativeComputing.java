@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeComputing.java
  * created:     26.04.2004
- * last change: 04.05.2006 by Dietmar Lippold
+ * last change: 07.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -79,6 +79,11 @@ public class OperativeComputing extends Thread {
     private RemoteStore store;
 
     /**
+     * Gibt an, ob dem Thread mitgeteilt wurde, sich zu beenden.
+     */
+    private volatile boolean terminating = false;
+
+    /**
      * Dieser Konstruktor sollte nicht benutzt werden, muss aber wegen
      * der Ableitung von <code>UnicastRemoteObject</code> überschrieben
      * werden.
@@ -142,6 +147,15 @@ public class OperativeComputing extends Thread {
     }
 
     /**
+     * Teilt dem Thread mit, daß er sich beenden soll.
+     */
+    synchronized void terminate() {
+
+        terminating = true;
+        notifyAll();
+    }
+
+    /**
      * Wartet auf ein Teilproblem und ruft, wenn dieses vorhanden ist, dessen
      * compute()-Methode auf. Anschließend wird <code>partialProblem</code>
      * der Wert <code>null</code> zugewiesen und die Lösung an die Instanz
@@ -154,7 +168,7 @@ public class OperativeComputing extends Thread {
     public void run() {
         PartialSolution ps = null;
 
-        while (true) {
+        while (!terminating) {
             synchronized (this) {
                 if (partialProblem == null) {
                     // Auf Teilproblem warten
@@ -182,6 +196,9 @@ public class OperativeComputing extends Thread {
                     ps = ((NonCommPartialProblem)partialProblem).compute();
                 } else if (partialProblem instanceof CommunicationPartialProblem) {
                     ps = ((CommunicationPartialProblem)partialProblem).compute(store);
+                } else if (partialProblem == null) {
+                    LOGGER.log(Level.FINE,
+                               "Teilproblem ist null, keine Berechnung");
                 } else {
                     // Fehler über den OperativeImpl an den Dispatcher weitergeben:
                     LOGGER.log(Level.SEVERE, "PartialProblem implementiert kein passendes Interface");
