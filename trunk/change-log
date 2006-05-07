@@ -13,7 +13,7 @@ Operative gelegentlich ein Fehler in der JVM auf, der zu deren Absturz
 führte.
 
 
-Stand 05.05.2006
+Stand 07.05.2006
 ----------------
 
  * Ein deadlock-Problem beseitigt, das auftreten konnte, wenn die
@@ -66,6 +66,12 @@ Stand 05.05.2006
    Fehlermeldung übermittelt.
 
  * Das Package user umbenannt in facade.
+
+ * Die log-Dateien werden jetzt nicht mehr im Home-Verzeichnis sondern in
+   dem Verzeichnis, in dem man das jeweilige Programm startet, abgelegt.
+
+ * Problem im Operative, durch das dieser gelegentlich nicht richtig beendet
+   wurde, beseitigt.
 
 
 Release 1.4
