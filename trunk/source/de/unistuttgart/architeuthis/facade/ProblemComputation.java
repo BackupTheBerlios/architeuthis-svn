@@ -1,7 +1,7 @@
 /*
  * file:        ProblemComputation.java
  * created:     19.02.2004
- * last change: 05.05.2006 by Dietmar Lippold
+ * last change: 07.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit, juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Dietmar Lippold, dietmar.lippold@informatik.uni-stuttgart.de
@@ -212,25 +212,27 @@ public class ProblemComputation {
 
                 // Teillösung berechnen
                 probStatCollector.startTimeMeasurement(null);
-                if (partialProblem instanceof NonCommPartialProblem) {
-                    nonCommParProb = (NonCommPartialProblem) partialProblem;
-                    partialSolution = nonCommParProb.compute();
-                } else if (partialProblem instanceof CommunicationPartialProblem) {
-                    commParProb = (CommunicationPartialProblem) partialProblem;
-                    try {
-                        partialSolution = commParProb.compute(distRemoteStore);
-                    } catch (RemoteException e) {
-                        // Exception kann nicht auftreten, da auf die
-                        // RemoteStores nicht über RMI zugegriffen wird.
-                        LOGGER.warning("Unmöglicher Fehler aufgetreten in"
-                                       + " Methode ProblemComputation.computeProblem: "
-                                       + e);
+                try {
+                    if (partialProblem instanceof NonCommPartialProblem) {
+                        nonCommParProb = (NonCommPartialProblem) partialProblem;
+                        partialSolution = nonCommParProb.compute();
+                    } else if (partialProblem instanceof CommunicationPartialProblem) {
+                        commParProb = (CommunicationPartialProblem) partialProblem;
+                        try {
+                            partialSolution = commParProb.compute(distRemoteStore);
+                        } catch (RemoteException e) {
+                            // Exception kann nicht auftreten, da auf die
+                            // RemoteStores nicht über RMI zugegriffen wird.
+                            LOGGER.warning("Unmöglicher Fehler aufgetreten in"
+                                           + " Methode ProblemComputation.computeProblem: "
+                                           + e);
+                        }
+                    } else {
+                        throw new ProblemComputeException("PartialProblem implementiert"
+                                                          + " kein passendes Interface");
                     }
-                } else {
-                    // Zuerst gegenseitige Abmeldung der RemoteStores.
+                } finally {
                     unregisterRemoteStore(centralRemoteStore, distRemoteStores);
-                    throw new ProblemComputeException("PartialProblem implementiert"
-                                                      + " kein passendes Interface");
                 }
                 probStatCollector.stopTimeMeasurement(null);
 
