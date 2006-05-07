@@ -123,9 +123,9 @@ public class ProblemComputation {
                 centralRemoteStore.terminate();
             }
         } catch (RemoteException e) {
-            // Exception kann nicht auftreten, da auf die RemoteStores nicht
+            // Exception sollte nicht auftreten, da auf die RemoteStores nicht
             // über RMI zugegriffen wird.
-            LOGGER.warning("Unmöglicher Fehler aufgetreten in Methode"
+            LOGGER.warning("Fehler bei der Abmeldung der RemoteStores in Methode"
                            + " ProblemComputation.unregisterRemoteStore: " + e);
         }
     }
@@ -179,40 +179,40 @@ public class ProblemComputation {
         }
         distRemoteStores = new LinkedList();
 
-        do {
-            probStatCollector.notifyRequestedPartialProblem();
-            partialProblem = problem.getPartialProblem(numberPartialProblems);
+        try {
+            do {
+                probStatCollector.notifyRequestedPartialProblem();
+                partialProblem = problem.getPartialProblem(numberPartialProblems);
 
-            if (partialProblem != null) {
-                probStatCollector.notifyCreatedPartialProblem();
+                if (partialProblem != null) {
+                    probStatCollector.notifyCreatedPartialProblem();
 
-                // Dezentralen RemoteStore erzeugen und RemoteStores
-                // gegenseitig anmelden.
-                if (generator != null) {
-                    distRemoteStore = generator.generateDistRemoteStore();
-                    if (distRemoteStore != null) {
-                        distRemoteStores.add(distRemoteStore);
-                        if (centralRemoteStore != null) {
-                            try {
-                                distRemoteStore.registerRemoteStore(centralRemoteStore);
-                                centralRemoteStore.registerRemoteStore(distRemoteStore);
-                            } catch (RemoteException e) {
-                                // Exception kann nicht auftreten, da auf die
-                                // RemoteStores nicht über RMI zugegriffen wird.
-                                LOGGER.warning("Unmöglicher Fehler aufgetreten in"
-                                               + " Methode"
-                                               + " ProblemComputation.computeProblem: "
-                                               + e);
+                    // Dezentralen RemoteStore erzeugen und RemoteStores
+                    // gegenseitig anmelden.
+                    if (generator != null) {
+                        distRemoteStore = generator.generateDistRemoteStore();
+                        if (distRemoteStore != null) {
+                            distRemoteStores.add(distRemoteStore);
+                            if (centralRemoteStore != null) {
+                                try {
+                                    distRemoteStore.registerRemoteStore(centralRemoteStore);
+                                    centralRemoteStore.registerRemoteStore(distRemoteStore);
+                                } catch (RemoteException e) {
+                                    // Exception sollte nicht auftreten, da auf die
+                                    // RemoteStores nicht über RMI zugegriffen wird.
+                                    LOGGER.warning("Fehler bei der Anmeldung der"
+                                                   + " RemoteStores in Methode"
+                                                   + " ProblemComputation.computeProblem: "
+                                                   + e);
+                                }
                             }
+                        } else {
+                            distRemoteStore = centralRemoteStore;
                         }
-                    } else {
-                        distRemoteStore = centralRemoteStore;
                     }
-                }
 
-                // Teillösung berechnen
-                probStatCollector.startTimeMeasurement(null);
-                try {
+                    // Teillösung berechnen
+                    probStatCollector.startTimeMeasurement(null);
                     if (partialProblem instanceof NonCommPartialProblem) {
                         nonCommParProb = (NonCommPartialProblem) partialProblem;
                         partialSolution = nonCommParProb.compute();
@@ -221,34 +221,33 @@ public class ProblemComputation {
                         try {
                             partialSolution = commParProb.compute(distRemoteStore);
                         } catch (RemoteException e) {
-                            // Exception kann nicht auftreten, da auf die
+                            // Exception sollte nicht auftreten, da auf die
                             // RemoteStores nicht über RMI zugegriffen wird.
-                            LOGGER.warning("Unmöglicher Fehler aufgetreten in"
-                                           + " Methode ProblemComputation.computeProblem: "
+                            LOGGER.warning("Fehler bei der Berechnung vom"
+                                           + " Teilproblem in Methode"
+                                           + " ProblemComputation.computeProblem: "
                                            + e);
                         }
                     } else {
                         throw new ProblemComputeException("PartialProblem implementiert"
                                                           + " kein passendes Interface");
                     }
-                } finally {
-                    unregisterRemoteStore(centralRemoteStore, distRemoteStores);
+                    probStatCollector.stopTimeMeasurement(null);
+
+                    // Teillösung dem Problem zurückgeben, damit es die
+                    // Gesamtlösung zusammensetzen kann.
+                    problem.collectPartialSolution(partialSolution, partialProblem);
+                    probStatCollector.notifyProcessedPartialProblem();
+
+                    // Nach der Gesamtlösung fragen
+                    solution = problem.getSolution();
                 }
-                probStatCollector.stopTimeMeasurement(null);
-
-                // Teillösung dem Problem zurückgeben, damit es die
-                // Gesamtlösung zusammensetzen kann.
-                problem.collectPartialSolution(partialSolution, partialProblem);
-                probStatCollector.notifyProcessedPartialProblem();
-
-                // Nach der Gesamtlösung fragen
-                solution = problem.getSolution();
-            }
-        } while ((partialProblem != null) && (solution == null));
-        finalProbStat = probStatCollector.getSnapshot();
-
-        // Gegenseitige Abmeldung der RemoteStores.
-        unregisterRemoteStore(centralRemoteStore, distRemoteStores);
+            } while ((partialProblem != null) && (solution == null));
+            finalProbStat = probStatCollector.getSnapshot();
+        } finally {
+            // Gegenseitige Abmeldung der RemoteStores.
+            unregisterRemoteStore(centralRemoteStore, distRemoteStores);
+        }
 
         if (solution == null) {
             throw new ProblemComputeException("Problem liefert keine"
