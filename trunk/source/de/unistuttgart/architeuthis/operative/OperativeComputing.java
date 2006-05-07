@@ -170,7 +170,7 @@ public class OperativeComputing extends Thread {
 
         while (!terminating) {
             synchronized (this) {
-                if (partialProblem == null) {
+                if ((partialProblem == null) && (!terminating)) {
                     // Auf Teilproblem warten
                     try {
                         LOGGER.log(Level.FINEST,
