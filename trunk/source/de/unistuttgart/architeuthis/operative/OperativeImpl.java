@@ -1,13 +1,18 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 07.05.2006 by Dietmar Lippold
+ * last change: 08.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
  *              Ralf Kible,        ralf_kible@gmx.de
  *              Dietmar Lippold,   dietmar.lippold@informatik.uni-stuttgart.de
  *              Michael Wohlfart,  michael.wohlfart@zsw-bw.de
+ *
+ * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+ * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+ * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+ * entwickelt.
  *
  *
  * This file is part of Architeuthis.
@@ -25,11 +30,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Architeuthis; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
- * Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
- * Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
- * entwickelt.
  */
 
 
@@ -188,11 +188,12 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
      * dezentralen beim zentralen ab.
      *
      * @throws RemoteException       Bei einem RMI Problem.
-     * @throws RemoteStoreException  Bei der Abmeldung oder Beendigung des
-     *                               zentralen oder dezentralen RemoteStore.
+     * @throws RemoteStoreException  Bei einem Problem mit der Abmeldung oder
+     *                               Beendigung des zentralen oder dezentralen
+     *                               RemoteStore.
      */
     private void unregisterRemoteStore()
-        throws RemoteException, RemoteStoreException {
+        throws RemoteStoreException, RemoteException {
 
         try {
             if ((centralRemoteStore != null) && (distRemoteStore != null)
@@ -219,6 +220,35 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
     }
 
     /**
+     * Bricht die Berechnung des aktuellen Teilproblems ab, entfernt die
+     * Hintergrundberechnung und meldet den zugehörigen RemoteStore ab. Wenn
+     * bei der Abmeldung oder Beendigung des RemoteStore eine Ausnahme
+     * auftritt, wird dazu nur eine log-Meldung ausgegeben.
+     *
+     * @throws RemoteException  Bei einem RMI Problem.
+     */
+    private void abortPartialProblem() throws RemoteException {
+
+        // OperativeComputing-Thread beenden
+        LOGGER.log(Level.FINE, "Berechnung wird gestoppt");
+
+        backgroundComputation.terminate();
+        if (backgroundComputation.isComputing()) {
+            backgroundComputation.stop();
+        }
+        backgroundComputation = null;
+
+        // RemoteStore abmelden
+        try {
+            unregisterRemoteStore();
+        } catch (RemoteStoreException e) {
+            LOGGER.log(Level.WARNING,
+                       "RemoteStoreException beim Beenden aufgetreten."
+                       + " Wird nicht mehr gemeldet.");
+        }
+    }
+
+    /**
      * Diese Methode beendet den Operative lokal, das heißt die
      * Hintergrundberechnung wird gestoppt und er wird vom lokalen RMI-Server
      * abgemeldet. Es wird keine Verbindung zum ComputeManager mehr
@@ -235,23 +265,7 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
         LOGGER.log(Level.INFO, "Operative wird beendet");
 
         if (backgroundComputation != null) {
-            // OperativeComputing-Thread beenden
-            LOGGER.log(Level.FINE, "Berechnung wird gestoppt");
-
-            backgroundComputation.terminate();
-            if (backgroundComputation.isComputing()) {
-                backgroundComputation.stop();
-            }
-            backgroundComputation = null;
-
-            // RemoteStore abmelden
-            try {
-                unregisterRemoteStore();
-            } catch (RemoteStoreException e) {
-                LOGGER.log(Level.WARNING,
-                           "RemoteStoreException beim Beenden aufgetreten."
-                           + " Wird nicht mehr gemeldet.");
-            }
+            abortPartialProblem();
 
             // Vom RMI-Server abmelden
             unexportObject(this, true);
@@ -522,21 +536,15 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
     /**
      * Bricht die momentan ausgeführte Hintergrundberechnung ab und schafft
      * die Voraussetzung für den Start einer neuen Hintergrundberechnung.
-     * Falls gerade keine Hintergrundberechnung durchgeführt wird, so
-     * geschieht nichts.
      *
-     * @throws RemoteException  Bei RMI-Verbindungsproblemen.
+     * @throws RemoteException  Bei RMI-Verbindungsproblemen oder bei einem
+     *                          Problem mit der Abmeldung oder Beendigung
+     *                          eines Remote-Store.
      */
     public synchronized void stopComputation() throws RemoteException {
-        LOGGER.log(Level.FINE, "Berechnung wird gestoppt");
-        if (backgroundComputation.isComputing()) {
-            backgroundComputation.stop();
-            backgroundComputation = null;
-//            Der nachfolgende Aufruf des GC führt beim Sun JDK 1.4 bis
-//            Version 1.4.2_04-b05 häufiger zum Absturz.
-//            System.gc();
-            backgroundComputation = new OperativeComputing(this);
-        }
+
+        abortPartialProblem();
+        backgroundComputation = new OperativeComputing(this);
     }
 
     /**
