@@ -154,9 +154,14 @@ sicherstellen:
 \end{itemize}
 
 Die vorhandenen Implementierungen vom gemeinsamen Speicher erfüllen diese
-Bedingungen und bieten alle drei Arten der Kommunikation. Die zu verwendende
-Art der Kommunikation wird beim Aufruf des Konstruktors der Klasse, die das
-Interface \texttt{RemoteStoreGenerator} implementiert, angegeben.
+Bedingungen und die Packages \texttt{de...remotestore.hashmap} und
+\texttt{de...remotestore.hashset} bieten auch alle drei Arten der
+Kommunikation. Die zu verwendende Art der Kommunikation wird beim Aufruf des
+Konstruktors der Klasse, die das Interface \texttt{RemoteStoreGenerator}
+implementiert, angegeben. Der gemeinsamen Speicher vom Package
+\texttt{de...remotestore.hashsetnew} bietet nur die dritte Art der
+Kommunikation (ein zentraler und mehrere dezentrale Speicher mit Lese- und
+Schreibzugriffen auf dem dezentralen Speicher).
 
 Die im gemeinsamen Speicher zu speichernden und damit zwischen den
 Teilproblemen zu übertragenden Objekte müssen serialisierbar sein, d.h.\ das

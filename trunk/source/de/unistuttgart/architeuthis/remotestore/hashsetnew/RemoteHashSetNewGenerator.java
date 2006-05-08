@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetNewGenerator.java
  * created:     12.04.2006
- * last change: 17.04.2006 by Dietmar Lippold
+ * last change: 08.05.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -40,21 +40,10 @@ import de.unistuttgart.architeuthis.remotestore.hashset.impl.RelayHashSetImpl;
 
 /**
  * Klasse, die RemoteStores mit der Funktionalität eines <CODE>HashSet</CODE>
- * erzeugt, wobei zusätzlich die Menge der vom RealyStore neu hinzugefügten
- * Objekte verwaltet wird. Über den Konstruktor kann angegeben werden, ob nur
- * ein zentraler oder zusätzlich mehrere dezentrale RemoteStores verwendet
- * werden sollen und ob im zweiten Fall die Methoden des zentralen synchron
- * oder asynchron aufgerufen werden sollen.<P>
- *
- * Wenn nur ein zentraler RemoteStore erzeugt wird und es somit keinen
- * RealyStore gibt, gibt es auch keine Menge der vom RealyStore neu
- * hinzugefügten Objekte bzw. ist diese Menge immer leer. Dies ist sinnvoll,
- * da die Menge dafür gedacht ist, nur durch ein Teilproblem und nicht durch
- * mehrere konkurrierend abgefragt zu werden.<P>
- *
- * Wenn es einen zentralen und zusätzlich dezentrale RemoteStores gibt, werden
- * auch Objekte, die vom Operative übergeben werden, genau dann in der Menge
- * der neuen Objekte gespeichert, wenn die Kommunikation synchron ist.
+ * erzeugt, wobei zusätzlich die Menge der vom zentralen RemoteStore
+ * (RealyStore) neu hinzugefügten Objekte verwaltet wird. Es werden immer ein
+ * zentraler und zusätzlich mehrere dezentrale RemoteStores verwendet und die
+ * Methoden des zentralen RealyStore werden asynchron aufgerufen.
  *
  * @author Michael Wohlfart, Dietmar Lippold
  */
@@ -71,39 +60,10 @@ public class RemoteHashSetNewGenerator implements RemoteStoreGenerator {
     private static final Logger LOGGER = Logger.getLogger(RemoteHashSetNewGenerator.class.getName());
 
     /**
-     * Gibt an, ob ausschließlich ein zentraler Speicher verwendet werden
-     * soll.
-     */
-    private boolean isCentralOnly;
-
-    /**
-     * Gibt an, ob die verteilten RemoteStores bei Verwendung eines RelayStore
-     * dessen Methoden synchron aufrufen sollen. Falls kein RelayStore
-     * verwendet wird, ist der Wert dieses Attributs ohne Bedeutung.
-     */
-    private boolean synchronComm;
-
-    /**
-     * Konstruktor, bei dem nur ein zentraler und kein verteilter RemoteStore
-     * von der erzeugten Instanz erzeugt wird.
+     * Erzeugt eine neue Instanz.
      */
     public RemoteHashSetNewGenerator() {
-        this.isCentralOnly = true;
-    }
-
-    /**
-     * Konstruktor, bei dem sowohl ein zentraler wie verteilte RemoteStores
-     * von der erzeugten Instanz erzeugt wird. Als Parameter ist anzugeben,
-     * ob die Aufrufe der verteilten beim zentralen RemoteStore synchron
-     * erfolgen sollen.
-     *
-     * @param synchronComm  <CODE>true</CODE>, wenn die Aufrufe der verteilten
-     *                      beim zentralen RemoteStore synchron erfolgen
-     *                      sollen, anderenfalls <CODE>false</CODE>.
-     */
-    public RemoteHashSetNewGenerator(boolean synchronComm) {
-        this.isCentralOnly = false;
-        this.synchronComm = synchronComm;
+        super();
     }
 
     /**
@@ -118,11 +78,7 @@ public class RemoteHashSetNewGenerator implements RemoteStoreGenerator {
         }
 
         try {
-            if (isCentralOnly) {
-                return (new RemoteHashSetNewImpl());
-            } else {
-                return (new RelayHashSetImpl());
-            }
+            return (new RelayHashSetImpl());
         } catch (RemoteException ex) {
             ex.printStackTrace();
             return null;
@@ -130,32 +86,21 @@ public class RemoteHashSetNewGenerator implements RemoteStoreGenerator {
     }
 
     /**
-     * Liefert den dezentralen RemoteStore oder <CODE>null</CODE>, falls nur
-     * ein zentraler Speicher verwendet werden soll.
+     * Liefert den dezentralen RemoteStore.
      *
-     * @return  Den dezentralen RemoteStore oder <CODE>null</CODE>.
+     * @return  Den dezentralen RemoteStore.
      */
     public RemoteStore generateDistRemoteStore() {
 
-        if (isCentralOnly) {
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("Dezentraler RemoteStore wird nicht verwendet.");
-            }
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("Erzeuge dezentralen asynchronen RemoteStore.");
+        }
+
+        try {
+            return (new RemoteHashSetNewImpl());
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
             return null;
-        } else {
-            try {
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    if (synchronComm) {
-                        LOGGER.fine("Erzeuge dezentralen synchronen RemoteStore.");
-                    } else {
-                        LOGGER.fine("Erzeuge dezentralen asynchronen RemoteStore.");
-                    }
-                }
-                return (new RemoteHashSetNewImpl(synchronComm));
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-                return null;
-            }
         }
     }
 }

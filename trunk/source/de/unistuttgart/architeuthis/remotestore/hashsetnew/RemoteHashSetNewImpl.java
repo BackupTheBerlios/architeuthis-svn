@@ -1,7 +1,7 @@
 /*
  * file:        RemoteHashSetNewImpl.java
  * created:     12.04.2006
- * last change: 25.04.2006 by Dietmar Lippold
+ * last change: 08.05.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -67,27 +67,13 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
     private HashSet newElements = new HashSet();
 
     /**
-     * Konstruktor, der festlegt, daß bei Verwendung eines RelayStore dessen
-     * Methoden asynchron aufgerufen werden sollen.
+     * Erzeugt eine neue Instanz. Die Methoden des RelayStore werden asynchron
+     * aufgerufen.
      *
      * @throws RemoteException  Bei einem RMI-Problem.
      */
     public RemoteHashSetNewImpl() throws RemoteException {
-        super();
-    }
-
-    /**
-     * Konstruktor, mit dem festlegt werden kann, ob bei Verwendung eines
-     * RelayStore dessen Methoden synchron aufgerufen werden sollen.
-     *
-     * @param synchronComm  Genau dann <CODE>true</CODE>, wenn bei Verwendung
-     *                      eines RelayStore dessen Methoden synchron
-     *                      aufgerufen werden sollen.
-     *
-     * @throws RemoteException  Bei einem RMI-Problem.
-     */
-    public RemoteHashSetNewImpl(boolean synchronComm) throws RemoteException {
-        super(synchronComm);
+        super(false);
     }
 
     /**
@@ -128,18 +114,8 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
 
     /**
      * Speichert das übergebene Objekt im lokalen HashSet und sendet es an die
-     * anderen RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE>
-     * angemeldet wurde.<P>
-     *
-     * Diese Methode wird vom Teilproblem aufgerufen. Für den
-     * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
-     * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
-     * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
-     * <P>
-     *
-     * Das übergebene Objekt wird nur dann in der Menge der neuen Objekte
-     * direkt gespeichert, wenn es ein RelayHashSet gibt und eine synchrone
-     * Kommunikation erfolgt.
+     * anderen RemoteHashSets weiter. Diese Methode wird vom Teilproblem
+     * aufgerufen.
      *
      * @param object  Das zu speichernde Objekt.
      *
@@ -147,26 +123,14 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
      */
     public void add(Serializable object) throws RemoteException {
 
-        if (localStoringNecessary()) {
-            super.addLocal(object);
-        }
+        super.addLocal(object);
         addRemote(object);
     }
 
     /**
      * Speichert die Objekte der <CODE>Collection</CODE> im lokalen HashSet
-     * und sendet sie an die anderen RemoteHashSets weiter, wenn ein
-     * <CODE>RelayHashSet</CODE> angemeldet wurde.<P>
-     *
-     * Diese Methode wird vom Teilproblem aufgerufen. Für den
-     * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
-     * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
-     * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
-     * <P>
-     *
-     * Die übergebenen Objekte werden nur dann in der Menge der neuen Objekte
-     * direkt gespeichert, wenn es ein RelayHashSet gibt und eine synchrone
-     * Kommunikation erfolgt.
+     * und sendet sie an die anderen RemoteHashSets weiter. Diese Methode
+     * wird vom Teilproblem aufgerufen.
      *
      * @param collection  Die aufzunehmenden Objekte.
      *
@@ -174,9 +138,7 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
      */
     public void addAll(Collection collection) throws RemoteException {
 
-        if (localStoringNecessary()) {
-            super.addAllLocal(collection);
-        }
+        super.addAllLocal(collection);
         addAllRemote(collection);
     }
 
@@ -218,18 +180,8 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
 
     /**
      * Entfernt das übergebene Objekt aus dem lokalen HashSet und sendet es an
-     * die anderen RemoteHashSets weiter, wenn ein <CODE>RelayHashSet</CODE>
-     * angemeldet wurde.<P>
-     *
-     * Diese Methode wird vom Teilproblem aufgerufen. Für den
-     * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
-     * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
-     * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
-     * <P>
-     *
-     * Das übergebene Objekt wird nur dann aus der Menge der neuen Objekte
-     * direkt entfernt, wenn es ein RelayHashSet gibt und eine synchrone
-     * Kommunikation erfolgt.
+     * die anderen RemoteHashSets weiter. Diese Methode wird vom Teilproblem
+     * aufgerufen.
      *
      * @param object  Das zu entfernende Objekt.
      *
@@ -237,26 +189,14 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
      */
     public void remove(Serializable object) throws RemoteException {
 
-        if (localStoringNecessary()) {
-            super.removeLocal(object);
-        }
+        super.removeLocal(object);
         removeRemote(object);
     }
 
     /**
      * Entfernt die Objekte der <CODE>Collection</CODE> aus dem lokalen
-     * HashSet und sendet sie an die anderen RemoteHashSets weiter, wenn ein
-     * <CODE>RelayHashSet</CODE> angemeldet wurde.<P>
-     *
-     * Diese Methode wird vom Teilproblem aufgerufen. Für den
-     * Anwendungsentwickler ist es transparent, ob hier ein lokales Objekt
-     * (distStore) angesprochen wird oder dies ein RMI-Aufruf ist und das
-     * angesprochene Storage-Objekt (centralStore) auf den Dispatcher liegt.
-     * <P>
-     *
-     * Die übergebenen Objekte werden nur dann aus der Menge der neuen Objekte
-     * direkt entfernt, wenn es ein RelayHashSet gibt und eine synchrone
-     * Kommunikation erfolgt.
+     * HashSet und sendet sie an die anderen RemoteHashSets weiter. Diese
+     * Methode wird vom Teilproblem aufgerufen.
      *
      * @param collection  Die zu entfernenden Objekte.
      *
@@ -264,9 +204,7 @@ public class RemoteHashSetNewImpl extends RemoteHashSetImpl
      */
     public void removeAll(Collection collection) throws RemoteException {
 
-        if (localStoringNecessary()) {
-            super.removeAllLocal(collection);
-        }
+        super.removeAllLocal(collection);
         removeAllRemote(collection);
     }
 
