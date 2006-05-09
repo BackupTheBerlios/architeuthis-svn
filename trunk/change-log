@@ -13,11 +13,8 @@ Operative gelegentlich ein Fehler in der JVM auf, der zu deren Absturz
 führte.
 
 
-Stand 07.05.2006
-----------------
-
- * Ein deadlock-Problem beseitigt, das auftreten konnte, wenn die
-   Berechnungsdauer eines Teilproblems extrem kurz war.
+Release 2.0
+-----------
 
  * Das Konzept des RemoteStore realisiert. Die Teilprobleme können dadurch
    auf einen gemeinsamen Speicher zugreifen. Dieser kann vom Benutzer selbst
@@ -30,14 +27,6 @@ Stand 07.05.2006
    RemoteStores testet, und ein zugehöriges runScript runRemoteHash
    aufgenommen.
 
- * In Klasse ComputeManager die Methode "returnPartialSolution" umbenannt in
-   "collectPartialSolution".
-
- * Im Interface Problem die Methode "collectResult" umbenannt in
-   "collectPartialSolution".
-
- * Dateien und Unterpackage im Package testenvironment umbenannt.
-
  * Das Benutzerhandbuch überarbeitet und ergänzt und auf Version 2.0
    angepaßt.
 
@@ -46,8 +35,24 @@ Stand 07.05.2006
    Array darf jetzt auch den Wert null enthalten, der dann unberücksichtigt
    bleibt.
 
+ * Wenn ein Fehler bei der Ausführung einer Methode eines Problems oder
+   Teilproblems auftritt, wird dem Benutzer jetzt ein Stack-Trace in der
+   Fehlermeldung übermittelt.
+
+ * Das Package user umbenannt in facade.
+
  * Klasse AbstractFixedSizePriorityPartialProblem umbenannt in
-   PriorityPartialProblem
+   PriorityPartialProblem.
+
+ * Im Interface Problem die Methode "collectResult" umbenannt in
+   "collectPartialSolution".
+
+ * In Klasse ComputeManager die Methode "returnPartialSolution" umbenannt in
+   "collectPartialSolution".
+
+ * Im Interface Problem sowie in den implementierenden Klassen den Typ vom
+   Parameter der Methode getPartialProblem sowie entsprechender Methoden von
+   long zu int geändert.
 
  * Die Package-Struktur der Primzahl-Testprogramme und die Programme selbst
    überarbeitet.
@@ -55,23 +60,18 @@ Stand 07.05.2006
  * Die Scripte zur Ausführung der Primzahl-Programme in ein eigenes
    Unterverzeichnis verschoben und ergänzt.
 
- * Im Interface Problem sowie in den implementierenden Klassen den Typ vom
-   Parameter der Methode getPartialProblem sowie entsprechender Methoden von
-   long zu int geändert.
+ * Dateien und Unterpackage im Package testenvironment umbenannt.
 
- * Level der logging-Meldungen des Dispatcher überarbeitet.
+ * Ein deadlock-Problem beseitigt, das auftreten konnte, wenn die
+   Berechnungsdauer eines Teilproblems extrem kurz war.
 
- * Wenn ein Fehler bei der Ausführung einer Methode eines Problems oder
-   Teilproblems auftritt, wird dem Benutzer jetzt ein Stack-Trace in der
-   Fehlermeldung übermittelt.
-
- * Das Package user umbenannt in facade.
+ * Problem im Operative, durch das dieser gelegentlich nicht richtig beendet
+   wurde, beseitigt.
 
  * Die log-Dateien werden jetzt nicht mehr im Home-Verzeichnis sondern in
    dem Verzeichnis, in dem man das jeweilige Programm startet, abgelegt.
 
- * Problem im Operative, durch das dieser gelegentlich nicht richtig beendet
-   wurde, beseitigt.
+ * Level der logging-Meldungen des Dispatcher überarbeitet.
 
 
 Release 1.4
