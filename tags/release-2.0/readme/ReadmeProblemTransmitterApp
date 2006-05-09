@@ -1,0 +1,53 @@
+Datei          : ReadmeProblemTransmitterApp
+Letzte Änderung: 05.05.2006 durch Dietmar Lippold
+
+
+This file is part of Architeuthis.
+
+Architeuthis is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+Architeuthis is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Architeuthis; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+Funktion von ProblemTransmitterApp
+----------------------------------
+
+Die ausführbare Klasse ProblemTransmitterApp dient der Brechnung von
+Stand-Alone Problemen, d.h. von Problemen, die vollständig auf dem
+Dispatcher und den Operatives berechnet werden können, ohne daß sie auf
+vorhandene Daten zugreifen müssen. Bei Verwendung dieser Klasse können dem
+Problem auch keine Parameter übergeben werden. Alle Daten müssen als
+Konstanten in der Klasse enthalten sein. Sie ist daher vor allem für
+Testzwecke gedacht. Die errechnete Lösung wird serialisiert in eine Datei
+geschrieben.
+
+
+Benutzung von ProblemTransmitterApp
+-----------------------------------
+
+Die Klasse befindet sich im Packet User.jar unter dem Package-Pfad
+de.unistuttgart.architeuthis.facade.ProblemTransmitterApp.
+
+Bei der Ausführung der Klasse muß als Komandozeilenargument vom Befehl
+"java" folgendes angegeben werden:
+
+  -Djava.security.policy=$CONFIG_DIR/transmitter.pol
+
+Dabei ist $CONFIG_DIR das Verzeichnis, in dem die Datei transmitter.pol
+liegt.
+
+Eine Beschreibung der speziellen Komandozeilenargumente der Klasse erhält
+man bei deren Ausführung (von deren main-Methode) ohne Angabe von
+Parametern. Beispiele zur Benutzung der Klasse stellen die run-Schripte aus
+dem Distributionspaket testenvironment.tar.gz dar.
+

@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- build-file fuer Ant zum Projekt Architeuthis                     -->
+<!-- Letzte Aenderung: 07.05.2006 durch Dietmar Lippold               -->
+
+<!-- Hinweise zur Benutzung werden nach Aufruf von "ant" ohne weitere -->
+<!-- Parameter ausgegeben.                                            -->
+
+<!-- Folgende Ziele sind vorhanden:                                   -->
+
+<!--- * compileDis    : Compiliert die Dispatcher-Dateien             -->
+<!--- * compileOp     : Compiliert die Operative-Dateien              -->
+<!--- * compileUser   : Compiliert die User-Dateien                   -->
+<!--- * compileProbs  : Compiliert die Testproblem-Dateien            -->
+<!--- * compile       : Compiliert alle java-Dateien                  -->
+
+<!--- * dispatcherJar : Erzeugt die jar-Datei zum Dispatcher          -->
+<!--- * operativeJar  : Erzeugt die jar-Datei zum Operative           -->
+<!--- * userJar       : Erzeugt die jar-Datei zu den User-Dateien     -->
+<!--- * problemsJar   : Erzeugt die jar-Datei zu den Testproblemen    -->
+<!--- * sourceJar     : Erzeugt die jar-Datei der java-Source-Dateien -->
+
+<!--- * dispatcherTar : Erzeugt die tar.gz-Datei zum Dispatcher       -->
+<!--- * operativeTar  : Erzeugt die tar.gz-Datei zum Operative        -->
+<!--- * userTarUnix   : Erzeugt die tar.gz-Datei zu den User-Dateien  -->
+<!--- * userTarWin    : Erzeugt die tar.gz-Datei zu den User-Dateien  -->
+<!--- * testsTarUnix  : Erzeugt die tar.gz-Datei zu den Test-Dateien  -->
+<!--- * testsTarWin   : Erzeugt die tar.gz-Datei zu den Test-Dateien  -->
+<!--- * srcTar        : Erzeugt die tar.gz-Datei vom gesamten Source  -->
+<!--- * allTar        : Erzeugt alle tar.gz-Dateien                   -->
+
+<!--- * clean         : Loescht alle von ant erzeugten Dateien        -->
+<!--- * help          : Gibt eine Meldung zur Benutzung aus           -->
+
+<project name="Architeuthis" default="help">
+
+  <!-- Festlegung der allgemeinen Verzeichnisse                       -->
+  <property name="source" location="source"/>
+  <property name="libs" location="libs"/>
+  <property name="config" location="config"/>
+  <property name="runScripts" location="runScripts"/>
+  <property name="readme" location="readme"/>
+  <property name="manual" location="manual"/>
+  <property name="misc" location="."/>
+  <property name="build" location="build"/>
+  <property name="deploy" location="deploy"/>
+
+  <!-- junit library -->
+  <property name="junitJar" location="libs/junit-3.8.1.jar"/>
+
+  <!-- Festlegung der class-Dateien der einzelnen Komponenten         -->
+
+  <classfileset id="dispatcherClasses" dir="${build}">
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/dispatcher/**"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/abstractproblems/*"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/userinterfaces/develop/*"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/remotestore/**"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/operative/OperativeImpl_Stub.class"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/facade/ProblemTransmitterImpl_Stub.class"/>
+  </classfileset>
+
+  <classfileset id="operativeClasses" dir="${build}">
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/operative/*"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/remotestore/**"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/abstractproblems/ContainerPartialSolution.class"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl_Stub.class"/>
+
+  </classfileset>
+
+  <classfileset id="userClasses" dir="${build}">
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/facade/*"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/abstractproblems/*"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/remotestore/**"/>
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl_Stub.class"/>
+  </classfileset>
+
+  <classfileset id="problemClasses" dir="${build}">
+    <rootfileset dir="${build}"
+                 includes="de/unistuttgart/architeuthis/testenvironment/**"/>
+    <exclude name="de/unistuttgart/architeuthis/remotestore/**"/>
+  </classfileset>
+
+
+  <!-- Compilierung der java-Dateien                                  -->
+
+  <target name="_compileStore">
+    <mkdir dir="${build}"/>
+
+    <javac source="1.4"
+           srcdir="${source}"
+           destdir="${build}"
+           encoding="ISO-8859-1"
+           debug="true"
+           includes="de/unistuttgart/architeuthis/remotestore/**/*.java"
+    />
+  </target>
+
+  <target name="compileDis">
+    <mkdir dir="${build}"/>
+
+    <javac source="1.4"
+           srcdir="${source}"
+           destdir="${build}"
+           encoding="ISO-8859-1"
+           debug="true"
+           includes="de/unistuttgart/architeuthis/dispatcher/**/*.java,
+                     de/unistuttgart/architeuthis/abstractproblems/*.java,
+                     de/unistuttgart/architeuthis/operative/OperativeImpl.java,
+                     de/unistuttgart/architeuthis/facade/ProblemTransmitterImpl.java,
+                     de/unistuttgart/architeuthis/misc/**/*.java,
+                     de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
+                     de/unistuttgart/architeuthis/userinterfaces/**/*.java"
+           excludes="**/*Test.java, **/*Tests.java"
+    />
+  </target>
+
+  <target name="compileOp">
+    <mkdir dir="${build}"/>
+
+    <javac source="1.4"
+           srcdir="${source}"
+           destdir="${build}"
+           encoding="ISO-8859-1"
+           debug="true"
+           includes="de/unistuttgart/architeuthis/operative/*.java,
+                     de/unistuttgart/architeuthis/abstractproblems/ContainerPartialSolution.java,
+                     de/unistuttgart/architeuthis/dispatcher/computemanaging/ComputeManagerImpl.java,
+                     de/unistuttgart/architeuthis/misc/**/*.java,
+                     de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
+                     de/unistuttgart/architeuthis/userinterfaces/**/*.java"
+           excludes="**/*Test.java, **/*Tests.java"
+    />
+  </target>
+
+  <target name="compileUser">
+    <mkdir dir="${build}"/>
+
+    <javac source="1.4"
+           srcdir="${source}"
+           destdir="${build}"
+           encoding="ISO-8859-1"
+           debug="true"   
+           includes="de/unistuttgart/architeuthis/facade/*.java,
+                     de/unistuttgart/architeuthis/abstractproblems/*.java,
+                     de/unistuttgart/architeuthis/dispatcher/problemmanaging/ProblemManagerImpl.java,
+                     de/unistuttgart/architeuthis/remotestore/**/*.java,
+                     de/unistuttgart/architeuthis/misc/**/*.java,
+                     de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
+                     de/unistuttgart/architeuthis/userinterfaces/**/*.java"
+           excludes="**/*Test.java, **/*Tests.java"
+    />
+  </target>
+
+  <target name="compileProbs">
+    <mkdir dir="${build}"/>
+
+    <javac source="1.4"
+           srcdir="${source}"
+           destdir="${build}"
+           encoding="ISO-8859-1"
+           debug="true"   
+           includes="de/unistuttgart/architeuthis/testenvironment/**/*.java,
+                     de/unistuttgart/architeuthis/abstractproblems/*.java,
+                     de/unistuttgart/architeuthis/facade/ProblemTransmitterImpl.java,
+                     de/unistuttgart/architeuthis/misc/Miscellaneous.java,
+                     de/unistuttgart/architeuthis/systeminterfaces/**/*.java,
+                     de/unistuttgart/architeuthis/userinterfaces/**/*.java"
+           excludes="**/*Test.java, **/*Tests.java"
+    />
+  </target>
+
+  <!-- Compilieren aller Klassen                                      -->
+  <target name="compile">
+    <mkdir dir="${build}"/>
+
+    <!-- Durch debug="true" wird bei Exceptions die Zeile im Source   -->
+    <!-- mit ausgegeben                                               -->
+    <javac source="1.4"
+           srcdir="${source}"
+           destdir="${build}"
+           encoding="ISO-8859-1"
+           debug="true"
+           includes="**/*.java">
+      <classpath>
+        <pathelement path="${junitJar}"/>
+      </classpath>
+    </javac>
+  </target>
+
+
+  <!-- Erzeugung der jar-Dateien                                      -->
+
+  <target name="_remotestoreStubs" depends="_compileStore"
+    description="Erstellt die Stub-Dateien im Package remotestore">
+
+    <rmic base="${build}"
+          stubversion="1.2"    	
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashmap.impl.RemoteHashMapImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashmap.impl.RelayHashMapImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashset.impl.RemoteHashSetImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashset.impl.RelayHashSetImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          debug="true"
+          classname="de.unistuttgart.architeuthis.remotestore.hashsetnew.RemoteHashSetNewImpl"/>
+  </target>
+
+  <target name="dispatcherJar" depends="compileDis, _remotestoreStubs"
+    description="Erstellt die jar-Datei der User-Klassen">
+
+    <rmic base="${build}"
+          stubversion="1.2"
+          classname="de.unistuttgart.architeuthis.dispatcher.computemanaging.ComputeManagerImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          classname="de.unistuttgart.architeuthis.dispatcher.problemmanaging.ProblemManagerImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          classname="de.unistuttgart.architeuthis.operative.OperativeImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          classname="de.unistuttgart.architeuthis.facade.ProblemTransmitterImpl"/>
+
+    <mkdir dir="${deploy}"/>
+
+    <!-- Workaround: Da ant Version 1.6.2 die jar-Datei nicht ersetzt,    -->
+    <!--             wenn sich eine der enthaltenen Dateien geändert hat, -->
+    <!--             wird die jar-Datei vorweg gelöscht.                  -->
+    <delete file="${deploy}/Dispatcher.jar"
+            quiet="true"/>
+
+    <jar destfile="${deploy}/Dispatcher.jar"
+         encoding="ISO-8859-1">
+      <manifest>
+        <attribute name="Main-Class"
+                   value="de.unistuttgart.architeuthis.dispatcher.DispatcherImpl"/>
+      </manifest>
+      <fileset refid="dispatcherClasses"/>
+    </jar>
+  </target>
+
+  <target name="operativeJar" depends="compileOp, _remotestoreStubs"
+    description="Erstellt die jar-Datei der Operative-Klassen">
+
+    <rmic base="${build}"
+          stubversion="1.2"
+          classname="de.unistuttgart.architeuthis.dispatcher.computemanaging.ComputeManagerImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          classname="de.unistuttgart.architeuthis.operative.OperativeImpl"/>
+
+    <mkdir dir="${deploy}"/>
+
+    <!-- Workaround: Da ant Version 1.6.2 die jar-Datei nicht ersetzt,    -->
+    <!--             wenn sich eine der enthaltenen Dateien geändert hat, -->
+    <!--             wird die jar-Datei vorweg gelöscht.                  -->
+    <delete file="${deploy}/Operative.jar"
+            quiet="true"/>
+
+    <jar destfile="${deploy}/Operative.jar"
+         encoding="ISO-8859-1">
+      <manifest>
+        <attribute name="Main-Class"
+                   value="de.unistuttgart.architeuthis.operative.OperativeImpl"/>
+      </manifest>
+      <fileset refid="operativeClasses"/>
+    </jar>
+  </target>
+
+  <target name="userJar" depends="compileUser, _remotestoreStubs"
+    description="Erstellt die jar-Datei der User-Klassen">
+
+    <rmic base="${build}"
+          stubversion="1.2"
+          classname="de.unistuttgart.architeuthis.facade.ProblemTransmitterImpl"/>
+    <rmic base="${build}"
+          stubversion="1.2"
+          classname="de.unistuttgart.architeuthis.dispatcher.problemmanaging.ProblemManagerImpl"/>
+
+    <mkdir dir="${deploy}"/>
+
+    <!-- Workaround: Da ant Version 1.6.2 die jar-Datei nicht ersetzt,    -->
+    <!--             wenn sich eine der enthaltenen Dateien geändert hat, -->
+    <!--             wird die jar-Datei vorweg gelöscht.                  -->
+    <delete file="${deploy}/User.jar"
+            quiet="true"/>
+
+    <jar destfile="${deploy}/User.jar"
+         encoding="ISO-8859-1">
+      <fileset refid="userClasses"/>
+    </jar>
+  </target>
+
+  <target name="problemsJar" depends="compileProbs"
+    description="Erstellt die jar-Datei der Testproblem-Klassen">
+
+    <mkdir dir="${deploy}"/>
+
+    <!-- Workaround: Da ant Version 1.6.2 die jar-Datei nicht ersetzt,    -->
+    <!--             wenn sich eine der enthaltenen Dateien geändert hat, -->
+    <!--             wird die jar-Datei vorweg gelöscht.                  -->
+    <delete file="${deploy}/Problems.jar"
+            quiet="true"/>
+
+    <jar destfile="${deploy}/Problems.jar"
+         encoding="ISO-8859-1">
+      <fileset refid="problemClasses"/>
+    </jar>
+  </target>
+
+  <target name="sourceJar"
+    description="Erstellt die jar-Datei der java-Source-Dateien">
+
+    <mkdir dir="${deploy}"/>
+
+    <!-- Workaround: Da ant Version 1.6.2 die jar-Datei nicht ersetzt,    -->
+    <!--             wenn sich eine der enthaltenen Dateien geändert hat, -->
+    <!--             wird die jar-Datei vorweg gelöscht.                  -->
+    <delete file="${deploy}/Source.jar"
+            quiet="true"/>
+
+    <jar destfile="${deploy}/Source.jar"
+         encoding="ISO-8859-1"
+         basedir="${source}"
+         includes="de/**/*">
+    </jar>
+  </target>
+
+
+  <!-- Erzeugung der tar-Dateien                                      -->
+
+  <target name="dispatcherTar" depends="dispatcherJar"
+    description="Erstellt die tar.gz-Datei der Dispatcher-Dateien">
+
+    <tar destfile="${deploy}/dispatcher.tar.gz"
+         compression="gzip">
+
+      <tarfileset dir="${deploy}"
+                  mode="644"
+                  prefix="/dispatcher/deploy">
+        <include name="Dispatcher.jar"/>
+      </tarfileset>
+
+      <tarfileset dir="${config}"
+                  mode="644"
+                  prefix="/dispatcher/config">
+        <include name="compserv.conf"/>
+        <include name="logging.properties"/>
+        <include name="dispatcher.pol"/>
+      </tarfileset>
+
+      <tarfileset dir="${readme}"
+                  mode="644"
+                  prefix="/dispatcher">
+        <include name="Readme"/>
+        <include name="ReadmeDispatcher"/>
+      </tarfileset>
+
+      <tarfileset dir="${runScripts}"
+                  mode="755"
+                  prefix="/dispatcher/runScripts">
+        <include name="setup.sh"/>
+        <include name="setup.bat"/>
+        <include name="runDispatcher.sh"/>
+        <include name="runDispatcher.bat"/>
+      </tarfileset>
+
+    </tar>
+  </target>
+
+  <target name="operativeTar" depends="operativeJar"
+    description="Erstellt die tar.gz-Datei der Operative-Dateien">
+
+    <tar destfile="${deploy}/operative.tar.gz"
+         compression="gzip">
+
+      <tarfileset dir="${deploy}"
+                  mode="644"
+                  prefix="/operative/deploy">
+        <include name="Operative.jar"/>
+      </tarfileset>
+
+      <tarfileset dir="${config}"
+                  mode="644"
+                  prefix="/operative/config">
+        <include name="logging.properties"/>
+        <include name="operative.pol"/>
+      </tarfileset>
+
+      <tarfileset dir="${readme}"
+                  mode="644"
+                  prefix="/operative">
+        <include name="Readme"/>
+        <include name="ReadmeOperative"/>
+        <include name="ReadmeGDM"/>
+      </tarfileset>
+
+      <tarfileset dir="${runScripts}"
+                  mode="755"
+                  prefix="/operative/runScripts">
+        <include name="setup.sh"/>
+        <include name="setup.bat"/>
+        <include name="runOperative.sh"/>
+        <include name="runOperative.bat"/>
+        <include name="background-prgs.sh"/>
+      </tarfileset>
+
+    </tar>
+  </target>
+
+  <target name="userTarUnix" depends="userJar"
+    description="Erstellt die tar.gz-Datei der User-Dateien für Unix">
+
+    <tar destfile="${deploy}/userenvironment-unix.tar.gz"
+         compression="gzip">
+
+      <tarfileset dir="${deploy}"
+                  mode="644"
+                  prefix="/user/deploy">
+        <include name="User.jar"/>
+      </tarfileset>
+
+      <tarfileset dir="${config}"
+                  mode="644"
+                  prefix="/user/config">
+        <include name="transmitter.pol"/>
+        <include name="statisticreader.pol"/>
+        <include name="logging.properties"/>
+      </tarfileset>
+
+      <tarfileset dir="${readme}"
+                  mode="644"
+                  prefix="/user">
+        <include name="Readme"/>
+        <include name="ReadmeUserenvironment"/>
+        <include name="ReadmeProblemTransmitterApp"/>
+        <include name="ReadmeClassFileServer"/>
+        <include name="ReadmeStatistics"/>
+      </tarfileset>
+
+      <tarfileset dir="${runScripts}"
+                  mode="755"
+                  prefix="/user/runScripts">
+        <include name="setup.sh"/>
+        <include name="runClassFileServer.sh"/>
+        <include name="runConsoleSysStat.sh"/>
+        <include name="runGuiSysStat.sh"/>
+      </tarfileset>
+
+    </tar>
+  </target>
+
+  <target name="userTarWin" depends="userJar"
+    description="Erstellt die tar.gz-Datei der User-Dateien für Windows">
+
+    <tar destfile="${deploy}/userenvironment-win.tar.gz"
+         compression="gzip">
+
+      <tarfileset dir="${deploy}"
+                  mode="644"
+                  prefix="/user/deploy">
+        <include name="User.jar"/>
+      </tarfileset>
+
+      <tarfileset dir="${config}"
+                  mode="644"
+                  prefix="/user/config">
+        <include name="transmitter.pol"/>
+        <include name="statisticreader.pol"/>
+        <include name="logging.properties"/>
+      </tarfileset>
+
+      <tarfileset dir="${readme}"
+                  mode="644"
+                  prefix="/user">
+        <include name="Readme"/>
+        <include name="ReadmeUserenvironment"/>
+        <include name="ReadmeProblemTransmitterApp"/>
+        <include name="ReadmeClassFileServer"/>
+        <include name="ReadmeStatistics"/>
+      </tarfileset>
+
+      <tarfileset dir="${runScripts}"
+                  mode="755"
+                  prefix="/user/runScripts">
+        <include name="setup.bat"/>
+        <include name="runClassFileServer.bat"/>
+        <include name="runConsoleSysStat.bat"/>
+        <include name="runGuiSysStat.bat"/>
+      </tarfileset>
+
+    </tar>
+  </target>
+
+  <target name="testsTarUnix" depends="userJar, problemsJar"
+    description="Erstellt die tar.gz-Datei der Test-Dateien für Unix">
+
+    <tar destfile="${deploy}/testenvironment-unix.tar.gz"
+         compression="gzip">
+
+      <tarfileset dir="${deploy}"
+                  mode="644"
+                  prefix="/testenvironment/deploy">
+        <include name="User.jar"/>
+      </tarfileset>
+
+      <tarfileset dir="${deploy}"
+                  mode="644"
+                  prefix="/testenvironment/classes">
+        <include name="Problems.jar"/>
+      </tarfileset>
+
+      <tarfileset dir="${config}"
+                  mode="644"
+                  prefix="/testenvironment/config">
+        <include name="transmitter.pol"/>
+        <include name="statisticreader.pol"/>
+        <include name="logging.properties"/>
+      </tarfileset>
+
+      <tarfileset dir="${readme}"
+                  mode="644"
+                  prefix="/testenvironment">
+        <include name="Readme"/>
+        <include name="ReadmeTestenvironment"/>
+        <include name="ReadmeProblemTransmitterApp"/>
+        <include name="ReadmeClassFileServer"/>
+        <include name="ReadmeStatistics"/>
+      </tarfileset>
+
+      <tarfileset dir="${runScripts}"
+                  mode="755"
+                  prefix="/testenvironment/runScripts">
+        <include name="setup.sh"/>
+        <include name="runClassFileServer.sh"/>
+        <include name="runConsoleSysStat.sh"/>
+        <include name="runGuiSysStat.sh"/>
+        <include name="runRemoteHash.sh"/>
+        <include name="runMonte.sh"/>
+        <include name="runRandom.sh"/>
+        <include name="runCaching.sh"/>
+        <include name="runFail.sh"/>
+        <include name="prime/*.sh"/>
+      </tarfileset>
+
+    </tar>
+  </target>
+
+  <target name="testsTarWin" depends="userJar, problemsJar"
+    description="Erstellt die tar.gz-Datei der Test-Dateien für Windows">
+
+    <tar destfile="${deploy}/testenvironment-win.tar.gz"
+         compression="gzip">
+
+      <tarfileset dir="${deploy}"
+                  mode="644"
+                  prefix="/testenvironment/deploy">
+        <include name="User.jar"/>
+      </tarfileset>
+
+      <tarfileset dir="${deploy}"
+                  mode="644"
+                  prefix="/testenvironment/classes">
+        <include name="Problems.jar"/>
+      </tarfileset>
+
+      <tarfileset dir="${config}"
+                  mode="644"
+                  prefix="/testenvironment/config">
+        <include name="transmitter.pol"/>
+        <include name="statisticreader.pol"/>
+        <include name="logging.properties"/>
+      </tarfileset>
+
+      <tarfileset dir="${readme}"
+                  mode="644"
+                  prefix="/testenvironment">
+        <include name="Readme"/>
+        <include name="ReadmeTestenvironment"/>
+        <include name="ReadmeProblemTransmitterApp"/>
+        <include name="ReadmeClassFileServer"/>
+        <include name="ReadmeStatistics"/>
+      </tarfileset>
+
+      <tarfileset dir="${runScripts}"
+                  mode="755"
+                  prefix="/testenvironment/runScripts">
+        <include name="setup.bat"/>
+        <include name="runClassFileServer.bat"/>
+        <include name="runConsoleSysStat.bat"/>
+        <include name="runGuiSysStat.bat"/>
+        <include name="runRemoteHash.bat"/>
+        <include name="runMonte.bat"/>
+        <include name="runRandom.bat"/>
+        <include name="runCaching.bat"/>
+        <include name="runFail.bat"/>
+        <include name="prime/*.bat"/>
+      </tarfileset>
+
+    </tar>
+  </target>
+
+  <target name="srcTar" depends="sourceJar"
+    description="Erstellt tar.gz-Datei vom gesamten Source">
+
+    <tar destfile="${deploy}/architeuthis_src.tar.gz"
+         compression="gzip">
+
+      <tarfileset dir="${deploy}"
+                  mode="644"
+                  prefix="/architeuthis">
+        <include name="Source.jar"/>
+      </tarfileset>
+
+      <tarfileset dir="${libs}"
+                  mode="644"
+                  prefix="/architeuthis/libs">
+        <include name="*"/>
+      </tarfileset>
+
+      <tarfileset dir="${config}"
+                  mode="644"
+                  prefix="/architeuthis/config">
+        <include name="*"/>
+      </tarfileset>
+
+      <tarfileset dir="${runScripts}"
+                  mode="755"
+                  prefix="/architeuthis/runScripts">
+        <include name="*"/>
+      </tarfileset>
+
+      <tarfileset dir="${readme}"
+                  mode="644"
+                  prefix="/architeuthis/readme">
+        <include name="*"/>
+      </tarfileset>
+
+      <tarfileset dir="${manual}"
+                  mode="644"
+                  prefix="/architeuthis/manual">
+        <include name="**"/>
+      </tarfileset>
+
+      <tarfileset dir="${misc}"
+                  mode="644"
+                  prefix="/architeuthis">
+        <include name="change-log"/>
+        <include name="todo"/>
+        <include name="build.xml"/>
+        <include name="gpl.txt"/>
+      </tarfileset>
+
+    </tar>
+  </target>
+
+  <target name="allTar" depends="dispatcherTar, operativeTar, userTarUnix,
+                                 userTarWin, testsTarUnix, testsTarWin, srcTar"
+    description="Erstellt alle tar.gz-Dateien">
+  </target>
+
+
+  <!-- Weitere Ziele                                                  -->
+
+  <target name="clean">
+    <delete dir="${build}"/>
+    <delete dir="${deploy}"/>
+  </target>
+
+  <target name="help">
+    <echo message="Benutzung: ant ziel"/>
+    <echo message="Moegliche Werte fuer ziel sind:"/>
+
+    <echo message=""/>
+    <echo message=" * compileDis    : Compiliert die Dispatcher-Dateien"/>
+    <echo message=" * compileOp     : Compiliert die Operative-Dateien"/>
+    <echo message=" * compileUser   : Compiliert die User-Dateien"/>
+    <echo message=" * compileProbs  : Compiliert die Testproblem-Dateien"/>
+    <echo message=" * compile       : Compiliert alle java-Dateien"/>
+
+    <echo message=""/>
+    <echo message=" * dispatcherJar : Erzeugt die jar-Datei zum Dispatcher"/>
+    <echo message=" * operativeJar  : Erzeugt die jar-Datei zum Operative"/>
+    <echo message=" * userJar       : Erzeugt die jar-Datei zu den User-Dateien"/>
+    <echo message=" * problemsJar   : Erzeugt die jar-Datei zu den Testproblemen"/>
+    <echo message=" * sourceJar     : Erzeugt die jar-Datei der java-Source-Dateien"/>
+
+    <echo message=""/>
+    <echo message=" * dispatcherTar : Erzeugt die tar.gz-Datei zum Dispatcher"/>
+    <echo message=" * operativeTar  : Erzeugt die tar.gz-Datei zum Operative"/>
+    <echo message=" * userTarUnix   : Erzeugt die tar.gz-Datei zu den User-Dateien"/>
+    <echo message="                   für Unix"/>
+    <echo message=" * userTarWin    : Erzeugt die tar.gz-Datei zu den User-Dateien"/>
+    <echo message="                   für Windows"/>
+    <echo message=" * testsTarUnix  : Erzeugt die tar.gz-Datei zu den Test-Dateien"/>
+    <echo message="                   für Unix"/>
+    <echo message=" * testsTarWin   : Erzeugt die tar.gz-Datei zu den Test-Dateien"/>
+    <echo message="                   für Windows"/>
+
+    <echo message=" * srcTar        : Erzeugt die tar.gz-Datei vom gesamten Source"/>
+    <echo message=" * allTar        : Erzeugt alle tar.gz-Dateien"/>
+
+    <echo message=""/>
+    <echo message=" * clean         : Loescht alle von ant erzeugten Dateien"/>
+    <echo message=" * help          : Gibt diesen Text zur Benutzung aus"/>
+
+  </target>
+</project>
+

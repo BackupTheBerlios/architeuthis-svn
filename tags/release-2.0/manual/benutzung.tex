@@ -1,0 +1,667 @@
+%% Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+%% Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+%% Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+%% entwickelt.
+
+
+\chapter[Benutzung als Dispatcher -Administrator]{Die Benutzung des Systems
+  als Dispatcher-Administrator}
+
+\section{Der Dispatcher}
+
+Der Dispatcher besteht aus drei Komponenten: Dem Com\-pute-Manager,
+dem Pro\-blem-Manager und der Statistik. Er ist das Herzst"uck des 
+Compute-Systems. 
+
+
+\subsection{Voraussetzungen}
+
+Benötigt wird zunächst ein funktionierendes Java Runtime Environment, Version
+1.4 oder neuer. Es ist eine Netzwerkanbindung n"otig, damit eine Kommunikation
+zu den Operatives geschaffen werden kann. Besondere Hardware-Anforderungen
+werden nicht gestellt, ein Rechner mit 600 MHz und 256 MB RAM kann problemlos 
+als Dispatcher für über 30 Operatives verwendet werden.
+
+
+\subsection{Benutzung}
+
+Um den Dispatcher benutzen zu können, muss er auf einem von allen Operatives
+erreichbaren Computer gestartet werden. Dieser Computer muss auch für
+Anfragen von den Computern offen sein, die später Probleme auf den
+Dispatcher übertragen wollen. Wie später beim Operative gilt auch hier: Am
+besten läuft der Dispatcher mit angepaßter Priorität im Hintergrund, falls
+auf dem Rechner zusätzlich eine interaktive Arbeit erfolgt.
+
+\subsection[Kommandozeilenparameter]{Aufruf und Kommandozeilenparameter}
+Kommandozeile zum Starten des Dispatchers (alles in einer Zeile, die
+Zeilenumbrüche wurden nur zur besseren Übersicht eingefügt):
+
+{\tt java -Djava.rmi.server.RMIClassLoaderSpi=\\
+  de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi\\
+  -Djava.util.logging.config.file=logging.properties\\
+  -Djava.security.policy=dispatcher.pol\\
+  de.unistuttgart.architeuthis.dispatcher.DispatcherImpl\\
+  -c <config-Datei> -port <Port-Nummer>\\
+  -deadtime <Zeit> -deadtries <Anzahl> -d -t -help}
+
+Dabei ist:
+
+\begin{description}
+\item[-Djava.rmi...CacheFlushingRMIClSpi] Optional. Dadurch werden die
+  Klassen von Problemen nur gecached, solange das Problem in Berechnung
+  ist. Sobald die Lösung dem Benutzer zurückübermittelt wurde, werden die
+  dazugehörigen Klassen aus dem Cache gelöscht. Damit können Probleme,
+  deren Klassen modifiziert wurden, dem Compute-System wieder zum 
+  Berechnen übergeben werden. Normalerweise würde das Java-eigene
+  Cachen von Klassen dies verhindern.
+
+  {\bf Achtung:} Selbst durch diese Massnahme kann es zu merkwürdigen
+  Effekten kommen (z.B. ClassCast-Exception), wenn mehrere Probleme
+  gleichzeitig in modifizierter Form berechnet werden, oder wenn mehrere
+  Probleme im gleichen Verzeichnis des Webservers bereitgestellt werden.
+  Daher sollte am Einfachsten für jedes neue Problem auch ein neues
+  Verzeichnis auf dem Webserver angelegt werden. Dann treten die oben
+  angedeuteten Probleme nicht auf.
+
+\item[-Djava.util.logging.config.file=logging.properties]
+  Optional. Gibt die Konfigurationsdatei für den im Dispatcher 
+  verwendeten Logger an. Die Konfigurationsdatei selbst ist kommentiert,
+  für die einzelnen Optionen bitte diese einsehen. Wird keine Angabe zur 
+  Konfigurationsdatei gemacht, verwendet der Dispatcher die
+  Standard-Konfiguration. Weitere Informationen finden sich außerdem in der 
+  Java API-Do\-ku\-men\-ta\-tion unter \texttt{java.util.logging}.
+  Der Dispatcher arbeitet im Namespace ``de.unistuttgart.architeuthis''.
+
+  {\bf Tipp:} Normalerweise sollten im Betrieb nur Informationen der
+  Informationslevel WARNING oder SEVERE oder eventuell INFO geloggt werden,
+  da sonst wichtige Ausgaben eventuell übersehen werden. Zum Testen
+  empfiehlt sich manchmal, einen niedrigeren Level zu wählen, beispielsweise
+  CONFIG.
+
+\item[-Djava.security.policy=dispatcher.pol]
+  Die policy-Datei für den Dispatcher. Diese Datei darf sich nicht in
+  einer jar-Datei befinden; der Pfad muss also relativ oder absolut angegeben
+  werden. Siehe dazu das Kapitel \hyperref[sicherh]{Sicherheit}.  
+
+\item[de.unistuttgart.architeuthis.dispatcher.DispatcherImpl]
+  Die Klasse zum Starten des Dispatchers.
+
+\item[-c <config-Datei>]
+  Optional. Es kann eine Konfigurationsdatei angegeben werden, die die
+  restlichen Parameter beinhaltet. Standardmäßig ist ``compserv.conf''
+  eingestellt. Falls diese Datei nicht vorhanden ist, werden Standardwerte
+  verwendet.
+
+\item[-port <Port-Nummer>]
+  Optional. Setzt die Port-Num\-mer, un\-ter der die RMI-Regi\-stry des
+  Dispatchers zu erreichen sein wird. Standardmäßig wird 1099 angenommen
+  (wie bei jeder RMI-Kommunikation).
+
+\item[-deadtime <Zeit>]   
+  Optional. Setzt die Zeit zwischen den Versuchen, Operatives zu finden, die
+  nicht mehr antworten. Eine höhere Zeit verursacht weniger Rechenlast und
+  Netzwerk-Verkehr auf dem Dispatcher, jedoch werden dann fehlerhafte
+  Operatives später entdeckt.
+
+\item[-deadtries <Anzahl>]
+  Optional. Setzt die Anzahl der Fehler, die sich bei einer Verbindung zu
+  einem Operative ereignen dürfen, bis dieser entfernt wird.
+
+\item[-d] Optional. Schaltet den Debug-Modus mit zusätzlichen Meldungen
+  ein.
+
+\item[-t] Optional. Erzeugt für die Übergabe und für den Abbruch eines
+  Teilproblems an die bzw.\ auf den Operatives einen neuen Thread.
+
+\item[-help] Optional. Gibt eine Meldung zur Benutzung aus und beendet
+  anschließend das Programm.
+\end{description}
+
+
+\chapter[Benutzung als Operative-Administrator]{Die Benutzung des Systems als
+  Operative-Administrator}
+
+\section{Der Operative}
+Die Operatives stellen die Rechenleistung des Compute-Systems bereit und
+führen die tatsächlichen Berechnungen aus.
+
+
+\subsection{Voraussetzungen}
+Die einzige Voraussetzung zum Betreiben eines Operatives ist ein
+installiertes Java-Runtime-Environment der Version 1.3 oder neuer und eine
+Netzwerkanbindung. Bei Benutzung von Version 1.3 ist jedoch zu beachten,
+dass dann ein nicht-cachen\-der Betrieb nicht möglich ist (siehe Option
+\hyperref[cachen]{CacheFlushingRMIClSpi}).
+
+
+\subsection{Benutzung}
+Die Benutzung gestaltet sich sehr einfach. Der Operative muss nur gestartet
+werden, wobei als Kommandozeilenparameter die RMI-Adresse des
+Compute-Mana\-gers angegeben werden muss, bei dem sich der Operative anmelden
+soll. Der Operative sollte am Besten mit nicht zu hoher Priorität im
+Hintergrund laufen, falls auf dem Rechner zusätzlich eine interaktive Arbeit
+erfolgt.
+
+{\bf Tipp:} Falls der Compute-Manager dauerhaft läuft, kann der Operative
+problemlos beim Rechnerstart im Hintergrund gestartet werden. Das 
+Herunterfahren des Rechners beendet den Operative ord\-nungs\-ge\-mäß.
+Ebenfalls denkbar ist es, den Operative im Hintergrund des GDM laufen zu
+lassen.
+
+{\bf Achtung:} Der Dispatcher und der Operative müssen gegenseitig
+erreichbar sein.
+
+
+\subsection[Kommandozeilenparameter]{Aufruf und Kommandozeilenparameter}
+Kommandozeile zum Aufruf des Operatives:
+
+{\tt java -Djava.security.policy=operative.pol\\
+  -Djava.rmi.server.RMIClassLoaderSpi=\\
+  de.unistuttgart.architeuthis.misc.CacheFlushingRMIClSpi\\
+  -Djava.util.logging.config.file=logging.properties\\
+  de.unistuttgart.architeuthis.operative.OperativeImpl\\
+  <Adresse> -d}
+
+Dabei ist:
+
+\begin{description}
+\item[-Djava.security.policy=operative.pol]
+  Gibt die Policy-Datei für den Operative an. Diese Datei darf sich nicht in
+  einer jar-Datei befinden; der Pfad muss also relativ oder absolut angegeben
+  werden. Siehe dazu das Kapitel
+  \hyperref[sicherh]{Sicherheit}.
+
+\item[-Djava.util.logging.config.file=logging.properties]
+  Optional. Gibt die Konfigurationsdatei für den im Operative 
+  verwendeten Logger an. Die Konfigurationsdatei selbst ist kommentiert,
+  für die einzelnen Optionen bitte diese einsehen. Wird keine Angabe zur 
+  Konfigurationsdatei gemacht, verwendet der Operative die
+  Standard-Konfiguration. Weitere Informationen finden sich außerdem in der 
+  Java API-Do\-ku\-men\-ta\-tion unter \texttt{java.util.logging}.
+  Der Dispatcher arbeitet im Namespace ``de.unistuttgart.architeuthis''.
+
+  {\bf Tipp:} Normalerweise sollten im Betrieb nur Informationen der
+  Informationslevel WARNING oder SEVERE oder eventuell INFO geloggt werden,
+  da sonst wichtige Ausgaben eventuell übersehen werden. Zum Testen
+  empfiehlt sich manchmal, einen niedrigeren Level zu wählen, beispielsweise
+  CONFIG.
+
+\item[-Djava.rmi...CacheFlushingRMIClSpi]
+\label{cachen}
+  Lädt einen anderen Service Provider für den RMIClassLoader. Dies bewirkt,
+  dass Klassen nicht gecached werden und somit Probleme, deren Klassen
+  modifiziert wurden, wieder mit dem System berechnet werden können. Zur
+  Minimierung des Netzwerk-Verkehrs kann diese Option auch entfallen.
+
+  {\bf Achtung:} Falls diese Option nicht angegeben wird, werden
+  Modifikationen in Teilproblem-Klassen nur dann erkannt, falls diese Klassen
+  entweder in einem anderen Verzeichnis auf dem Webserver abgelegt werden oder
+  der Operative neu gestartet wird. Wenn die Option angegeben wird, dürfen
+  die class-Dateien nicht geändert werden, während das Problem berechnet wird.
+
+\item[de.unistuttgart.architeuthis.operative.OperativeImpl]
+  Die Klasse zum Starten des Operatives.
+
+\item[Adresse] 
+        Die Adresse der RMI-Registry, in der der Dispatcher eingetragen ist,
+        bei dem sich der Operative anmelden soll. Exemplarisch:\\
+        {\tt <Rechnername>:<Port>}
+
+        Dabei ist:
+
+        \begin{description}
+        \item[Rechnername] Der Name oder die IP-Adresse des Rechners,
+            auf dem der Dispatcher läuft.
+        \item[Port] Optional. Der Port, auf dem der Dispatcher
+            auf Verbindungen hört. Falls nicht angegeben, wird 1099
+            angenommen und außerdem muss dann der : entfallen.
+        \end{description}
+
+\item[-d] Optional. Schaltet den Debug-Modus mit zusätzlichen Meldungen
+        ein.
+\end{description}
+
+
+\chapter[Benutzung als Endanwender]{Die Benutzung des Systems als Endanwender}
+
+\section{Das eigentliche Problem}
+Zu implementieren sind drei Java-Klassen, die im folgenden n"aher erkl"art
+werden.
+
+Alle nachfolgend genannten Interfaces befinden sich im Package
+\texttt{de...userinterfaces.develop}.
+
+
+\subsection[Problem]{Das Problem - Problem.java} 
+
+Das Problem ist die organisierende Hauptklasse. Es generiert die
+Teilprobleme, empf"angt die Teill"osungen und gibt die Gesamtl"osung
+zur"uck, sobald diese erzeugt werden konnte. Das Interface \texttt{Problem}
+besitzt dementsprechend drei Methoden. In der Regel sollte das konkrete
+Problem serialisierbar sein und das Unter-Interface
+\texttt{SerializableProblem} implementieren.
+
+%{\scriptsize \verbatiminput{java/Problem.jav}}
+
+%{\scriptsize \verbatiminput{java/SerializableProblem.jav}}
+
+{\bf Hinweis:}
+Falls das Erstellen von Teilproblemen oder das Verarbeiten von Teillösungen
+rechenintensiv ist, ist es ratsam, dafür selbst Teilprobleme zu generieren.
+
+\subsection[Teilproblem]{Das Teilproblem - PartialProblem.java}
+Das Teilproblem ist das eigentliche Rechenprogramm, das auf dem Operative
+ausgeführt wird. Das Interface selbst fungiert lediglich als Ober-Interface
+ohne Methoden, erweitert aber das Interface \texttt{Serializable}.
+
+%{\scriptsize \verbatiminput{java/PartialProblem.jav}}
+
+Es besitzt zwei Unter-Interfaces, von denen eines von einem konkreten
+Teilproblem zu implementieren ist. \texttt{NonCommPartialProblem} ist für
+Teilprobleme, die keinen gemeinsamen Speichers benutzen
+(nicht-kommunizierende Teilprobleme). \texttt{CommunicationPartialProblem}
+ist für Teilprobleme, die einen gemeinsamen Speichers benutzen
+(kommunizierende Teilprobleme). Beide Unter-Interfaces besitzen nur eine
+Methode \texttt{compute} und unterscheiden sich nur darin, dass diese Methode
+im ersten Fall keinen und im zweiten Fall einen Parameter besitzt.
+
+%{\scriptsize \verbatiminput{java/NonCommPartialProblem.jav}}
+
+%{\scriptsize \verbatiminput{java/CommunicationPartialProblem.jav}}
+
+
+\subsection[Teill"osung]{Die Teill"osung - PartialSolution.java}
+Eine Teill"osung ist das Ergebnis des berechneten Teilproblems und muss
+das Interface \texttt{PartialSolution} implementieren, das wiederum
+\texttt{Serializable} erweitert.
+
+%{\scriptsize \verbatiminput{java/PartialSolution.jav}}
+
+\subsection{Wichtige allgemeine Hinweise}
+
+\begin{itemize}
+\item Alle in einer serialisierbaren Klasse (die \texttt{Serializable}
+      implementiert) enthaltenen Attribut-Klassen müssen serialisierbar
+      sein.
+
+\item Wenn eine serialisierbare Klasse eine nicht-serialisierbare Oberklasse
+      besitzt, muss die Oberklasse einen parameterlosen Konstruktor
+      besitzten. Außerdem muss die Unterklasse dafür Sorge tragen, dass nach
+      der Deserialisierung  einer Instanz von ihr die Attribute der
+      Oberklasse die erforderlichen Werte besitzen. Weitere Hinweise zur
+      Serialisierung finden sich in der API-Beschreibung zum Interface
+      \texttt{java.io.Serializable}.
+
+\item In den serialisierbaren Objekten, insbesondere in den Klassen, die
+      {\tt Partial\-Problem} und {\tt Partial\-Solution} implementieren,
+      dürfen keine sta\-ti\-schen Variablen
+%     \marginpar{Statische Variablen}
+      verwendet werden, da diese beim Versenden der Objekte via RMI nicht
+      serialisiert werden. Konstanten (also {\tt static final}-Attribute)
+      dürfen jedoch verwendet werden.
+
+\item Generell ist es empfehlenswert, jedes neue Problem, das auf dem
+      Compute-System berechnet werden soll, in einem neuen Verzeichnis auf
+      dem Webserver abzulegen.
+
+\item Sobald das Ergebnis ermittelt werden kann, sollte das {\tt Problem}
+      keine weiteren {\tt Partial\-Problem}-Objekte mehr erzeugen, da diese
+      sonst auch berechnet werden, ohne nach der Lösung zu fragen. Bei der
+      Ankunft einer berechneten {\tt Par\-tial\-So\-lu\-tion} wird jedoch
+      nach der Gesamtlösung gefragt.
+
+\item Die Erzeugung und das Zusammensetzen der Teilprobleme sowie das
+      Berechnen der Gesamtl"osung sollte, da es auf dem Dispatcher-Rechner
+      ausgef"uhrt wird, nur geringen Rechenaufwand erfordern. Falls es mehr
+      Rechenaufwand erfordert, sollten diese T"atigkeiten als eigene
+      Teilprobleme vergeben werden.
+\end{itemize}
+
+\subsection[Hilfestellung]{Hilfestellung bei der Implementierung mittels
+                           abstrakter Klassen}
+Es werden abstrakte Klassen angeboten, die das Implementieren vereinfachen
+sollen. Siehe dazu \hyperref[abstrakt]{Kapitel \ref{abstrakt}
+\emph{Abstrakte Hilfsklassen}}.
+
+\subsection{Bereitstellen der Klassen mittels des ClassFileServer}
+\label{classfileserver}
+
+Wie schon erwähnt, müssen alle Klassen, die zur Verarbeitung des Problems
+und der Teilprobleme erforderlich sind, auf einem Webserver für alle
+Computer des Systems erreichbar sein (also sowohl für Operatives, wie auch
+für den Dispatcher). Dabei muss die benutzte Package-Hierarchie wie bei Java
+üblich als Verzeichnis-Hierarchie vorhanden sein. Die Klassen können
+alternativ auch in einem jar-File liegen, das ebenfalls die
+Package-Hierarchie nachbildet.
+
+Falls kein Webserver zur Verfügung steht, kann der sogenannte
+{\tt Class\-File\-Server} benutzt werden. Dies ist ein von Sun geschriebener
+Mini-Webserver, der nur dazu dient, Klassen an RMI-Applikationen
+auszuliefern. Die Benutzung ist sehr einfach. Man starte den
+ClassFileServer mit folgender Kommandozeile:
+
+{\tt java de.unistuttgart.architeuthis.facade.ClassFileServer <port> <root>}
+
+Dabei ist:
+
+\begin{description}
+\item[port] Der Port auf dem der Webserver ansprechbar sein soll.
+\item[root] Das Verzeichnis, das als Wurzel-Verzeichnis für die
+    auszuliefernden Dateien des Web\-servers dienen soll.
+\end{description}
+
+Danach sind unter {\tt http://<rechnername>:<port>/} alle Dateien und
+Verzeichnisse unterhalb von {\tt<root>} erreichbar.
+
+{\bf Achtung:}
+Der ClassFileServer macht alle alle Dateien (nicht nur class-Dateien)
+unterhalb des angegebenen Verzeichnisses zugänglich. Mas sollte daher für
+die class-Dateien ein eigenes Verzeichnis erzeugen.
+
+
+\section{Die Problem-Verarbeitung}
+Zur Verarbeitung eines (serialisierbaren) Problems steht als Schnittstelle
+zwischen Benutzer und Compute-System die Klasse
+{\tt de...facade.ProblemCom\-putation} zur Verfügung. Diese bieten zwei
+Arten von Methoden:
+
+\begin{description}
+\item[transmitProblem] Diese Methode überträgt ein übergebenes
+  serialisierbares Problem zur Verarbeitung an den Dispatcher. Dabei ist
+  zumindest der Rechnername des Dispatcher anzugeben. Außerdem ist eine
+  \emph{codebase}, d.h.\ ein URL, unter dem die vom Problem und von den
+  Teilproblemen benötigten Klassen abrufbar sind, oder ein Array von
+  codebases entweder zu übergeben oder über das Property
+   \texttt{java.rmi.server.codebase} beim Aufruf der JVM anzugeben. In
+  jedem Fall kann zusätzlich (optional) noch eine Instanz von
+  {\tt RemoteStoreGenerator} übergeben werden.
+
+\item[computeProblem] Diese Methode berechnet ein übergebenes
+  serialisierbares Probem lokal, d.h.\ ohne Übertragung an den
+  Dispatcher. Diese Methode ist besonders in der Phase der Entwicklung
+  nützlich, da z.B.\ Testausgaben möglich sind. Der Methode kann optional
+  die vorzuschlagende Anzahl der Teilprobleme und außerdem noch optional
+  eine Instanz von {\tt RemoteStoreGenerator} übergeben werden.
+\end{description}
+
+Die Verwendung der beiden Arten von Methoden ist ansonsten gleich und
+unterscheidet sich nicht vom Aufruf von Methoden, die vom Benutzer selbst
+implementiert wurden und lokal ausgeführt werden.
+
+Sollen mehrere Probleme nacheinander verarbeitet werden, sollte von der
+oben genannten Klasse aus Effizienzgründen trotzdem nur eine Instanz erzeugt
+werden.
+
+
+\section{Der Problem-Übermittler}
+\label{ProblemTransmitterImpl}
+
+Für den Ausnahmefall, dass ein Problem nicht serialisierbar ist, kann das
+Problem vom Compute-Manager geladen und vollständig auf dem Compute-System
+ausgeführt werden. Dazu steht die Klasse
+\texttt{de...facade.ProblemTransmit\-terImpl} zur Verfügung. Sie bietet
+außerdem, auch bei der Übertragung einer Instanz eines serialisierbaren
+Problems, die Möglichkeit, während der Berechnung des Problems auf dem
+Compute-System nebenläufig eine Problem-Statistik oder eine System-Statistik
+abzufragen oder die Berechnung des Problems abzubrechen. Ihre Verwendung
+hat jedoch einige Nachteile:
+
+\begin{itemize}
+\item  Sie bietet keine Methode zur lokalen Berechnung eines Problems.
+
+\item  Für die Berechnung eines nicht-serialisierbaren Problems kann die
+       zu erzeugende Instanz nur durch den Konstruktor konfiguriert werden
+       und als Parameter können nur Objekte angegeben werden (keine Werte
+       elementaren Typs).
+
+\item  Für die Berechnung eines nicht-serialisierbaren Problems muss außerdem
+       der Klassenname als String angegeben werden, wodurch der Compiler
+       keine entsprechenden Prüfungen mehr vornehmen kann.
+\end{itemize}
+
+Zur Übertragung eines Problems mittels \texttt{ProblemTransmitterImpl} muss
+von dieser Klasse unter Angabe des Rechnernames des Dispatchers eine
+Instanz erzeugt werden. Die Klasse bietet mehrere Methoden mit dem Namen
+{\tt transmitProblem}. Bei einem nicht-serialisierbaren Problem, von dem
+eine Instanz auf dem Dispatcher erzeugt wird, ist ein Array mit den
+(serialisierbaren) Parameter-Objekten für den Konstruktor anzugeben.
+
+Als Beispiel für die Verwendung von {\tt ProblemTransmitterImpl}  kann die
+Klasse \texttt{de...testenvironment.prime.advanced.PrimeNumbersParallel}
+zusam\-men mit den anderen Klassen dieses Packages betrachtet werden.
+
+
+\section{Ausführung eines eigenständigen Problems}
+
+Für den Sonderfall, dass ein Problem komplett eigenständig ist und keine
+Daten mit anderen Programmen austauscht und keine Eingaben vom Benutzer
+benötigt, steht die Klasse \texttt{de...facade.ProblemTransmitterApp} zur
+Verfügung. Der Vorteil bei der Benutzung liegt darin, daß zu einem
+Problem keine extra Klasse zur Ausführung des Problems erstellt werden
+braucht und daß automatisch eine Problem- und eine System-Statistik
+angezeigt werden kann.
+
+Die Kommandozeile zum Ausführen der Klasse ist:
+
+{\tt java -Djava.security.policy=transmitter.pol\\
+  de.unistuttgart.architeuthis.facade.ProblemTransmitterApp\\
+  -r <ProblemManager> -u <packageURL> -c <klassenname>\\
+  -f <dateiname> -s -d -n -p}
+
+\begin{description}
+\item[-Djava.security.policy=transmitter.pol]
+  Gibt die Po\-li\-cy-Da\-tei für den Pro\-blem-Über\-mit\-tler an. Diese
+  Datei darf sich nicht in einer jar-Datei befinden; der Pfad muss also
+  relativ oder absolut angegeben werden. Siehe dazu das Kapitel
+  \hyperref[sicherh]{Sicherheit}.
+
+\item[de.unistuttgart.architeuthis.facade.ProblemTransmitterApp]
+  Die Haupt-Klasse der Kommandozeilen-Applikation.
+
+\item[-r <ProblemManager>]
+        Die Adresse der RMI-Registry, in der der
+        Dispatcher eingetragen ist, an den sich die Kommandozeilen-Applikation
+        wenden soll. Exemplarisch:
+
+         {\tt <Rechnername>:<Port>}
+
+        Dabei ist:
+
+        \begin{description}
+        \item[Rechnername] Der Name oder die IP-Adresse des Rechners,
+            auf dem der Dispatcher läuft.
+        \item[Port] Optional. Der Port, auf dem der Dispatcher auf
+            Verbindungen hört. Falls nicht angegeben, wird 1099 angenommen
+            und außerdem muss der Doppelpunkt dann entfallen.
+        \end{description}
+
+\item[-u <packageURL>] Der URL des äußersten Pakets der Klassen des
+  Problems. Die Adresse muss entweder mit ``/'' enden, falls die Klassen
+  ungepackt in der Package-Hierarchie vorliegen, oder mit dem Namen der
+  jar-Datei, die die Klassen in der Package-Hierarchie enthält. Anstatt
+  einen vorhandenen Web-Server kann man auch
+  den \hyperref[classfileserver]{ClassFileServer} verwenden (s.\ Abschnitt
+  \ref{classfileserver}).
+
+\item[-c <klassenname>] Der vollständige Klassenname (inklusive aller Packages)
+  der Klasse des Problems, die das Interface {\tt Problem} implementiert.
+
+{\bf Achtung:}
+\begin{itemize} 
+\item Da bei der Übermittlung durch die Kommandozeilen-Applikation dem Problem
+      keine Parameter übergeben werden können, ist es notwendig, dass das
+      Problem einen parameterlosen Konstruktor implementiert, der mögliche
+      Attribute mit den benötigten Werten initialisiert.
+
+\item Die Unterverzeichnisse, die durch die Package-Struktur entstehen,
+      müssen auf dem Webserver ebenfalls vorhanden sein.\\
+      Beispiel: Die Klasse {\tt MyProblem} aus dem Package {\tt mypackage}
+      ist unter der URL\\ {\tt
+      http://myserver/mydir/my\-pack\-age/My\-Prob\-lem\-.class} erreichbar.
+      Dann muss der Parameter {\tt -u} den Wert {\tt
+      http://my\-ser\-ver/my\-dir/} erhalten und der Parameter {\tt -c} den
+      Wert {\tt my\-pack\-age.My\-Prob\-lem}.
+\end{itemize}
+
+\item[-f <dateiname>] Der Name der Datei, in der die Lösung des Problems
+  gespeichert werden soll. Die Lösung wird dabei einfach in ihrer
+  serialisierten Form in die Datei geschrieben. Wird kein Dateiname angegeben,
+  wird die Lösung auf der Standard-Ausgabe ausgegeben.
+
+\item[-s] Optional. Überträgt das Problem als serialisierbares Problem.
+
+\item[-d] Optional. Schaltet zusätliche Debug-Meldungen ein.
+
+\item[-n] Optional. Schaltet die beiden graphischen Statistik--Fenster ab.
+          Nach der Berechnung wird eine Statistik in Textform ausgegeben.
+
+\item[-p] Optional. Startet nur das Fenster für die Problem--Statistik, nicht
+          jedoch das für die System--Statistik.
+\end{description}
+
+Das Schließen der beiden graphischen Statistik--Fenster hat keinen Einfluß
+auf die Berechnung des Problems. Die Berechnung des Problems kann jedoch
+durch {\tt Strg-C} im Fenster, in dem das Problem gestartet wurde,
+abgebrochen werden.
+
+
+\section{Der Laufzeitvergleich}
+
+Die Klasse \texttt{de...facade.RuntimeComparison} dient zum Vergleich
+zwischen der Berechnung eines Problems auf dem lokalen Computer und der
+Berechnung auf dem Compute-System. Sie gibt jeweils die benötigte Zeit und
+die L"osung von beiden Berechnungen aus oder speichert die L"osungen in
+Dateien.
+
+\subsection{Durchführung der Berechnungen}
+
+Die Berechnung auf einem einzelnen Computer ist so realisiert, dass dem
+Problem mitgeteilt wird, dass nur ein Operative zur Verf"ugung steht. Ob
+dann nur ein Teilproblem generiert wird h"angt von der Implementierung des
+Problems ab. Die Berechnung erfolgt nur durch den lokalen Computer.
+
+Bei der verteilte Berechnung wird das Problem an einen Dispatcher übergeben
+und durch alle verfügbaren Operatives berechnet.
+
+\subsection[Kommandozeilenparameter]{Aufruf und Kommandozeilenparameter}
+
+Die Kommandozeile zum Aufrufen der Testumgebung ist:
+
+{\tt java -Djava.security.policy=transmitter.pol\\
+  de.unistuttgart.architeuthis.facade.RuntimeComparison\\
+  -r <ProblemManager> -u <packageURL>\\
+  -c <klassenname> -f <dateiname> -d}
+
+Dabei ist:
+
+\begin{description}
+\item[-Djava.security.policy=transmitter.pol]
+  Die für die Testumgebung zu benutzende policy-Datei. Diese Datei darf
+  sich nicht in einer jar-Datei befinden; der Pfad muss also relativ
+  oder absolut angegeben werden. Siehe Kapitel \hyperref[sicherh]{Sicherheit}.
+
+\item[de.unistuttgart.architeuthis.facade.RuntimeComparison]
+  Die Haupt-Klasse des Laufzeitvergleichs.
+
+\item[-r <computesystem>] 
+    Die Adresse der RMI-Registry, in der der Dispatcher eingetragen ist,
+    an die sich der Laufzeitvergleich wenden soll. Exemplarisch:
+
+    {\tt <Rechnername>:<Port>}
+
+    Dabei ist:
+
+    \begin{description}
+    \item[Rechnername] Der Name oder die IP-Adresse des Rechners,
+        auf dem der Dispatcher läuft.
+    \item[Port] Optional. Der Port, auf dem der Dispatcher auf
+        Verbindungen hört. Falls nicht angegeben, wird 1099 angenommen und
+        außerdem muss dann der Doppelpunkt entfallen.
+    \end{description}
+
+\item[-u <classURL>] Der URL des äußersten Pakets der Klassen des
+  Problems. Die Adresse muss entweder mit ``/'' enden, falls die Klassen
+  ungepackt in der Package-Hierarchie vorliegen, oder mit dem Namen der
+  jar-Datei, die die Klassen in der Package-Hierarchie enthält. Anstatt
+  einen vorhandenen Web-Server kann man auch
+  den \hyperref[classfileserver]{ClassFileServer} verwenden (s.\ Abschnitt
+  \ref{classfileserver}).
+
+\item[-c <klassenname>] Der vollständige Klassenname (inklusive aller Packages)
+  der Klasse des Problems, die das Interface Problem implementiert.
+
+  {\bf Achtung:} Die Unterverzeichnisse, die durch die Package-Struktur
+  entstehen, müssen auf dem Webserver ebenfalls vorhanden sein.\\
+  Beispiel: Die Klasse {\tt MyProblem} aus dem Package {\tt mypackage} ist
+  unter der URL
+  {\tt http://myserver/mydir/my\-pack\-age/My\-Prob\-lem\-.class} erreichbar.
+  Dann muss der Parameter \texttt{-u} den Wert
+  {\tt http://my\-ser\-ver/my\-dir/} erhalten und der Parameter \texttt{-c}
+  den Wert {\tt my\-pack\-age.My\-Prob\-lem}.
+
+\item[-f <dateiname>] Optional. Der Name der Datei, in der die Lösung des
+  Problems gespeichert werden soll. Die Lösung wird dabei einfach in ihrer
+  serialisierten Form in die Datei geschrieben. Wird kein Dateiname angegeben,
+  wird die Lösung auf der Standard-Ausgabe ausgegeben.
+
+\item[-d] Optional. Schaltet zusätliche Debug-Meldungen ein.
+\end{description}
+
+
+\section{Die Statistik}
+
+Mit der Statistik können Informationen über den Zustand des Compute-Systems
+abgefragt werden. Diese werden entweder in einem eigenen Fenster oder
+textuell ausgegeben.
+
+\subsection{Voraussetzungen}
+Die einzige Voraussetzung zum Anzeigen der Statistik ist ein installiertes
+Java-Runtime-Environment der Version 1.3 oder neuer und eine
+Netzwerkanbindung oder  ein lokales Arbeiten auf dem Dispatcher-Rechner.
+Für die graphische Statistik-Ausgabe ist eine funktionierende graphische
+Oberfläche erforderlich.
+
+\subsection[Kommandozeilenparameter]{Aufruf und Kommandozeilenparameter}
+
+Aufruf der Version mit eigenem Fenster:
+
+{\tt java -Djava.security.policy=statisticreader.pol\\
+     de.unistuttgart.architeuthis.facade.SystemGUIStatisticsReader\\
+     <computeSystem>}
+
+Aufruf der Konsolen-Version:
+
+{\tt java -Djava.security.policy=statisticreader.pol\\
+     de.unistuttgart.architeuthis.facade.SystemTextStatisticsReader\\
+     <computeSystem>}
+
+\begin{description}
+\item[-Djava.security.policy=statisticreader.pol]
+  Gibt die Po\-li\-cy-Da\-tei für die Sta\-tistik-Anzeige an. Diese Datei 
+  darf sich nicht in einer jar-Datei befinden; der Pfad muss also relativ
+  oder absolut angegeben werden. Siehe dazu das Kapitel
+  \hyperref[sicherh]{Sicherheit}.
+
+\item[de.unistuttgart.architeuthis.facade.SystemGUIStatisticsReader]
+  Die Haupt-Klasse der Statistik-Anzeige in einem eigenen Fenster.
+
+\item[de.unistuttgart.architeuthis.facade.SystemTextStatisticsReader]
+  Die Haupt-Klasse der textuellen Statistik-Anzeige.
+
+\item[<computeSystem>]
+    Die Adresse der RMI-Registry, in der der Dispatcher eingetragen ist,
+    an die sich die Statistik wenden soll. Exemplarisch:
+
+     {\tt <Rechnername>:<Port>}
+
+    Dabei ist:
+
+    \begin{description}
+    \item[Rechnername] Der Name oder die IP-Adresse des Rechners,
+        auf dem der Dispatcher läuft.
+    \item[Port] Optional. Der Port, auf dem der Dispatcher auf
+        Verbindungen hört. Falls nicht angegeben, wird 1099 angenommen
+        und außerdem muss dann der : entfallen.
+    \end{description}
+\end{description}
+

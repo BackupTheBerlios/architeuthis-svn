@@ -1,0 +1,215 @@
+%% Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+%% Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+%% Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+%% entwickelt.
+
+
+\chapter{Überblick über das Systems, Begriffsklärung}
+
+\section{Name: Architeuthis}
+
+Der dänische Wissenschaftler Japetus Steenstrup erhielt Schnabel, Schulp und
+einige Saugnäpfe eines Riesenkalmars, der ein Jahr zuvor an der dänischen
+Küste an Land gespült worden war. Er verglich das Material mit
+entsprechenden Organen bekannter kleinerer Kalmararten und schloss daraus,
+dass es zu einem riesigen Kalmar gehören müsse, den er Architeuthis, den
+ersten oder größten Kalmar, nannte. Die Gattung \emph{Architeuthis}
+(Steenstrup 1856) bezeichnet heute noch die Atlantischen Riesenkalmare.
+
+Riesenkalmare gehören zu den Kopffüßern (Cephalopoda). Sie haben im Ganzen
+zehn Arme, davon zwei lange Tentakel mit keulenförmig verbreiterten Enden,
+die mit Saugnäpfen bewehrt sind und zum Fangen der Beute dienen. Acht kurze
+Arme [\dots] führen die Beute dem Mund zu.
+
+Quelle: http://www.weichtiere.at/Kopffuesser/kalmar.html (Abruf 15.04.2006)
+
+
+\subsection*{Aussprache}
+Das Wort \emph{Architeuthis} ist aus dem Lateinischen abgeleitet, wird
+deshalb auf der zweiten Silbe betont und sonst nach der im Deutschen
+üblichen Sprechweise ausgesprochen. Insbesondere ist das ``ch'' kein K-Laut,
+das ``eu'' wie in ``Europa'' und das zweite ``h'' stimmlos.
+
+\section{Übersicht}
+
+Die Architektur des \hyperref[compsys]{Compute-Systems} ist in drei Ebenen
+und drei Stufen gegliedert, die im folgenden genauer erklärt werden.
+
+\begin{center}
+\begin{tabular}{l|c|c|c}
+
+Stufe $\rightarrow$  &       Benutzer      & Dispatcher & Operative   \\
+Ebene $\downarrow$   &        Stufe        &   Stufe    & Stufe       \\
+\hline
+ Anwendungs Ebene    &    Problem-Paket    &  Problem   & Teilproblem \\
+                     &    Testumgebung     &  Lösung    & Teillösung  \\
+\hline
+ Compute-System      & Problem-Übermittler & Dispatcher & Operative   \\
+ Ebene               &  Statistik-Anzeige  &            &             \\
+\hline
+ Hardware Ebene & Benutzer-Rechner & Dispatcher-Rechner & Operative-Rechner \\
+                &   Web-Server     &                    &                   \\
+\end{tabular}
+\end{center}
+
+
+\section{Anwendungs Ebene}
+
+Für die Bedienung des Compute-Systems wird im Folgenden von mehreren 
+Personen ausgegangen, die aber nicht notwendig verschieden sein müssen:
+
+\begin{itemize}
+    \item \hyperref[benutzer]{Benutzer}
+    \item \hyperref[admin]{Dispatcher-Administrator}
+    \item \hyperref[clber]{Operative-Bereitsteller}
+\end{itemize}
+
+
+\subsection{Benutzer Stufe}
+
+\textbf{Problem-Paket}\label{probpak}
+  steht für folgende Java-Klassen:
+\begin{enumerate}
+    \item {\em Problem}
+    \item {\em PartialProblem (Teilproblem)}
+    \item {\em PartialSolution (Teillösung)}
+\end{enumerate}
+
+\textbf{Benutzer}\label{benutzer}
+    startet ein Anwendungsprogramm des
+    \hyperref[compsys]{Compute-Systems}. Er ist im Normalfall auch derjenige,
+    der das {\em Problem-Paket} implementiert hat.
+
+\textbf{Testumgebung}\label{testumg}
+    stellt Tests zur Überprüfung der Funktion und zur Messung der
+    Performance des \hyperref[compsys]{Compute-Systems} bereit. Für
+    letzteres kann ein {\em Problem} jeweils auf dem
+    \hyperref[benrech]{Benutzer-Rechner} und auf dem
+    \hyperref[compsys]{Compute-System} berechnet und die jeweile
+    Berechnungzeit verglichen werden.
+
+
+\subsection{Dispatcher Stufe}
+
+\textbf{Administrator}\label{admin}
+    startet den Dispatcher mit der Java-Klasse {\tt ComputeManagerImpl}.
+
+\textbf{Problem}\label{prob}
+    bezeichnet eine Java-Klasse, die das Interface {\em Problem}
+    implementiert und so mit Hilfe des \hyperref[compsys]{Compute-Systems}
+    eine Berechnung vornimmt. Das Interface erfordert, dass die Java-Klasse
+    dem \hyperref[compman]{Compute-Manager} {\em Teilprobleme} liefert und
+    die zugehörigen {\em Teillösungen} wieder zusammenfassen kann, um daraus
+    die {\em Gesamtlösung} zu erstellen.
+
+\textbf{Gesamtlösung}\label{gesl"os}
+    wird vom {\em Problem} erzeugt,  nachdem alle notwendigen
+    {\em Teilprobleme} berechnet worden sind. Die Gesamtlösung muss ein
+    {\em Serializable-Objekt} sein.
+
+
+\subsection{Operative Stufe}
+
+\textbf{Operative-Bereitsteller}\label{clber}
+    startet einen Operative. Da mehere Operatives in einem Compute-System 
+    arbeiten können, handelt es sich bei den Operative-Bereitstellern
+    ebenfalls um mehrere Personen (die aber nicht notwendig verschieden sein
+    müssen).
+
+\textbf{Teilproblem (PartialProblem)}\label{teilprob}
+    ist ein von einem {\em Problem} erzeugtes Objekt, das von einem
+    \hyperref[compclie]{Operative} verarbeitet werden kann, indem es das
+    Interface {\em PartialProblem} implementiert.
+
+\textbf{Teillösung (PartialSolution)}\label{teillos}
+    ist ein von einem {\em Teilproblem} erzeugtes Objekt, das dem {\em
+    Problem} zurückgegeben wird. Die Klasse muss {\em Serializable}
+    implementieren.
+
+
+\section{Compute-System Ebene}
+
+\textbf{Compute-System}\label{compsys}
+    bezeichnet die Gesamtheit aller Komponenten, die zur Berechnung eines
+    parallelisierten \hyperref[prob]{Problems} benötigt werden, also den
+    {\em Problem-Übermittler}, den {\em Dispatcher} und die {\em Operatives}.
+
+
+\subsection{Benutzer Stufe}
+
+\textbf{Problem-Übermittler (ProblemTransmitter)}\label{probueb}
+\label{anwpr}
+    ist die Software-Komponente, die Kontakt zum {\em Dispatcher} herstellt
+    und das Übertragen des \hyperref[prob]{Problems} vom
+    \hyperref[benutzer]{Benutzer} ermöglicht. Die zugehörigen Klassen sind
+    \emph{ProblemTransmitterImpl} und \emph{ProblemComputation}.
+
+\textbf{Statistik-Anzeige}
+    stellt dem Benutzer aktuelle Informationen zum Compute-Sys\-tems insgesamt
+    (\emph{Systems-Statistik}) und zu seinem \hyperref[prob]{Problem}
+    (\emph{Problem-Statistik}) bereit. Die zugehörigen Klassen sind
+    \emph{ProblemGUIStatisticsReader}, \emph{SystemGUIStatisticsReader} und
+    \emph{SystemTextStatisticsReader}.
+
+
+\subsection{Dispatcher Stufe}
+
+\textbf{Dispatcher}\label{compserv}
+    besteht aus drei Komponenten: Dem {\em Compute-Manager}, dem
+    \emph{Prob\-lem-Manager} und der {\em Statistik}. Er ist das Herzst"uck
+    des {\em Compute-Systems}. Er wird durch den
+    \hyperref[admin]{\em Administrator} auf dem
+    \hyperref[servrech]{\em Dispatcher-Rechner} gestartet.
+
+\textbf{Problem-Manager}\label{problman}
+    bezeichnet den Teil des {\em Dispatchers}, der sich um die Verwaltung
+    der \hyperref[prob]{Probleme} und \hyperref[teilprob]{Teilprobleme}
+    k"ummert, da dies bei mehreren {\em Problemen} notwendig ist.
+
+\textbf{Compute-Manager}\label{compman}
+    bezeichnet den Teil des {\em Dispatchers}, der sich um die Verwaltung
+    der {\em Operatives} k"ummert und die Verteilung der
+    \hyperref[teilprob]{Teilprobleme} "ubernimmt.
+
+\textbf{Statistik}\label{stat}
+    bezeichnet den Teil des {\em Dispatchers}, der die  statistischen Daten
+    des {\em Compute-Systems} verwaltet. 
+
+
+\subsection{Operative Stufe}
+
+\textbf{Operative}\label{compclie}
+    bekommt von dem {\em Compute-Manager} genau ein
+    \hyperref[teilprob]{Teilproblem} und berechnet dieses. Die
+    \hyperref[teillos]{Teillösung} schickt er dann wieder an ihn zurück.
+
+
+\section{Hardware Ebene}
+
+Die Hardware unfasst die für das Gesamtsystem erforderlichen Rechner.
+Einzelne konkrete Rechner können auch mehrere Funktionen ausführen (z.B.
+gleichzeitig {\em Dispatcher-Rechner} und {\em Operative-Rechner} sein).
+
+
+\subsection{Benutzer Stufe}
+
+\textbf{Benutzer Rechner}\label{benrech}
+  startet die Kommunikation zum \hyperref[compsys]{Compute-System}.
+
+\textbf{Web-Server}\label{weserver}
+    ist nötig, damit das \hyperref[compsys]{Compute-System} das
+    \hyperref[probpak]{Problem-Paket}  laden kann.
+
+
+\subsection{Dispatcher Stufe}
+
+\textbf{Dispatcher Rechner}\label{servrech}
+  stellt die Hardware für den \hyperref[compsys]{Dispatcher} zur Verfügung.
+
+
+\subsection{Operative Stufe}
+
+\textbf{Operative Rechner}\label{clierech} 
+  ist mit dem {\em Dispatcher-Rechner} verbunden. Auf ihm laufen die
+  eigentlichen Berechnungen ab.
+

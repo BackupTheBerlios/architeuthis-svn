@@ -1,0 +1,21 @@
+// Policy fuer den ProblemTransmitter
+
+grant {
+  // ShutdownHooks ermoeglichen das kontrollierte Beenden des Transmitters
+  permission java.lang.RuntimePermission "shutdownHooks";
+
+  // Verbindung zum ProblemManager herstellen:
+  // permission java.net.SocketPermission "<Name des ProblemManager>", "accept, connect, listen, resolve";
+  permission java.net.SocketPermission "*", "accept, connect, listen, resolve";
+
+  // Loesung schreiben, evtl. kann gleich der Dateiname angegeben werden:
+  // permission java.io.FilePermission "ergebnis.dat", "write";
+  permission java.io.FilePermission "<<ALL FILES>>", "write";
+  
+  // Erlaubt das dynamische Setzen der Codebase
+  permission java.util.PropertyPermission "java.rmi.server.codebase", "read, write";
+
+  // Erlaubt das Veraendern des Logging-Level.
+  permission java.util.logging.LoggingPermission "control";
+};
+

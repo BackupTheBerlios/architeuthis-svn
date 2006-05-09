@@ -1,0 +1,94 @@
+Datei          : ReadmeDispatcher
+Letzte Änderung: 04.05.2006 durch Dietmar Lippold
+
+
+This file is part of Architeuthis.
+
+Architeuthis is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+Architeuthis is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Architeuthis; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+Funktion vom Dispatcher
+-----------------------
+
+Der Dispatcher ist die zentrale Komponente eines Architeuthis-Systems. Er
+hat folgende Aufgaben:
+
+ 1. Entgegennahme von Problemen von ProblemTransmittern.
+ 2. Zerlegung der Probleme in Teilprobleme.
+ 3. Vergabe der Teilprobleme an Operatives.
+ 4. Entgegennahme der Teillösungen von den Operatives.
+ 5. Erzeugung einer Gesamtlösung aus den Teillösungen eines Problems.
+ 6. Übermittlung der Gesamtlösung an den zugehörigen ProblemTransmitter.
+
+Der Dispatcher wird oftmals für mehrere Benutzer oder Abteilungen auf
+einem zentralen Rechner betrieben werden. Zu Testzwecken kann er aber auch
+auf dem gleichen Rechner wie der ProblemTransmitter oder ein Operative
+laufen.
+
+
+Benutzung vom Dispatcher
+------------------------
+
+Das Distributionspaket vom Dispatcher enthält folgende Dateien:
+
+ * Readme             : Datei mit allgemeinen Hinweisen zu Architeuthis.
+ * ReadmeDispatcher   : Diese Datei mit Hinweise zum Dispatcher.
+ * Dispatcher.jar     : Die Klassen der Dispatchers.
+ * logging.properties : Die Einstellungen zum Logging.
+ * compserv.conf      : Vorgegebene Optionen für den Dispatcher (optional).
+ * dispatcher.pol     : Die Festlegung Rechte, die der Dispatcher auf dem
+                        Rechner hat, auf dem er läuft.
+ * setup.sh           : Einstellungen zum Betrieb des jeweiligen
+                        Dispatchers unter Linux/Unix.
+ * setup.bat          : Einstellungen zum Betrieb des jeweiligen
+                        Dispatchers unter Windows.
+ * runDispatcher.sh   : Script zum Starten des Dispatchers unter Linux/Unix.
+ * runDispatcher.bat  : Script zum Starten des Dispatchers unter Windows.
+
+Die Dateien zum Starten des Dispatchers liegen im Verzeichnis runScripts.
+
+Zum Starten des Dispatchers kann man die environment-Variable JAVA_HOME auf
+das Verzeichnis vom JRE oder JDK setzen. In der tcsh unter Linux/Unix kann
+der Befehl z.B. folgendermaßen aussehen:
+
+  setenv JAVA_HOME /usr/java/jdk
+
+Alternativ kann man auch die Variable JAVA in der Datei setup.sh bzw. in
+setup.bat setzen. In dieser Datei kann man außerdem noch folgende Einträge
+ändern:
+
+ * DEPLOY_DIR      : Das Verzeichnis mit der jar-Datei vom Dispatcher.
+                     Vorgegeben ist dieses relativ zum Verzeichnis
+                     runScripts. Man braucht diese Variable also nicht zu
+                     ändern, wenn man den Dispatcher aus diesem Verzeichnis
+                     startet.
+
+ * CONFIG_DIR      : Das Verzeichnis mit den Konfigurationsdateien
+                     dispatcher.pol und logging.properties. Vorgegeben ist
+                     dieses relativ zum Verzeichnis runScripts. Man braucht
+                     diese Variable also nicht zu ändern, wenn man den
+                     Dispatcher aus diesem Verzeichnis startet.
+
+ * DISPATCHER_PORT : Der Port, unter dem der Dispatcher erreichbar ist.
+                     Der default-Port ist 1854. In der Regel wird man
+                     diese Variable nicht ändern.
+
+Um die Datei compserv.conf zu verwenden, kopiert man sie in das Verzeichnis,
+aus dem man den Dispatcher startet.
+
+Zum Starten des Dispatchers ruft man dann einfach das Start-Scripts auf.
+Unter Linux/Unix: ./runDispatcher.sh
+Unter Windows   : runDispatcher.bat
+

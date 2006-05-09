@@ -1,0 +1,239 @@
+%% Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+%% Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+%% Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+%% entwickelt.
+
+
+\chapter{Gemeinsamer Speicher}
+\label{gemeinSpeicher}
+
+\section{Vorwort}
+
+Dieses Kapitel beschreibt die Möglichkeit, für die Teilprobleme einen
+gemeinsamen Speicher zu benutzen und neue Arten von gemeinsamen Speicher zu
+entwickeln.
+
+
+\section{Hinweise für den Benutzer}
+
+Für die Benutzung eines gemeinsamen Speichers sind drei Interfaces von
+Bedeutung:
+
+\begin{itemize}
+\item  \texttt{de...userinterfaces.develop.RemoteStoreGenerator}
+       definiert die Klasse, die die Instanzen des gemeinsamen Speichers
+       erzeugt.
+
+\item  \texttt{de...userinterfaces.develop.RemoteStore}
+       kennzeichnet den gemeinsamen Speicher.
+
+\item  \texttt{de...userinterfaces.develop.CommunicationPartialProblem}
+       definiert ein Teilproblem als eines, das den gemeinsamen Speicher
+       benutzen kann.
+\end{itemize}
+
+Damit die Teilprobleme einen gemeinsamen Speicher verwenden können, ist
+folgendes zu tun:
+
+\begin{itemize}
+\item  Die Teilprobleme müssen das Interface \texttt{CommunicationPartialProblem}
+       implementieren. Methoden des Teilproblems, die direkt oder indirekt
+       den gemeinsamen Speicher benutzen, können eine \texttt{RemoteException}
+       werfen. Diese wird an die Methode \texttt{compute(RemoteStore)} vom
+       Interface weitergegeben.
+
+\item  Es muß eine konkrete Klasse erstellt werden, die das Interface
+       \texttt{RemoteStore} implementiert. In der Regel wird diese Klasse
+       durch ein zusätzliches Interface beschrieben, über das ein Teilproblem
+       auf den gemeinsamen Speicher zugreift.
+
+\item  Es muß eine konkrete Klasse erstellt werden, die das Interface\\
+       \texttt{RemoteStoreGenerator} implementiert.
+\end{itemize}
+
+Im Package \texttt{de.unistuttgart.architeuthis.remotestore} sind schon
+Klassen, die die Interfaces \texttt{RemoteStore} und
+\texttt{RemoteStoreGenerator} implementieren, vorhanden und können benutzt
+werden. Die Entwicklung eigener Klassen wird im nächsten Abschnitt
+beschrieben.
+
+\begin{center}
+\begin{figure}[ht]
+  \begin{center}
+  \includegraphics[angle=-90,width=250pt,]{speicherZentral}
+  \caption{Zentraler Speicher alleine}
+  \label{speicherZentrall}
+  \end{center}
+\end{figure}
+\end{center}
+
+\begin{center}
+\begin{figure}[ht]
+  \begin{center}
+  \includegraphics[angle=-90,width=250pt]{speicherDezentral}
+  \caption{Zentraler und dezentraler Speicher}
+  \label{speicherDezentrall}
+  \end{center}
+\end{figure}
+\end{center}
+
+Für die Kommunikation der Teilprobleme mit dem gemeinsamen Speicher scheinen
+folgende drei Möglichkeiten relevant, die sich danach unterscheiden, welches
+Ergebnis aufeinanderfolgende Lesezugriffe zweier Teilprobleme auf den
+gemeinsamen Speicher ohne zwischenzeitliche Schreibzugriffe liefern:
+
+\begin{enumerate}
+\item  Aufeinanderfolgende Lesezugriffe zweier Teilprobleme ohne
+       zwischenzeitliche Schreibzugriffe liefern den gleichen Wert.
+
+       Dies kann dadurch realisiert werden, daß nur ein zentraler Speicher
+       vorhanden ist, auf den alle Teilprobleme beim Lesen und Schreiben
+       zugreifen (s.\ Abbildung \ref{speicherZentrall}).
+
+\item  Aufeinanderfolgende Lesezugriffe zweier Teilprobleme ohne
+       zwischenzeitliche Schreibzugriffe können vorübergehend einen
+       unterschiedlichen Wert liefert. Es ist aber sicher gestellt, daß
+       der Inhalt des gemeinsamen Speichers nach einiger Zeit für alle
+       Teilprobleme wieder identisch ist.
+
+       Dieses Verfahren kann dadurch realisiert werden, daß ein zentraler
+       Speicher und zusätzlich auf jedem Operative ein dezentraler Speicher
+       vorhanden ist (s.\ Abbildung \ref{speicherDezentrall}). Das Schreiben
+       aller Teilprobleme erfolgt in den zentralen Speicher und ist erst
+       abgeschlossen, wenn das Schreiben auch auf allen dezentralen
+       Speichern erfolgt ist. Dieser Vorgang erfolgt unterbrechungsfrei,
+       d.h.\ ohne daß während des Schreibens in die dezentralen Speicher ein
+       anderes Teilproblem in den zentralen Speicher schreibt. Das Lesen
+       erfolgt aus den dezentralen Speichern.
+
+\item  Aufeinanderfolgende Lesezugriffe zweier Teilprobleme ohne
+       zwischenzeitliche Schreibzugriffe können dauerhaft einen
+       unterschiedlichen Wert liefert.
+
+       Dies passiert, wenn ein zentraler Speicher und zusätzlich auf jedem
+       Operative ein dezentraler Speicher vorhanden ist (s.\ Abbildung
+       \ref{speicherDezentrall}) und sowohl Lesezugriffe wie Schreibzugriffe
+       der Teilprobleme (erst einmal) nur auf den dezentralen Speicher
+       erfolgen. Schreibzugriffe werden dann anschließend (d.h.\ nebenläufig
+       zur weiteren Berechnung des Teilproblems und zu weiteren
+       Schreibzugriffen anderer Teilprobleme auf ihren jeweiligen
+       dezentralen Speicher) an den zentralen Speicher weitergeleitet, der
+       sie wiederum an die dezentralen Speicher weiterleitet.
+\end{enumerate}
+
+Wenn aufeinanderfolgende Lesezugriffe zweier Teilprobleme auf den
+gemeinsamen Speicher den gleichen Wert liefern, ist dies in der Regel für
+den Benutzer des Speichers und damit den Entwickler des Problems leichter
+nachzuvollziehen. Die Verfahren, bei denen die Lesezugriffe oder die Lese-
+und die Scheibzugriffe auf den dezentralen Speicher erfolgen sind aber in
+der Regel Laufzeit-effizienter.
+
+Es ist jedoch zu beachten, daß die \emph{Reihenfolge} der Lese- und
+Schreibzugriffe auf den gemeinsamen Speichers durch die Teilprobleme
+untereinander in allen Fällen unbestimmt ist (so wie die Reihenfolge des
+Eintreffens von Teillösungen beim Problem unbestimmt ist), d.h.\ in
+verschiedenen Programmläufen unterschiedlich sein kann.
+
+In jedem Fall sollte ein gemeinsamer Speicher aber folgende Bedingungen
+sicherstellen:
+
+\begin{itemize}
+\item  Wenn ein Teilproblem ein Objekt in den Speicher schreibt und dieses
+       Teilproblem anschließend aus dem Speicher ließt, sollte das vorherige
+       Schreiben schon erfolgt sein.
+
+\item  Mehrere Aufrufe zur Veränderung des Speichers durch \emph{ein}
+       Teilproblem sollten im Speicher für alle anderen Teilprobleme in der
+       gleichen Reihenfolge vorgenommen werden. Wenn also ein Teilproblem
+       \emph{A} die Schreibzugriffe \emph{A1} und \emph{A2} vornimmt und ein
+       Teilproblem \emph{B} den Schreibzugriff \emph{B1}, dann könnten diese
+       im (dezentralen) Speicher eines Teilproblem \emph{C} in der
+       Reihenfolge A1, A2, B1 eingehen  und im (dezentralen) Speicher eines
+       Teilproblem \emph{D} in der Reihenfolge A1, B1, A2. In jedem Fall
+       würde aber A1 vor A2 erfolgen.
+\end{itemize}
+
+Die vorhandenen Implementierungen vom gemeinsamen Speicher erfüllen diese
+Bedingungen und die Packages \texttt{de...remotestore.hashmap} und
+\texttt{de...remotestore.hashset} bieten auch alle drei Arten der
+Kommunikation. Die zu verwendende Art der Kommunikation wird beim Aufruf des
+Konstruktors der Klasse, die das Interface \texttt{RemoteStoreGenerator}
+implementiert, angegeben. Der gemeinsamen Speicher vom Package
+\texttt{de...remotestore.hashsetnew} bietet nur die dritte Art der
+Kommunikation (ein zentraler und mehrere dezentrale Speicher mit Lese- und
+Schreibzugriffen auf dem dezentralen Speicher).
+
+Die im gemeinsamen Speicher zu speichernden und damit zwischen den
+Teilproblemen zu übertragenden Objekte müssen serialisierbar sein, d.h.\ das
+Interface \texttt{java.io.Serializable} implementieren. Es ist zu beachten,
+daß die Objekte bei der Übertragung tief kopiert werden, d.h.\ es werden
+alle über Attribute direkt oder indirekt erreichbaren Objekte mitkopiert.
+Das Kopieren ist von besonderer Bedeutung, wenn die Klasse eines Objekts die
+Methode \texttt{equals} selbst nicht implementiert sondern nur von der
+Klasse \texttt{Objekt} erbt. Die Gleichheit zwischen zwischen zwei Objekten
+ist dann die Instanz-Gleichheit. Wenn dann ein Objekt (z.B.\ als Attribut
+anderer Objekte) mehrfach übertragen wird, sind die Kopien des Objekts beim
+empfangenden Teilproblem nicht mehr gleich (da es sich nicht mehr um die
+gleiche Instanz handelt). Bei Benutzung der Speicher aus dem Package
+\texttt{remotestore} ist aber zumindest sicher gestellt, daß ein Objekte,
+das (indirekt) in mehreren Parametern einer Methode vorkommt, auch beim
+empfangenden Teilproblem als ein Objekt erkannt wird (d.h.\ die Kopie
+mehrfach verwendet wird).
+
+
+\section{Hinweise für den Entwickler}
+
+Die Entwicklung eines Remote-Store soll anhand des Beispiels vom Package
+\texttt{de...remotestore.hashmap} beschrieben werden. Die jeweiligen
+Klassen aus diesem Package werden nachfolgend in Klammern relativ zu diesem
+Package angegeben.
+
+Im Haupt-Package sollte nur ein Interface zur Benutzung durch das Teilproblem
+(\texttt{UserRemoteHashMap}) und die Implementierung von
+\texttt{RemoteStoreGenerator} (\texttt{RemoteHashMapGenerator}) enthalten
+sein. Die weiteren Interfaces und die konkreten Klassen sollten sich in
+Unter-Packages befinden.
+
+Es sind zwei weitere Interfaces sinnvoll, eines für den zentralen Speicher
+mit den Methoden zum Aufruf durch den dezentalen Speicher
+(\texttt{hashmap.interf.RelayHashMap}) und eines für den dezentralen
+Speicher mit den Methoden zum Aufruf durch den zentalen Speicher
+(\texttt{hashmap.interf.LocalHashMap}). Entsprechend werden die
+Implementierungen der Interfaces im folgenden als Relay-Store und
+Local-Store bezeichnet.
+
+Zum asynchronen Übertragen von Daten vom Local-Store zum Relay-Store sind
+einige Hilfsklassen vorhanden. Die Übertragung selbst kann durch die Klasse
+\texttt{de...remotestore.Transmitter} erfolgen. Für jede beim Relay-Store
+aufzurufende Methode ist eine Unterklasse von
+\texttt{de...remotestore.TransmitObject} zu erzeugen. Die zu übertragenden
+Objekte sind an den \texttt{Transmitter} zu übergeben, der sie seinerseits
+an eine Instanz von \texttt{de...remotestore.TransmitProcedure} (im Beispiel
+\texttt{hashmap.impl.HashMapTransProc}) übergibt. In dieser
+Prozedur kann für die Objekte entsprechend ihrer Klasse die jeweils
+zugehörige Methode aufgerufen werden. Wenn einer Methode mehrere Objekte zu
+übergeben sind, sind diese vorher in der Instanz einer neuen Klasse
+zusammenzufassen (wie in \texttt{hashmap.impl.MapEntry}).
+
+In den Methoden vom Relay-Store (\texttt{hashmap.impl.RelayHashMapImpl})
+werden die entsprechenden Methoden aller Local-Stores aufgerufen. Bei der
+asynchronen Kommunikation braucht jedoch die Methode desjenigen Local-Store,
+der die Methode beim Relay-Store aufgerufen hat, nicht aufgerufen zu werden.
+Der Local-Store muß die Daten dann selbst lokal speichern.
+
+Im Remote-Store (\texttt{hashmap.impl.RemoteHashMapImpl}), der sowohl das
+Interface zur Benutzung durch das Teilproblem wie das Interface vom
+Local-Store implementiert, sind entsprechend der beiden Aufgaben der Klasse
+(Interaktion mit dem Teilproblem und Interaktion mit dem Relay-Store) zwei
+Arten der Synchronisation erforderlich. Die eine dient zur Synchronisation
+des Zugriffs auf die eigentlichen Daten der Datensturktur (im Beispiel auf
+das Attribut \texttt{hashMap}), die andere dient zur Synchronisation des
+Zugriffs auf den Relay-Store bzw.\ auf das Attribut, in dem er gespeichert
+ist (\texttt{relayHashMap}). Die erste Art kann durch die Sychronisation der
+jeweiligen Methode (also auf das Objekts \texttt{this}) geschehen, für die
+andere sollte ein extra Objekt angelegt werden (im Beispiel
+\texttt{relayStoreSyncObj}). Zur Vermeidung von dealocks ist wichtig, daß
+die beiden Arten der Synchronisation nicht geschachtelt werden, d.h.\ an
+keiner Stelle eine Synchronisation (ein Lock) sowohl auf \texttt{this} wie
+auf das extra Objekt besteht.
+

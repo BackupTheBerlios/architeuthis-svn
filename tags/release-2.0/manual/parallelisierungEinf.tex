@@ -1,0 +1,175 @@
+%% Realease 1.0 dieser Software wurde am Institut für Intelligente Systeme der
+%% Universität Stuttgart (http://www.informatik.uni-stuttgart.de/ifi/is/) unter
+%% Leitung von Dietmar Lippold (dietmar.lippold@informatik.uni-stuttgart.de)
+%% entwickelt.
+
+
+\chapter[Beispiel zur Parallelisierung]{Der Weg zum parallelisierten Programm
+         anhand eines Beispiels}
+
+Dieses Kapitel beschreibt die einfache Parallelisierung eines vorgegebenen
+Programms.
+
+
+\section{Aufgabenstellung}
+
+Man betrachte zunächst die folgende Methode {\tt primzahlTeilbereich} aus
+\texttt{de.unistuttgart.architeuthis.testenvironment.PrimeNumbers}.
+
+{\scriptsize \verbatiminput{java/primzahlTeilbereich.jav}}
+
+Ermittelt werden sollen also alle Primzahlen, die in einem Intervall von
+zwei Zahlen liegen. Da dies so geschieht, daß die Zahlen einzeln überprüft
+werden, ob sie jeweils eine Primzahl sind, sind die Überprüfungen
+unabhängig voneinander. Die Gesamtaufgabe kann also recht einfach in
+Teilaufgaben zerlegt werden, indem das Gesamtintervall in Teilintervalle
+zerlegt wird. Jedes Teilintervall bildet dann ein Teilproblem und eine
+Teillösung ist eine Liste der Primzahlen aus dem Teilintervall. Die
+Gesamtlösung ergibt sich dann durch hintereinander hängen der Listen
+der Teillösungen. Dabei ist zu beachten, daß die Primzahlen in der
+Gesamtliste aufsteigend sortiert sein müssen.
+
+
+\section{Implementierung}
+
+Die Sortierung der Primzahlen in der Gesamtliste kann dadurch implizit
+erfolgen, daß den Teilproblemen die Teilintervalle aufsteigend zugeordnet
+werden (wie es naheliegend ist) und die Teillösungen (die Listen der
+Primzahlen) in der entsprechenden Reihenfolge aneinander gehängt werden.
+Da die Berechnung der Teilprobleme unabhängig voneinander ist, können sie
+außerdem alle geleichzeitig erzeugt werden.
+
+Die Rückgabe der Teillösungen in der Reihenfolge der Ausgabe der Teilprobleme
+wird durch die zur Verfügung stehenden abstrakten Hilfsklassen
+(s.\ Kapitel \ref{abstrakt}) erledigt. Da die Teilprobleme außerdem alle
+gleichzeitig erzeugt werden können, kann die Klasse
+\texttt{AbstractFixedSizeProblem} verwendet werden. Für diese müssen
+die folgenden beiden Methoden implementiert werden:
+
+\begin{itemize}
+\item protected PartialProblem[] createPartialProblems(int parProbsSuggested)
+\item protected Serializable createSolution(PartialSolution[] partialSolutions)
+\end{itemize}
+
+Deren Implementierung erfolgt wie schon beschrieben. In
+\texttt{createPartialProblems} werden die Teilprobleme dadurch erzeugt,
+daß jedem Teilproblem ein Teilintervall gleicher Größe zugeordnet wird. In
+\texttt{createSolution} werden dann alle Teillösungen in ihrer Reihenfolge
+im Array aneinandergehängt (zum konkreten Typ der Elemente des Array s.u.).
+Das Gesamtintervall wird durch die Unter- und Obergrenze dem Konstruktor
+des Problems übergeben. Nachfolgend die vollständige Implementierung der
+Problem-Klasse.
+
+{\scriptsize \verbatiminput{java/basic/PrimeRangeProblemImpl.jav}}
+
+Die Implementierung des Teilproblems erfolgt einfach dadurch, daß dem
+Konstruktor das zu durchsuchende Teilintervall übergeben wird und
+in der Methode \texttt{compute()} zur Berechnung der Primzahlen die
+vorgegebene Methode \texttt{primzahlTeilbereich} aufgerufen wird. Um die
+Liste als Teillösung zurückzugeben, wird die zur Verfügung stehende
+Hilfsklasse \texttt{ContainerPartialSolution} verwandt. Aus dieser muß
+die Liste dann mit der schon oben genannten Methode \texttt{createSolution}
+abgerufen werden. Nachfolgend die vollständige Implementierung der
+Teilproblem-Klasse.
+
+{\scriptsize \verbatiminput{java/basic/PrimePartialProblemImpl.jav}}
+
+
+\section{Ausführung}
+
+Die Ausführung bzw.\ Berechnung des Problems erfolgt in drei einfachen
+Schritten:
+
+\begin{enumerate}
+\item  Es wird eine Instanz der Klasse \texttt{de...facade.ProblemComputation}
+       erzeugt.
+
+\item  Es wird eine Instanz des Problems erzeugt. Diese wird in der Praxis
+       in der Regel durch ein Programm, das die Parameter des Problems
+       errechnet und das Ergebnis (die Lösung) des Problems weiterverwendet,
+       erzeugt werden.
+
+\item  Es wird die Methode \texttt{transmitProblem} der Instanz von
+       \texttt{ProblemComputation} aufgerufen und ihr die Instanz vom
+       Problem übergeben. Außerdem ist der Methode der Name des
+       Dispatcher-Rechners und der URL, unter dem die class-Dateien
+       abrufbar sind (z.B.\ mittels des ClassFileServer, s.\ Abschnitt
+       \ref{classfileserver}), zu übergeben. Insbesondere zu Testzwecken
+       und zur Berechnung unabhängig von einem laufenden Compute-System
+       kann alternativ auch die Methode \texttt{computeProblem} aufgerufen
+       werden.
+\end{enumerate}
+
+Die nachfolgend angegebene Klasse
+\texttt{de...testenvironment.prime.basic.GeneratePrimes} kann zur
+Verdeutlichung des Vorgehens dienen.
+
+{\scriptsize \verbatiminput{java/basic/GeneratePrimes.jav}}
+
+Die Klasse besitzt als Beispiel lediglich eine einzelne
+\texttt{main}-Methode, die die Parameter für das Problem als
+Kommandozeilen-Argumente einliest. Der Name des Dispatchers und der URL
+für die class-Dateien sind als Konstanten definiert. Sie hätten natürlich
+z.B.\ ebenfalls als Kommandozeilen-Argumente eingelesen werden können.
+Von der Instanz der Klasse \texttt{ProblemComputation} hätte abschließend
+noch die finale Statistik zum Problem abgerufen (mittels der Methode
+\texttt{getFinalProblemStat}) und ausgegeben werden können.
+
+Wichtig ist, das für die JVM dem Property \texttt{java.security.policy}
+die policy-Datei zugewiesen wird, indem auf der Kommandozeile für den
+Befehl \texttt{java} die entsprechende policy-Datei angegeben wird. Ein
+konkreter Aufruf des obigen Programms zur Ausführung auf dem Compute-System
+könnte unter Linux also folgendermaßen aussehen (alles in einer Zeile):
+
+\texttt{java -cp ../deploy/User.jar:../deploy/Problems.jar\\
+        -Djava.security.policy=../config/transmitter.pol\\
+        de.unistuttgart.architeuthis.testenvironment.prime.basic.GeneratePrimes\\
+        200000 201000 r}
+
+Unter Windows müssen in den Pfadangaben die Slashes durch Backslashes
+erseztzt und anstatt des Doppelpunktes ein Semikolon angegeben werden.
+
+
+\section{Weitere Beispiele}
+
+Weiter Beispiele sind im Package \texttt{de.unis.architeuthis.testumgebung}
+zu finden. Hier eine kurze Auflistung der Probleme und jeweils eine kurze
+Beschreibung dazu.
+
+\begin{enumerate}
+\item \texttt{de...testenvironment.prime.basic.PrimRangeProblemImpl}\\
+	Das ist das obige Beispiel dieses Kapitels mittels der abstrakten
+        Klasse \texttt{AbstractFixedSizeProblem}.
+
+\item \texttt{de...testenvironment.prime.advanced.PrimRangeProblemImpl}\\
+        Dieses Problem macht das gleiche wie das obige Problem, nur daß
+        die Aufteilung in Teilprobleme geschickter so erfolgt, daß der
+        Rechenaufwand für die einzelnen Teilprobleme noch gleicher ist.
+
+\item \texttt{de...testenvironment.prime.advanced.PrimSequenceProblemImpl}\\
+	Dies ist das Beispiel f"ur Fortgeschrittene im n"achsten Kapitel.
+
+\item \texttt{de...testenvironment.montecarlo.MonteCarloProblemImpl}\\
+        Hier wird das MonteCarlo-Verfahren zur Bestimmung der Zahl $Pi$
+        parallelisert. Man bekommt somit bei einer festgelegten Rechenzeit
+        eine bessere Genauigkeit f"ur $Pi$.
+
+\item \texttt{de...testenvironment.random.RandomProblemImpl}\\
+        Hier wartet jedes Teilproblem einfach eine zuf"allige Anzahl von
+        Sekunden. Dies ist f"ur Testzwecke recht interessant.
+
+\item \texttt{de...testenvironment.fail.FailProblemImpl}\\
+        Ein Problem für Testzwecke, bei dem die Abfrage nach einer Lösung
+        immer den Wert \texttt{null} liefert.
+
+\item \texttt{de...testenvironment.caching.CachingTestProblem}\\
+        Hier werden drei Dummy-Klassen in den Teilproblemen geladen. Mit
+        diesem Problem wurde verglichen, inwiefern sich das Laden von
+        Klassen zeitlich bemerkbar macht. Siehe dazu auch das Kapitel
+        \hyperref[performance]{Performance}.
+
+\item \texttt{de...testenvironment.hashstore.HashStoreProblemImpl}\\
+        Bei diesem Problem benutzen die Teilprobleme das Package
+        \texttt{de...remotestore.hashmap} als gemeinsamen Speicher.
+\end{enumerate}
+
