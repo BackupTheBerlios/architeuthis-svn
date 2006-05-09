@@ -1,5 +1,5 @@
 Datei          : QuickStart
-Letzte Änderung: 05.05.2006 durch Dietmar Lippold
+Letzte Änderung: 09.05.2006 durch Dietmar Lippold
 
 
 This file is part of Architeuthis.
@@ -37,9 +37,10 @@ einem Doppelkreuz am Anfang sind Kommentarzeilen.
 mkdir Architeuthis
 cd Architeuthis
 
-# Man downloaded die Datei testenvironment-unix.tar.gz von
+# Man downloaded die Datei testenvironment-unix.tar.gz entweder von
 # http://developer.berlios.de/project/showfiles.php?group_id=1370
-...
+# oder per FTP z.B. wie folgt:
+wget ftp://ftp.berlios.de/pub/architeuthis/testenvironment-unix.tar.gz
 
 # Man entpackt die Datei.
 tar -zxf testenvironment-unix.tar.gz
@@ -61,9 +62,12 @@ cd ../runScripts/prime
 # Man wechselt in das am Anfang angelegte Verzeichnis.
 cd ../../..
 
-# Man downloaded die Dateien dispatcher.tar.gz und operative.tar.gz von
+# Man downloaded die Dateien dispatcher.tar.gz und operative.tar.gz
+# entweder von
 # http://developer.berlios.de/project/showfiles.php?group_id=1370
-...
+# oder per FTP z.B. wie folgt:
+wget ftp://ftp.berlios.de/pub/architeuthis/dispatcher.tar.gz
+wget ftp://ftp.berlios.de/pub/architeuthis/operative.tar.gz
 
 # Man entpackt die Dateien.
 tar -zxf dispatcher.tar.gz
