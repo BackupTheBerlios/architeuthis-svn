@@ -1,7 +1,7 @@
 /*
  * filename:    OperativeImpl.java
  * created:     <???>
- * last change: 08.05.2006 by Dietmar Lippold
+ * last change: 10.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -457,6 +457,8 @@ public class OperativeImpl extends UnicastRemoteObject implements Operative {
                 exceptionMessage);
         } catch (RemoteException e) {
             // Dispatcher ist nicht erreichbar, Operative beenden
+            LOGGER.log(Level.SEVERE, "Compute-Manager nicht erreichbar zum"
+                                     + " Melden eines Fehlers");
             computeManager = null;
             shutdown();
         }
