@@ -1,7 +1,7 @@
 /*
  * file:        ParameterParser.java
  * created:     21.10.2004
- * last change: 06.03.2006 by Dietmar Lippold
+ * last change: 11.05.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -614,7 +614,7 @@ public class ParameterParser {
     }
 
     /**
-     * Returns the first parameter of an option as int primitive
+     * Returns the first parameter of an option as int primitive.
      *
      * @param option  option to query for parameters.
      *
@@ -625,14 +625,36 @@ public class ParameterParser {
     }
 
     /**
-     * Returns the first parameter of an option as long primitive
+     * Returns the first parameter of an option as long primitive.
      *
      * @param option  option to query for parameters.
      *
-     * @return  the value of the first parameter <code>long</code>.
+     * @return  the value of the first parameter as <code>long</code>.
      */
     public long getParameterAsLong(Option option) {
         return Long.parseLong(option.getParameter());
+    }
+
+    /**
+     * Returns the first parameter of an option as float primitive.
+     *
+     * @param option  option to query for parameters.
+     *
+     * @return  the value of the first parameter as <code>float</code>.
+     */
+    public float getParameterAsFloat(Option option) {
+        return Float.parseFloat(option.getParameter());
+    }
+
+    /**
+     * Returns the first parameter of an option as double primitive.
+     *
+     * @param option  option to query for parameters.
+     *
+     * @return  the value of the first parameter as <code>double</code>.
+     */
+    public double getParameterAsDouble(Option option) {
+        return Double.parseDouble(option.getParameter());
     }
 
     /**
