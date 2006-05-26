@@ -1,7 +1,7 @@
 /*
  * file:        ParameterParser.java
  * created:     21.10.2004
- * last change: 11.05.2006 by Dietmar Lippold
+ * last change: 26.05.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -132,6 +132,28 @@ public class ParameterParser {
      */
     public synchronized void removeOption(Option option) {
         optionList.remove(option);
+    }
+
+    /**
+     * Returns the stored option with the specified key. If no such option is
+     * stored, <code>null</code> is returned.
+     *
+     * @param key The key of the option to be returned.
+     *
+     * @return The option with the specified key or <code>null</code>.
+     */
+    public synchronized Option getOption(String key) {
+        Iterator optionIter;
+        Option   option;
+
+        optionIter = optionList.iterator();
+        while (optionIter.hasNext()) {
+            option = (Option) optionIter.next();
+            if (option.getKey().equals(key)) {
+                return option;
+            }
+        }
+        return null;
     }
 
     /**
