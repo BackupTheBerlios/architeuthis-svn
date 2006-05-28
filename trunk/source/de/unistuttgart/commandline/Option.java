@@ -1,7 +1,7 @@
 /*
  * file:        Option.java
  * created:     21.10.2004
- * last change: 06.03.2006 by Dietmar Lippold
+ * last change: 28.05.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -366,11 +366,8 @@ public class Option {
         return this;
     }
 
-    ////////////////////////////////////////////////////////////////////////
-    // the following methods should only be accessed by the parameter parser
-
     /**
-     * The setter for the key attribute.
+     * The getter for the key attribute.
      *
      * @return the key for this option
      */
@@ -379,13 +376,25 @@ public class Option {
     }
 
     /**
-     * The setter for the key attribute.
+     * The getter for the key attribute.
      *
      * @return the key for this option
      */
     String getDescription() {
         return description;
     }
+
+    /**
+     * Check if this option is optional.
+     *
+     * @return  <code>true</code> if and only if this is an optional option.
+     */
+    boolean isOptional() {
+        return isOptional;
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    // the following methods should only be accessed by the parameter parser
 
     /**
      * Method to check if a String matches prefix + key of this option.
@@ -420,15 +429,6 @@ public class Option {
      */
     boolean isEnabled() {
         return isEnabled;
-    }
-
-    /**
-     * Check if this option is optional.
-     *
-     * @return  <code>true</code> if and only if this is an optional option.
-     */
-    boolean isOptional() {
-        return isOptional;
     }
 
     /**
