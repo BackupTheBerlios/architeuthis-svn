@@ -1,7 +1,7 @@
 /*
  * file:        Option.java
  * created:     21.10.2004
- * last change: 28.05.2006 by Dietmar Lippold
+ * last change: 29.05.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -50,7 +50,8 @@ import java.util.regex.Pattern;
  * <ul>
  *  <li>prefix: "-"</li>
  *  <li>key: "key"</li>
- *  <li>description: "value"</li>
+ *  <li>paramDescription: "value"</li>
+ *  <li>fullDescription: "key-value"</li>
  *  <li>isOptional: true</li>
  *  <li>maxParameter: 0</li>
  *  <li>minParameter: 0</li>
@@ -69,7 +70,13 @@ public class Option {
     /**
      * The default description for all parameters.
      */
-    private static final String DEFAULT_DESCRIPTION = "value";
+    private static final String DEFAULT_PARAM_DESCRIPTION = "value";
+
+    /**
+     * The default description of this option.
+     */
+    private static final String DEFAULT_FULL_DESCRIPTION = DEFAULT_KEY + "-"
+                                                           + DEFAULT_PARAM_DESCRIPTION;
 
     /**
      * The default value used as prefix for all implementations, the default
@@ -127,9 +134,14 @@ public class Option {
     private String key = DEFAULT_KEY;
 
     /**
-     * The description of this option.
+     * The description of the parameters of this option.
      */
-    private String description = DEFAULT_DESCRIPTION;
+    private String paramDescription = DEFAULT_PARAM_DESCRIPTION;
+
+    /**
+     * The full description of this option.
+     */
+    private String fullDescription = DEFAULT_FULL_DESCRIPTION;
 
     /**
      * The prefix used for this option, the prefix is usually something
@@ -162,7 +174,6 @@ public class Option {
      * The default constructor.
      */
     public Option() {
-
     }
 
     /**
@@ -172,46 +183,44 @@ public class Option {
      */
     public Option(String key) {
         this.key = key;
-        this.description = key;
+        this.fullDescription = key;
     }
 
     /**
      * A constructor for setting key and description.
      *
-     * @param key          the parameter key.
-     * @param description  the option description.
+     * @param key               the parameter key.
+     * @param paramDescription  the description of the parameters.
      */
-    public Option(String key, String description) {
+    public Option(String key, String paramDescription) {
 
-        this.key = key;
-        this.description = description;
+        this(key);
+        this.paramDescription = paramDescription;
     }
 
     /**
      * A constructor for setting key, name and parameter check.
      *
-     * @param key             the parameter key-
-     * @param description     the option description.
-     * @param parameterCheck  defines the number of expected parameters.
+     * @param key               the parameter key.
+     * @param paramDescription  the description of the parameters.
+     * @param parameterCheck    defines the number of expected parameters.
      */
-    public Option(String key, String description, int parameterCheck) {
+    public Option(String key, String paramDescription, int parameterCheck) {
 
-        this.key = key;
-        this.description = description;
+        this(key, paramDescription);
         this.setParameterNumberCheck(parameterCheck);
     }
 
     /**
      * A constructor for setting key, description and optional parameter.
      *
-     * @param key          the parameter key.
-     * @param description  the option description.
-     * @param isOptional   flag for optional/non-optional attribute.
+     * @param key               the parameter key.
+     * @param paramDescription  the description of the parameters.
+     * @param isOptional        flag for optional/non-optional attribute.
      */
-    public Option(String key, String description, boolean isOptional) {
+    public Option(String key, String paramDescription, boolean isOptional) {
 
-        this.key = key;
-        this.description = description;
+        this(key, paramDescription);
         this.isOptional = isOptional;
     }
 
@@ -219,18 +228,16 @@ public class Option {
      * A constructor for setting key, description, optional parameter and
      * paramter check.
      *
-     * @param key             the parameter key.
-     * @param description     the option description.
-     * @param isOptional      flag for optional/non-optional attribute.
-     * @param parameterCheck  one of the defined constants for the number of
-     *                        allowed parameters.
+     * @param key               the parameter key.
+     * @param paramDescription  the description of the parameters.
+     * @param isOptional        flag for optional/non-optional attribute.
+     * @param parameterCheck    one of the defined constants for the number of
+     *                          allowed parameters.
      */
-    public Option(String key, String description,
+    public Option(String key, String paramDescription,
                   boolean isOptional, int parameterCheck) {
 
-        this.key = key;
-        this.description = description;
-        this.isOptional = isOptional;
+        this(key, paramDescription, isOptional);
         this.setParameterNumberCheck(parameterCheck);
     }
 
@@ -281,7 +288,7 @@ public class Option {
      *
      * @param key  the key being used.
      *
-     * @return  this object
+     * @return  this object.
      */
     public Option setKey(String key) {
 
@@ -294,14 +301,27 @@ public class Option {
      * to the description if more than on parameter is allowed for this
      * option.
      *
-     * @param description  description for the option. This String is used
-     *                     for the method toString.
+     * @param paramDescription  description for the parameter of this option.
+     *                          This String is used for the method toString.
      *
-     * @return  this object
+     * @return  this object.
      */
-    public Option setDescription(String description) {
+    public Option setParamDescription(String paramDescription) {
 
-        this.description = description;
+        this.paramDescription = paramDescription;
+        return this;
+    }
+
+    /**
+     * Set the full description of the option.
+     *
+     * @param fullDescription  the full description for this option.
+     *
+     * @return  this object.
+     */
+    public Option setFullDescription(String fullDescription) {
+
+        this.fullDescription = fullDescription;
         return this;
     }
 
@@ -376,12 +396,21 @@ public class Option {
     }
 
     /**
-     * The getter for the key attribute.
+     * The getter for the parameter description attribute.
      *
-     * @return the key for this option
+     * @return the key for this option.
      */
-    String getDescription() {
-        return description;
+    String getParamDescription() {
+        return paramDescription;
+    }
+
+    /**
+     * The getter for the full description attribute.
+     *
+     * @return the key for this option.
+     */
+    String getFullDescription() {
+        return fullDescription;
     }
 
     /**
@@ -531,7 +560,7 @@ public class Option {
      *
      * @return  the first parameter.
      */
-    String getParameter() {  // package-private
+    String getParameter() {
 
         assert (parameters.size() > 0);
         return (String) parameters.get(0);
@@ -559,7 +588,7 @@ public class Option {
         // all non-optional (minimal) stuff:
         for (int i = 1; i <= minParameters; i++) {
             result.append(" <");
-            result.append(description);
+            result.append(paramDescription);
             if (maxParameters > 1) {
                 result.append("." + i);
             }
@@ -571,7 +600,7 @@ public class Option {
             // we don't show all, just some dots
             result.append(" [");
             result.append(" <");
-            result.append(description);
+            result.append(paramDescription);
             result.append(minParameters + 1);
             result.append("> ... ");
             result.append("]");
@@ -581,7 +610,7 @@ public class Option {
                 result.append(" [");
                 for (int i = minParameters + 1; i <= maxParameters; i++) {
                     result.append(" <");
-                    result.append(description);
+                    result.append(paramDescription);
                     if ((maxParameters - minParameters) > 1) {
                         result.append("." + i);
                     }

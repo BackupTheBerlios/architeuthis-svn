@@ -1,7 +1,7 @@
 /*
  * file:        ParameterParserArchiTest.java
  * created:     21.10.2004
- * last change: 06.03.2006 by Dietmar Lippold
+ * last change: 28.05.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -135,23 +135,23 @@ public class ParameterParserArchiTest extends TestCase {
         Option deadtries = new Option();
 
         configFile.setKey("c");
-        configFile.setDescription("config-Datei");
+        configFile.setParamDescription("config-Datei");
         configFile.setOptional(false);
         configFile.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
         parser.addOption(configFile);
 
         port.setKey("port");
-        port.setDescription("Port-Nummer");
+        port.setParamDescription("Port-Nummer");
         port.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
         parser.addOption(port);
 
         deadtime.setKey("deadtime");
-        deadtime.setDescription("Zeit");
+        deadtime.setParamDescription("Zeit");
         deadtime.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
         parser.addOption(deadtime);
 
         deadtries.setKey("deadtries");
-        deadtries.setDescription("Anzahl");
+        deadtries.setParamDescription("Anzahl");
         deadtries.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
         parser.addOption(deadtries);
 
