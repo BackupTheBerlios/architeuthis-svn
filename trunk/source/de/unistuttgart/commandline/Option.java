@@ -50,8 +50,8 @@ import java.util.regex.Pattern;
  * <ul>
  *  <li>prefix: "-"</li>
  *  <li>key: "key"</li>
- *  <li>paramDescription: "value"</li>
- *  <li>fullDescription: "-key:value"</li>
+ *  <li>paramDescription: ""</li>
+ *  <li>fullDescription: "-key"</li>
  *  <li>isOptional: true</li>
  *  <li>maxParameter: 0</li>
  *  <li>minParameter: 0</li>
@@ -70,7 +70,7 @@ public class Option {
     /**
      * The default description for all parameters.
      */
-    private static final String DEFAULT_PARAM_DESCRIPTION = "value";
+    private static final String DEFAULT_PARAM_DESCRIPTION = "";
 
     /**
      * The default value used as prefix for all implementations, the default
@@ -82,8 +82,7 @@ public class Option {
      * The default description of this option.
      */
     private static final String DEFAULT_FULL_DESCRIPTION = DEFAULT_PREXFIX
-                                                           + DEFAULT_KEY + ":"
-                                                           + DEFAULT_PARAM_DESCRIPTION;
+                                                           + DEFAULT_KEY;
 
     /**
      * The default pattern String to match parameters with
@@ -198,7 +197,7 @@ public class Option {
 
         this(key);
         this.paramDescription = paramDescription;
-        this.fullDescription += ":" + paramDescription;
+        this.fullDescription += " " + paramDescription;
     }
 
     /**
@@ -394,7 +393,7 @@ public class Option {
      *
      * @return the key for this option
      */
-    String getKey() {
+    public String getKey() {
         return key;
     }
 
@@ -403,7 +402,7 @@ public class Option {
      *
      * @return the key for this option.
      */
-    String getParamDescription() {
+    public String getParamDescription() {
         return paramDescription;
     }
 
@@ -412,7 +411,7 @@ public class Option {
      *
      * @return the key for this option.
      */
-    String getFullDescription() {
+    public String getFullDescription() {
         return fullDescription;
     }
 
@@ -421,8 +420,26 @@ public class Option {
      *
      * @return  <code>true</code> if and only if this is an optional option.
      */
-    boolean isOptional() {
+    public boolean isOptional() {
         return isOptional;
+    }
+
+    /**
+     * Returns the minimum number of parameters for this option.
+     *
+     * @return  the minimum number of parameters for this option.
+     */
+    public int minParameterNumber() {
+        return minParameters;
+    }
+
+    /**
+     * Returns the maximum number of parameters for this option.
+     *
+     * @return  the maximum number of parameters for this option.
+     */
+    public int maxParameterNumber() {
+        return maxParameters;
     }
 
     ////////////////////////////////////////////////////////////////////////
