@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
  *  <li>prefix: "-"</li>
  *  <li>key: "key"</li>
  *  <li>paramDescription: "value"</li>
- *  <li>fullDescription: "key-value"</li>
+ *  <li>fullDescription: "-key:value"</li>
  *  <li>isOptional: true</li>
  *  <li>maxParameter: 0</li>
  *  <li>minParameter: 0</li>
@@ -73,16 +73,18 @@ public class Option {
     private static final String DEFAULT_PARAM_DESCRIPTION = "value";
 
     /**
-     * The default description of this option.
-     */
-    private static final String DEFAULT_FULL_DESCRIPTION = DEFAULT_KEY + "-"
-                                                           + DEFAULT_PARAM_DESCRIPTION;
-
-    /**
      * The default value used as prefix for all implementations, the default
      * value can be changed with the setPrefix method.
      */
     private static final String DEFAULT_PREXFIX = "-";
+
+    /**
+     * The default description of this option.
+     */
+    private static final String DEFAULT_FULL_DESCRIPTION = DEFAULT_PREXFIX
+                                                           + DEFAULT_KEY + ":"
+                                                           + DEFAULT_PARAM_DESCRIPTION;
+
     /**
      * The default pattern String to match parameters with
      * (match any input by default).
@@ -183,7 +185,7 @@ public class Option {
      */
     public Option(String key) {
         this.key = key;
-        this.fullDescription = key;
+        this.fullDescription = DEFAULT_PREXFIX + key;
     }
 
     /**
@@ -196,6 +198,7 @@ public class Option {
 
         this(key);
         this.paramDescription = paramDescription;
+        this.fullDescription += ":" + paramDescription;
     }
 
     /**
