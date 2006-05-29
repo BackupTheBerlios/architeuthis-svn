@@ -1,7 +1,7 @@
 /*
  * file:        RuntimeComparison.java
  * created:     <???>
- * last change: 05.05.2006 by Dietmar Lippold
+ * last change: 29.05.2006 by Dietmar Lippold
  * developers:  Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -279,22 +279,22 @@ public class RuntimeComparison {
         ParameterParser parser = new ParameterParser();
 
         Option urlOption = new Option("u");
-        urlOption.setDescription("webserver");
+        urlOption.setParamDescription("webserver");
         urlOption.setOptional(false);
         parser.addOption(urlOption);
 
         Option remoteComputeOption = new Option("r");
-        remoteComputeOption.setDescription("adressCompSys");
+        remoteComputeOption.setParamDescription("adressCompSys");
         remoteComputeOption.setOptional(false);
         parser.addOption(remoteComputeOption);
 
         Option problemNameOption = new Option("c");
-        problemNameOption.setDescription("problemName");
+        problemNameOption.setParamDescription("problemName");
         problemNameOption.setOptional(false);
         parser.addOption(problemNameOption);
 
         Option fileNameOption = new Option("f");
-        fileNameOption.setDescription("filename");
+        fileNameOption.setParamDescription("filename");
         fileNameOption.setOptional(true);
         parser.addOption(fileNameOption);
 

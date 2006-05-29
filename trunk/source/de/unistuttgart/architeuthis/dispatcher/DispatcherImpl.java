@@ -1,7 +1,7 @@
 /*
  * file:        DispatcherImpl.java
  * created:     18.12.20003
- * last change: 10.04.2006 by Dietmar Lippold
+ * last change: 29.05.2006 by Dietmar Lippold
  * developer:   Jürgen Heit,       juergen.heit@gmx.de
  *              Andreas Heydlauff, AndiHeydlauff@gmx.de
  *              Achim Linke,       achim81@gmx.de
@@ -166,22 +166,22 @@ public final class DispatcherImpl {
 
         Option configOption = new Option("c");
         configOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
-        configOption.setDescription("configfile");
+        configOption.setParamDescription("configfile");
         parser.addOption(configOption);
 
         Option portOption = new Option("port");
         portOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
-        portOption.setDescription("port");
+        portOption.setParamDescription("number");
         parser.addOption(portOption);
 
         Option deadtriesOption = new Option("deadtries");
         deadtriesOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
-        deadtriesOption.setDescription("deadtries");
+        deadtriesOption.setParamDescription("number");
         parser.addOption(deadtriesOption);
 
         Option deadtimeOption = new Option("deadtime");
         deadtimeOption.setParameterNumberCheck(Option.ONE_PARAMETER_CHECK);
-        deadtimeOption.setDescription("deadtime");
+        deadtimeOption.setParamDescription("number");
         parser.addOption(deadtimeOption);
 
         parser.setComandline(args);
