@@ -1,7 +1,7 @@
 /*
  * file:        Option.java
  * created:     21.10.2004
- * last change: 29.05.2006 by Dietmar Lippold
+ * last change: 06.06.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -389,6 +389,15 @@ public class Option {
     }
 
     /**
+     * The getter for the prefix attribute.
+     *
+     * @return the prefix for this option
+     */
+    public String getPrefix() {
+        return prefix;
+    }
+
+    /**
      * The getter for the key attribute.
      *
      * @return the key for this option
@@ -425,6 +434,17 @@ public class Option {
     }
 
     /**
+     * Check if this option is enabled.
+     *
+     * @return  <code>true</code> if and only if this option is enabled. This
+     *          means it is found in a parsed commandline or in a properties
+     *          file.
+     */
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    /**
      * Returns the minimum number of parameters for this option.
      *
      * @return  the minimum number of parameters for this option.
@@ -440,6 +460,15 @@ public class Option {
      */
     public int maxParameterNumber() {
         return maxParameters;
+    }
+
+    /**
+     * Accessor for the parameter vector.
+     *
+     * @return  a <code>ArrayList</code> of parameters.
+     */
+    public ArrayList getParameterList() {
+        return parameters;
     }
 
     ////////////////////////////////////////////////////////////////////////
@@ -467,17 +496,6 @@ public class Option {
      */
     void setEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
-    }
-
-    /**
-     * Check if this option is enabled.
-     *
-     * @return  <code>true</code> if and only if this option is enabled. This
-     *          means it is found in a parsed commandline or in a properties
-     *          file.
-     */
-    boolean isEnabled() {
-        return isEnabled;
     }
 
     /**
@@ -564,15 +582,6 @@ public class Option {
 
         parameters.clear();
         isEnabled = false;
-    }
-
-    /**
-     * Accessor for the parameter vector.
-     *
-     * @return  a <code>ArrayList</code> of parameters.
-     */
-    ArrayList getParameterList() {
-        return parameters;
     }
 
     /**
