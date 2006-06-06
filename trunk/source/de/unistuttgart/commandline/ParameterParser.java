@@ -88,14 +88,14 @@ public class ParameterParser {
     private String[] argv = null;
 
     /**
-     * Minimum number of parameters.
+     * Minimum number of free parameters.
      */
-    private int minParameters = 0;
+    private int minFreeParameters = 0;
 
     /**
-     * Maximim number of parameters.
+     * Maximim number of free parameters.
      */
-    private int maxParameters = 0;
+    private int maxFreeParameters = 0;
 
     /**
      * Storage for free parameters.
@@ -444,12 +444,12 @@ public class ParameterParser {
         }
 
         // check for free parameter minimum number
-        if (freeParameters.size() < minParameters) {
+        if (freeParameters.size() < minFreeParameters) {
             throw new ParameterParserException("Missing parameters ");
         }
 
         // check for free parameter maximum number
-        if (freeParameters.size() > maxParameters) {
+        if (freeParameters.size() > maxFreeParameters) {
             throw new ParameterParserException("Too many parameters: "
                                                + freeParameters);
         }
@@ -527,20 +527,20 @@ public class ParameterParser {
 
         switch (parameterCheck) {
         case Option.ZERO_OR_MORE_PARAMETERS_CHECK:
-            minParameters = 0;
-            maxParameters = Integer.MAX_VALUE;
+            minFreeParameters = 0;
+            maxFreeParameters = Integer.MAX_VALUE;
             break;
         case Option.ONE_OR_MORE_PARAMETERS_CHECK:
-            minParameters = 1;
-            maxParameters = Integer.MAX_VALUE;
+            minFreeParameters = 1;
+            maxFreeParameters = Integer.MAX_VALUE;
             break;
         case Option.ZERO_PARAMETERS_CHECK:
-            minParameters = 0;
-            maxParameters = 0;
+            minFreeParameters = 0;
+            maxFreeParameters = 0;
             break;
         case Option.ONE_PARAMETER_CHECK:
-            minParameters = 1;
-            maxParameters = 1;
+            minFreeParameters = 1;
+            maxFreeParameters = 1;
             break;
         default:
             assert (false);
@@ -630,7 +630,7 @@ public class ParameterParser {
      *          a free parameter.
      */
     boolean canTakeFreeParameter() {
-        return (freeParameters.size() < maxParameters);
+        return (freeParameters.size() < maxFreeParameters);
     }
 
     /**
@@ -738,32 +738,33 @@ public class ParameterParser {
 
         // append the freeParameter description
         // all non-optional (minimal) stuff
-        for (int i = 1; i <= minParameters; i++) {
+        for (int i = 1; i <= minFreeParameters; i++) {
             freeParamString.append(" <");
             freeParamString.append(freeParameterDescription);
-            if (maxParameters > 1) {
+            if (maxFreeParameters > 1) {
                 freeParamString.append("." + i);
             }
             freeParamString.append(">");
         }
 
         // the optional (maximal) parameters
-        if (Option.MAX_OPT_SHOWN_PARAMETERS < (maxParameters - minParameters)) {
+        if (Option.MAX_OPT_SHOWN_PARAMETERS < (maxFreeParameters
+                                               - minFreeParameters)) {
             // we don't show all, just some dots
             freeParamString.append(" [");
             freeParamString.append(" <");
             freeParamString.append(freeParameterDescription);
-            freeParamString.append("." + (minParameters + 1));
+            freeParamString.append("." + (minFreeParameters + 1));
             freeParamString.append("> ... ");
             freeParamString.append("]");
         } else {
             // show all
-            if (maxParameters > minParameters) {
+            if (maxFreeParameters > minFreeParameters) {
                 freeParamString.append(" [");
-                for (int i = minParameters + 1; i <= maxParameters; i++) {
+                for (int i = minFreeParameters + 1; i <= maxFreeParameters; i++) {
                     freeParamString.append(" <");
                     freeParamString.append(freeParameterDescription);
-                    if ((maxParameters - minParameters) > 1) {
+                    if ((maxFreeParameters - minFreeParameters) > 1) {
                         freeParamString.append("." + i);
                     }
                     freeParamString.append(">");
