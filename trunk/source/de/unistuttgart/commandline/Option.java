@@ -32,6 +32,7 @@ package de.unistuttgart.commandline;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
+import java.io.Serializable;
 
 /**
  * The base class for modeling a single commandline option.
@@ -60,7 +61,7 @@ import java.util.regex.Pattern;
  * @see ParameterParser
  *
  */
-public class Option {
+public class Option implements Serializable {
 
     /**
      * The default option key string

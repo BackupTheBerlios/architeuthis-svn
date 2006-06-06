@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Iterator;
+import java.io.Serializable;
 
 /**
  * This class implements a simple command line parser.
@@ -53,7 +54,7 @@ import java.util.Iterator;
  *
  * @author Michael Wohlfart
  */
-public class ParameterParser {
+public class ParameterParser implements Serializable {
 
     /**
      * The default description for the free parameters.
