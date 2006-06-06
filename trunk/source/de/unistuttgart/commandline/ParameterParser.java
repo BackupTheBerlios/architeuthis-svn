@@ -1,7 +1,7 @@
 /*
  * file:        ParameterParser.java
  * created:     21.10.2004
- * last change: 26.05.2006 by Dietmar Lippold
+ * last change: 06.06.2006 by Dietmar Lippold
  * developers:  Michael Wohlfart, michael.wohlfart@zsw-bw.de
  *              Dietmar Lippold,  dietmar.lippold@informatik.uni-stuttgart.de
  *
@@ -116,7 +116,7 @@ public class ParameterParser {
      * Method to add an option to this instance. Any previous added option
      * with the same key is removed.
      *
-     * @param option Option object to be added to this parser.
+     * @param option  Option object to be added to this parser.
      */
     public synchronized void addOption(Option option) {
 
@@ -125,9 +125,9 @@ public class ParameterParser {
     }
 
     /**
-     * Method to remove and option fromt the ParameterParser.
+     * Method to remove and option from the ParameterParser.
      *
-     * @param option Option object to be removed from this parser
+     * @param option  Option object to be removed from this parser
      *
      */
     public synchronized void removeOption(Option option) {
@@ -138,9 +138,9 @@ public class ParameterParser {
      * Returns the stored option with the specified key. If no such option is
      * stored, <code>null</code> is returned.
      *
-     * @param key The key of the option to be returned.
+     * @param key  The key of the option to be returned.
      *
-     * @return The option with the specified key or <code>null</code>.
+     * @return  The option with the specified key or <code>null</code>.
      */
     public synchronized Option getOption(String key) {
         Iterator optionIter;
@@ -154,6 +154,15 @@ public class ParameterParser {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns a copy of the list of the stored options.
+     *
+     * @return  The list of stored options.
+     */
+    public synchronized LinkedList getOptionList() {
+        return ((LinkedList) optionList.clone());
     }
 
     /**
