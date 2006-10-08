@@ -13,10 +13,12 @@ Operative gelegentlich ein Fehler in der JVM auf, der zu deren Absturz
 führte.
 
 
-Stand 29.05.2006
-----------------
+Release 2.0.1
+-------------
 
  * Umbenennung und Ergänzung von Methoden im Package commandline.
+
+ * Einige weitere kleine Änderungen im Package commandline.
 
 
 Release 2.0
